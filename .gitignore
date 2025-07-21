@@ -1,0 +1,10 @@
+# MediaWiki
+/composer.lock
+/vendor
+/node_modules
+.eslintcache
+/.stylelintcache
+
+# Editors
+*.swp
+.idea/

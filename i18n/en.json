@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Marco Fossati",
+			"Eric Gardner",
+			"Roan Kattouw",
+			"Matthias Mullie",
+			"Jon Robson",
+			"Kimberly Sarabia",
+			"Brooke Vibber",
+			"Lauralyn Watson"
+		]
+	},
+	"readerexperiments-desc": "A set of prototypes that aim at growing Wikipedia readers"
+}

@@ -1,0 +1,55 @@
+{
+	"name": "ReaderExperiments",
+	"author": [
+		"Marco Fossati",
+		"Eric Gardner",
+		"Roan Kattouw",
+		"Matthias Mullie",
+		"Jon Robson",
+		"Kimberly Sarabia",
+		"Brooke Vibber",
+		"Lauralyn Watson"
+	],
+	"url": "https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:ReaderExperiments",
+	"descriptionmsg": "readerexperiments-desc",
+	"license-name": "GPL-2.0-or-later",
+	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.42.0"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\ReaderExperiments\\": "src/"
+	},
+	"config": {
+		"ReaderExperimentsVandalizeEachPage": {
+			"description": "Write 'ReaderExperiments was here' on each page",
+			"value": false
+		}
+	},
+	"HookHandlers": {
+		"ReaderExperimentsHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Hooks"
+		}
+	},
+	"Hooks": {
+		"BeforePageDisplay": "ReaderExperimentsHooks"
+	},
+	"MessagesDirs": {
+		"ReaderExperiments": [
+			"i18n"
+		]
+	},
+	"ResourceModules": {
+		"ext.readerExperiments": {
+			"localBasePath": "resources/ext.readerExperiments",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments",
+			"dependencies": [],
+			"styles": [],
+			"packageFiles": [
+				"init.js"
+			],
+			"messages": []
+		}
+	},
+	"manifest_version": 2
+}
