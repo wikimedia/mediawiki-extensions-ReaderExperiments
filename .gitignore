@@ -5,6 +5,11 @@
 .eslintcache
 /.stylelintcache
 
+
 # Editors
 *.swp
 .idea/
+.vscode/*
+
+# Operating Systems
+.DS_Store
