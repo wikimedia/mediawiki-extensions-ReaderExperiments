@@ -1,16 +1,20 @@
 {
-	"name": "ReaderExperiments",
+	"name": "reader-experiments",
 	"private": true,
 	"scripts": {
 		"test": "grunt test"
 	},
 	"devDependencies": {
+		"@wikimedia/codex": "^2.2.0",
+		"@wikimedia/codex-design-tokens": "^2.2.0",
+		"@wikimedia/codex-icons": "^2.2.0",
 		"eslint-config-wikimedia": "0.30.0",
 		"grunt": "1.6.1",
 		"grunt-banana-checker": "0.13.0",
 		"grunt-eslint": "24.3.0",
 		"grunt-stylelint": "0.20.1",
-		"stylelint-config-wikimedia": "0.18.0"
+		"stylelint-config-wikimedia": "0.18.0",
+		"vue": "3.5.13"
 	},
 	"eslintIgnore": [
 		"vendor/**"

@@ -19,20 +19,25 @@
 
 namespace MediaWiki\Extension\ReaderExperiments;
 
-use MediaWiki\Html\Html;
+use Article;
+use MediaWiki\Parser\ParserOutput;
 
-class Hooks implements \MediaWiki\Hook\BeforePageDisplayHook {
+class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 
 	/**
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/BeforePageDisplay
-	 * @param \OutputPage $out
-	 * @param \Skin $skin
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ArticleViewHeaderHook
+	 *
+	 * @param Article $article
+	 * @param bool|ParserOutput|null &$outputDone
+	 * @param bool &$pcache
 	 */
-	public function onBeforePageDisplay( $out, $skin ): void {
+	public function onArticleViewHeader( $article, &$outputDone, &$pcache ): void {
+		$out = $article->getContext()->getOutput();
 		$config = $out->getConfig();
-		if ( $config->get( 'ReaderExperimentsVandalizeEachPage' ) ) {
-			$out->addModules( 'oojs-ui-core' );
-			$out->addHTML( Html::element( 'p', [], 'ReaderExperiments was here' ) );
+
+		if ( $config->get( 'ReaderExperimentsShowImageBrowsing' ) ) {
+			$out->addModules( 'ext.readerExperiments.imageBrowsing' );
+			$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
 		}
 	}
 

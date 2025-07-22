@@ -21,8 +21,8 @@
 		"MediaWiki\\Extension\\ReaderExperiments\\": "src/"
 	},
 	"config": {
-		"ReaderExperimentsVandalizeEachPage": {
-			"description": "Write 'ReaderExperiments was here' on each page",
+		"ReaderExperimentsShowImageBrowsing": {
+			"description": "Show the prototype Image Browsing UI",
 			"value": false
 		}
 	},
@@ -32,7 +32,7 @@
 		}
 	},
 	"Hooks": {
-		"BeforePageDisplay": "ReaderExperimentsHooks"
+		"ArticleViewHeader": "ReaderExperimentsHooks"
 	},
 	"MessagesDirs": {
 		"ReaderExperiments": [
@@ -40,13 +40,16 @@
 		]
 	},
 	"ResourceModules": {
-		"ext.readerExperiments": {
-			"localBasePath": "resources/ext.readerExperiments",
-			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments",
-			"dependencies": [],
+		"ext.readerExperiments.imageBrowsing": {
+			"localBasePath": "resources/ext.readerExperiments.imageBrowsing",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.imageBrowsing",
+			"dependencies": [
+				"vue"
+			],
 			"styles": [],
 			"packageFiles": [
-				"init.js"
+				"init.js",
+				"components/MediaGallery.vue"
 			],
 			"messages": []
 		}
