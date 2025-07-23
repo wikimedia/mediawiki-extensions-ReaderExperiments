@@ -2,5 +2,14 @@
 	"root": true,
 	"extends": [
 		"wikimedia/server"
+	],
+	"overrides": [
+		{
+			"files": [ "*.vue" ],
+			"rules": {
+				"arrow-body-style": "off",
+				"vue/multi-word-component-names": "off"
+			}
+		}
 	]
 }

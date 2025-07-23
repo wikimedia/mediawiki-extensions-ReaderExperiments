@@ -44,11 +44,14 @@
 			"localBasePath": "resources/ext.readerExperiments.imageBrowsing",
 			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.imageBrowsing",
 			"dependencies": [
-				"vue"
+				"vue",
+				"mediawiki.Title",
+				"mediawiki.util"
 			],
 			"styles": [],
 			"packageFiles": [
 				"init.js",
+				"thumbExtractor.js",
 				"components/MediaGallery.vue"
 			],
 			"messages": []
