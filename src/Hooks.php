@@ -33,11 +33,14 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 	 */
 	public function onArticleViewHeader( $article, &$outputDone, &$pcache ): void {
 		$out = $article->getContext()->getOutput();
+		$title = $out->getContext()->getTitle();
 		$config = $out->getConfig();
 
-		if ( $config->get( 'ReaderExperimentsShowImageBrowsing' ) ) {
-			$out->addModules( 'ext.readerExperiments.imageBrowsing' );
-			$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
+		if ( $title && $title->getNamespace() === NS_MAIN ) {
+			if ( $config->get( 'ReaderExperimentsShowImageBrowsing' ) ) {
+				$out->addModules( 'ext.readerExperiments.imageBrowsing' );
+				$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
+			}
 		}
 	}
 

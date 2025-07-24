@@ -314,6 +314,19 @@ function mapThumbUrls( thumb ) {
 	return thumbs;
 }
 
+/**
+ * @param {Element} container The DOM element container for the thumbnail
+ * @return {string|null}
+ */
+function getCaptionTextIfAvailable( container ) {
+	if ( container.querySelector( 'figcaption' ) ) {
+		return container.querySelector( 'figcaption' ).innerHTML;
+	} else {
+		return null;
+	}
+}
+
 module.exports = {
-	extractThumbInfo
+	extractThumbInfo,
+	getCaptionTextIfAvailable
 };

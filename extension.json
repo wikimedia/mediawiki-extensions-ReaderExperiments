@@ -52,7 +52,9 @@
 			"packageFiles": [
 				"init.js",
 				"thumbExtractor.js",
-				"components/MediaGallery.vue"
+				"App.vue",
+				"components/Carousel.vue",
+				"components/CarouselItem.vue"
 			],
 			"messages": []
 		}

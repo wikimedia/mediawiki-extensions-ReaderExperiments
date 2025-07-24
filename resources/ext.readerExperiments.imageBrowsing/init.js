@@ -1,5 +1,5 @@
 const Vue = require( 'vue' );
-const Gallery = require( './components/MediaGallery.vue' );
+const App = require( './App.vue' );
 
-Vue.createMwApp( Gallery )
+Vue.createMwApp( App )
 	.mount( '#ext-readerExperiments-imageBrowsing' );
