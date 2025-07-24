@@ -2,17 +2,25 @@
 	"name": "reader-experiments",
 	"private": true,
 	"scripts": {
-		"test": "grunt test"
+		"fix": "grunt lint --fix",
+		"jest": "jest --config tests/jest/jest.config.js",
+		"lint": "grunt lint",
+		"test": "grunt lint && npm run jest"
 	},
 	"devDependencies": {
-		"@wikimedia/codex": "2.2.1",
-		"@wikimedia/codex-design-tokens": "2.2.1",
-		"@wikimedia/codex-icons": "2.2.1",
+		"@babel/preset-env": "7.25.4",
+		"@vue/test-utils": "2.4.6",
+		"@vue/vue3-jest": "29.2.6",
+		"@wikimedia/codex": "^2.2.0",
+		"@wikimedia/codex-design-tokens": "^2.2.0",
+		"@wikimedia/codex-icons": "^2.2.0",
 		"eslint-config-wikimedia": "0.31.0",
 		"grunt": "1.6.1",
 		"grunt-banana-checker": "0.13.0",
 		"grunt-eslint": "24.3.0",
 		"grunt-stylelint": "0.20.1",
+		"jest": "29.7.0",
+		"jest-environment-jsdom": "29.7.0",
 		"stylelint-config-wikimedia": "0.18.0",
 		"vue": "3.5.13"
 	},

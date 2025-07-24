@@ -11,6 +11,9 @@ A set of prototypes that aim at growing Wikipedia readers.
 
 
 ## Get your hands dirty
+
+### Installation
+
 - Install [MediaWiki](https://gerrit.wikimedia.org/g/mediawiki/core/+/HEAD/DEVELOPERS.md)
 - Set up desktop and mobile skins:
 ``` sh
@@ -27,36 +30,45 @@ git clone ssh://${USERNAME}@gerrit.wikimedia.org:29418/mediawiki/extensions/Read
 printf "\nwfLoadExtension( 'ReaderExperiments' );\n" >> LocalSettings.php
 ```
 
+### Development
 
-### Lint
+The following instructions are specific to a local environment setup that uses Docker.
 
-#### Back end
+#### Lint
+
+##### Back end
 ``` sh
 docker compose exec mediawiki bash
 cd extensions/ReaderExperiments
 composer install
+composer fix  # Auto-fix PHP
 composer test
 ```
 
 
-#### Front end
+##### Front end
 ``` sh
 curl -fsS 'https://gerrit.wikimedia.org/g/fresh/+/24.05.1/bin/fresh-install?format=TEXT' | base64 --decode | python3
 fresh-node -env -net
 cd extensions/ReaderExperiments
 npm ci
-npm test
+npm run fix  # Auto-fix JavaScript, Styles, and Banana (i18n messages)
+npm run lint
 ```
 
 
-### Test
+#### Test
 
-#### Back end
+##### Back end
 ``` sh
 docker compose exec mediawiki bash
 composer phpunit:entrypoint -- extensions/ReaderExperiments/tests/phpunit/
 ```
 
 
-#### Front end
-To be defined.
+##### Front end
+``` sh
+fresh-node -env -net
+cd extensions/ReaderExperiments
+npm ci
+npm run jest

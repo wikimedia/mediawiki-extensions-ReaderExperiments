@@ -28,6 +28,6 @@ module.exports = function ( grunt ) {
 		banana: conf.MessagesDirs
 	} );
 
-	grunt.registerTask( 'test', [ 'eslint', 'stylelint', 'banana' ] );
-	grunt.registerTask( 'default', 'test' );
+	grunt.registerTask( 'lint', [ 'eslint', 'stylelint', 'banana' ] );
+	grunt.registerTask( 'default', 'lint' );
 };

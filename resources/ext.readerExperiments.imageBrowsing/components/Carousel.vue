@@ -4,16 +4,16 @@
 			v-for="( image, index ) in images"
 			:key="index"
 			:image="image"
-		></carousel-item>>
+		></carousel-item>
 	</div>
 </template>
 
 <script>
-const Vue = require( 'vue' );
+const { defineComponent } = require( 'vue' );
 const CarouselItem = require( './CarouselItem.vue' );
 
 // @vue/component
-module.exports = exports = Vue.defineComponent( {
+module.exports = exports = defineComponent( {
 	name: 'Carousel',
 	components: {
 		CarouselItem
