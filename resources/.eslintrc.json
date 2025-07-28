@@ -7,6 +7,12 @@
 	],
 	"overrides": [
 		{
+			"files": [ "*.vue", "*.js" ],
+			"rules": {
+				"jsdoc/valid-types": "off"
+			}
+		},
+		{
 			"files": [ "*.vue" ],
 			"rules": {
 				"arrow-body-style": "off",

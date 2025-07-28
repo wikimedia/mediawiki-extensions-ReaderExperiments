@@ -27,7 +27,7 @@ const extensions = {
  * @todo add specific data extractors as needed
  *
  * @param {Element} thumb
- * @return {Object}
+ * @return {import("./types").ThumbnailImageData}
  */
 function thumbInfo( thumb ) {
 	const item = {};
@@ -155,7 +155,7 @@ function thumbInfo( thumb ) {
  * @todo MMV also has an allow-list of extensions in config. may need to replicate this.
  *
  * @param {Element} content
- * @return {Object[]}
+ * @return {import("./types").ThumbnailImageData[]}
  */
 function extractThumbInfo( content ) {
 	const selectors = [
