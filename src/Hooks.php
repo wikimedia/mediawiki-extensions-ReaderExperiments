@@ -20,6 +20,7 @@
 namespace MediaWiki\Extension\ReaderExperiments;
 
 use Article;
+use MediaWiki\Context\RequestContext;
 use MediaWiki\Parser\ParserOutput;
 
 class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
@@ -37,7 +38,10 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 		$config = $out->getConfig();
 
 		if ( $title && $title->getNamespace() === NS_MAIN ) {
-			if ( $config->get( 'ReaderExperimentsShowImageBrowsing' ) ) {
+			if (
+				$config->get( 'ReaderExperimentsShowImageBrowsing' ) ||
+				RequestContext::getMain()->getRequest()->getFuzzyBool( 'imageBrowsing' )
+			) {
 				$out->addModules( 'ext.readerExperiments.imageBrowsing' );
 				$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
 			}
