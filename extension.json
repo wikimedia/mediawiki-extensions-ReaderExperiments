@@ -46,7 +46,8 @@
 			"dependencies": [
 				"vue",
 				"mediawiki.Title",
-				"mediawiki.util"
+				"mediawiki.util",
+				"@wikimedia/codex"
 			],
 			"styles": [],
 			"packageFiles": [
@@ -54,7 +55,11 @@
 				"thumbExtractor.js",
 				"App.vue",
 				"components/Carousel.vue",
-				"components/CarouselItem.vue"
+				"components/CarouselItem.vue",
+				"components/DetailView.vue",
+				"components/Overlay.vue",
+				"components/VisualTableOfContents.vue",
+				"components/VisualTableOfContentsItem.vue"
 			],
 			"messages": []
 		}

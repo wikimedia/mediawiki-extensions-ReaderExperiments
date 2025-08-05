@@ -4,6 +4,7 @@
 			v-for="( image, index ) in images"
 			:key="index"
 			:image="image"
+			@click="onItemClick( image )"
 		></carousel-item>
 	</div>
 </template>
@@ -24,8 +25,20 @@ module.exports = exports = defineComponent( {
 			required: true
 		}
 	},
-	setup() {
-		return {};
+	emits: [
+		'carousel-item-click'
+	],
+	setup( props, { emit } ) {
+		/**
+		 * @param {import("../types").ThumbnailImageData} image
+		 */
+		function onItemClick( image ) {
+			emit( 'carousel-item-click', image );
+		}
+
+		return {
+			onItemClick
+		};
 	}
 } );
 </script>
