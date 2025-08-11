@@ -80,7 +80,7 @@ function thumbInfo( thumb ) {
 		 *
 		 * @property {mw.Title} title
 		 */
-		item.title = new mw.Title( 'File' + item.name );
+		item.title = new mw.Title( 'File:' + item.name );
 
 		/**
 		 * Lowercase-normalized source file extension. Note that actual
