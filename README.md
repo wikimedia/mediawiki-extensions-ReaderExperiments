@@ -4,9 +4,12 @@ A set of prototypes that aim at growing Wikipedia readers.
 
 ## Highlights
 - Prototypes are temporary, disposable, and not optimized
-- Decoupled architecture for fast development: back-end PHP API endpoints deliver JSON over HTTP to front-end JavaScript & CSS applications
+- Decoupled architecture for fast development: back-end PHP API endpoints
+  deliver JSON over HTTP to front-end JavaScript & CSS applications
 - API endpoints are _stubs_ and can be tailored for a single feature
-- User interfaces in [Vue.js](https://www.mediawiki.org/wiki/Vue.js) and [Codex](https://www.mediawiki.org/wiki/Codex). The HTML output or cache is left untouched if possible
+- User interfaces in [Vue.js](https://www.mediawiki.org/wiki/Vue.js) and
+  [Codex](https://www.mediawiki.org/wiki/Codex). The HTML output or cache is
+  left untouched if possible
 - One-time shared setup for metrics integration, user preferences, etc.
 
 
@@ -30,9 +33,22 @@ git clone ssh://${USERNAME}@gerrit.wikimedia.org:29418/mediawiki/extensions/Read
 printf "\nwfLoadExtension( 'ReaderExperiments' );\n" >> LocalSettings.php
 ```
 
+- Enable the features
+
+``` php
+$wgReaderExperimentsShowImageBrowsing = true;
+```
+
+#### Quick start
+
+The quickest way to get up and running with the extension is to enable
+[MobileFrontendContentProvider](https://www.mediawiki.org/wiki/Extension:MobileFrontendContentProvider).
+After doing so, navigate to the page Angkor_Wat.
+
 ### Development
 
-The following instructions are specific to a local environment setup that uses Docker.
+The following instructions are specific to a local environment setup that
+uses Docker.
 
 #### Lint
 
