@@ -12,7 +12,9 @@
 				v-if="activeImage"
 				:images="thumbnailData"
 				:active-image="activeImage"
-				@close-overlay="onClose"
+				@close-overlay="onCloseOverlay"
+				@vtoc-item-click="onItemClick"
+				@vtoc-view-in-article="onViewInArticle"
 			></overlay>
 		</teleport>
 	</div>
@@ -60,11 +62,16 @@ module.exports = exports = defineComponent( {
 			console.log( image );
 		}
 
+		function onViewInArticle( image ) {
+			onCloseOverlay();
+			image.thumb.scrollIntoView();
+		}
+
 		/**
 		 * When a "close" event has been emitted from the Overlay component,
 		 * clear the active image and hide the overlay part of the UI.
 		 */
-		function onClose() {
+		function onCloseOverlay() {
 			activeImage.value = null;
 
 			// eslint-disable-next-line no-console
@@ -74,7 +81,8 @@ module.exports = exports = defineComponent( {
 		return {
 			thumbnailData,
 			onItemClick,
-			onClose,
+			onViewInArticle,
+			onCloseOverlay,
 			activeImage,
 			teleportTarget
 		};

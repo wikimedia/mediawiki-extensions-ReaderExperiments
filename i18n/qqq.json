@@ -12,6 +12,7 @@
 		]
 	},
 	"readerexperiments-desc": "{{desc|name=ReaderExperiments|url=https://www.mediawiki.org/wiki/Extension:ReaderExperiments}}",
+	"readerexperiments-imagebrowsing-vtoc-link": "Label on image browser visual table of contents to jump to the article at the position of the selected image",
 	"readerexperiments-imagebrowsing-detail-caption-expand": "Label for button to expand the text associates with the displayed image",
 	"readerexperiments-imagebrowsing-detail-caption-collapse": "Label for button to collapse the text associates with the displayed image",
 	"readerexperiments-imagebrowsing-detail-fullscreen": "Label for button to display the image full screen",

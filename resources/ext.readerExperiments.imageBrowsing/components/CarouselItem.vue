@@ -2,9 +2,9 @@
 	<figure class="ib-carousel-item">
 		<img
 			class="ib-carousel-item__image"
-			:src="image.thumb.src"
-			:alt="image.alt"
-		>
+			:src="image.src"
+			:srcset="image.srcset"
+			:alt="image.alt">
 	</figure>
 </template>
 

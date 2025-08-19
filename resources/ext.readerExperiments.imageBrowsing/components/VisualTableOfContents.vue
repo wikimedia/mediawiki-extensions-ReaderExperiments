@@ -6,7 +6,8 @@
 			v-for="( image, index ) in images"
 			:key="index"
 			:image="image"
-			@click="onItemClick( image )"
+			@vtoc-item-click="onItemClick( image )"
+			@vtoc-view-in-article="onViewInArticle( image )"
 		></visual-table-of-contents-item>
 	</div>
 </template>
@@ -27,11 +28,39 @@ module.exports = exports = defineComponent( {
 			required: true
 		}
 	},
-	setup() {
-		return {};
+	emits: [
+		'vtoc-item-click',
+		'vtoc-view-in-article'
+	],
+	setup( props, { emit } ) {
+		/**
+		 * @param {import("../types").ThumbnailImageData} image
+		 */
+		function onItemClick( image ) {
+			emit( 'vtoc-item-click', image );
+		}
+
+		/**
+		 * @param {import("../types").ThumbnailImageData} image
+		 */
+		function onViewInArticle( image ) {
+			emit( 'vtoc-view-in-article', image );
+		}
+
+		return {
+			onItemClick,
+			onViewInArticle
+		};
 	}
 } );
 </script>
 
 <style lang="less">
+.ib-vtoc {
+	width: 100%;
+	max-width: 320em;
+	height: 4em;
+	padding: 0;
+	position: relative;
+}
 </style>

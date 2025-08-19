@@ -121,11 +121,34 @@ function thumbInfo( thumb ) {
 	);
 
 	/**
-	 * @property {Object} urls mapped by width.
-	 * This will include the 1x src and any 1.5x and 2x sources in the srcset
-	 * but will not automatically include any new renderings with resizeUrl.
+	 * HTML element of the figcaption if present.
+	 * @type {?Element}
 	 */
-	item.urls = mapThumbUrls( thumb );
+	item.caption = item.container ? item.container.querySelector( 'figcaption' ) : null;
+
+	/**
+	 * src attribute on the original (or hidden) image
+	 * @type string
+	 */
+	item.src = thumb.src || thumb.dataset.mwSrc;
+
+	/**
+	 * srcset attribute on the original (or hidden) image
+	 * @type string
+	 */
+	item.srcset = thumb.srcset || thumb.dataset.mwSrcset;
+
+	/**
+	 * Specified width in CSS pixels on the original (or hidden) image
+	 * @type number
+	 */
+	item.width = thumb.width || thumb.dataset.width;
+
+	/**
+	 * Specified height in CSS pixels on the original (or hidden) image
+	 * @type number
+	 */
+	item.height = thumb.height || thumb.dataset.height;
 
 	return item;
 }
@@ -238,80 +261,6 @@ function isIncludedThumbInfo( info ) {
 	return isValidExtension( info.title ) &&
 		isAllowedThumb( info.thumb ) &&
 		!( info.extension === 'svg' && isInfoboxThumb( info.thumb ) );
-}
-
-/**
- * Extract the known thumbnail URLs from a given live thumb or placeholder
- * for lazy-loader as a map of widths to URLs.
- *
- * @param {HTMLImageElement|HTMLSpanElement} thumb
- * @return {Object}
- */
-function mapThumbUrls( thumb ) {
-	const src = thumb.src || thumb.dataset.mwSrc;
-	const srcset = thumb.srcset || thumb.dataset.mwSrcset;
-	const width = thumb.width || thumb.dataset.width;
-	const height = thumb.height || thumb.dataset.height;
-
-	const thumbs = {};
-	if ( !width || !height ) {
-		return thumbs;
-	}
-
-	if ( src ) {
-		try {
-			const parsed = mw.util.parseImageUrl( src );
-			const thumbWidth = parsed.width;
-			const thumbHeight = Math.round( parsed.width * height / width );
-			thumbs[ thumbWidth ] = {
-				width: thumbWidth,
-				height: thumbHeight,
-				src: src
-			};
-		} catch ( e ) {
-			// Skip non-parseable thumb URLs
-		}
-	}
-	if ( srcset ) {
-		/* eslint-disable max-len */
-		// "//upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Portland_Oregon_Aerial%2C_June_2025.jpg/500px-Portland_Oregon_Aerial%2C_June_2025.jpg 1.5x,
-		// //upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Portland_Oregon_Aerial%2C_June_2025.jpg/960px-Portland_Oregon_Aerial%2C_June_2025.jpg 2x"
-		/* eslint-enable max-len */
-
-		const regex = /\s*([^,\s][^\s]+[^,\s])\s+(\d+(?:\.\d+)?)(w|x)\w*(,|$)/y;
-
-		let matches = regex.exec( srcset );
-		while ( matches ) {
-			const thumbSrc = matches[ 1 ];
-			// we're not going to need the density factor here
-			// const scale = parseFloat( matches[ 2 ] );
-			const type = matches[ 3 ];
-
-			if ( type === 'x' ) {
-				try {
-					// The rendered thumbnails may be bucketed to specific actual
-					// sizes, so don't rely on the stated sizes on the <img>!
-					// Use the ones from the URLs do we know what sizes we actually
-					// have to work with.
-					// Heights will be approximated of necessity.
-
-					const parsed = mw.util.parseImageUrl( thumbSrc );
-					const thumbWidth = parsed.width;
-					const thumbHeight = Math.round( parsed.width * width / height );
-
-					thumbs[ thumbWidth ] = {
-						width: thumbWidth,
-						height: thumbHeight,
-						src: thumbSrc
-					};
-				} catch ( e ) {
-					// Skip non-parseable thumb URLs
-				}
-			}
-			matches = regex.exec( srcset );
-		}
-	}
-	return thumbs;
 }
 
 /**

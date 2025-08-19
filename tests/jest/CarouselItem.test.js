@@ -10,11 +10,12 @@ beforeEach( () => {
 	thumb.setAttribute( 'src', src );
 
 	const image = {
-		thumb: thumb,
-		alt: alt
+		thumb,
+		alt,
+		src
 	};
 
-	expected = `<img class="ib-carousel-item__image" src="${ thumb.src }" alt="${ alt }">`;
+	expected = `<img class="ib-carousel-item__image" src="${ src }" alt="${ alt }">`;
 	wrapper = shallowMount( CarouselItem, { props: { image: image } } );
 } );
 

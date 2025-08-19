@@ -14,9 +14,9 @@ beforeEach( () => {
 	three.setAttribute( 'src', '//url/to/In_the_Memphis.jpg' );
 
 	const images = [
-		{ thumb: one, alt: 'Elvis in a tuxedo' },
-		{ thumb: two, alt: null },
-		{ thumb: three, alt: 'Elvis performing on stage' }
+		{ thumb: one, alt: 'Elvis in a tuxedo', src: one.src },
+		{ thumb: two, alt: null, src: two.src },
+		{ thumb: three, alt: 'Elvis performing on stage', src: three.src }
 	];
 
 	expected = [];

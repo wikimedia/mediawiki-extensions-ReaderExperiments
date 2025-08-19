@@ -21,10 +21,18 @@ export interface ThumbnailImageData {
 	/** The thumbnail container, if present (includes image and caption) */
 	container?: Element;
 
-	/** URLs mapped by width */
-	urls: Record<string, {
-		src: string;
-		width: number;
-		height: number;
-	}>;
+	/** The figcaption element, if present (contains caption) */
+	caption?: Element;
+
+	/** The extracted src attribute (may be from lazy-loader) */
+	src: string;
+
+	/** The extracted srcset attribute (may be from lazy-loader) */
+	srcset: string;
+
+	/** The extracted width attribute (may be from lazy-loader) */
+	width: number;
+
+	/** The extracted height attribute (may be from lazy-loader) */
+	height: number;
 }
