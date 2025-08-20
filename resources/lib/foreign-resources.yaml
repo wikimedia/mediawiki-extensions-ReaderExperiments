@@ -9,3 +9,12 @@ fast-average-color:
   dest:
     package/dist/index.js:
     package/LICENSE:
+smartcrop:
+  type: tar
+  homepage: https://github.com/jwagner/smartcrop.js
+  license: MIT
+  version: 2.0.5
+  src: https://registry.npmjs.org/smartcrop/-/smartcrop-2.0.5.tgz
+  integrity: sha384-MFx/krFqqAwdVQcbFsG7NZ6io1/k+p/zRG1aJxYtjjnzaiwRUxVslq915QQ/c3Cl
+  dest:
+    package/smartcrop.js:

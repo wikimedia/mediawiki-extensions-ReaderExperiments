@@ -43,6 +43,7 @@
 			"i18n"
 		]
 	},
+	"ForeignResourcesDir": "resources/lib",
 	"ResourceModules": {
 		"ext.readerExperiments.imageBrowsing": {
 			"localBasePath": "resources/ext.readerExperiments.imageBrowsing",
@@ -52,6 +53,7 @@
 				"mediawiki.ForeignApi",
 				"mediawiki.Title",
 				"mediawiki.util",
+				"ext.readerExperiments.smartcrop",
 				"@wikimedia/codex",
 				"fast-average-color"
 			],
@@ -104,8 +106,14 @@
 			"packageFiles": [
 				"index.js"
 			]
+		},
+		"ext.readerExperiments.smartcrop": {
+			"scripts": [
+				"lib/smartcrop/smartcrop.js"
+			],
+			"localBasePath": "resources",
+			"remoteExtPath": "ReaderExperiments/resources"
 		}
 	},
-	"ForeignResourcesDir": "resources/lib",
 	"manifest_version": 2
 }
