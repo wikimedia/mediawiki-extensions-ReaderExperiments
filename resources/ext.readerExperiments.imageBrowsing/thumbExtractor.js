@@ -316,9 +316,9 @@ function mapThumbUrls( thumb ) {
 
 /**
  * @param {Element} container The DOM element container for the thumbnail
- * @return {string|null}
+ * @return {string|null} the caption's HTML string, if any
  */
-function getCaptionTextIfAvailable( container ) {
+function getCaptionIfAvailable( container ) {
 	if ( container.querySelector( 'figcaption' ) ) {
 		return container.querySelector( 'figcaption' ).innerHTML;
 	} else {
@@ -328,5 +328,5 @@ function getCaptionTextIfAvailable( container ) {
 
 module.exports = {
 	extractThumbInfo,
-	getCaptionTextIfAvailable
+	getCaptionIfAvailable
 };

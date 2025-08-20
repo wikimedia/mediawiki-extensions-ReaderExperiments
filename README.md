@@ -33,11 +33,17 @@ git clone ssh://${USERNAME}@gerrit.wikimedia.org:29418/mediawiki/extensions/Read
 printf "\nwfLoadExtension( 'ReaderExperiments' );\n" >> LocalSettings.php
 ```
 
-- Enable the features
-
+- Enable the features by adding this to LocalSettings.php:
 ``` php
 $wgReaderExperimentsShowImageBrowsing = true;
 ```
+
+- When running this with MobileFrontendContentProvider, also add these variables to LocalSettings.php:
+```php
+$wgReaderExperimentsApiBaseUri = 'https://en.wikipedia.org/w/api.php'; // or whatever $wgMFMwApiContentProviderBaseUri is set to
+$wgGenerateThumbnailOnParse = false;
+```
+
 
 #### Quick start
 

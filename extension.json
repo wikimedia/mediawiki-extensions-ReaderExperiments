@@ -24,6 +24,10 @@
 		"ReaderExperimentsShowImageBrowsing": {
 			"description": "Show the prototype Image Browsing UI",
 			"value": false
+		},
+		"ReaderExperimentsApiBaseUri": {
+			"description": "Url to API of MediaWiki instance to use for external data (e.g. when using MobileFrontendContentProvider, in which case this should be equal to $wgMFMwApiContentProviderBaseUri), or leave empty to use local API.",
+			"value": ""
 		}
 	},
 	"HookHandlers": {
@@ -45,12 +49,26 @@
 			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.imageBrowsing",
 			"dependencies": [
 				"vue",
+				"mediawiki.ForeignApi",
 				"mediawiki.Title",
 				"mediawiki.util",
-				"@wikimedia/codex"
+				"@wikimedia/codex",
+				"fast-average-color"
 			],
-			"styles": [],
 			"packageFiles": [
+				{
+					"name": "icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconClose",
+						"cdxIconFullscreen",
+						"cdxIconShare",
+						"cdxIconLogoWikimediaCommons",
+						"cdxIconDownload",
+						"cdxIconAdd",
+						"cdxIconSubtract"
+					]
+				},
 				"init.js",
 				"thumbExtractor.js",
 				"App.vue",
@@ -61,8 +79,29 @@
 				"components/VisualTableOfContents.vue",
 				"components/VisualTableOfContentsItem.vue"
 			],
-			"messages": []
+			"styles": [],
+			"messages": [
+				"readerexperiments-imagebrowsing-detail-caption-expand",
+				"readerexperiments-imagebrowsing-detail-caption-collapse",
+				"readerexperiments-imagebrowsing-detail-fullscreen",
+				"readerexperiments-imagebrowsing-detail-share",
+				"readerexperiments-imagebrowsing-detail-share-copy",
+				"readerexperiments-imagebrowsing-detail-view-on-commons",
+				"readerexperiments-imagebrowsing-detail-download",
+				"readerexperiments-imagebrowsing-detail-download-size-original",
+				"readerexperiments-imagebrowsing-detail-download-size-small",
+				"readerexperiments-imagebrowsing-detail-download-size-medium",
+				"readerexperiments-imagebrowsing-detail-download-size-large",
+				"readerexperiments-imagebrowsing-detail-download-size-xl"
+			]
+		},
+		"fast-average-color": {
+			"localBasePath": "resources/lib/fast-average-color",
+			"packageFiles": [
+				"index.js"
+			]
 		}
 	},
+	"ForeignResourcesDir": "resources/lib",
 	"manifest_version": 2
 }

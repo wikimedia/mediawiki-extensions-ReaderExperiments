@@ -11,5 +11,17 @@
 			"Lauralyn Watson"
 		]
 	},
-	"readerexperiments-desc": "A set of prototypes that aim at growing Wikipedia readers"
+	"readerexperiments-desc": "A set of prototypes that aim at growing Wikipedia readers",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "More",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Less",
+	"readerexperiments-imagebrowsing-detail-fullscreen": "Full screen",
+	"readerexperiments-imagebrowsing-detail-share": "Share",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Copy",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "View on Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Download",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Original file ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Small ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Medium ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Large ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Extra large ($1x$2 px)"
 }

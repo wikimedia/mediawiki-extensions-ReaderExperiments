@@ -44,6 +44,7 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 			) {
 				$out->addModules( 'ext.readerExperiments.imageBrowsing' );
 				$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
+				$out->addJsConfigVars( 'ReaderExperimentsApiBaseUri', $config->get( 'ReaderExperimentsApiBaseUri' ) );
 			}
 		}
 	}
