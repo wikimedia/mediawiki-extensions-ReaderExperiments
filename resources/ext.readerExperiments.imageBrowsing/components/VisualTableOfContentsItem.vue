@@ -8,22 +8,26 @@
 					:src="image.src"
 					:srcset="image.srcset"
 					:alt="image.alt"></a>
-			<figcaption>{{ text }}</figcaption>
+			<!-- eslint-disable-next-line vue/no-v-html -->
+			<figcaption v-html="caption"></figcaption>
 		</figure>
 		<div class="ib-vtoc-link-container">
 			<cdx-button
 				class="ib-vtoc-link"
 				action="progressive"
 				@click.prevent="onViewInArticle( image )"
-			>{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-link' ) }}</cdx-button>
+			>
+				{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-link' ) }}
+			</cdx-button>
 		</div>
 		<hr>
 	</div>
 </template>
 
 <script>
-const { computed, defineComponent } = require( 'vue' );
+const { defineComponent } = require( 'vue' );
 const { CdxButton } = require( '@wikimedia/codex' );
+const useImageCaption = require( '../composables/useImageCaption.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -42,9 +46,8 @@ module.exports = exports = defineComponent( {
 		'vtoc-view-in-article'
 	],
 	setup( props, { emit } ) {
-		const text = computed( () => {
-			return ( props.image.caption && props.image.caption.innerText ) || props.image.alt || props.image.name;
-		} );
+		// Use the composable for caption logic
+		const { caption } = useImageCaption( props.image );
 
 		function onItemClick( image ) {
 			emit( 'vtoc-item-click', image );
@@ -55,7 +58,7 @@ module.exports = exports = defineComponent( {
 		}
 
 		return {
-			text,
+			caption,
 			onItemClick,
 			onViewInArticle
 		};

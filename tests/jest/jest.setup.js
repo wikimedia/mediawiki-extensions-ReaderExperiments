@@ -86,7 +86,10 @@ const mw = {
 		sanitizeIP: jest.fn(),
 		getParamValue: jest.fn().mockReturnValue( null )
 	},
-	Rest: RestMock
+	Rest: RestMock,
+	html: {
+		escape: jest.fn( ( str ) => str )
+	}
 	// Add more mw properties as needed…
 };
 

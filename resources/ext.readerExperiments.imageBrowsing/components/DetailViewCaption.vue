@@ -46,7 +46,7 @@ const { defineComponent, ref, computed, useTemplateRef, onMounted, toRef } = req
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
 const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
-const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
+const useImageCaption = require( '../composables/useImageCaption.js' );
 
 /**
  * @typedef {import('../types').ImageData} ImageData
@@ -66,15 +66,8 @@ module.exports = exports = defineComponent( {
 		}
 	},
 	setup( props ) {
-		/**
-		 * Try a few different ways to get caption text for the active image
-		 */
-		const caption = computed( () => {
-			const figcaption = getCaptionIfAvailable( props.image.container );
-			const altText = props.image.alt;
-			const titleText = props.image.title.getFileNameTextWithoutExtension();
-			return figcaption || altText || titleText;
-		} );
+		// Use the composable for caption logic
+		const { caption } = useImageCaption( props.image );
 
 		const canCaptionExpand = ref( true );
 		const isCaptionExpanded = ref( false );
@@ -153,16 +146,28 @@ module.exports = exports = defineComponent( {
 		max-height: 75vh;
 		overflow: hidden;
 
-		&.ib-detail-view-caption__collapsed {
+		&.ib-detail-view-caption__collapsed,
+		&:not( .ib-detail-view-caption__collapsed ) {
 			display: -webkit-box;
 			-webkit-box-orient: vertical;
 			-moz-box-orient: vertical;
 			-ms-box-orient: vertical;
 			box-orient: vertical;
+		}
+
+		&.ib-detail-view-caption__collapsed {
 			-webkit-line-clamp: 3;
 			-moz-line-clamp: 3;
 			-ms-line-clamp: 3;
 			line-clamp: 3;
+		}
+
+		&:not( .ib-detail-view-caption__collapsed ) {
+			// Use a static line clamp for simplicity
+			-webkit-line-clamp: 8;
+			-moz-line-clamp: 8;
+			-ms-line-clamp: 8;
+			line-clamp: 8;
 		}
 
 		a:where( :not( [ role='button' ] ) ) {

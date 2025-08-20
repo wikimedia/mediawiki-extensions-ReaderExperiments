@@ -1,3 +1,5 @@
+const excludedImageClasses = require( './excludedImageClasses.js' );
+
 // Defaults from MMV's MediaViewerExtensions config map
 // This is used in MMV both for limiting which extensions
 // get in the photo viewer and which frontend display classes
@@ -127,6 +129,11 @@ function thumbInfo( thumb ) {
 	item.container = thumb.closest(
 		'[typeof*="mw:File"], [typeof*="mw:Image"], .thumb'
 	);
+
+	/**
+	 * @property {?string} paragraph The thumbnail's nearby paragraph text in HTML format
+	 */
+	item.paragraph = findNearbyParagraph( item.container );
 
 	/**
 	 * HTML element of the figcaption if present.
@@ -261,6 +268,16 @@ function isInfoboxThumb( thumb ) {
 }
 
 /**
+ * Check if the image is excluded by any of the CSS classes
+ *
+ * @param {Element} thumb The image element
+ * @return {boolean} Whether the image should be excluded. If true, then it's excluded.
+ */
+function isExcludedByClass( thumb ) {
+	return excludedImageClasses.some( ( className ) => thumb.closest( `.${ className }` ) );
+}
+
+/**
  * Make sure the thumb doesn't match any MMV-derived or Carousel-specific
  * exclusions.
  *
@@ -274,8 +291,8 @@ function isIncludedThumbInfo( info ) {
 		isAllowedThumb( info.thumb ) &&
 		// The image isn't an SVG that appears in an infobox
 		!( info.extension === 'svg' && isInfoboxThumb( info.thumb ) ) &&
-		// The image isn't derived from Template:Clade table
-		!info.thumb.closest( '.clade' );
+		// The image isn't excluded by CSS classes
+		!isExcludedByClass( info.thumb );
 }
 
 /**
@@ -288,6 +305,49 @@ function getCaptionIfAvailable( container ) {
 	} else {
 		return null;
 	}
+}
+
+/**
+ * Find the first next sibling non-empty paragraph element from the image container.
+ * For infoboxes that don't have a figcaption or alt text, it will use the first
+ * paragraph from the article content.
+ *
+ * @param {Element|null} container - The image container element
+ * @return {?{string}}  The paragraph data or null if none found
+ */
+function findNearbyParagraph( container ) {
+	if ( !container ) {
+		return null;
+	}
+
+	// Check sibling paragraphs first, excludes table images such as infobox
+	let currentElement = container.nextElementSibling;
+	while ( currentElement ) {
+		if ( currentElement.tagName === 'P' && !currentElement.closest( 'table' ) ) {
+			const result = currentElement.innerHTML;
+			if ( result ) {
+				return result;
+			}
+		}
+		currentElement = currentElement.nextElementSibling;
+	}
+
+	// Handles infobox images
+	if ( container.closest( '.infobox' ) && !container.caption && !container.alt ) {
+		const contentArea = container.closest( 'div.mw-parser-output' );
+		if ( contentArea ) {
+			const paragraphs = contentArea.querySelectorAll( 'p' );
+			for ( const p of paragraphs ) {
+				// Check text content length to prevent empty paragraph elements
+				const firstParagraph = p.textContent.trim().length > 0 && p.innerHTML;
+				if ( firstParagraph ) {
+					return firstParagraph;
+				}
+			}
+		}
+	}
+
+	return null;
 }
 
 module.exports = {

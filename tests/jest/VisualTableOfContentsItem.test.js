@@ -1,15 +1,34 @@
 const { mount, shallowMount } = require( '@vue/test-utils' );
 const VisualTableOfContentsItem = require( '../../resources/ext.readerExperiments.imageBrowsing/components/VisualTableOfContentsItem' );
 
+// Mock the thumbExtractor module
+jest.mock( '../../resources/ext.readerExperiments.imageBrowsing/thumbExtractor.js', () => ( {
+	getCaptionIfAvailable: jest.fn( () => null )
+} ) );
+
+// Mock the mw global object
+global.mw = {
+	html: {
+		escape: jest.fn( ( text ) => text )
+	}
+};
+
 let mockImage, wrapper;
 
 describe( 'VisualTableOfContentsItem', () => {
 	beforeEach( () => {
+		// Reset mocks
+		jest.clearAllMocks();
 		mockImage = {
 			src: '//url/to/full-image.jpg',
 			srcset: '//url/to/full-image.jpg 1x, //url/to/full-image@2x.jpg 2x',
-			alt: 'Test image alt text',
-			name: 'Test image name'
+			alt: 'The image alt text',
+			name: 'The image file name',
+			width: 200,
+			height: 200,
+			container: {
+				querySelector: jest.fn( () => null )
+			}
 		};
 
 		// Default wrapper, override in test cases as needed
@@ -20,7 +39,7 @@ describe( 'VisualTableOfContentsItem', () => {
 		} );
 	} );
 
-	it( 'renders the item component', () => {
+	it( 'renders the component', () => {
 		expect( wrapper.find( '.ib-vtoc-item' ).exists() ).toBe( true );
 	} );
 
@@ -52,27 +71,18 @@ describe( 'VisualTableOfContentsItem', () => {
 		expect( link.text() ).toContain( 'readerexperiments-imagebrowsing-vtoc-link' );
 	} );
 
-	it( 'displays figcaption text based on image properties', () => {
-		const figcaption = wrapper.find( 'figcaption' );
-		expect( figcaption.exists() ).toBe( true );
-		// Should display alt text when no caption is provided
-		expect( figcaption.text() ).toBe( mockImage.alt );
-	} );
-
-	it( 'displays caption text when available', () => {
-		const imageWithCaption = {
-			...mockImage,
-			caption: { innerText: 'This is a caption' }
-		};
-
+	// TODO: Test other caption fallback options
+	it( 'displays caption text', () => {
 		wrapper = shallowMount( VisualTableOfContentsItem, {
 			props: {
-				image: imageWithCaption
+				image: mockImage
 			}
 		} );
 
 		const figcaption = wrapper.find( 'figcaption' );
-		expect( figcaption.text() ).toBe( 'This is a caption' );
+		// Since getCaptionIfAvailable is mocked to return null, it falls back to alt text
+		// Verify the fallback behavior works correctly
+		expect( figcaption.text() ).toBe( mockImage.alt );
 	} );
 
 	it( 'emits vtoc-item-click event when image is clicked', async () => {

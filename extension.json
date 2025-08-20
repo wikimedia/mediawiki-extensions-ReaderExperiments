@@ -72,6 +72,7 @@
 					]
 				},
 				"init.js",
+				"excludedImageClasses.js",
 				"thumbExtractor.js",
 				"App.vue",
 				"components/Carousel.vue",
@@ -84,7 +85,8 @@
 				"components/VisualTableOfContentsItem.vue",
 				"composables/useBackgroundColor.js",
 				"composables/useSmartCrop.js",
-				"composables/useMwApi.js"
+				"composables/useMwApi.js",
+				"composables/useImageCaption.js"
 			],
 			"styles": [],
 			"messages": [

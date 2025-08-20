@@ -91,6 +91,9 @@ export interface ImageData {
 
 	title: MwTitle;
 
+	/** The nearby paragraph text in raw HTML format */
+	paragraph: string;
+
 	/**
 	 * A function for producing new thumbnails with target resolution on demand;
 	 * pass in desired width in pixels to receive a URL of the appropriate size.
