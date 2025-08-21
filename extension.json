@@ -77,7 +77,8 @@
 				"components/DetailView.vue",
 				"components/Overlay.vue",
 				"components/VisualTableOfContents.vue",
-				"components/VisualTableOfContentsItem.vue"
+				"components/VisualTableOfContentsItem.vue",
+				"composables/useBackgroundColor.js"
 			],
 			"styles": [],
 			"messages": [

@@ -129,7 +129,7 @@ const { CdxButton, CdxToggleButton, CdxIcon, CdxPopover, CdxTextInput, CdxSelect
 // https://doc.wikimedia.org/codex/latest/using-codex/developing.html#vue-3-icons
 // https://www.mediawiki.org/wiki/Codex#Using_Codex_icons
 const { cdxIconFullscreen, cdxIconShare, cdxIconLogoWikimediaCommons, cdxIconDownload, cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
-const { FastAverageColor } = require( 'fast-average-color' );
+const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -158,7 +158,7 @@ module.exports = exports = defineComponent( {
 		'download',
 		'download-file'
 	],
-	setup( props, { emit } ) {
+	async setup( props, { emit } ) {
 		const $i18n = inject( 'i18n' );
 
 		const imageInfo = ref( {} );
@@ -284,24 +284,14 @@ module.exports = exports = defineComponent( {
 		);
 		const resizedSrc = props.activeImage.resizeUrl( fullscreenWidth );
 
-		// Captions background color (= dominant image color)
-		const dominantColorHex = ref();
-		const dominantColorIsDark = ref();
-		const image = new Image();
-		image.onload = () => {
-			const options = {
-				algorithm: 'simple',
-				width: props.activeImage.thumb.width,
-				height: props.activeImage.thumb.height
-			};
-			const color = new FastAverageColor().getColor( image, options );
-			dominantColorHex.value = color.hex;
-			dominantColorIsDark.value = color.isDark;
-		};
-		if ( apiBaseUri ) {
-			image.crossOrigin = 'anonymous';
-		}
-		image.src = props.activeImage.thumb.src;
+		const color = await useBackgroundColor(
+			props.activeImage.thumb.src,
+			props.activeImage.thumb.width,
+			props.activeImage.thumb.height
+		);
+
+		const dominantColorHex = color.hex;
+		const dominantColorIsDark = color.isDark;
 
 		return {
 			cdxIconFullscreen,

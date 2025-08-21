@@ -7,10 +7,12 @@
 			<cdx-icon :icon="cdxIconClose"></cdx-icon>
 		</cdx-button>
 
-		<detail-view
-			:active-image="activeImage"
-			:caption="caption"
-		></detail-view>
+		<suspense>
+			<detail-view
+				:active-image="activeImage"
+				:caption="caption"
+			></detail-view>
+		</suspense>
 
 		<visual-table-of-contents
 			:images="images"
