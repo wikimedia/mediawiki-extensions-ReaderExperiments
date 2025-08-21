@@ -100,6 +100,7 @@ const DetailViewCaption = require( './DetailViewCaption.vue' );
 // https://www.mediawiki.org/wiki/Codex#Using_Codex_icons
 const { cdxIconFullscreen, cdxIconShare, cdxIconLogoWikimediaCommons, cdxIconDownload } = require( '../icons.json' );
 const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
+const useMwApi = require( '../composables/useMwApi.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -135,8 +136,8 @@ module.exports = exports = defineComponent( {
 		const imageInfo = ref( {} );
 		const downloadWidths = ref( [] );
 		const selectedDownloadWidth = ref();
-		const apiBaseUri = mw.config.get( 'ReaderExperimentsApiBaseUri' );
-		const api = apiBaseUri ? new mw.ForeignApi( apiBaseUri, { anonymous: true } ) : new mw.Api();
+		const api = useMwApi();
+
 		api.get( {
 			formatversion: 2,
 			action: 'query',
