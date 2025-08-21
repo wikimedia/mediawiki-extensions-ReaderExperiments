@@ -5,43 +5,12 @@
 		<img :src="resizedSrc" alt="">
 
 		<!-- Caption -->
-		<div
+		<detail-view-caption
 			v-if="caption"
-			class="ib-detail-view__caption"
-			:style="{
-				'--dominant-color-hex': dominantColorHex,
-				'--dominant-color-is-dark': dominantColorIsDark ? 1 : 0
-			}"
-		>
-			<p
-				ref="captionTextElement"
-				class="ib-detail-view__caption-text"
-				:class="{ 'ib-detail-view__caption-collapsed': !isCaptionExpanded }"
-			>
-				{{ caption }}
-			</p>
-
-			<cdx-button
-				v-if="canCaptionExpand && !isCaptionExpanded"
-				class="ib-detail-view__caption-expand"
-				weight="quiet"
-				size="small"
-				@click="onCaptionExpand"
-			>
-				<cdx-icon :icon="cdxIconAdd" size="small"></cdx-icon>
-				{{ $i18n( 'readerexperiments-imagebrowsing-detail-caption-expand' ).text() }}
-			</cdx-button>
-			<cdx-button
-				v-if="canCaptionExpand && isCaptionExpanded"
-				class="ib-detail-view__caption-collapse"
-				weight="quiet"
-				size="small"
-				@click="onCaptionCollapse"
-			>
-				<cdx-icon :icon="cdxIconSubtract" size="small"></cdx-icon>
-				{{ $i18n( 'readerexperiments-imagebrowsing-detail-caption-collapse' ).text() }}
-			</cdx-button>
-		</div>
+			:caption="caption"
+			:dominant-color-hex="dominantColorHex"
+			:dominant-color-is-dark="dominantColorIsDark"
+		></detail-view-caption>
 
 		<div class="ib-detail-view__buttons">
 			<!-- Full screen -->
@@ -124,11 +93,12 @@
 </template>
 
 <script>
-const { defineComponent, ref, inject, useTemplateRef, onMounted } = require( 'vue' );
+const { defineComponent, ref, inject } = require( 'vue' );
 const { CdxButton, CdxToggleButton, CdxIcon, CdxPopover, CdxTextInput, CdxSelect } = require( '@wikimedia/codex' );
+const DetailViewCaption = require( './DetailViewCaption.vue' );
 // https://doc.wikimedia.org/codex/latest/using-codex/developing.html#vue-3-icons
 // https://www.mediawiki.org/wiki/Codex#Using_Codex_icons
-const { cdxIconFullscreen, cdxIconShare, cdxIconLogoWikimediaCommons, cdxIconDownload, cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
+const { cdxIconFullscreen, cdxIconShare, cdxIconLogoWikimediaCommons, cdxIconDownload } = require( '../icons.json' );
 const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 
 // @vue/component
@@ -140,7 +110,8 @@ module.exports = exports = defineComponent( {
 		CdxIcon,
 		CdxPopover,
 		CdxTextInput,
-		CdxSelect
+		CdxSelect,
+		DetailViewCaption
 	},
 	props: {
 		activeImage: {
@@ -234,23 +205,6 @@ module.exports = exports = defineComponent( {
 			emit( 'download' );
 		}
 
-		const captionTextElement = useTemplateRef( 'captionTextElement' );
-		const canCaptionExpand = ref( true );
-		const isCaptionExpanded = ref( false );
-
-		function onCaptionExpand() {
-			isCaptionExpanded.value = true;
-		}
-
-		function onCaptionCollapse() {
-			isCaptionExpanded.value = false;
-		}
-
-		onMounted( () => {
-			canCaptionExpand.value = captionTextElement.value.clientHeight !==
-				captionTextElement.value.scrollHeight;
-		} );
-
 		//
 		// Popovers
 		//
@@ -298,16 +252,12 @@ module.exports = exports = defineComponent( {
 			cdxIconShare,
 			cdxIconLogoWikimediaCommons,
 			cdxIconDownload,
-			cdxIconAdd,
-			cdxIconSubtract,
 			onFullScreen,
 			onShare,
 			onDownload,
 			onCopy,
 			onFileDownload,
 			onChangeDownloadSize,
-			onCaptionExpand,
-			onCaptionCollapse,
 			imageInfo,
 			triggerShareElement,
 			showSharePopover,
@@ -317,10 +267,7 @@ module.exports = exports = defineComponent( {
 			selectedDownloadWidth,
 			resizedSrc,
 			dominantColorHex,
-			dominantColorIsDark,
-			captionTextElement,
-			canCaptionExpand,
-			isCaptionExpanded
+			dominantColorIsDark
 		};
 	}
 } );
@@ -351,50 +298,6 @@ module.exports = exports = defineComponent( {
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
-	}
-
-	&__caption {
-		--caption-padding: 20px;
-		--gradient-height: 60px;
-
-		font-weight: bold;
-		width: 100%;
-		max-height: calc( 100% - var( --caption-padding ) - var( --gradient-height ) );
-		margin: 0;
-		padding: var( --caption-padding );
-
-		// preserve space for buttons on the right: 32px (button width) + 2x 20px (button margin on either side)
-		padding-right: calc( var( --caption-padding ) + 32px + var( --caption-padding ) );
-
-		// colorize caption text & background (which comes in from a transparent top)
-		padding-top: calc( var( --caption-padding ) + var( --gradient-height ) );
-		background-image: linear-gradient( transparent, var( --dominant-color-hex ) var( --gradient-height ) );
-
-		p, .ib-detail-view__caption-expand, .ib-detail-view__caption-collapse {
-			color: ~"oklch( from var( --dominant-color-hex ) calc( l * var( --dominant-color-is-dark ) * 100 ) c h )";
-		}
-
-		.ib-detail-view__caption-expand, .ib-detail-view__caption-collapse {
-			float: right;
-		}
-
-		.ib-detail-view__caption-text {
-			padding: 0;
-			max-height: 75vh;
-			overflow: hidden;
-
-			&.ib-detail-view__caption-collapsed {
-				display: -webkit-box;
-				-webkit-box-orient: vertical;
-				-moz-box-orient: vertical;
-				-ms-box-orient: vertical;
-				box-orient: vertical;
-				-webkit-line-clamp: 3;
-				-moz-line-clamp: 3;
-				-ms-line-clamp: 3;
-				line-clamp: 3;
-			}
-		}
 	}
 
 	&__download-popover .cdx-popover__body {

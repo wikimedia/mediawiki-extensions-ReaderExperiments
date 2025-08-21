@@ -75,6 +75,7 @@
 				"components/Carousel.vue",
 				"components/CarouselItem.vue",
 				"components/DetailView.vue",
+				"components/DetailViewCaption.vue",
 				"components/Overlay.vue",
 				"components/VisualTableOfContents.vue",
 				"components/VisualTableOfContentsItem.vue",
