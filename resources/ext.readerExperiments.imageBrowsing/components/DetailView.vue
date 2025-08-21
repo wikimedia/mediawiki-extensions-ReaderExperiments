@@ -124,7 +124,7 @@
 </template>
 
 <script>
-const { defineComponent, ref, inject, nextTick } = require( 'vue' );
+const { defineComponent, ref, inject, useTemplateRef, onMounted } = require( 'vue' );
 const { CdxButton, CdxToggleButton, CdxIcon, CdxPopover, CdxTextInput, CdxSelect } = require( '@wikimedia/codex' );
 // https://doc.wikimedia.org/codex/latest/using-codex/developing.html#vue-3-icons
 // https://www.mediawiki.org/wiki/Codex#Using_Codex_icons
@@ -234,21 +234,22 @@ module.exports = exports = defineComponent( {
 			emit( 'download' );
 		}
 
-		// render captions collapsed by default; once rendered, nextTick will
-		// execute and check if the caption text is overflowing - if not, then
-		// we ought to hide the "More" button because there's nothing to expand
-		const captionTextElement = ref();
+		const captionTextElement = useTemplateRef( 'captionTextElement' );
 		const canCaptionExpand = ref( true );
 		const isCaptionExpanded = ref( false );
-		nextTick( () => {
-			canCaptionExpand.value = captionTextElement.value.clientHeight !== captionTextElement.value.scrollHeight;
-		} );
+
 		function onCaptionExpand() {
 			isCaptionExpanded.value = true;
 		}
+
 		function onCaptionCollapse() {
 			isCaptionExpanded.value = false;
 		}
+
+		onMounted( () => {
+			canCaptionExpand.value = captionTextElement.value.clientHeight !==
+				captionTextElement.value.scrollHeight;
+		} );
 
 		//
 		// Popovers
