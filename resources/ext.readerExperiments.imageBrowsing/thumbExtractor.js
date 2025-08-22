@@ -35,7 +35,7 @@ const extensions = {
  * @todo add specific data extractors as needed
  *
  * @param {Element} thumb
- * @return {import("./types").ThumbnailImageData}
+ * @return {import('./types').ImageData}
  */
 function thumbInfo( thumb ) {
 	const item = {};
@@ -188,7 +188,7 @@ function thumbInfo( thumb ) {
  * based on mmv.bootstrap.js's processThumbs function.
  *
  * @param {Element} content
- * @return {import("./types").ThumbnailImageData[]}
+ * @return {import('./types').ImageData[]}
  */
 function extractThumbInfo( content ) {
 	const selectors = [

@@ -102,6 +102,10 @@ const { cdxIconFullscreen, cdxIconShare, cdxIconLogoWikimediaCommons, cdxIconDow
 const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 const useMwApi = require( '../composables/useMwApi.js' );
 
+/**
+ * @typedef {import("../types").ImageData} ImageData
+ */
+
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'DetailView',
@@ -116,9 +120,10 @@ module.exports = exports = defineComponent( {
 	},
 	props: {
 		activeImage: {
-			type: Object,
+			type: /** @type {import('vue').PropType<ImageData> */ ( Object ),
 			required: true
 		},
+
 		caption: {
 			type: [ String, null ],
 			required: true

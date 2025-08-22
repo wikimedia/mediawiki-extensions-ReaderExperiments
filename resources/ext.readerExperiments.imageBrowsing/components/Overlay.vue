@@ -35,6 +35,10 @@ const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconClose } = require( '../icons.json' );
 const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
 
+/**
+ * @typedef {import('../types').ImageData} ImageData
+ */
+
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'Overlay',
@@ -46,11 +50,11 @@ module.exports = exports = defineComponent( {
 	},
 	props: {
 		images: {
-			type: Array,
+			type: /** @type {import('vue').PropType<ImageData[]>} */ ( Array ),
 			required: true
 		},
 		activeImage: {
-			type: Object,
+			type: /** @type {import('vue').PropType<ImageData> */ ( Object ),
 			required: true
 		}
 	},
@@ -96,14 +100,14 @@ module.exports = exports = defineComponent( {
 		}
 
 		/**
-		 * @param {import("../types").ThumbnailImageData} image
+		 * @param {import('../types').ImageData} image
 		 */
 		function onItemClick( image ) {
 			emit( 'vtoc-item-click', image );
 		}
 
 		/**
-		 * @param {import("../types").ThumbnailImageData} image
+		 * @param {import('../types').ImageData} image
 		 */
 		function onViewInArticle( image ) {
 			emit( 'vtoc-view-in-article', image );

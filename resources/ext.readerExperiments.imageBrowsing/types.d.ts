@@ -5,7 +5,7 @@
 /**
  * Interface for the data returned by the `thumbExtractor.js` utilities.
  */
-export interface ThumbnailImageData {
+export interface ImageData {
 	/** Name of the file, extracted from thumb URLs */
 	name: string;
 
@@ -35,4 +35,10 @@ export interface ThumbnailImageData {
 
 	/** The extracted height attribute (may be from lazy-loader) */
 	height: number;
+
+	/**
+	 * A function for producing new thumbnails with target resolution on demand;
+	 * pass in desired width in pixels to receive a URL of the appropriate size.
+	 */
+	resizeUrl: ( w: number ) => string;
 }

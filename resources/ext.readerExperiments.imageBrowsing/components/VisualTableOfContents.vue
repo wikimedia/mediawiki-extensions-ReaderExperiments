@@ -34,14 +34,14 @@ module.exports = exports = defineComponent( {
 	],
 	setup( props, { emit } ) {
 		/**
-		 * @param {import("../types").ThumbnailImageData} image
+		 * @param {import('../types').ImageData} image
 		 */
 		function onItemClick( image ) {
 			emit( 'vtoc-item-click', image );
 		}
 
 		/**
-		 * @param {import("../types").ThumbnailImageData} image
+		 * @param {import('../types').ImageData} image
 		 */
 		function onViewInArticle( image ) {
 			emit( 'vtoc-view-in-article', image );

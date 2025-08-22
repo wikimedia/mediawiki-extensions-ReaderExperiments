@@ -30,7 +30,7 @@ module.exports = exports = defineComponent( {
 	],
 	setup( props, { emit } ) {
 		/**
-		 * @param {import("../types").ThumbnailImageData} image
+		 * @param {import("../types").ImageData} image
 		 */
 		function onItemClick( image ) {
 			emit( 'carousel-item-click', image );

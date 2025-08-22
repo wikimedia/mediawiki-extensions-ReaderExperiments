@@ -34,13 +34,10 @@ module.exports = exports = defineComponent( {
 		Overlay
 	},
 	setup() {
-		// Reactive ref containing data for all images on the page
 		const thumbnailData = ref( [] );
-
-		// The currently active image, if any
 		const activeImage = ref( null );
 
-		// Extract thumbnail image (as an array of ThumbnailImageData)
+		// Extract thumbnail image (as an array of ImageData objects)
 		// from the content of the underlying article page.
 		const content = document.getElementById( 'content' );
 		if ( content ) {
@@ -53,7 +50,7 @@ module.exports = exports = defineComponent( {
 		 * When a carousel item is clicked by the user, set that image as
 		 * the active image and show the overlay part of the UI.
 		 *
-		 * @param {import("./types").ThumbnailImageData} image
+		 * @param {import('./types').ImageData} image
 		 */
 		function onItemClick( image ) {
 			activeImage.value = image;
@@ -62,6 +59,9 @@ module.exports = exports = defineComponent( {
 			console.log( image );
 		}
 
+		/**
+		 * @param {import('./types').ImageData} image
+		 */
 		function onViewInArticle( image ) {
 			onCloseOverlay();
 			image.thumb.scrollIntoView();
