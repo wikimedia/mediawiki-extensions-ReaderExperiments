@@ -82,7 +82,9 @@ module.exports = {
 		// This generates a virtual `codex.js` file that doesn't exist on the filesystem,
 		// so tell Jest it can load the full library instead.
 		// See https://www.mediawiki.org/wiki/Codex#Loading_a_subset_of_Codex_components_(recommended_for_skins_and_extensions)
-		'codex.js$': '@wikimedia/codex'
+		'codex.js$': '@wikimedia/codex',
+		// Mock the dynamically generated icons.json file
+		'../icons.json$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/icons.json'
 	},
 
 	// An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

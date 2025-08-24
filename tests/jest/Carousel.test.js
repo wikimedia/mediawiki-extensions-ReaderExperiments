@@ -3,45 +3,47 @@ const Carousel = require( '../../resources/ext.readerExperiments.imageBrowsing/c
 
 let expected, wrapper;
 
-beforeEach( () => {
-	const one = document.createElement( 'img' );
-	one.setAttribute( 'src', '//url/to/Elvis.jpg' );
+describe( 'Carousel', () => {
+	beforeEach( () => {
+		const one = document.createElement( 'img' );
+		one.setAttribute( 'src', '//url/to/Elvis.jpg' );
 
-	const two = document.createElement( 'img' );
-	two.setAttribute( 'src', '//url/to/The_Pelvis.jpg' );
+		const two = document.createElement( 'img' );
+		two.setAttribute( 'src', '//url/to/The_Pelvis.jpg' );
 
-	const three = document.createElement( 'img' );
-	three.setAttribute( 'src', '//url/to/In_the_Memphis.jpg' );
+		const three = document.createElement( 'img' );
+		three.setAttribute( 'src', '//url/to/In_the_Memphis.jpg' );
 
-	const images = [
-		{ thumb: one, alt: 'Elvis in a tuxedo', src: one.src },
-		{ thumb: two, alt: null, src: two.src },
-		{ thumb: three, alt: 'Elvis performing on stage', src: three.src }
-	];
+		const images = [
+			{ thumb: one, alt: 'Elvis in a tuxedo', src: one.src },
+			{ thumb: two, alt: null, src: two.src },
+			{ thumb: three, alt: 'Elvis performing on stage', src: three.src }
+		];
 
-	expected = [];
+		expected = [];
 
-	for ( const image of images ) {
-		const figure = document.createElement( 'figure' );
-		figure.setAttribute( 'class', 'ib-carousel-item' );
+		for ( const image of images ) {
+			const figure = document.createElement( 'figure' );
+			figure.setAttribute( 'class', 'ib-carousel-item' );
 
-		const img = document.createElement( 'img' );
-		img.setAttribute( 'class', 'ib-carousel-item__image' );
-		img.setAttribute( 'src', image.thumb.src );
+			const img = document.createElement( 'img' );
+			img.setAttribute( 'class', 'ib-carousel-item__image' );
+			img.setAttribute( 'src', image.thumb.src );
 
-		const alt = image.alt;
-		if ( alt !== null ) {
-			img.setAttribute( 'alt', alt );
+			const alt = image.alt;
+			if ( alt !== null ) {
+				img.setAttribute( 'alt', alt );
+			}
+
+			figure.append( img );
+			expected.push( figure );
 		}
 
-		figure.append( img );
-		expected.push( figure );
-	}
+		wrapper = mount( Carousel, { props: { images: images } } );
+	} );
 
-	wrapper = mount( Carousel, { props: { images: images } } );
-} );
-
-test( 'render a carousel of images', () => {
-	const actual = wrapper.findAll( '.ib-carousel-item' ).map( ( item ) => item.wrapperElement );
-	expect( actual ).toEqual( expected );
+	it( 'renders a carousel of images', () => {
+		const actual = wrapper.findAll( '.ib-carousel-item' ).map( ( item ) => item.wrapperElement );
+		expect( actual ).toEqual( expected );
+	} );
 } );
