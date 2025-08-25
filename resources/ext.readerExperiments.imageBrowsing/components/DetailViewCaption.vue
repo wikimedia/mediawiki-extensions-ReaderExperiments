@@ -1,18 +1,21 @@
 <template>
 	<div
+		v-if="caption"
 		class="ib-detail-view-caption"
 		:style="{
 			'--dominant-color-hex': dominantColorHex,
 			'--dominant-color-is-dark': dominantColorIsDark ? 1 : 0
 		}"
 	>
+		<!-- eslint-disable vue/no-v-html -->
 		<p
 			ref="captionTextElement"
 			class="ib-detail-view-caption__text"
 			:class="{ 'ib-detail-view-caption__collapsed': !isCaptionExpanded }"
+			v-html="caption"
 		>
-			{{ caption }}
 		</p>
+		<!-- eslint-enable vue/no-v-html -->
 
 		<cdx-button
 			v-if="canCaptionExpand && !isCaptionExpanded"
@@ -39,9 +42,15 @@
 </template>
 
 <script>
-const { defineComponent, ref, useTemplateRef, onMounted } = require( 'vue' );
+const { defineComponent, ref, computed, useTemplateRef, onMounted } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
+const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
+const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
+
+/**
+ * @typedef {import('../types').ImageData} ImageData
+ */
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -51,23 +60,41 @@ module.exports = exports = defineComponent( {
 		CdxIcon
 	},
 	props: {
-		caption: {
-			type: [ String, null ],
-			required: true
-		},
-		dominantColorHex: {
-			type: String,
-			required: true
-		},
-		dominantColorIsDark: {
-			type: Boolean,
+		image: {
+			type: /** @type {import('vue').PropType<ImageData> */ ( Object ),
 			required: true
 		}
 	},
-	setup() {
-		const captionTextElement = useTemplateRef( 'captionTextElement' );
+	async setup( props ) {
+		/**
+		 * Try a few different ways to get caption text for the active image
+		 */
+		const caption = computed( () => {
+			const figcaption = getCaptionIfAvailable( props.image.container );
+			const altText = props.image.alt;
+			const titleText = props.image.title.getFileNameTextWithoutExtension();
+			return figcaption || altText || titleText;
+		} );
+
 		const canCaptionExpand = ref( true );
 		const isCaptionExpanded = ref( false );
+
+		const captionTextElement = useTemplateRef( 'captionTextElement' );
+
+		onMounted( () => {
+			canCaptionExpand.value = captionTextElement.value.clientHeight !==
+				captionTextElement.value.scrollHeight;
+		} );
+
+		// Background color
+		const color = await useBackgroundColor(
+			props.image.thumb.src,
+			props.image.thumb.width,
+			props.image.thumb.height
+		);
+
+		const dominantColorHex = color.hex;
+		const dominantColorIsDark = color.isDark;
 
 		function onCaptionExpand() {
 			isCaptionExpanded.value = true;
@@ -77,12 +104,10 @@ module.exports = exports = defineComponent( {
 			isCaptionExpanded.value = false;
 		}
 
-		onMounted( () => {
-			canCaptionExpand.value = captionTextElement.value.clientHeight !==
-				captionTextElement.value.scrollHeight;
-		} );
-
 		return {
+			dominantColorHex,
+			dominantColorIsDark,
+			caption,
 			captionTextElement,
 			canCaptionExpand,
 			isCaptionExpanded,
@@ -142,6 +167,12 @@ module.exports = exports = defineComponent( {
 			-moz-line-clamp: 3;
 			-ms-line-clamp: 3;
 			line-clamp: 3;
+		}
+
+		a:where( :not( [ role='button' ] ) ) {
+			color: inherit;
+			text-decoration: underline;
+			text-decoration-thickness: 1.5px; // Make the underline slightly more legible
 		}
 	}
 }

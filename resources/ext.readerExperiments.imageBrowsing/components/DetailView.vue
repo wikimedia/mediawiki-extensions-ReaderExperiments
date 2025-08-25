@@ -1,15 +1,14 @@
-<!-- TODO refactor into smaller components -->
 <template>
 	<div class="ib-detail-view">
 		<!-- Image -->
-		<img :src="resizedSrc" alt="">
+		<img
+			:src="resizedSrc"
+			:alt="activeImage.alt"
+		>
 
 		<!-- Caption -->
 		<detail-view-caption
-			v-if="caption"
-			:caption="caption"
-			:dominant-color-hex="dominantColorHex"
-			:dominant-color-is-dark="dominantColorIsDark"
+			:image="activeImage"
 		></detail-view-caption>
 
 		<!-- controls -->
@@ -23,7 +22,6 @@
 const { defineComponent } = require( 'vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );
-const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 
 /**
  * @typedef {import("../types").ImageData} ImageData
@@ -40,11 +38,6 @@ module.exports = exports = defineComponent( {
 		activeImage: {
 			type: /** @type {import('vue').PropType<ImageData> */ ( Object ),
 			required: true
-		},
-
-		caption: {
-			type: [ String, null ],
-			required: true
 		}
 	},
 	async setup( props ) {
@@ -59,19 +52,8 @@ module.exports = exports = defineComponent( {
 
 		const resizedSrc = props.activeImage.resizeUrl( fullscreenWidth );
 
-		const color = await useBackgroundColor(
-			props.activeImage.thumb.src,
-			props.activeImage.thumb.width,
-			props.activeImage.thumb.height
-		);
-
-		const dominantColorHex = color.hex;
-		const dominantColorIsDark = color.isDark;
-
 		return {
-			resizedSrc,
-			dominantColorHex,
-			dominantColorIsDark
+			resizedSrc
 		};
 	}
 } );
