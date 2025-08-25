@@ -1,5 +1,10 @@
 <template>
-	<div class="ib-overlay">
+	<div
+		ref="overlayElement"
+		class="ib-overlay"
+		tabindex="0"
+		@keydown.esc="onClose"
+	>
 		<cdx-button
 			class="ib-overlay__close"
 			@click="onClose"
@@ -23,7 +28,7 @@
 </template>
 
 <script>
-const { defineComponent, ref } = require( 'vue' );
+const { defineComponent, ref, onMounted, useTemplateRef } = require( 'vue' );
 const DetailView = require( './DetailView.vue' );
 const VisualTableOfContents = require( './VisualTableOfContents.vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
@@ -55,6 +60,11 @@ module.exports = exports = defineComponent( {
 		'vtoc-view-in-article'
 	],
 	setup( props, { emit } ) {
+		const overlayElement = useTemplateRef( 'overlayElement' );
+		onMounted( () => {
+			overlayElement.value.focus();
+		} );
+
 		// Active image's caption, if any
 		const caption = ref( null );
 		caption.value = getCaptionIfAvailable( props.activeImage.container );
@@ -100,6 +110,7 @@ module.exports = exports = defineComponent( {
 		}
 
 		return {
+			overlayElement,
 			onClose,
 			onItemClick,
 			onViewInArticle,
