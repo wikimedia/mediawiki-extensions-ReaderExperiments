@@ -6,18 +6,26 @@
 // In Wikimedia production, 'stl' is also set, for 3D objects,
 // but I think we want that excluded here for now.
 //
-// We may want to exclude SVG as well, this can be done here
-// if we decide on that.
+// Allow-list of file extensions,
+// based on https://commons.wikimedia.org/wiki/Special:MediaStatistics.
+//
+// Remove an item to exclude all images with that file extension from the extraction.
 const extensions = {
+	bmp: 'default',
+	djv: 'default',
 	djvu: 'default',
+	gif: 'default',
 	jpg: 'default',
 	jpeg: 'default',
-	gif: 'default',
-	svg: 'default',
+	jpe: 'default',
+	jps: 'default',
 	png: 'default',
-	tiff: 'default',
+	apng: 'default',
+	svg: 'default',
 	tif: 'default',
-	webp: 'default'
+	tiff: 'default',
+	webp: 'default',
+	xcf: 'default'
 };
 
 /**
@@ -122,30 +130,35 @@ function thumbInfo( thumb ) {
 
 	/**
 	 * HTML element of the figcaption if present.
+	 *
 	 * @type {?Element}
 	 */
 	item.caption = item.container ? item.container.querySelector( 'figcaption' ) : null;
 
 	/**
 	 * src attribute on the original (or hidden) image
+	 *
 	 * @type string
 	 */
 	item.src = thumb.src || thumb.dataset.mwSrc;
 
 	/**
 	 * srcset attribute on the original (or hidden) image
+	 *
 	 * @type string
 	 */
 	item.srcset = thumb.srcset || thumb.dataset.mwSrcset;
 
 	/**
 	 * Specified width in CSS pixels on the original (or hidden) image
+	 *
 	 * @type number
 	 */
 	item.width = thumb.width || thumb.dataset.width;
 
 	/**
 	 * Specified height in CSS pixels on the original (or hidden) image
+	 *
 	 * @type number
 	 */
 	item.height = thumb.height || thumb.dataset.height;
@@ -164,18 +177,15 @@ function thumbInfo( thumb ) {
  * original thumbnail element is not returned, but a container and some
  * metadata.
  *
- * Images in a class="metadata" or class="noviewer" will be excluded from the
- * list, matching MMV's behavior, and this should prevent most navigational
- * icons from showing up in results.
+ * The following images are filtered out via `isIncludedThumbInfo`:
  *
- * Images that appear in an infobox will be excluded as we don't want to
- * repeat them immediately right above themselves, and these often include
- * flags and small maps we don't want to include in the photo carousel.
+ * - class="metadata" or class="noviewer", which should exclude most navigational icons.
+ *   Matches MMV's behavior
+ * - SVG images that appear in an infobox, as they're often
+ *   flags and small maps we don't want to show in the photo carousel
  *
  * Selectors for fetching parsoid-rendered and legacy-rendered images are
  * based on mmv.bootstrap.js's processThumbs function.
- *
- * @todo MMV also has an allow-list of extensions in config. may need to replicate this.
  *
  * @param {Element} content
  * @return {import("./types").ThumbnailImageData[]}
@@ -258,9 +268,14 @@ function isInfoboxThumb( thumb ) {
  * @return {boolean} true if it's ok to use
  */
 function isIncludedThumbInfo( info ) {
+	// The file extension is in the `extensions` allow-list
 	return isValidExtension( info.title ) &&
+		// The image element doesn't have exclusion markup
 		isAllowedThumb( info.thumb ) &&
-		!( info.extension === 'svg' && isInfoboxThumb( info.thumb ) );
+		// The image isn't an SVG that appears in an infobox
+		!( info.extension === 'svg' && isInfoboxThumb( info.thumb ) ) &&
+		// The image isn't derived from Template:Clade table
+		!info.thumb.closest( '.clade' );
 }
 
 /**
