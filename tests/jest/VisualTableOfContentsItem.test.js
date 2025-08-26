@@ -1,4 +1,4 @@
-const { shallowMount } = require( '@vue/test-utils' );
+const { mount, shallowMount } = require( '@vue/test-utils' );
 const VisualTableOfContentsItem = require( '../../resources/ext.readerExperiments.imageBrowsing/components/VisualTableOfContentsItem' );
 
 let mockImage, wrapper;
@@ -33,7 +33,7 @@ describe( 'VisualTableOfContentsItem', () => {
 	} );
 
 	it( 'includes a "view in article" link button', () => {
-		wrapper = shallowMount( VisualTableOfContentsItem, {
+		wrapper = mount( VisualTableOfContentsItem, {
 			props: {
 				image: mockImage
 			},

@@ -10,22 +10,26 @@
 					:alt="image.alt"></a>
 			<figcaption>{{ text }}</figcaption>
 		</figure>
-		<a
-			class="ib-vtoc-link"
-			href="#"
-			@click.prevent="onViewInArticle( image )"
-		>{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-link' ) }}</a>
+		<div class="ib-vtoc-link-container">
+			<cdx-button
+				class="ib-vtoc-link"
+				action="progressive"
+				@click.prevent="onViewInArticle( image )"
+			>{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-link' ) }}</cdx-button>
+		</div>
 		<hr>
 	</div>
 </template>
 
 <script>
 const { computed, defineComponent } = require( 'vue' );
+const { CdxButton } = require( '@wikimedia/codex' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'VisualTableOfContentsItem',
 	components: {
+		CdxButton
 	},
 	props: {
 		image: {
@@ -60,31 +64,38 @@ module.exports = exports = defineComponent( {
 </script>
 
 <style lang="less">
+@import 'mediawiki.skin.variables.less';
+
+@ib-vtoc-image-height: 12em;
+
 .ib-vtoc-item {
 	width: 100%;
-	max-width: 320px;
-	// @fixme this should use a variable
-	background: white;
-}
-.ib-vtoc-item figure {
-}
-.ib-vtoc-item figure img {
-	height: 8em;
-	width: 100%;
-	max-width: 100%;
-	align: center;
-	object-fit: contain;
-}
-.ib-vtoc-item hr {
-}
-.ib-vtoc-item figure figcaption {
-	padding: 1em;
-}
-.ib-vtoc-item .ib-vtoc-link {
-	// @fixme colors should use variables
-	background: #ace;
-	border: solid 1px #448;
-	color: #448;
-	padding: 1ex;
+	// @todo: add 2-column variant at 640px
+
+	figure {
+		margin: @size-100;
+
+		img {
+			width: @size-full;
+			height: auto;
+			max-height: @ib-vtoc-image-height;
+			object-fit: contain;
+			align: center;
+		}
+	}
+
+	figcaption {
+		margin-top: @size-50;
+	}
+
+	.ib-vtoc-link-container {
+		margin: @size-100;
+		margin-top: 0;
+	}
+
+	hr {
+		margin: 0;
+		margin-top: @size-100;
+	}
 }
 </style>

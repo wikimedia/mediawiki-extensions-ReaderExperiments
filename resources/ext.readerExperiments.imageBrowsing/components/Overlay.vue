@@ -93,10 +93,12 @@ module.exports = exports = defineComponent( {
 </script>
 
 <style lang="less">
+@import 'mediawiki.skin.variables.less';
+
 .ib-overlay {
 	width: 100vw;
 	height: 100vh;
-	background-color: white;
+	background-color: @background-color-base;
 	overflow-y: auto;
 	position: fixed;
 	top: 0;
@@ -104,8 +106,8 @@ module.exports = exports = defineComponent( {
 
 	&__close {
 		position: absolute;
-		top: 16px;
-		right: 16px;
+		top: @spacing-100;
+		right: @spacing-100;
 	}
 }
 </style>
