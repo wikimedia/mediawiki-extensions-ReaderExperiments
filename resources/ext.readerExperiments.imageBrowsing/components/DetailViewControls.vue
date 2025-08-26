@@ -250,11 +250,6 @@ module.exports = exports = defineComponent( {
 
 		function onFullScreen() {
 			emit( 'toggle-fullscreen' );
-			if ( !document.fullScreenElement ) {
-				props.image.thumb.requestFullscreen();
-			} else {
-				document.exitFullscreen();
-			}
 		}
 
 		return {

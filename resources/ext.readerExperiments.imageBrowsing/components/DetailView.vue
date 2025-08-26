@@ -2,6 +2,7 @@
 	<div class="ib-detail-view">
 		<!-- Image -->
 		<img
+			ref="imageElement"
 			:src="resizedSrc"
 			:alt="activeImage.alt"
 		>
@@ -14,12 +15,13 @@
 		<!-- controls -->
 		<detail-view-controls
 			:image="activeImage"
+			@toggle-fullscreen="onFullScreen"
 		></detail-view-controls>
 	</div>
 </template>
 
 <script>
-const { defineComponent } = require( 'vue' );
+const { defineComponent, useTemplateRef } = require( 'vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );
 
@@ -41,6 +43,7 @@ module.exports = exports = defineComponent( {
 		}
 	},
 	async setup( props ) {
+		const imageElement = useTemplateRef( 'imageElement' );
 		// Full-screen image src
 		const fullscreenWidth = Math.max(
 			window.innerWidth,
@@ -52,8 +55,23 @@ module.exports = exports = defineComponent( {
 
 		const resizedSrc = props.activeImage.resizeUrl( fullscreenWidth );
 
+		/**
+		 * Handle full-screen takeover here instead of in the child
+		 * DetailViewControls component, since this component is the
+		 * one that has access to a full-size image
+		 */
+		function onFullScreen() {
+			if ( !document.fullScreenElement ) {
+				imageElement.value.requestFullscreen();
+			} else {
+				document.exitFullscreen();
+			}
+		}
+
 		return {
-			resizedSrc
+			resizedSrc,
+			imageElement,
+			onFullScreen
 		};
 	}
 } );
