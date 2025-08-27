@@ -10,7 +10,8 @@
 			],
 			"rules": {
 				"arrow-body-style": "off",
-				"vue/multi-word-component-names": "off"
+				"vue/multi-word-component-names": "off",
+				"vue/prefer-use-template-ref": "error"
 			}
 		}
 	]
