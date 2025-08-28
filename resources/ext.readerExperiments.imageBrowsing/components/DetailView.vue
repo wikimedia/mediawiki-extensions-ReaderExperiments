@@ -21,9 +21,10 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef } = require( 'vue' );
+const { defineComponent, useTemplateRef, onMounted, watch, nextTick } = require( 'vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );
+const useSmartCrop = require( '../composables/useSmartCrop.js' );
 
 /**
  * @typedef {import("../types").ImageData} ImageData
@@ -44,7 +45,38 @@ module.exports = exports = defineComponent( {
 	},
 	async setup( props ) {
 		const imageElement = useTemplateRef( 'imageElement' );
-		// Full-screen image src
+		// Per-instance guard
+		let runId = 0;
+		onMounted( () => {
+			const imgEl = imageElement.value;
+			if ( !imgEl ) {
+				return;
+			}
+			if ( !imgEl.complete ) {
+				imgEl.addEventListener( 'load', () => runSmartCrop( imgEl ), { once: true } );
+			} else {
+				runSmartCrop( imgEl );
+			}
+		} );
+
+		// Re-run whenever the image changes.
+		watch(
+			() => props.activeImage && props.activeImage.name,
+			async () => {
+				// Wait for DOM to update with the new src.
+				await nextTick();
+				const imgEl = imageElement.value;
+				if ( !imgEl ) {
+					return;
+				}
+				if ( !imgEl.complete ) {
+					imgEl.addEventListener( 'load', () => runSmartCrop( imgEl ), { once: true } );
+				} else {
+					runSmartCrop( imgEl );
+				}
+			}
+		);
+
 		const fullscreenWidth = Math.max(
 			window.innerWidth,
 			parseInt(
@@ -58,16 +90,34 @@ module.exports = exports = defineComponent( {
 		const standardizedWidth = Math.min.apply( null, acceptableWidths.length ? acceptableWidths : [ fullscreenWidth ] );
 		const resizedSrc = props.activeImage.resizeUrl( standardizedWidth );
 
-		/**
-		 * Handle full-screen takeover here instead of in the child
-		 * DetailViewControls component, since this component is the
-		 * one that has access to a full-size image
-		 */
 		function onFullScreen() {
-			if ( !document.fullScreenElement ) {
-				imageElement.value.requestFullscreen();
+			if ( !document.fullscreenElement ) {
+				if ( imageElement.value ) {
+					imageElement.value.requestFullscreen();
+				}
 			} else {
 				document.exitFullscreen();
+			}
+		}
+
+		async function runSmartCrop( imgEl ) {
+			// Mark latest.
+			const myRun = ++runId;
+			try {
+				const width = imgEl.clientWidth;
+				const height = Math.round( ( width / 9 ) * 16 );
+				const fileTitle = `File:${ props.activeImage.name }`;
+				const cropResult = await useSmartCrop( 'https://en.wikipedia.org/w/api.php', fileTitle, width, height );
+				// If stale, bail.
+				if ( myRun !== runId ) {
+					return;
+				}
+				const crop = cropResult.topCrop;
+				// eslint-disable-next-line no-console
+				console.log( '[SmartCrop] Crop result:', crop );
+			} catch ( err ) {
+				// eslint-disable-next-line no-console
+				console.error( '[SmartCrop] Error during crop:', err );
 			}
 		}
 

@@ -53,7 +53,7 @@
 				"mediawiki.ForeignApi",
 				"mediawiki.Title",
 				"mediawiki.util",
-				"ext.readerExperiments.smartcrop",
+				"smartcrop",
 				"@wikimedia/codex",
 				"fast-average-color"
 			],
@@ -83,6 +83,7 @@
 				"components/VisualTableOfContents.vue",
 				"components/VisualTableOfContentsItem.vue",
 				"composables/useBackgroundColor.js",
+				"composables/useSmartCrop.js",
 				"composables/useMwApi.js"
 			],
 			"styles": [],
@@ -106,6 +107,12 @@
 			"localBasePath": "resources/lib/fast-average-color",
 			"packageFiles": [
 				"index.js"
+			]
+		},
+		"smartcrop": {
+			"localBasePath": "resources/lib/smartcrop",
+			"packageFiles": [
+				"smartcrop.js"
 			]
 		},
 		"ext.readerExperiments.smartcrop": {
