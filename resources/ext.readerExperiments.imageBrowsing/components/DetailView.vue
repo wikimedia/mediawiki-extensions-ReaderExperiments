@@ -21,7 +21,7 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, onMounted, watch, nextTick } = require( 'vue' );
+const { computed, defineComponent, useTemplateRef, onMounted, watch, nextTick } = require( 'vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );
 const useSmartCrop = require( '../composables/useSmartCrop.js' );
@@ -77,18 +77,26 @@ module.exports = exports = defineComponent( {
 			}
 		);
 
-		const fullscreenWidth = Math.max(
-			window.innerWidth,
-			parseInt(
-				( window.innerHeight / props.activeImage.height ) *
-				props.activeImage.width
-			)
-		);
-		// Standardize image widths to the nearest standard limit to increase the
-		// chances of one being ready to serve right away, having been rendered before
-		const acceptableWidths = mw.config.get( 'ReaderExperimentsImageBrowsingThumbLimits' ).filter( ( limit ) => limit >= fullscreenWidth );
-		const standardizedWidth = Math.min.apply( null, acceptableWidths.length ? acceptableWidths : [ fullscreenWidth ] );
-		const resizedSrc = props.activeImage.resizeUrl( standardizedWidth );
+		// Full-screen image src
+		const resizedSrc = computed( () => {
+			const fullscreenWidth = Math.max(
+				window.innerWidth,
+				parseInt(
+					( window.innerHeight / props.activeImage.height ) *
+					props.activeImage.width
+				)
+			);
+			// Take a list of standardized image rendering widths (eg 1280, 2560)
+			// and find one that looks like it'll fit or exceed the window; using
+			// a standard size increases the chances of one being ready to serve
+			// right away, having been rendered before.
+			const thumbLimits = mw.config.get( 'ReaderExperimentsImageBrowsingThumbLimits' );
+			const acceptableWidths = thumbLimits.filter( ( limit ) => limit >= fullscreenWidth );
+			const standardizedWidth = acceptableWidths.length ?
+				Math.min.apply( null, acceptableWidths ) :
+				fullscreenWidth;
+			return props.activeImage.resizeUrl( standardizedWidth );
+		} );
 
 		function onFullScreen() {
 			if ( !document.fullscreenElement ) {
