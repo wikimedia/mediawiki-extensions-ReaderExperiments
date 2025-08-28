@@ -88,9 +88,9 @@ module.exports = exports = defineComponent( {
 
 		// Background color
 		const color = await useBackgroundColor(
-			props.image.thumb.src,
-			props.image.thumb.width,
-			props.image.thumb.height
+			props.image.src,
+			props.image.width,
+			props.image.height
 		);
 
 		const dominantColorHex = color.hex;

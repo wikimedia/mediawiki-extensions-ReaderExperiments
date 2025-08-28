@@ -45,8 +45,8 @@ module.exports = exports = defineComponent( {
 
 <style lang="less">
 .ib-carousel {
-	display: flex;
-	height: 180px;
+	display: block;
+	white-space: nowrap;
 	overflow-x: auto;
 	margin-bottom: 10px;
 }

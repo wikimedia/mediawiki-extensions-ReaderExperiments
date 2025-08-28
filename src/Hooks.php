@@ -45,6 +45,14 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 				$out->addModules( 'ext.readerExperiments.imageBrowsing' );
 				$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
 				$out->addJsConfigVars( 'ReaderExperimentsApiBaseUri', $config->get( 'ReaderExperimentsApiBaseUri' ) );
+
+				$thumbLimits = array_unique( array_merge(
+					$config->get( 'ThumbLimits' ),
+					$config->get( 'ThumbnailSteps' ) ?? [],
+					[ 1280, 2560 ]
+				) );
+				sort( $thumbLimits, SORT_NUMERIC );
+				$out->addJsConfigVars( 'ReaderExperimentsImageBrowsingThumbLimits', $thumbLimits );
 			}
 		}
 	}

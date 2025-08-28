@@ -48,12 +48,15 @@ module.exports = exports = defineComponent( {
 		const fullscreenWidth = Math.max(
 			window.innerWidth,
 			parseInt(
-				( window.innerHeight / props.activeImage.thumb.height ) *
-				props.activeImage.thumb.width
+				( window.innerHeight / props.activeImage.height ) *
+				props.activeImage.width
 			)
 		);
-
-		const resizedSrc = props.activeImage.resizeUrl( fullscreenWidth );
+		// Standardize image widths to the nearest standard limit to increase the
+		// chances of one being ready to serve right away, having been rendered before
+		const acceptableWidths = mw.config.get( 'ReaderExperimentsImageBrowsingThumbLimits' ).filter( ( limit ) => limit >= fullscreenWidth );
+		const standardizedWidth = Math.min.apply( null, acceptableWidths.length ? acceptableWidths : [ fullscreenWidth ] );
+		const resizedSrc = props.activeImage.resizeUrl( standardizedWidth );
 
 		/**
 		 * Handle full-screen takeover here instead of in the child
