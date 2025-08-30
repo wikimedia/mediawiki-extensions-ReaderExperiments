@@ -14,6 +14,9 @@
 		>
 			<cdx-button
 				class="ib-overlay__close"
+				:aria-label="$i18n(
+					'readerexperiments-imagebrowsing-overlay-close-button-label'
+				).text()"
 				@click="onClose"
 			>
 				<cdx-icon :icon="cdxIconClose"></cdx-icon>

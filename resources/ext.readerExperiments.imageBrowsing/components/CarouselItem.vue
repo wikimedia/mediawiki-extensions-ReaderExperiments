@@ -1,11 +1,20 @@
 <template>
-	<button class="ib-carousel-item">
+	<button
+		class="ib-carousel-item"
+		:aria-label="$i18n( 'readerexperiments-imagebrowsing-carousel-item-button-label' ).text()"
+	>
 		<img
 			class="ib-carousel-item__image"
 			:src="thumbnailSrc"
 			:width="thumbnailWidth"
 			:height="thumbnailHeight"
-			:alt="image.alt">
+			:alt="image.alt ?
+				image.alt :
+				$i18n(
+					'readerexperiments-imagebrowsing-image-alt-text',
+					image.title.getFileNameTextWithoutExtension()
+				).text()"
+		>
 	</button>
 </template>
 

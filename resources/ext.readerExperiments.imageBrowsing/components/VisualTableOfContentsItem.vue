@@ -8,10 +8,14 @@
 					class="ib-vtoc-item__figure__image"
 					:src="image.src"
 					:srcset="image.srcset"
-					:alt="image.alt"
+					:alt="image.alt ?
+						image.alt :
+						$i18n(
+							'readerexperiments-imagebrowsing-image-alt-text',
+							image.title.getFileNameTextWithoutExtension()
+						).text()"
 				>
 			</button>
-
 			<!-- eslint-disable-next-line vue/no-v-html -->
 			<figcaption v-html="caption"></figcaption>
 
@@ -20,7 +24,7 @@
 				action="progressive"
 				@click.prevent="onViewInArticle( image )"
 			>
-				{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-view-button-label' ) }}
+				{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-view-button-label' ).text() }}
 			</cdx-button>
 		</figure>
 	</div>

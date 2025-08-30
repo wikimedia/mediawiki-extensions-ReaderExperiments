@@ -4,7 +4,12 @@
 		<img
 			ref="imageElement"
 			:src="resizedSrc"
-			:alt="activeImage.alt"
+			:alt="activeImage.alt ?
+				activeImage.alt :
+				$i18n(
+					'readerexperiments-imagebrowsing-image-alt-text',
+					activeImage.title.getFileNameTextWithoutExtension()
+				).text()"
 			:style="cropStyle"
 		>
 

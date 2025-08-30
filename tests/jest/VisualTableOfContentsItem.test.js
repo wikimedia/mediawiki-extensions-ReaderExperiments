@@ -1,4 +1,4 @@
-const { mount, shallowMount } = require( '@vue/test-utils' );
+const { mount } = require( '@vue/test-utils' );
 const VisualTableOfContentsItem = require( '../../resources/ext.readerExperiments.imageBrowsing/components/VisualTableOfContentsItem' );
 
 // Mock the thumbExtractor module
@@ -32,9 +32,22 @@ describe( 'VisualTableOfContentsItem', () => {
 		};
 
 		// Default wrapper, override in test cases as needed
-		wrapper = shallowMount( VisualTableOfContentsItem, {
+		wrapper = mount( VisualTableOfContentsItem, {
 			props: {
 				image: mockImage
+			},
+			global: {
+				mocks: {
+					$i18n: ( key, ...params ) => ( {
+						text: () => {
+							const messages = {
+								'readerexperiments-imagebrowsing-image-alt-text': `${ params[ 0 ] || '$1' }`,
+								'readerexperiments-imagebrowsing-vtoc-view-button-label': 'View in article'
+							};
+							return messages[ key ] || key;
+						}
+					} )
+				}
 			}
 		} );
 	} );
@@ -52,37 +65,17 @@ describe( 'VisualTableOfContentsItem', () => {
 	} );
 
 	it( 'includes a "view in article" button', () => {
-		wrapper = mount( VisualTableOfContentsItem, {
-			props: {
-				image: mockImage
-			},
-			global: {
-				mocks: {
-					// Return key directly as string for this test because the component template
-					// uses the i18n key without `.text()`. This overrides the global i18n mock that
-					// returns an object with .text() and .parse() methods.
-					$i18n: ( key ) => key
-				}
-			}
-		} );
-
 		const button = wrapper.find( '.ib-vtoc-item__view-in-article' );
 		expect( button.exists() ).toBe( true );
-		expect( button.text() ).toContain( 'readerexperiments-imagebrowsing-vtoc-view-button-label' );
+		expect( button.text() ).toContain( 'View in article' );
 	} );
 
 	// TODO: Test other caption fallback options
 	it( 'displays caption text', () => {
-		wrapper = shallowMount( VisualTableOfContentsItem, {
-			props: {
-				image: mockImage
-			}
-		} );
-
 		const figcaption = wrapper.find( 'figcaption' );
-		// Since getCaptionIfAvailable is mocked to return null, it falls back to alt text
-		// Verify the fallback behavior works correctly
-		expect( figcaption.text() ).toBe( mockImage.alt );
+		// Since getCaptionIfAvailable is mocked to return null, it falls back to alt text.
+		// Verify the fallback behavior works correctly.
+		expect( figcaption.text() ).toBe( 'The image alt text' );
 	} );
 
 	it( 'emits vtoc-item-click event when image is clicked', async () => {

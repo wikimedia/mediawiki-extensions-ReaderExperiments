@@ -29,6 +29,10 @@ describe( 'Carousel', () => {
 				width: 100,
 				height: 200,
 				resizeUrl: resizeUrl.bind( null, one.src ),
+				name: 'Elvis in tuxedo.jpg',
+				title: {
+					getFileNameTextWithoutExtension: () => 'Elvis in tuxedo'
+				},
 
 				// not an actual attribute of this object; just one to be used for
 				// testing later on, placed here for the sake of conveniently
@@ -43,6 +47,10 @@ describe( 'Carousel', () => {
 				width: 200,
 				height: 100,
 				resizeUrl: resizeUrl.bind( null, two.src ),
+				name: 'Elvis sings to a crowd of people.png',
+				title: {
+					getFileNameTextWithoutExtension: () => 'Elvis sings to a crowd of people'
+				},
 
 				// not an actual attribute of this object; just one to be used for
 				// testing later on, placed here for the sake of conveniently
@@ -57,6 +65,10 @@ describe( 'Carousel', () => {
 				width: 175,
 				height: 175,
 				resizeUrl: resizeUrl.bind( null, three.src ),
+				name: 'Elvis performs on stage.jpg',
+				title: {
+					getFileNameTextWithoutExtension: () => 'Elvis performs on stage'
+				},
 
 				// not an actual attribute of this object; just one to be used for
 				// testing later on, placed here for the sake of conveniently
@@ -69,8 +81,9 @@ describe( 'Carousel', () => {
 		expected = [];
 
 		for ( const image of images ) {
-			const figure = document.createElement( 'button' );
-			figure.setAttribute( 'class', 'ib-carousel-item' );
+			const carouselItem = document.createElement( 'button' );
+			carouselItem.setAttribute( 'class', 'ib-carousel-item' );
+			carouselItem.setAttribute( 'aria-label', 'Select an image' );
 
 			const img = document.createElement( 'img' );
 			img.setAttribute( 'class', 'ib-carousel-item__image' );
@@ -81,13 +94,30 @@ describe( 'Carousel', () => {
 			const alt = image.alt;
 			if ( alt !== null ) {
 				img.setAttribute( 'alt', alt );
+			} else {
+				img.setAttribute( 'alt', image.title.getFileNameTextWithoutExtension() );
 			}
 
-			figure.append( img );
-			expected.push( figure );
+			carouselItem.append( img );
+			expected.push( carouselItem );
 		}
 
-		wrapper = mount( Carousel, { props: { images: images } } );
+		wrapper = mount( Carousel, {
+			props: { images: images },
+			global: {
+				mocks: {
+					$i18n: ( key, ...params ) => ( {
+						text: () => {
+							const messages = {
+								'readerexperiments-imagebrowsing-carousel-item-button-label': 'Select an image',
+								'readerexperiments-imagebrowsing-image-alt-text': `${ params[ 0 ] || '$1' }`
+							};
+							return messages[ key ] || key;
+						}
+					} )
+				}
+			}
+		} );
 	} );
 
 	it( 'renders a carousel of images', () => {

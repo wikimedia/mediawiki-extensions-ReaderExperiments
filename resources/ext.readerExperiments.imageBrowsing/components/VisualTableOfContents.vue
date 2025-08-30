@@ -2,7 +2,7 @@
 	<div class="ib-vtoc">
 		<div class="ib-vtoc__heading">
 			<span>
-				{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-heading' ) }}
+				{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-heading' ).text() }}
 			</span>
 		</div>
 
