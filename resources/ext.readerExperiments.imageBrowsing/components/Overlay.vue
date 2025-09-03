@@ -1,8 +1,13 @@
 <template>
 	<div
+		tabindex="0"
+		@focus="onFocusTrapStart"
+	></div>
+
+	<div
 		ref="overlayElement"
 		class="ib-overlay"
-		tabindex="0"
+		tabindex="-1"
 		@keydown.esc="onClose"
 	>
 		<cdx-button
@@ -25,6 +30,11 @@
 			@vtoc-view-in-article="onViewInArticle"
 		></visual-table-of-contents>
 	</div>
+
+	<div
+		tabindex="0"
+		@focus="onFocusTrapEnd"
+	></div>
 </template>
 
 <script>
@@ -59,10 +69,43 @@ module.exports = exports = defineComponent( {
 		'vtoc-view-in-article'
 	],
 	setup( props, { emit } ) {
+		function focusFirstFocusableElement( container, backwards = false ) {
+			// Find all focusable elements in the container.
+			// Exclude elements with a negative tabindex; those are technically focusable, but are
+			// skipped when tabbing
+			let candidates = Array.from(
+				container.querySelectorAll( `
+					input, select, textarea, button, object, a, area,
+					[contenteditable], [tabindex]:not([tabindex^="-"])
+				` )
+			);
+
+			// If we're looking for the previous element, reverse the array.
+			if ( backwards ) {
+				candidates = candidates.reverse();
+			}
+
+			for ( const candidate of candidates ) {
+				// Try to focus each element.
+				candidate.focus();
+				// Once it works, return true.
+				if ( document.activeElement === candidate ) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		const overlayElement = useTemplateRef( 'overlayElement' );
 		onMounted( () => {
-			overlayElement.value.focus();
+			focusFirstFocusableElement( overlayElement.value, false );
 		} );
+		const onFocusTrapStart = () => {
+			focusFirstFocusableElement( overlayElement.value, true );
+		};
+		const onFocusTrapEnd = () => {
+			focusFirstFocusableElement( overlayElement.value, false );
+		};
 
 		function onClose() {
 			emit( 'close-overlay' );
@@ -93,6 +136,8 @@ module.exports = exports = defineComponent( {
 		return {
 			overlayElement,
 			detailViewRef,
+			onFocusTrapStart,
+			onFocusTrapEnd,
 			onClose,
 			onItemClick,
 			onViewInArticle,
