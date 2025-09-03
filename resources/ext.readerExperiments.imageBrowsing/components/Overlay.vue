@@ -48,7 +48,7 @@ module.exports = exports = defineComponent( {
 			required: true
 		},
 		activeImage: {
-			type: /** @type {import('vue').PropType<ImageData> */ ( Object ),
+			type: /** @type {import('vue').PropType<ImageData>} */ ( Object ),
 			required: true
 		}
 	},

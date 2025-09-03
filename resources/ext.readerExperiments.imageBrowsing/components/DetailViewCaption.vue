@@ -61,7 +61,7 @@ module.exports = exports = defineComponent( {
 	},
 	props: {
 		image: {
-			type: /** @type {import('vue').PropType<ImageData> */ ( Object ),
+			type: /** @type {import('vue').PropType<ImageData>} */ ( Object ),
 			required: true
 		}
 	},
@@ -78,12 +78,11 @@ module.exports = exports = defineComponent( {
 
 		const canCaptionExpand = ref( true );
 		const isCaptionExpanded = ref( false );
-
 		const captionTextElement = useTemplateRef( 'captionTextElement' );
 
 		onMounted( () => {
-			canCaptionExpand.value = captionTextElement.value.clientHeight !==
-				captionTextElement.value.scrollHeight;
+			canCaptionExpand.value = captionTextElement.value &&
+				captionTextElement.value.clientHeight !== captionTextElement.value.scrollHeight;
 		} );
 
 		// Background color
