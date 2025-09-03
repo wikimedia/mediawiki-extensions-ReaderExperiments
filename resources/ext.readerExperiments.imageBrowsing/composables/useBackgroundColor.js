@@ -2,6 +2,7 @@ const { FastAverageColor } = require( 'fast-average-color' );
 const { ref, watchEffect, readonly } = require( 'vue' );
 
 /**
+ * @typedef {import('types-mediawiki')} MediaWikiTypes
  * @typedef {import('../types').ImageData} ImageData
  * @typedef {import('fast-average-color').FastAverageColorResult} ColorResult
  * @typedef {import('vue').DeepReadonly<import('vue').Ref<ColorResult | null>>} ReadonlyColorRef

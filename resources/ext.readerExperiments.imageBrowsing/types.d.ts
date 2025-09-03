@@ -2,58 +2,7 @@
  * Global type definitions for the Image Browsing feature
  */
 
-/**
- * Placeholeder type definition for MW Title objects. Does not include static methods.
- * For full documentation see https://doc.wikimedia.org/mediawiki-core/master/js/mw.Title.html.
- *
- * @todo replace this with https://github.com/wikimedia-gadgets/types-mediawiki
- * once we can use that library here.
- */
-export class MwTitle {
-	public constructor( title: string, namespace?: number );
-
-	public canHaveTalkPage(): boolean;
-
-	public exists(): boolean | null;
-
-	public getExtension(): string | null;
-
-	public getFileNameTextWithoutExtension(): string;
-
-	public getFileNameWithoutExtension(): string;
-
-	public getFragment(): string | null;
-
-	public getMain(): string;
-
-	public getMainText(): string;
-
-	public getName(): string;
-
-	public getNamespaceId(): number;
-
-	public getNamespacePrefix(): string;
-
-	public getNameText(): string;
-
-	public getPrefixedDb(): string;
-
-	public getPrefixedText(): string;
-
-	public getRelativeText( namespace: number ): string;
-
-	public getSubjectPage(): Title | null;
-
-	public getTalkPage(): Title | null;
-
-	public getUrl( params?: QueryParams ): string;
-
-	public isTalkPage(): boolean;
-
-	public toString(): string;
-
-	public toText(): string;
-}
+import 'types-mediawiki';
 
 /**
  * Interface for the data returned by the `thumbExtractor.js` utilities.
@@ -89,7 +38,7 @@ export interface ImageData {
 	/** The extracted height attribute (may be from lazy-loader) */
 	height: number;
 
-	title: MwTitle;
+	title: mw.Title;
 
 	/** The nearby paragraph text in raw HTML format */
 	paragraph: string;

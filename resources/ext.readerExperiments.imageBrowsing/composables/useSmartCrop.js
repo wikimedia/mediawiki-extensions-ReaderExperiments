@@ -1,3 +1,7 @@
+/**
+ * @typedef {import('types-mediawiki')} MediaWikiTypes
+ */
+
 let SmartCrop;
 try {
 	SmartCrop = require( 'smartcrop' );
@@ -36,6 +40,10 @@ module.exports = async function useSmartCrop( apiBaseUri, fileName, width, heigh
 		iiprop: 'url',
 		format: 'json'
 	} );
+
+	if ( !result.query || !result.query.pages ) {
+		throw new Error( `[useSmartCrop] Invalid API response for ${ fileName }` );
+	}
 
 	const pages = result.query.pages;
 	const firstPage = Object.values( pages )[ 0 ];

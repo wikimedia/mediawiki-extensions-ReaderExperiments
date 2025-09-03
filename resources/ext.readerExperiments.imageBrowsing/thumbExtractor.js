@@ -31,13 +31,17 @@ const extensions = {
 };
 
 /**
+ * @typedef {import('types-mediawiki')} MediaWikiTypes
+ */
+
+/**
  * Extract data from a live or hidden thumbnail in the content area
  * of the wiki page, with a tiny bit of metadata.
  *
  * @todo add specific data extractors as needed
  *
  * @param {Element} thumb
- * @return {import('./types').ImageData}
+ * @return {import('./types').ImageData|null}
  */
 function thumbInfo( thumb ) {
 	const item = {};
@@ -69,8 +73,12 @@ function thumbInfo( thumb ) {
 	try {
 		const parsed = mw.util.parseImageUrl( url );
 
+		if ( !parsed ) {
+			return null;
+		}
+
 		/**
-		 * @property {string} name target name of the file, extracted from thumb URLs
+		 * target name of the file, extracted from thumb URLs
 		 */
 		item.name = parsed.name;
 
@@ -78,8 +86,6 @@ function thumbInfo( thumb ) {
 		 * A function for producing new thumbnails with a target resolution on demand.
 		 * May or may not work with MobileFrontendContentProvider...
 		 * Pass the desired width in device pixels as a function to the string.
-		 *
-		 * @type {function(number): string}
 		 */
 		item.resizeUrl = parsed.resizeUrl;
 
@@ -87,44 +93,39 @@ function thumbInfo( thumb ) {
 		 * MediaWiki title object for the target file's File: page.
 		 * For Commons images this will refer to the local shadow page,
 		 * not the remote original.
-		 *
-		 * @property {mw.Title} title
 		 */
 		item.title = new mw.Title( 'File:' + item.name );
 
 		/**
 		 * Lowercase-normalized source file extension. Note that actual
 		 * thumbnail images may appear as different file types.
-		 *
-		 * @property {string} extension
 		 */
-		item.extension = item.title.getExtension().toLowerCase();
+		const extension = item.title.getExtension();
+		item.extension = extension ? extension.toLowerCase() : '';
 
 	} catch ( e ) {
 		return null;
 	}
 
 	/**
-	 * @property {string} alt the provided alt text for the thumbnail, if any
+	 * the provided alt text for the thumbnail, if any
 	 */
 	item.alt = thumb.alt || thumb.dataset.mwAlt || null;
 
 	/**
-	 * @property {Element} thumb the original thumbnail; this may change if
-	 * lazy loading is active, so beware
+	 * the original thumbnail; this may change if lazy loading is active, so beware
 	 */
 	item.thumb = thumb;
 
 	/**
-	 * @property {?Element} link the wrapping 'a' link element, if any
+	 * the wrapping 'a' link element, if any
 	 */
 	item.link = thumb.closest(
 		'a.mw-file-description, a.image'
 	);
 
 	/**
-	 * @property {?Element} container the thumbnail container, if present,
-	 *                           encompassing the image and any caption
+	 * the thumbnail container, if present, encompassing the image and any caption
 	 */
 	item.container = thumb.closest(
 		'[typeof*="mw:File"], [typeof*="mw:Image"], .thumb'
@@ -137,36 +138,26 @@ function thumbInfo( thumb ) {
 
 	/**
 	 * HTML element of the figcaption if present.
-	 *
-	 * @type {?Element}
 	 */
 	item.caption = item.container ? item.container.querySelector( 'figcaption' ) : null;
 
 	/**
 	 * src attribute on the original (or hidden) image
-	 *
-	 * @type string
 	 */
 	item.src = thumb.src || thumb.dataset.mwSrc;
 
 	/**
 	 * srcset attribute on the original (or hidden) image
-	 *
-	 * @type string
 	 */
 	item.srcset = thumb.srcset || thumb.dataset.mwSrcset;
 
 	/**
 	 * Specified width in CSS pixels on the original (or hidden) image
-	 *
-	 * @type number
 	 */
 	item.width = thumb.width || thumb.dataset.width;
 
 	/**
 	 * Specified height in CSS pixels on the original (or hidden) image
-	 *
-	 * @type number
 	 */
 	item.height = thumb.height || thumb.dataset.height;
 

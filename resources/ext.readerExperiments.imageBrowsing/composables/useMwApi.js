@@ -1,6 +1,9 @@
 /**
- * @todo would be great to type this properly
- * @return {Object} MW API instance
+ * @typedef {import('types-mediawiki')} MediaWikiTypes
+ */
+
+/**
+ * @return {mw.Api|mw.ForeignApi} MW API instance
  */
 module.exports = exports = function useMwApi() {
 	const apiBaseUri = mw.config.get( 'ReaderExperimentsApiBaseUri' );
