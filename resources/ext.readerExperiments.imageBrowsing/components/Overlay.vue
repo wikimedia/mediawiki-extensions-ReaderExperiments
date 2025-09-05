@@ -14,6 +14,7 @@
 
 		<suspense>
 			<detail-view
+				ref="detailViewRef"
 				:active-image="activeImage"
 			></detail-view>
 		</suspense>
@@ -67,11 +68,19 @@ module.exports = exports = defineComponent( {
 			emit( 'close-overlay' );
 		}
 
+		const detailViewRef = useTemplateRef( 'detailViewRef' );
+
 		/**
 		 * @param {import('../types').ImageData} image
 		 */
 		function onItemClick( image ) {
 			emit( 'vtoc-item-click', image );
+			if ( detailViewRef.value && detailViewRef.value.$el ) {
+				// Scroll the overlay back to the detail view at top.
+				detailViewRef.value.$el.scrollIntoView( {
+					behavior: 'smooth'
+				} );
+			}
 		}
 
 		/**
@@ -83,6 +92,7 @@ module.exports = exports = defineComponent( {
 
 		return {
 			overlayElement,
+			detailViewRef,
 			onClose,
 			onItemClick,
 			onViewInArticle,

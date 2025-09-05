@@ -64,6 +64,8 @@ module.exports = exports = defineComponent( {
 		 */
 		function onViewInArticle( image ) {
 			onCloseOverlay();
+
+			// Scroll the main page view to the image in context.
 			image.thumb.scrollIntoView( {
 				behavior: 'smooth'
 			} );
