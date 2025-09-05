@@ -6,13 +6,24 @@ let mockImage, wrapper;
 describe( 'DetailViewCaption', () => {
 	beforeEach( () => {
 		mockImage = {
+			name: 'Example.jpg',
 			thumb: Object.assign( new Image(), {
 				width: 800,
 				height: 600,
 				src: '//url/to/thumb.jpg'
 			} ),
 			alt: 'Alt text for image',
-			title: { getPrefixedDb: jest.fn().mockReturnValue( 'File:Example.jpg' ) },
+			src: '//url/to/thumb.jpg',
+			srcset: '//url/to/thumb.jpg',
+			width: 800,
+			height: 600,
+			container: null,
+			caption: null,
+			link: null,
+			title: {
+				getPrefixedDb: jest.fn().mockReturnValue( 'File:Example.jpg' ),
+				getFileNameTextWithoutExtension: jest.fn().mockReturnValue( 'Example' )
+			},
 			resizeUrl: jest.fn().mockImplementation( ( width ) => `//resized/image/${ width }.jpg` )
 		};
 

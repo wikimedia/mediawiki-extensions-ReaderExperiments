@@ -92,3 +92,14 @@ const mw = {
 
 // Assign things to "global" here if you want them to be globally available during Jest tests.
 global.mw = mw;
+
+// Mock FastAverageColor to avoid console warnings about missing canvas support
+jest.mock( 'fast-average-color', () => ( {
+	FastAverageColor: jest.fn().mockImplementation( () => ( {
+		getColor: jest.fn().mockReturnValue( {
+			hex: '#3366cc',
+			isDark: false,
+			isLight: true
+		} )
+	} ) )
+} ) );

@@ -283,7 +283,7 @@ function isIncludedThumbInfo( info ) {
  * @return {string|null} the caption's HTML string, if any
  */
 function getCaptionIfAvailable( container ) {
-	if ( container.querySelector( 'figcaption' ) ) {
+	if ( container && container.querySelector( 'figcaption' ) ) {
 		return container.querySelector( 'figcaption' ).innerHTML;
 	} else {
 		return null;

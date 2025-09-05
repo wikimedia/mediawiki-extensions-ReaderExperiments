@@ -1,32 +1,45 @@
 const { FastAverageColor } = require( 'fast-average-color' );
+const { ref, watchEffect, readonly } = require( 'vue' );
 
 /**
- * @param {string} src
- * @param {number} width
- * @param {number} height
- *
- * @return {import('fast-average-color').FastAverageColorResult}
+ * @typedef {import('../types').ImageData} ImageData
+ * @typedef {import('fast-average-color').FastAverageColorResult} ColorResult
+ * @typedef {import('vue').DeepReadonly<import('vue').Ref<ColorResult | null>>} ReadonlyColorRef
  */
-module.exports = exports = async function useBackgroundColor(
-	src,
-	width,
-	height
-) {
-	const apiBaseUri = mw.config.get( 'ReaderExperimentsApiBaseUri' );
-	const image = new Image();
 
-	if ( apiBaseUri ) {
-		image.crossOrigin = 'anonymous';
-	}
+/**
+ * @param {import('vue').Ref<ImageData>} imageRef
+ * @return {ReadonlyColorRef}
+ */
+module.exports = exports = function useBackgroundColor( imageRef ) {
+	const colorResult = ref( null );
 
-	image.src = src;
-	await image.decode();
+	watchEffect( async () => {
+		const image = imageRef.value;
+		if ( !image ) {
+			return;
+		}
 
-	const color = new FastAverageColor().getColor( image, {
-		algorithm: 'simple',
-		width: width,
-		height: height
+		const apiBaseUri = mw.config.get( 'ReaderExperimentsApiBaseUri' );
+		const imageElement = new Image();
+
+		if ( apiBaseUri ) {
+			imageElement.crossOrigin = 'anonymous';
+		}
+
+		imageElement.src = image.src;
+		if ( imageElement.decode ) {
+			await imageElement.decode();
+		}
+
+		const color = new FastAverageColor().getColor( imageElement, {
+			algorithm: 'simple',
+			width: image.width,
+			height: image.height
+		} );
+
+		colorResult.value = color;
 	} );
 
-	return color;
+	return readonly( colorResult );
 };

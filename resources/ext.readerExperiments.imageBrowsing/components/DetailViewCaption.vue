@@ -42,7 +42,7 @@
 </template>
 
 <script>
-const { defineComponent, ref, computed, useTemplateRef, onMounted } = require( 'vue' );
+const { defineComponent, ref, computed, useTemplateRef, onMounted, toRef } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
 const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
@@ -65,7 +65,7 @@ module.exports = exports = defineComponent( {
 			required: true
 		}
 	},
-	async setup( props ) {
+	setup( props ) {
 		/**
 		 * Try a few different ways to get caption text for the active image
 		 */
@@ -86,14 +86,11 @@ module.exports = exports = defineComponent( {
 		} );
 
 		// Background color
-		const color = await useBackgroundColor(
-			props.image.src,
-			props.image.width,
-			props.image.height
-		);
+		const imageRef = toRef( props, 'image' );
+		const color = useBackgroundColor( imageRef );
 
-		const dominantColorHex = color.hex;
-		const dominantColorIsDark = color.isDark;
+		const dominantColorHex = computed( () => color.value && color.value.hex || '#000' );
+		const dominantColorIsDark = computed( () => color.value && color.value.isDark || false );
 
 		function onCaptionExpand() {
 			isCaptionExpanded.value = true;
