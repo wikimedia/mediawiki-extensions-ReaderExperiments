@@ -139,20 +139,23 @@ module.exports = exports = defineComponent( {
 </script>
 
 <style lang="less">
+@import 'mediawiki.skin.variables.less';
+
 .ib-detail-view {
-	width: 100%;
-	height: 100vh;
 	display: flex;
 	align-items: end;
+	position: relative;
+	height: 100dvh;
+	flex-shrink: 0;
 
 	img {
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 100%;
-		height: 100%;
+		width: @size-full;
+		height: @size-full;
 		object-fit: cover;
-		z-index: -1;
+		z-index: @z-index-bottom;
 	}
 }
 

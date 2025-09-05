@@ -4,31 +4,34 @@
 		@focus="onFocusTrapStart"
 	></div>
 
-	<div
-		ref="overlayElement"
-		class="ib-overlay"
-		tabindex="-1"
-		@keydown.esc="onClose"
-	>
-		<cdx-button
-			class="ib-overlay__close"
-			@click="onClose"
+	<div class="ib-overlay-backdrop" @click="onClose">
+		<div
+			ref="overlayElement"
+			class="ib-overlay-container"
+			tabindex="-1"
+			@keydown.esc="onClose"
+			@click.stop
 		>
-			<cdx-icon :icon="cdxIconClose"></cdx-icon>
-		</cdx-button>
+			<cdx-button
+				class="ib-overlay__close"
+				@click="onClose"
+			>
+				<cdx-icon :icon="cdxIconClose"></cdx-icon>
+			</cdx-button>
 
-		<suspense>
-			<detail-view
-				ref="detailViewRef"
-				:active-image="activeImage"
-			></detail-view>
-		</suspense>
+			<suspense>
+				<detail-view
+					ref="detailViewRef"
+					:active-image="activeImage"
+				></detail-view>
+			</suspense>
 
-		<visual-table-of-contents
-			:images="images"
-			@vtoc-item-click="onItemClick"
-			@vtoc-view-in-article="onViewInArticle"
-		></visual-table-of-contents>
+			<visual-table-of-contents
+				:images="images"
+				@vtoc-item-click="onItemClick"
+				@vtoc-view-in-article="onViewInArticle"
+			></visual-table-of-contents>
+		</div>
 	</div>
 
 	<div
@@ -150,19 +153,39 @@ module.exports = exports = defineComponent( {
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
 
-.ib-overlay {
-	width: 100vw;
-	height: 100vh;
-	background-color: @background-color-base;
-	overflow-y: auto;
+.ib-overlay-backdrop {
 	position: fixed;
 	top: 0;
 	left: 0;
+	z-index: @z-index-overlay-backdrop;
+	width: @size-viewport-width-full;
+	height: @size-viewport-height-full;
+	background-color: @background-color-backdrop-light;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
-	&__close {
-		position: absolute;
-		top: @spacing-100;
-		right: @spacing-100;
-	}
+.ib-overlay-container {
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 1110px;
+	height: 100%;
+	background-color: @background-color-base;
+	border-left: @border-base;
+	border-right: @border-base;
+	box-shadow: @box-shadow-large;
+	overflow-y: auto;
+	position: relative;
+	z-index: @z-index-overlay;
+}
+
+.ib-overlay__close {
+	position: absolute;
+	top: @spacing-100;
+	right: @spacing-100;
+	z-index: @z-index-overlay;
 }
 </style>

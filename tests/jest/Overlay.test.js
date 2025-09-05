@@ -32,7 +32,8 @@ describe( 'Overlay', () => {
 	} );
 
 	it( 'renders the overlay component', () => {
-		expect( wrapper.find( '.ib-overlay' ).exists() ).toBe( true );
+		expect( wrapper.find( '.ib-overlay-backdrop' ).exists() ).toBe( true );
+		expect( wrapper.find( '.ib-overlay-container' ).exists() ).toBe( true );
 	} );
 
 	it( 'renders the close button', () => {
@@ -43,6 +44,14 @@ describe( 'Overlay', () => {
 	it( 'emits close-overlay event when close button is clicked', async () => {
 		const closeButton = wrapper.find( '.ib-overlay__close' );
 		await closeButton.trigger( 'click' );
+
+		expect( wrapper.emitted( 'close-overlay' ) ).toBeTruthy();
+		expect( wrapper.emitted( 'close-overlay' ).length ).toBe( 1 );
+	} );
+
+	it( 'emits close-overlay event when backdrop is clicked', async () => {
+		const backdrop = wrapper.find( '.ib-overlay-backdrop' );
+		await backdrop.trigger( 'click' );
 
 		expect( wrapper.emitted( 'close-overlay' ) ).toBeTruthy();
 		expect( wrapper.emitted( 'close-overlay' ).length ).toBe( 1 );

@@ -65,6 +65,8 @@ module.exports = exports = defineComponent( {
 @import 'mediawiki.skin.variables.less';
 
 .ib-vtoc {
+	flex-shrink: 0;
+
 	&__heading {
 		font-size: @font-size-large;
 		font-weight: @font-weight-bold;
