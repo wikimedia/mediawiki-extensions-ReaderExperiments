@@ -102,7 +102,8 @@
 				"readerexperiments-imagebrowsing-detail-download-size-medium",
 				"readerexperiments-imagebrowsing-detail-download-size-large",
 				"readerexperiments-imagebrowsing-detail-download-size-xl",
-				"readerexperiments-imagebrowsing-vtoc-link"
+				"readerexperiments-imagebrowsing-vtoc-link",
+				"readerexperiments-imagebrowsing-vtoc-heading"
 			]
 		},
 		"fast-average-color": {

@@ -1,14 +1,20 @@
 <template>
 	<div class="ib-vtoc">
-		<h2>Visual TOC:</h2>
+		<div class="ib-vtoc__heading">
+			<span>
+				{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-heading' ) }}
+			</span>
+		</div>
 
-		<visual-table-of-contents-item
-			v-for="( image, index ) in images"
-			:key="index"
-			:image="image"
-			@vtoc-item-click="onItemClick( image )"
-			@vtoc-view-in-article="onViewInArticle( image )"
-		></visual-table-of-contents-item>
+		<div class="ib-vtoc__grid">
+			<visual-table-of-contents-item
+				v-for="( image, index ) in images"
+				:key="index"
+				:image="image"
+				@vtoc-item-click="onItemClick( image )"
+				@vtoc-view-in-article="onViewInArticle( image )"
+			></visual-table-of-contents-item>
+		</div>
 	</div>
 </template>
 
@@ -56,11 +62,22 @@ module.exports = exports = defineComponent( {
 </script>
 
 <style lang="less">
+@import 'mediawiki.skin.variables.less';
+
 .ib-vtoc {
-	width: 100%;
-	max-width: 320em;
-	height: 4em;
-	padding: 0;
-	position: relative;
+	&__heading {
+		font-size: @font-size-large;
+		font-weight: @font-weight-bold;
+		padding: @spacing-150;
+		border-bottom: @border-subtle;
+	}
+
+	&__grid {
+		@media screen and ( min-width: @min-width-breakpoint-tablet ) {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-auto-rows: 10px;
+		}
+	}
 }
 </style>

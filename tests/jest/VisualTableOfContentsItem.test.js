@@ -51,7 +51,7 @@ describe( 'VisualTableOfContentsItem', () => {
 		expect( img.attributes( 'alt' ) ).toBe( mockImage.alt );
 	} );
 
-	it( 'includes a "view in article" link button', () => {
+	it( 'includes a "view in article" button', () => {
 		wrapper = mount( VisualTableOfContentsItem, {
 			props: {
 				image: mockImage
@@ -66,9 +66,9 @@ describe( 'VisualTableOfContentsItem', () => {
 			}
 		} );
 
-		const link = wrapper.find( '.ib-vtoc-link' );
-		expect( link.exists() ).toBe( true );
-		expect( link.text() ).toContain( 'readerexperiments-imagebrowsing-vtoc-link' );
+		const button = wrapper.find( '.ib-vtoc-item__view-in-article' );
+		expect( button.exists() ).toBe( true );
+		expect( button.text() ).toContain( 'readerexperiments-imagebrowsing-vtoc-link' );
 	} );
 
 	// TODO: Test other caption fallback options
@@ -86,8 +86,8 @@ describe( 'VisualTableOfContentsItem', () => {
 	} );
 
 	it( 'emits vtoc-item-click event when image is clicked', async () => {
-		const imageLink = wrapper.find( '.ib-vtoc-detail' );
-		await imageLink.trigger( 'click' );
+		const imageButton = wrapper.find( '.ib-vtoc-item__figure button' );
+		await imageButton.trigger( 'click' );
 
 		expect( wrapper.emitted( 'vtoc-item-click' ) ).toBeTruthy();
 		// Verify the argument value that was emitted
@@ -95,8 +95,8 @@ describe( 'VisualTableOfContentsItem', () => {
 	} );
 
 	it( 'emits vtoc-view-in-article event when view in article link is clicked', async () => {
-		const link = wrapper.find( '.ib-vtoc-link' );
-		await link.trigger( 'click' );
+		const button = wrapper.find( '.ib-vtoc-item__view-in-article' );
+		await button.trigger( 'click' );
 
 		expect( wrapper.emitted( 'vtoc-view-in-article' ) ).toBeTruthy();
 		// Verify the argument value that was emitted
