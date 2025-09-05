@@ -14,7 +14,10 @@ try {
 				width: 100,
 				height: 100,
 				score: { detail: 0, saturation: 0, skin: 0, boost: 0, total: 0 }
-			}
+			},
+			// mimic the real return
+			sourceWidth: 100,
+			sourceHeight: 100
 		} )
 	};
 }
@@ -59,7 +62,17 @@ module.exports = async function useSmartCrop( apiBaseUri, fileName, width, heigh
 	image.src = url;
 	await image.decode();
 
+	// capture coordinate space SmartCrop used
+	const sourceWidth = image.naturalWidth || image.width;
+	const sourceHeight = image.naturalHeight || image.height;
+
 	// Run SmartCrop
 	const cropResult = await SmartCrop.crop( image, { width, height } );
-	return cropResult;
+	// expose source dimensions
+	return {
+		topCrop: cropResult.topCrop,
+		crops: cropResult.crops,
+		sourceWidth,
+		sourceHeight
+	};
 };

@@ -5,6 +5,7 @@
 			ref="imageElement"
 			:src="resizedSrc"
 			:alt="activeImage.alt"
+			:style="cropStyle"
 		>
 
 		<!-- Caption -->
@@ -21,7 +22,7 @@
 </template>
 
 <script>
-const { computed, defineComponent, useTemplateRef, onMounted, watch, nextTick } = require( 'vue' );
+const { ref, computed, defineComponent, useTemplateRef, onMounted, watch, nextTick } = require( 'vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );
 const useSmartCrop = require( '../composables/useSmartCrop.js' );
@@ -45,6 +46,8 @@ module.exports = exports = defineComponent( {
 	},
 	async setup( props ) {
 		const imageElement = useTemplateRef( 'imageElement' );
+		const cropStyle = ref( {} );
+
 		// Per-instance guard
 		let runId = 0;
 		onMounted( () => {
@@ -109,30 +112,71 @@ module.exports = exports = defineComponent( {
 		}
 
 		async function runSmartCrop( imgEl ) {
-			// Mark latest.
 			const myRun = ++runId;
+
 			try {
-				const width = imgEl.clientWidth;
-				const height = Math.round( ( width / 9 ) * 16 );
+				// 9:16 portrait analysis box
+				const analysisW = imgEl.clientWidth;
+				const analysisH = Math.round( ( analysisW / 9 ) * 16 );
+
 				const fileTitle = `File:${ props.activeImage.name }`;
-				const cropResult = await useSmartCrop( 'https://en.wikipedia.org/w/api.php', fileTitle, width, height );
-				// If stale, bail.
+
+				const { topCrop: crop, sourceWidth, sourceHeight } = await useSmartCrop(
+					'https://en.wikipedia.org/w/api.php',
+					fileTitle,
+					analysisW,
+					analysisH
+				);
+
 				if ( myRun !== runId ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[SmartCrop] Stale result; ignoring.' );
 					return;
 				}
-				const crop = cropResult.topCrop;
+				if ( !crop || typeof crop.x !== 'number' || typeof crop.y !== 'number' ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[SmartCrop] Missing/invalid crop; skipping.' );
+					return;
+				}
+
+				// Center of crop in the SAME analysis space (9:16)
+				const centerX = crop.x + crop.width / 2;
+				const centerY = crop.y + crop.height / 2;
+				// Convert to object-position percentages relative to the SOURCE image SmartCrop analyzed
+				const toPct = ( value, total ) => ( value / total ) * 100;
+				const clamp = ( v ) => Math.max( 0, Math.min( 100, v ) );
+
+				// use the returned dimensions from useSmartCrop, NOT analysisW/H or naturalW/H
+				const xPercent = toPct( centerX, sourceWidth );
+				const yPercent = toPct( centerY, sourceHeight );
+				const xClamped = clamp( xPercent );
+				const yClamped = clamp( yPercent );
+
+				if ( xClamped !== xPercent || yClamped !== yPercent ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[SmartCrop] Clamped percentages:', { xPercent, yPercent, xClamped, yClamped } );
+				}
+
+				// Sanity check. Apply to reactive style.
+				const style = {
+					objectFit: 'cover',
+					objectPosition: `${ xClamped }% ${ yClamped }%`
+				};
+				cropStyle.value = style;
+				imgEl.style.objectPosition = style.objectPosition;
 				// eslint-disable-next-line no-console
-				console.log( '[SmartCrop] Crop result:', crop );
+				console.log( '[SmartCrop] Applied style:', style );
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
-				console.error( '[SmartCrop] Error during crop:', err );
+				console.error( '[SmartCrop] error:', err );
 			}
 		}
 
 		return {
 			resizedSrc,
 			imageElement,
-			onFullScreen
+			onFullScreen,
+			cropStyle
 		};
 	}
 } );
