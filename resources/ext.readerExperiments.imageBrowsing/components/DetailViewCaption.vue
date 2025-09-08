@@ -42,7 +42,7 @@
 </template>
 
 <script>
-const { defineComponent, ref, computed, useTemplateRef, onMounted, toRef } = require( 'vue' );
+const { defineComponent, ref, computed, useTemplateRef, onMounted, watch, nextTick, toRef } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
 const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
@@ -69,23 +69,16 @@ module.exports = exports = defineComponent( {
 	setup( props ) {
 		const imageRef = toRef( props, 'image' );
 
+		// Background color
+		const color = useBackgroundColor( imageRef );
+		const dominantColorHex = computed( () => color.value && color.value.hex || '#000' );
+		const dominantColorIsDark = computed( () => color.value && color.value.isDark || false );
+
 		// Use the composable for caption logic
 		const { caption } = useImageCaption( imageRef );
-
 		const canCaptionExpand = ref( true );
 		const isCaptionExpanded = ref( false );
 		const captionTextElement = useTemplateRef( 'captionTextElement' );
-
-		onMounted( () => {
-			canCaptionExpand.value = captionTextElement.value &&
-				captionTextElement.value.clientHeight !== captionTextElement.value.scrollHeight;
-		} );
-
-		// Background color
-		const color = useBackgroundColor( imageRef );
-
-		const dominantColorHex = computed( () => color.value && color.value.hex || '#000' );
-		const dominantColorIsDark = computed( () => color.value && color.value.isDark || false );
 
 		function onCaptionExpand() {
 			isCaptionExpanded.value = true;
@@ -94,6 +87,20 @@ module.exports = exports = defineComponent( {
 		function onCaptionCollapse() {
 			isCaptionExpanded.value = false;
 		}
+
+		function calculateCaptionOverflow() {
+			canCaptionExpand.value = captionTextElement.value &&
+				captionTextElement.value.clientHeight !== captionTextElement.value.scrollHeight;
+		}
+
+		// Determine if the "more" button needs to be shown when component mounts
+		onMounted( calculateCaptionOverflow );
+
+		// Check this again if the caption text changes
+		watch( caption, () => {
+			isCaptionExpanded.value = false;
+			nextTick( calculateCaptionOverflow );
+		} );
 
 		return {
 			dominantColorHex,
