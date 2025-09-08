@@ -3,6 +3,7 @@
 		<carousel
 			v-if="thumbnailData.length > 2"
 			:images="thumbnailData"
+			@carousel-load="onCarouselLoad"
 			@carousel-item-click="onItemClick"
 		>
 		</carousel>
@@ -23,6 +24,7 @@
 <script>
 const { defineComponent, ref, inject } = require( 'vue' );
 const { extractThumbInfo } = require( './thumbExtractor.js' );
+const { submitInteraction } = require( './instrumentation.js' );
 const Carousel = require( './components/Carousel.vue' );
 const Overlay = require( './components/Overlay.vue' );
 
@@ -36,6 +38,7 @@ module.exports = exports = defineComponent( {
 	setup() {
 		const thumbnailData = ref( [] );
 		const activeImage = ref( null );
+		const clickCounter = ref( 0 );
 
 		// Extract thumbnail image (as an array of ImageData objects)
 		// from the content of the underlying article page.
@@ -47,6 +50,12 @@ module.exports = exports = defineComponent( {
 
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 
+		// Instrument carousel load
+		function onCarouselLoad() {
+			// eslint-disable-next-line camelcase
+			submitInteraction( 'image_carousel_load', { action_source: 'init' } );
+		}
+
 		/**
 		 * When a carousel item is clicked by the user, set that image as
 		 * the active image and show the overlay part of the UI.
@@ -55,9 +64,19 @@ module.exports = exports = defineComponent( {
 		 */
 		function onItemClick( image ) {
 			activeImage.value = image;
+			clickCounter.value += 1;
 
-			// eslint-disable-next-line no-console
-			console.log( image );
+			// Instrument click on a carousel image
+			/* eslint-disable camelcase */
+			const interactionData = {
+				action_subtype: 'view_image',
+				action_source: 'image_carousel'
+			};
+			if ( clickCounter.value === 1 ) {
+				interactionData.action_context = 'image1';
+			}
+			/* eslint-enable camelcase */
+			submitInteraction( 'click', interactionData );
 		}
 
 		/**
@@ -92,12 +111,14 @@ module.exports = exports = defineComponent( {
 		function onCloseOverlay() {
 			activeImage.value = null;
 
-			// eslint-disable-next-line no-console
-			console.log( 'Closed the overlay' );
+			// Instrument overlay close
+			// eslint-disable-next-line camelcase
+			submitInteraction( 'image_carousel_load', { action_source: 'close' } );
 		}
 
 		return {
 			thumbnailData,
+			onCarouselLoad,
 			onItemClick,
 			onViewInArticle,
 			onCloseOverlay,

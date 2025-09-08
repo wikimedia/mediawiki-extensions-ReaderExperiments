@@ -73,6 +73,7 @@
 				},
 				"init.js",
 				"excludedImageClasses.js",
+				"instrumentation.js",
 				"thumbExtractor.js",
 				"App.vue",
 				"components/Carousel.vue",

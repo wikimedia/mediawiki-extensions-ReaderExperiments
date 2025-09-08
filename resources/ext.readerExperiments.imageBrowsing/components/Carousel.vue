@@ -12,7 +12,7 @@
 </template>
 
 <script>
-const { defineComponent } = require( 'vue' );
+const { defineComponent, onMounted } = require( 'vue' );
 const CarouselItem = require( './CarouselItem.vue' );
 
 // @vue/component
@@ -28,9 +28,14 @@ module.exports = exports = defineComponent( {
 		}
 	},
 	emits: [
+		'carousel-load',
 		'carousel-item-click'
 	],
 	setup( props, { emit } ) {
+		onMounted( () => {
+			emit( 'carousel-load' );
+		} );
+
 		/**
 		 * @param {import("../types").ImageData} image
 		 * @param {Event} e
