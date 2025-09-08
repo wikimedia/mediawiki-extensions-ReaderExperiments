@@ -60,14 +60,17 @@ module.exports = exports = defineComponent( {
 		CdxIcon
 	},
 	props: {
+		// eslint-disable-next-line vue/no-unused-properties
 		image: {
 			type: /** @type {import('vue').PropType<ImageData>} */ ( Object ),
 			required: true
 		}
 	},
 	setup( props ) {
+		const imageRef = toRef( props, 'image' );
+
 		// Use the composable for caption logic
-		const { caption } = useImageCaption( props.image );
+		const { caption } = useImageCaption( imageRef );
 
 		const canCaptionExpand = ref( true );
 		const isCaptionExpanded = ref( false );
@@ -79,7 +82,6 @@ module.exports = exports = defineComponent( {
 		} );
 
 		// Background color
-		const imageRef = toRef( props, 'image' );
 		const color = useBackgroundColor( imageRef );
 
 		const dominantColorHex = computed( () => color.value && color.value.hex || '#000' );

@@ -8,7 +8,9 @@ const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
 /**
  * Vue composable for getting image caption text with fallback options
  *
- * @param {import('../types').ImageData} imageData
+ * Accepts an ImageData object or a reactive reference.
+ *
+ * @param {import('../types').ImageData|import('vue').Ref<import('../types').ImageData>} imageData
  *
  * @return {ComputedRef<string|null>} Object with caption computed property
  */
@@ -22,11 +24,10 @@ module.exports = exports = function useImageCaption( imageData ) {
 	 * 4. escaped filename without extension
 	 */
 	const caption = computed( () => {
-		if ( !imageData ) {
+		const image = imageData.value || imageData;
+		if ( !image ) {
 			return null;
 		}
-
-		const image = imageData;
 		const figcaption = getCaptionIfAvailable( image.container );
 		const paragraphText = image.paragraph && image.paragraph;
 		const altText = image.alt && mw.html.escape( image.alt );
