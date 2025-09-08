@@ -27,7 +27,7 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, computed } = require( 'vue' );
+const { defineComponent, useTemplateRef, computed, toRef } = require( 'vue' );
 const { CdxButton, useResizeObserver } = require( '@wikimedia/codex' );
 const useImageCaption = require( '../composables/useImageCaption.js' );
 
@@ -73,7 +73,8 @@ module.exports = exports = defineComponent( {
 		} );
 
 		// Use the composable for caption logic
-		const { caption } = useImageCaption( props.image );
+		const imageRef = toRef( props, 'image' );
+		const { caption } = useImageCaption( imageRef );
 
 		function onItemClick( image ) {
 			emit( 'vtoc-item-click', image );
