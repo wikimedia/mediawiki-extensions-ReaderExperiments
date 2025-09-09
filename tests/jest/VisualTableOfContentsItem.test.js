@@ -71,7 +71,7 @@ describe( 'VisualTableOfContentsItem', () => {
 	} );
 
 	// TODO: Test other caption fallback options
-	it( 'displays caption text', () => {
+	it( 'displays image alt text as the caption text when figcaption and nearby paragraph is unavailable', () => {
 		const figcaption = wrapper.find( 'figcaption' );
 		// Since getCaptionIfAvailable is mocked to return null, it falls back to alt text.
 		// Verify the fallback behavior works correctly.

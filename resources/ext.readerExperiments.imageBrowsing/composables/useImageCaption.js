@@ -21,7 +21,6 @@ module.exports = exports = function useImageCaption( imageData ) {
 	 * 1. figcaption from getCaptionIfAvailable
 	 * 2. nearby paragraph text
 	 * 3. escaped alt text
-	 * 4. escaped filename without extension
 	 */
 	const caption = computed( () => {
 		if ( !imageData.value ) {
@@ -30,14 +29,11 @@ module.exports = exports = function useImageCaption( imageData ) {
 		const figcaption = getCaptionIfAvailable( imageData.value.container );
 		const paragraphText = imageData.value.paragraph && imageData.value.paragraph;
 		const altText = imageData.value.alt && mw.html.escape( imageData.value.alt );
-		const titleText = imageData.value.title &&
-			mw.html.escape( imageData.value.title.getFileNameTextWithoutExtension() );
 
 		return (
 			figcaption ||
 			paragraphText ||
-			altText ||
-			titleText
+			altText
 		);
 	} );
 
