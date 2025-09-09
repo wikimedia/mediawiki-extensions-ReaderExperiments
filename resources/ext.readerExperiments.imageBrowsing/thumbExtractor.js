@@ -300,8 +300,6 @@ function getCaptionIfAvailable( container ) {
 
 /**
  * Find the first next sibling non-empty paragraph element from the image container.
- * For infoboxes that don't have a figcaption or alt text, it will use the first
- * paragraph from the article content.
  *
  * @param {Element|null} container - The image container element
  * @return {?{string}}  The paragraph data or null if none found
@@ -321,21 +319,6 @@ function findNearbyParagraph( container ) {
 			}
 		}
 		currentElement = currentElement.nextElementSibling;
-	}
-
-	// Handles infobox images
-	if ( container.closest( '.infobox' ) && !container.caption && !container.alt ) {
-		const contentArea = container.closest( 'div.mw-parser-output' );
-		if ( contentArea ) {
-			const paragraphs = contentArea.querySelectorAll( 'p' );
-			for ( const p of paragraphs ) {
-				// Check text content length to prevent empty paragraph elements
-				const firstParagraph = p.textContent.trim().length > 0 && p.innerHTML;
-				if ( firstParagraph ) {
-					return firstParagraph;
-				}
-			}
-		}
 	}
 
 	return null;
