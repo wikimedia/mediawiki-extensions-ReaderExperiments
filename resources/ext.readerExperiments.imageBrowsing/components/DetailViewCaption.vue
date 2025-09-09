@@ -139,6 +139,11 @@ module.exports = exports = defineComponent( {
 		transparent, var( --dominant-color-hex ) var( --gradient-height )
 	);
 
+	// Override Minerva skin paragraph styles
+	p {
+		padding-bottom: 0;
+	}
+
 	&__text,
 	&__expand.cdx-button,
 	&__collapse.cdx-button {
