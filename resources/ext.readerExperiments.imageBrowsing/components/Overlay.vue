@@ -41,7 +41,7 @@
 </template>
 
 <script>
-const { defineComponent, onMounted, useTemplateRef } = require( 'vue' );
+const { defineComponent, onMounted, onBeforeUnmount, useTemplateRef } = require( 'vue' );
 const DetailView = require( './DetailView.vue' );
 const VisualTableOfContents = require( './VisualTableOfContents.vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
@@ -100,8 +100,15 @@ module.exports = exports = defineComponent( {
 		}
 
 		const overlayElement = useTemplateRef( 'overlayElement' );
+		const existingBodyOverflow = document.body.style.overflow;
 		onMounted( () => {
+			// Prevent body scroll
+			document.body.style.overflow = 'hidden';
 			focusFirstFocusableElement( overlayElement.value, false );
+		} );
+		onBeforeUnmount( () => {
+			// Restore body scroll
+			document.body.style.overflow = existingBodyOverflow;
 		} );
 		const onFocusTrapStart = () => {
 			focusFirstFocusableElement( overlayElement.value, true );
