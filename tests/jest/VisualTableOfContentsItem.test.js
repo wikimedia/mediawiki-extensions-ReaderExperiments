@@ -68,7 +68,7 @@ describe( 'VisualTableOfContentsItem', () => {
 
 		const button = wrapper.find( '.ib-vtoc-item__view-in-article' );
 		expect( button.exists() ).toBe( true );
-		expect( button.text() ).toContain( 'readerexperiments-imagebrowsing-vtoc-link' );
+		expect( button.text() ).toContain( 'readerexperiments-imagebrowsing-vtoc-view-button-label' );
 	} );
 
 	// TODO: Test other caption fallback options

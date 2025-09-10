@@ -142,7 +142,8 @@ module.exports = exports = defineComponent( {
 				// Center of crop in the SAME analysis space (9:16)
 				const centerX = crop.x + crop.width / 2;
 				const centerY = crop.y + crop.height / 2;
-				// Convert to object-position percentages relative to the SOURCE image SmartCrop analyzed
+				// Convert to object-position percentages relative to the
+				// SOURCE image SmartCrop analyzed
 				const toPct = ( value, total ) => ( value / total ) * 100;
 				const clamp = ( v ) => Math.max( 0, Math.min( 100, v ) );
 

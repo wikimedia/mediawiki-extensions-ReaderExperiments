@@ -20,7 +20,7 @@
 				action="progressive"
 				@click.prevent="onViewInArticle( image )"
 			>
-				{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-link' ) }}
+				{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-view-button-label' ) }}
 			</cdx-button>
 		</figure>
 	</div>

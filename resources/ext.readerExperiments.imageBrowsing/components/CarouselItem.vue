@@ -26,7 +26,9 @@ module.exports = exports = defineComponent( {
 		const thumbnailHeight = 175;
 		const minThumbnailWidth = 100;
 
-		let thumbnailWidth = parseInt( props.image.width * ( thumbnailHeight / props.image.height ) );
+		let thumbnailWidth = parseInt(
+			props.image.width * ( thumbnailHeight / props.image.height )
+		);
 		if ( thumbnailWidth < minThumbnailWidth ) {
 			thumbnailWidth = minThumbnailWidth;
 		}
@@ -34,7 +36,9 @@ module.exports = exports = defineComponent( {
 		// Standardize thumbnail widths to the nearest standard limit to increase the
 		// chances of one being ready to serve right away, having been rendered before
 		const acceptableThumbnailWidths = mw.config.get( 'ReaderExperimentsImageBrowsingThumbLimits' ).filter( ( limit ) => limit >= thumbnailWidth );
-		const standardizedThumbnailWidth = Math.min.apply( null, acceptableThumbnailWidths.length ? acceptableThumbnailWidths : [ thumbnailWidth ] );
+		const standardizedThumbnailWidth = Math.min.apply(
+			null, acceptableThumbnailWidths.length ? acceptableThumbnailWidths : [ thumbnailWidth ]
+		);
 
 		return {
 			thumbnailSrc: props.image.resizeUrl( standardizedThumbnailWidth ),
