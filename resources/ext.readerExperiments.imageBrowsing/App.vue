@@ -41,7 +41,8 @@ module.exports = exports = defineComponent( {
 		// from the content of the underlying article page.
 		const content = document.getElementById( 'content' );
 		if ( content ) {
-			thumbnailData.value = extractThumbInfo( content );
+			// Grab all image info, removing those that failed to parse
+			thumbnailData.value = extractThumbInfo( content ).filter( ( img ) => img.name );
 		}
 
 		const teleportTarget = inject( 'CdxTeleportTarget' );

@@ -86,8 +86,12 @@ function thumbInfo( thumb ) {
 		 * A function for producing new thumbnails with a target resolution on demand.
 		 * May or may not work with MobileFrontendContentProvider...
 		 * Pass the desired width in device pixels as a function to the string.
+		 *
+		 * resizeUrl may not be available (e.g. when the url is not a thumbnail
+		 * because it is already displayed at full size), in which case we'll
+		 * opt to fall back to the known URL instead of nothing at all.
 		 */
-		item.resizeUrl = parsed.resizeUrl;
+		item.resizeUrl = parsed.resizeUrl || ( () => url );
 
 		/**
 		 * MediaWiki title object for the target file's File: page.
