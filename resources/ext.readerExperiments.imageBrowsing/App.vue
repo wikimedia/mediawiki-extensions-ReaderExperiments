@@ -66,9 +66,22 @@ module.exports = exports = defineComponent( {
 			onCloseOverlay();
 
 			// Scroll the main page view to the image in context.
-			image.thumb.scrollIntoView( {
-				behavior: 'smooth'
-			} );
+			// Do not use image.thumb, as that may be a lazy-load placeholder
+			// span which has already been replaced; use the container.
+			if ( image.container ) {
+				// In mobile mode, sections may be collapsed.
+				// Toggle the section if necessary.
+				const section = image.container.closest( '.collapsible-block-js' );
+				if ( section && section.classList && !section.classList.contains( 'open-block' ) ) {
+					const headingWrapper = section.previousSibling;
+					if ( headingWrapper ) {
+						headingWrapper.click();
+					}
+				}
+				image.container.scrollIntoView( {
+					behavior: 'smooth'
+				} );
+			}
 		}
 
 		/**
