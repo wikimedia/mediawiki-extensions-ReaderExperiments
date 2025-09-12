@@ -105,7 +105,9 @@ module.exports = exports = defineComponent( {
 @ib-vtoc-image-height: 12em;
 
 .ib-vtoc-item {
-	border-bottom: @border-subtle;
+	border-style: @border-style-base;
+	border-color: @border-color-subtle;
+	border-width: 0.5px; // Use a fractional width so overlapping borders appear normal
 	padding: @spacing-150;
 
 	&__figure {
@@ -130,10 +132,6 @@ module.exports = exports = defineComponent( {
 
 	&__view-in-article {
 		display: block;
-	}
-
-	@media screen and ( min-width: @min-width-breakpoint-tablet ) {
-		border-right: @border-subtle;
 	}
 }
 </style>
