@@ -1,5 +1,6 @@
 <template>
 	<div class="ib-detail-view-controls">
+		<!-- Fullscreen -->
 		<cdx-button
 			class="ib-detail-view-controls__fullscreen"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-fullscreen' ).text()"
@@ -44,6 +45,8 @@
 			role="button"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-view-on-commons' ).text()"
 			:href="descriptionUrl"
+			target="_blank"
+			rel="noreferrer noopener"
 		>
 			<cdx-icon :icon="cdxIconLogoWikimediaCommons"></cdx-icon>
 		</a>
@@ -80,7 +83,7 @@
 </template>
 
 <script>
-const { defineComponent, ref, inject, computed, useTemplateRef } = require( 'vue' );
+const { defineComponent, ref, inject, computed, useTemplateRef, watch } = require( 'vue' );
 const useMwApi = require( '../composables/useMwApi.js' );
 const { CdxButton, CdxToggleButton, CdxIcon, CdxPopover, CdxTextInput, CdxSelect } = require( '@wikimedia/codex' );
 const { cdxIconFullscreen, cdxIconShare, cdxIconLogoWikimediaCommons, cdxIconDownload } = require( '../icons.json' );
@@ -130,25 +133,34 @@ module.exports = exports = defineComponent( {
 	async setup( props, { emit } ) {
 		const $i18n = inject( 'i18n' );
 		const api = useMwApi();
-		const title = props.image.title;
 
 		const triggerShareElement = useTemplateRef( 'triggerShareElement' );
 		const triggerDownloadElement = useTemplateRef( 'triggerDownloadElement' );
 
-		const { query } = await api.get( {
-			formatversion: 2,
-			action: 'query',
-			prop: 'imageinfo',
-			titles: title.getPrefixedDb(),
-			iiprop: 'url|size'
-		} );
+		const imageInfo = ref( null );
 
-		const imageInfo = computed( () => {
+		const fetchImageInfo = async ( image ) => {
+			const { query } = await api.get( {
+				formatversion: 2,
+				action: 'query',
+				prop: 'imageinfo',
+				titles: image.title.getPrefixedDb(),
+				iiprop: 'url|size'
+			} );
+
 			if ( query && query.pages && query.pages[ 0 ] && query.pages[ 0 ].imageinfo ) {
-				return query.pages[ 0 ].imageinfo[ 0 ];
+				imageInfo.value = query.pages[ 0 ].imageinfo[ 0 ];
 			} else {
-				return null;
+				imageInfo.value = null;
 			}
+		};
+
+		// Initial fetch
+		await fetchImageInfo( props.image );
+
+		// Watch for image prop changes and refetch
+		watch( () => props.image, async ( newImage ) => {
+			await fetchImageInfo( newImage );
 		} );
 
 		const descriptionUrl = computed( () => {
