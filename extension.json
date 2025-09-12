@@ -21,10 +21,6 @@
 		"MediaWiki\\Extension\\ReaderExperiments\\": "src/"
 	},
 	"config": {
-		"ReaderExperimentsShowImageBrowsing": {
-			"description": "Show the prototype Image Browsing UI",
-			"value": false
-		},
 		"ReaderExperimentsApiBaseUri": {
 			"description": "Url to API of MediaWiki instance to use for external data (e.g. when using MobileFrontendContentProvider, in which case this should be equal to $wgMFMwApiContentProviderBaseUri), or leave empty to use local API.",
 			"value": ""
@@ -32,7 +28,10 @@
 	},
 	"HookHandlers": {
 		"ReaderExperimentsHooks": {
-			"class": "MediaWiki\\Extension\\ReaderExperiments\\Hooks"
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Hooks",
+			"optional_services": [
+				"MetricsPlatform.XLab.ExperimentManager"
+			]
 		}
 	},
 	"Hooks": {

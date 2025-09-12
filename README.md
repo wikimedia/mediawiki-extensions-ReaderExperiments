@@ -33,10 +33,7 @@ git clone ssh://${USERNAME}@gerrit.wikimedia.org:29418/mediawiki/extensions/Read
 printf "\nwfLoadExtension( 'ReaderExperiments' );\n" >> LocalSettings.php
 ```
 
-- Enable the features by adding this to LocalSettings.php:
-``` php
-$wgReaderExperimentsShowImageBrowsing = true;
-```
+
 
 - When running this with MobileFrontendContentProvider, also add these variables to LocalSettings.php:
 ```php
@@ -50,6 +47,19 @@ $wgGenerateThumbnailOnParse = false;
 The quickest way to get up and running with the extension is to enable
 [MobileFrontendContentProvider](https://www.mediawiki.org/wiki/Extension:MobileFrontendContentProvider).
 After doing so, navigate to the page Angkor_Wat.
+
+### Enabling image browsing
+
+Image browsing can be enabled in two ways:
+
+1. **URL parameter** (for testing): Add `?imageBrowsing=1` to any article URL
+2. **Experiment assignment**: Users assigned to the treatment group via ExperimentManager
+
+Example with URL parameter: `/wiki/Angkor_Wat?imageBrowsing=1`
+
+Notes:
+- The URL parameter bypasses experiment gating for easy testing
+- Without the URL parameter, the feature only loads for users in the experiment treatment group
 
 ### Development
 

@@ -20,10 +20,31 @@
 namespace MediaWiki\Extension\ReaderExperiments;
 
 use Article;
-use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\MetricsPlatform\XLab\ExperimentManager;
 use MediaWiki\Parser\ParserOutput;
 
 class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
+
+	/** @var string */
+	private const EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
+	/** @var string */
+	private const TREATMENT_GROUP = 'image-browsing-test';
+
+	private ?ExperimentManager $experimentManager;
+
+	public function __construct( ?ExperimentManager $experimentManager = null ) {
+		$this->experimentManager = $experimentManager;
+	}
+
+	private function isInTreatmentGroup(): bool {
+		if ( !$this->experimentManager ) {
+			return false;
+		}
+
+		$experiment = $this->experimentManager->getExperiment( self::EXPERIMENT_NAME );
+		$assignedGroup = $experiment->getAssignedGroup();
+		return $assignedGroup === self::TREATMENT_GROUP;
+	}
 
 	/**
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ArticleViewHeaderHook
@@ -38,14 +59,18 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 		$config = $out->getConfig();
 
 		if ( $title && $title->getNamespace() === NS_MAIN ) {
-			if (
-				$config->get( 'ReaderExperimentsShowImageBrowsing' ) ||
-				RequestContext::getMain()->getRequest()->getFuzzyBool( 'imageBrowsing' )
-			) {
-				$out->addModules( 'ext.readerExperiments.imageBrowsing' );
-				$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
-				$out->addJsConfigVars( 'ReaderExperimentsApiBaseUri', $config->get( 'ReaderExperimentsApiBaseUri' ) );
+			// Check URL parameter for manual enablement
+			$request = $article->getContext()->getRequest();
+			$urlParamEnabled = $request->getFuzzyBool( 'imageBrowsing' );
 
+			// Check if we're using Minerva skin
+			$isMinervaSkin = $out->getSkin()->getSkinName() === 'minerva';
+
+			// Enable if Minerva skin AND (URL param is set OR user is in treatment group).
+			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInTreatmentGroup() ) ) {
+				$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
+
+				$out->addJsConfigVars( 'ReaderExperimentsApiBaseUri', $config->get( 'ReaderExperimentsApiBaseUri' ) );
 				$thumbLimits = array_unique( array_merge(
 					$config->get( 'ThumbLimits' ),
 					$config->get( 'ThumbnailSteps' ) ?? [],
@@ -53,6 +78,9 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 				) );
 				sort( $thumbLimits, SORT_NUMERIC );
 				$out->addJsConfigVars( 'ReaderExperimentsImageBrowsingThumbLimits', $thumbLimits );
+
+				// Load heavy module since already gated server-side.
+				$out->addModules( 'ext.readerExperiments.imageBrowsing' );
 			}
 		}
 	}
