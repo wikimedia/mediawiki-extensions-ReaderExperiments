@@ -241,7 +241,7 @@ module.exports = exports = defineComponent( {
 
 		function onFileDownload() {
 			emit( 'download-file' );
-			window.location.href = props.image.resizeUrl( selectedDownloadWidth.value );
+			window.location.href = props.image.resizeUrl( selectedDownloadWidth.value ) + '?download';
 		}
 
 		function onChangeDownloadSize( value ) {
