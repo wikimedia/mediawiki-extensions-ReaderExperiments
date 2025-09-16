@@ -41,11 +41,12 @@ $wgReaderExperimentsApiBaseUri = 'https://en.wikipedia.org/w/api.php'; // or wha
 $wgGenerateThumbnailOnParse = false;
 ```
 
-
 #### Quick start
 
-The quickest way to get up and running with the extension is to enable
-[MobileFrontendContentProvider](https://www.mediawiki.org/wiki/Extension:MobileFrontendContentProvider).
+The quickest way to get up and running with the extension is to enable:
+- [MobileFrontendContentProvider](https://www.mediawiki.org/wiki/Extension:MobileFrontendContentProvider)
+- [WikimediaMessages](https://www.mediawiki.org/wiki/Extension:WikimediaMessages)
+
 After doing so, navigate to the page Angkor_Wat.
 
 ### Enabling image browsing

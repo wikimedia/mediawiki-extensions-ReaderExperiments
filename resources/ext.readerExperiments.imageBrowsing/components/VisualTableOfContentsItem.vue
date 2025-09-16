@@ -127,6 +127,11 @@ module.exports = exports = defineComponent( {
 	border-width: 0.5px; // Use a fractional width so overlapping borders appear normal
 	padding: @spacing-150;
 
+	&:last-of-type,
+	&:nth-last-of-type(2) {
+		border-bottom: none;
+	}
+
 	&__figure {
 		text-align: center;
 

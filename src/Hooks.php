@@ -70,14 +70,25 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInTreatmentGroup() ) ) {
 				$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
 
-				$out->addJsConfigVars( 'ReaderExperimentsApiBaseUri', $config->get( 'ReaderExperimentsApiBaseUri' ) );
+				$out->addJsConfigVars(
+					'ReaderExperimentsApiBaseUri',
+					$config->get( 'ReaderExperimentsApiBaseUri' )
+				);
+				$out->addJsConfigVars(
+					'ReaderExperimentsImageBrowsingExternalWikis',
+					$config->get( 'ReaderExperimentsImageBrowsingExternalWikis' )
+				);
+
 				$thumbLimits = array_unique( array_merge(
 					$config->get( 'ThumbLimits' ),
 					$config->get( 'ThumbnailSteps' ) ?? [],
 					[ 1280, 2560 ]
 				) );
 				sort( $thumbLimits, SORT_NUMERIC );
-				$out->addJsConfigVars( 'ReaderExperimentsImageBrowsingThumbLimits', $thumbLimits );
+				$out->addJsConfigVars(
+					'ReaderExperimentsImageBrowsingThumbLimits',
+					$thumbLimits
+				);
 
 				// Load heavy module since already gated server-side.
 				$out->addModules( 'ext.readerExperiments.imageBrowsing' );

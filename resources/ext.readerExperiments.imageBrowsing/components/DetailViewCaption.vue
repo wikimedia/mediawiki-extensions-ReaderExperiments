@@ -65,9 +65,10 @@ module.exports = exports = defineComponent( {
 			if ( !props.image ) {
 				return;
 			}
+			const label = props.image.label;
 			const figcaption = getCaptionIfAvailable( props.image.container );
 			const altText = props.image.alt && mw.html.escape( props.image.alt );
-			return figcaption || altText;
+			return label || figcaption || altText;
 		} );
 
 		const canCaptionExpand = ref( true );

@@ -5,5 +5,6 @@
 	"cdxIconLogoWikimediaCommons": "<path d=\"M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-18C5.589 2 2 5.589 2 10s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8z\"/>",
 	"cdxIconDownload": "<path d=\"M10 13.207L6.146 9.354l1.414-1.414L9 9.379V1h2v8.379l1.44-1.44 1.414 1.415L10 13.207zM1 15h18v2H1v-2z\"/>",
 	"cdxIconAdd": "<path d=\"M11 9V1H9v8H1v2h8v8h2v-8h8V9h-8z\"/>",
-	"cdxIconSubtract": "<path d=\"M1 9v2h18V9H1z\"/>"
+	"cdxIconSubtract": "<path d=\"M1 9v2h18V9H1z\"/>",
+	"cdxIconArrowPrevious": "<path d=\"M5.83 9 5.58-5.58L10 2l-8 8 8 8 1.41-1.41L5.83 11H18V9z\"/>"
 }

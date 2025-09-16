@@ -12,10 +12,10 @@ export interface ImageData {
 	name: string;
 
 	/** The provided alt text for the thumbnail */
-	alt: string;
+	alt?: string;
 
 	/** The original thumbnail (may change if lazy-loading so beware) */
-	thumb: Element;
+	thumb?: Element;
 
 	/** The wrapping 'a' tag, if any */
 	link?: Element;
@@ -41,7 +41,13 @@ export interface ImageData {
 	title: mw.Title;
 
 	/** The nearby paragraph text in raw HTML format */
-	paragraph: string;
+	paragraph?: string;
+
+	/** The wikibase label ("caption" in commonswiki parlance) */
+	label?: string;
+
+	/** Domain names of external projects where this image is used */
+	externalSources?: string[];
 
 	/**
 	 * A function for producing new thumbnails with target resolution on demand;

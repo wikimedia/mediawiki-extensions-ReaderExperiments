@@ -292,7 +292,7 @@ function isIncludedThumbInfo( info ) {
 }
 
 /**
- * @param {Element} container The DOM element container for the thumbnail
+ * @param {Element|null} container The DOM element container for the thumbnail
  * @return {string|null} the caption's HTML string, if any
  */
 function getCaptionIfAvailable( container ) {

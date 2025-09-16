@@ -32,6 +32,21 @@
 				@vtoc-item-click="onItemClick"
 				@vtoc-view-in-article="onViewInArticle"
 			></visual-table-of-contents>
+
+			<visual-table-of-contents-other-wikis
+				:exclude-images="images"
+				@vtoc-item-click="onItemClick"
+			></visual-table-of-contents-other-wikis>
+
+			<cdx-button
+				class="ib-overlay__back-button"
+				action="progressive"
+				weight="primary"
+				@click="onClose"
+			>
+				<cdx-icon :icon="cdxIconArrowPrevious"></cdx-icon>
+				{{ $i18n( 'readerexperiments-imagebrowsing-overlay-back-button-label' ).text() }}
+			</cdx-button>
 		</div>
 	</div>
 
@@ -45,8 +60,9 @@
 const { defineComponent, onMounted, onBeforeUnmount, useTemplateRef } = require( 'vue' );
 const DetailView = require( './DetailView.vue' );
 const VisualTableOfContents = require( './VisualTableOfContents.vue' );
+const VisualTableOfContentsOtherWikis = require( './VisualTableOfContentsOtherWikis.vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
-const { cdxIconClose } = require( '../icons.json' );
+const { cdxIconClose, cdxIconArrowPrevious } = require( '../icons.json' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -54,6 +70,7 @@ module.exports = exports = defineComponent( {
 	components: {
 		DetailView,
 		VisualTableOfContents,
+		VisualTableOfContentsOtherWikis,
 		CdxButton,
 		CdxIcon
 	},
@@ -152,7 +169,8 @@ module.exports = exports = defineComponent( {
 			onClose,
 			onItemClick,
 			onViewInArticle,
-			cdxIconClose
+			cdxIconClose,
+			cdxIconArrowPrevious
 		};
 	}
 } );
@@ -161,40 +179,52 @@ module.exports = exports = defineComponent( {
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
 
-.ib-overlay-backdrop {
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: @z-index-overlay-backdrop;
-	width: @size-viewport-width-full;
-	height: @size-viewport-height-full;
-	background-color: @background-color-backdrop-light;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
+.ib-overlay {
+	&-backdrop {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: @z-index-overlay-backdrop;
+		width: @size-viewport-width-full;
+		height: @size-viewport-height-full;
+		background-color: @background-color-backdrop-light;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
-.ib-overlay-container {
-	display: flex;
-	flex-direction: column;
-	box-sizing: border-box;
-	width: 100%;
-	max-width: 1110px;
-	height: 100%;
-	background-color: @background-color-base;
-	border-left: @border-base;
-	border-right: @border-base;
-	box-shadow: @box-shadow-large;
-	overflow-y: auto;
-	position: relative;
-	z-index: @z-index-overlay;
-}
+	&-container {
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 1110px;
+		height: 100%;
+		background-color: @background-color-base;
+		border-left: @border-base;
+		border-right: @border-base;
+		box-shadow: @box-shadow-large;
+		overflow-y: auto;
+		position: relative;
+		z-index: @z-index-overlay;
+	}
 
-.ib-overlay__close {
-	position: absolute;
-	top: @spacing-100;
-	right: @spacing-100;
-	z-index: @z-index-overlay;
+	&__close {
+		position: absolute;
+		top: @spacing-100;
+		right: @spacing-100;
+		z-index: @z-index-overlay;
+	}
+
+	&__back-button.cdx-button {
+		margin-top: @spacing-150;
+		margin-bottom: @spacing-150;
+
+		@media screen and ( min-width: @min-width-breakpoint-tablet ) {
+			margin-left: @spacing-150;
+			max-width: fit-content;
+		}
+	}
 }
 
 </style>
