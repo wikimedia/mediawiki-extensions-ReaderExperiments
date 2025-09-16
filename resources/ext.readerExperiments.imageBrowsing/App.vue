@@ -1,8 +1,8 @@
 <template>
 	<div class="ib-app">
 		<carousel
-			v-if="thumbnailData.length > 2"
-			:images="thumbnailData"
+			v-if="contentImages.length > 2"
+			:images="contentImages"
 			@carousel-load="onCarouselLoad"
 			@carousel-item-click="onItemClick"
 		>
@@ -11,7 +11,7 @@
 		<teleport :to="teleportTarget">
 			<overlay
 				v-if="activeImage"
-				:images="thumbnailData"
+				:images="contentImages"
 				:active-image="activeImage"
 				@close-overlay="onCloseOverlay"
 				@vtoc-item-click="onItemClick"
@@ -24,7 +24,8 @@
 <script>
 const { defineComponent, ref, inject } = require( 'vue' );
 const router = require( 'mediawiki.router' );
-const { extractThumbInfo } = require( './thumbExtractor.js' );
+const useContentImages = require( './composables/useContentImages.js' );
+const useExternalImages = require( './composables/useExternalImages.js' );
 const Carousel = require( './components/Carousel.vue' );
 const Overlay = require( './components/Overlay.vue' );
 
@@ -38,17 +39,9 @@ module.exports = exports = defineComponent( {
 	setup() {
 		const submitInteraction = inject( 'submitInteraction' );
 
-		const thumbnailData = ref( [] );
+		const contentImages = ref( useContentImages() );
 		const activeImage = ref( null );
 		const clickCounter = ref( 0 );
-
-		// Extract thumbnail image (as an array of ImageData objects)
-		// from the content of the underlying article page.
-		const content = document.getElementById( 'content' );
-		if ( content ) {
-			// Grab all image info, removing those that failed to parse
-			thumbnailData.value = extractThumbInfo( content ).filter( ( img ) => img.name );
-		}
 
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 
@@ -59,11 +52,35 @@ module.exports = exports = defineComponent( {
 		router.addRoute(
 			// eslint-disable-next-line security/detect-non-literal-regexp
 			new RegExp( '^' + RegExp.escape( routePrefix ) + '(.+)$' ),
-			( prefixedDbFileTitle ) => {
+			async ( prefixedDbFileTitle ) => {
 				const uriDecoded = decodeURIComponent( prefixedDbFileTitle );
-				const image = thumbnailData.value.find(
+
+				// Attempt to locate the image in the content images first
+				let image = contentImages.value.find(
 					( imageData ) => imageData.title.getPrefixedDb() === uriDecoded
 				);
+
+				// If we could not fail the image, it may have been an image
+				// from an external source
+				if ( !image ) {
+					// Unlike for local images, where we're using the same ref
+					// that is passed throughout the app to perform the lookup,
+					// we're explicitly calling useExternalImages() both here
+					// and in the component we'll be rendering them in.
+					// I wish there was a clean way to pass around the same data,
+					// but then it would have to be either immediately initialized
+					// (as opposed to the lazy init we have now, based on users
+					// either clicking to show these images, or requesting it via
+					// a shared/history URL), or we would have to proxy the data
+					// and always treat it as a Promise, which, while doable,
+					// is still different from how we handle local images.
+					// Anyway, useExternalImages() just caches its results, so
+					// repeat calls from different places are not really am issue.
+					image = ( await useExternalImages() ).find(
+						( imageData ) => imageData.title.getPrefixedDb() === uriDecoded
+					);
+				}
+
 				if ( image ) {
 					activeImage.value = image;
 				} else {
@@ -71,7 +88,7 @@ module.exports = exports = defineComponent( {
 					// a completely valid url got shared, but the image has since been removed
 					// from the page
 					// eslint-disable-next-line no-console
-					console.error( '[ImageBrowsing] Invalid navigation image; could not find:', name );
+					console.error( '[ImageBrowsing] Invalid navigation image; could not find:', prefixedDbFileTitle );
 					activeImage.value = null;
 				}
 			},
@@ -175,7 +192,7 @@ module.exports = exports = defineComponent( {
 		}
 
 		return {
-			thumbnailData,
+			contentImages,
 			onCarouselLoad,
 			onItemClick,
 			onViewInArticle,

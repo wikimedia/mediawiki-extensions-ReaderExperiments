@@ -24,6 +24,13 @@
 		"ReaderExperimentsApiBaseUri": {
 			"description": "Url to API of MediaWiki instance to use for external data (e.g. when using MobileFrontendContentProvider, in which case this should be equal to $wgMFMwApiContentProviderBaseUri), or leave empty to use local API.",
 			"value": ""
+		},
+		"ReaderExperimentsImageBrowsingExternalWikis": {
+			"description": "Map of external wiki domains from which to show other images, to the message key to use when describing the project name.",
+			"value": {
+				"wikipedia.org": "/* i18n-unused */",
+				"wikidata.org": "wikibase-otherprojects-wikidata"
+			}
 		}
 	},
 	"HookHandlers": {
@@ -50,6 +57,7 @@
 			"dependencies": [
 				"vue",
 				"mediawiki.ForeignApi",
+				"mediawiki.language",
 				"mediawiki.router",
 				"mediawiki.Title",
 				"mediawiki.util",
@@ -69,7 +77,8 @@
 						"cdxIconDownload",
 						"cdxIconAdd",
 						"cdxIconSubtract",
-						"cdxIconImage"
+						"cdxIconImage",
+						"cdxIconArrowPrevious"
 					]
 				},
 				"init.js",
@@ -84,10 +93,16 @@
 				"components/Overlay.vue",
 				"components/VisualTableOfContents.vue",
 				"components/VisualTableOfContentsItem.vue",
+				"components/VisualTableOfContentsOtherWikis.vue",
+				"components/VisualTableOfContentsOtherWikisItem.vue",
 				"composables/useBackgroundColor.js",
+				"composables/useContentImages.js",
+				"composables/useExternalImages.js",
 				"composables/useSmartCrop.js",
+				"composables/useMediaSearchResults.js",
 				"composables/useMwApi.js",
 				"composables/useImageCaption.js",
+				"composables/useUniqueExternalGlobalUsageWikis.js",
 				"plugins/instrumentationPlugin.js"
 			],
 			"styles": [],
@@ -107,9 +122,16 @@
 				"readerexperiments-imagebrowsing-detail-download-size-xl",
 				"readerexperiments-imagebrowsing-image-alt-text",
 				"readerexperiments-imagebrowsing-loading",
+				"readerexperiments-imagebrowsing-overlay-back-button-label",
 				"readerexperiments-imagebrowsing-overlay-close-button-label",
 				"readerexperiments-imagebrowsing-vtoc-heading",
-				"readerexperiments-imagebrowsing-vtoc-view-button-label"
+				"readerexperiments-imagebrowsing-vtoc-other-wikis-heading",
+				"readerexperiments-imagebrowsing-vtoc-other-wikis-loading",
+				"readerexperiments-imagebrowsing-vtoc-view-button-label",
+				"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia",
+				"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple",
+				"readerexperiments-imagebrowsing-vtoc-external-wikis-others",
+				"wikibase-otherprojects-wikidata"
 			]
 		},
 		"fast-average-color": {

@@ -32,6 +32,20 @@
 				@vtoc-item-click="onItemClick"
 				@vtoc-view-in-article="onViewInArticle"
 			></visual-table-of-contents>
+
+			<visual-table-of-contents-other-wikis
+				@vtoc-item-click="onItemClick"
+			></visual-table-of-contents-other-wikis>
+
+			<cdx-button
+				class="ib-overlay__back-button"
+				action="progressive"
+				weight="primary"
+				@click="onClose"
+			>
+				<cdx-icon :icon="cdxIconArrowPrevious"></cdx-icon>
+				{{ $i18n( 'readerexperiments-imagebrowsing-overlay-back-button-label' ).text() }}
+			</cdx-button>
 		</div>
 	</div>
 
@@ -45,8 +59,9 @@
 const { defineComponent, onMounted, onBeforeUnmount, useTemplateRef } = require( 'vue' );
 const DetailView = require( './DetailView.vue' );
 const VisualTableOfContents = require( './VisualTableOfContents.vue' );
+const VisualTableOfContentsOtherWikis = require( './VisualTableOfContentsOtherWikis.vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
-const { cdxIconClose } = require( '../icons.json' );
+const { cdxIconClose, cdxIconArrowPrevious } = require( '../icons.json' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -54,6 +69,7 @@ module.exports = exports = defineComponent( {
 	components: {
 		DetailView,
 		VisualTableOfContents,
+		VisualTableOfContentsOtherWikis,
 		CdxButton,
 		CdxIcon
 	},
@@ -152,7 +168,8 @@ module.exports = exports = defineComponent( {
 			onClose,
 			onItemClick,
 			onViewInArticle,
-			cdxIconClose
+			cdxIconClose,
+			cdxIconArrowPrevious
 		};
 	}
 } );
@@ -197,4 +214,10 @@ module.exports = exports = defineComponent( {
 	z-index: @z-index-overlay;
 }
 
+.ib-overlay__back-button {
+	margin-top: @spacing-150;
+	margin-left: @spacing-150;
+	margin-bottom: @spacing-150;
+	max-width: fit-content;
+}
 </style>

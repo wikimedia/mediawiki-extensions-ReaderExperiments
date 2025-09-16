@@ -26,12 +26,16 @@ module.exports = exports = function useImageCaption( imageData ) {
 		if ( !imageData.value ) {
 			return null;
 		}
+		// Content caption, for local images
 		const figcaption = getCaptionIfAvailable( imageData.value.container );
-		const paragraphText = imageData.value.paragraph && imageData.value.paragraph;
+		// Wikibase/Commons label, for external images
+		const label = imageData.value.label;
+		const paragraphText = imageData.value.paragraph;
 		const altText = imageData.value.alt && mw.html.escape( imageData.value.alt );
 
 		return (
 			figcaption ||
+			label ||
 			paragraphText ||
 			altText
 		);
