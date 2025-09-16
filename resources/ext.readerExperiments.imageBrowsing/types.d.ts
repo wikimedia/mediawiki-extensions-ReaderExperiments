@@ -49,3 +49,9 @@ export interface ImageData {
 	 */
 	resizeUrl: ( w: number ) => string;
 }
+
+export interface InstrumentationPluginConfig {
+	enabled: boolean;
+	eventStream: string;
+	schema: string;
+}

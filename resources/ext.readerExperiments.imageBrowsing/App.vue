@@ -24,7 +24,6 @@
 <script>
 const { defineComponent, ref, inject } = require( 'vue' );
 const { extractThumbInfo } = require( './thumbExtractor.js' );
-const { submitInteraction } = require( './instrumentation.js' );
 const Carousel = require( './components/Carousel.vue' );
 const Overlay = require( './components/Overlay.vue' );
 
@@ -36,6 +35,8 @@ module.exports = exports = defineComponent( {
 		Overlay
 	},
 	setup() {
+		const submitInteraction = inject( 'submitInteraction' );
+
 		const thumbnailData = ref( [] );
 		const activeImage = ref( null );
 		const clickCounter = ref( 0 );
