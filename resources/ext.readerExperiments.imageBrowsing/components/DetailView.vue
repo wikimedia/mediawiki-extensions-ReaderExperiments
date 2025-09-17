@@ -10,18 +10,20 @@
 					'readerexperiments-imagebrowsing-image-alt-text',
 					activeImage.title.getFileNameTextWithoutExtension()
 				).text()"
-			:style="cropStyle"
+			:style="isCropped ? cropStyle : {}"
 		>
 
 		<!-- Caption -->
 		<detail-view-caption
+			v-if="isCropped"
 			:image="activeImage"
 		></detail-view-caption>
 
 		<!-- controls -->
 		<detail-view-controls
 			:image="activeImage"
-			@toggle-fullscreen="onFullScreen"
+			:initial-cropped="isCropped"
+			@toggle-crop="onToggleCrop"
 		></detail-view-controls>
 	</div>
 </template>
@@ -106,14 +108,9 @@ module.exports = exports = defineComponent( {
 			return props.activeImage.resizeUrl( standardizedWidth );
 		} );
 
-		function onFullScreen() {
-			if ( !document.fullscreenElement ) {
-				if ( imageElement.value ) {
-					imageElement.value.requestFullscreen();
-				}
-			} else {
-				document.exitFullscreen();
-			}
+		const isCropped = ref( true );
+		function onToggleCrop( value ) {
+			isCropped.value = value;
 		}
 
 		async function runSmartCrop( imgEl ) {
@@ -181,7 +178,8 @@ module.exports = exports = defineComponent( {
 		return {
 			resizedSrc,
 			imageElement,
-			onFullScreen,
+			onToggleCrop,
+			isCropped,
 			cropStyle
 		};
 	}
@@ -204,8 +202,10 @@ module.exports = exports = defineComponent( {
 		left: 0;
 		width: @size-full;
 		height: @size-full;
-		object-fit: cover;
 		z-index: @z-index-bottom;
+		// below is "fullscreen" style, which will be overridden by a more specific
+		// crop (calculated in JS) by default
+		object-fit: contain;
 	}
 }
 

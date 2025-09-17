@@ -1,13 +1,15 @@
 <template>
 	<div class="ib-detail-view-controls">
 		<!-- Fullscreen -->
-		<cdx-button
-			class="ib-detail-view-controls__fullscreen"
-			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-fullscreen' ).text()"
-			@click="onFullScreen"
+		<cdx-toggle-button
+			v-model="isUncropped"
+			v-tooltip:left="$i18n( 'readerexperiments-imagebrowsing-detail-crop' ).text()"
+			class="ib-detail-view-controls__crop"
+			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-crop' ).text()"
+			@update:model-value="onToggleCrop"
 		>
 			<cdx-icon :icon="cdxIconFullscreen"></cdx-icon>
-		</cdx-button>
+		</cdx-toggle-button>
 
 		<!-- Share -->
 		<cdx-toggle-button
@@ -85,7 +87,7 @@
 <script>
 const { defineComponent, ref, inject, computed, useTemplateRef, watch } = require( 'vue' );
 const useMwApi = require( '../composables/useMwApi.js' );
-const { CdxButton, CdxToggleButton, CdxIcon, CdxPopover, CdxTextInput, CdxSelect } = require( '@wikimedia/codex' );
+const { CdxToggleButton, CdxIcon, CdxPopover, CdxTextInput, CdxTooltip, CdxSelect } = require( '@wikimedia/codex' );
 const { cdxIconFullscreen, cdxIconShare, cdxIconLogoWikimediaCommons, cdxIconDownload } = require( '../icons.json' );
 
 const fakeButtonClasses = [
@@ -108,12 +110,14 @@ const fakeButtonClasses = [
 module.exports = exports = defineComponent( {
 	name: 'DetailViewControls',
 	components: {
-		CdxButton,
 		CdxToggleButton,
 		CdxIcon,
 		CdxPopover,
 		CdxTextInput,
 		CdxSelect
+	},
+	directives: {
+		tooltip: CdxTooltip
 	},
 	props: {
 		/**
@@ -122,10 +126,17 @@ module.exports = exports = defineComponent( {
 		image: {
 			type: Object,
 			required: true
+		},
+		/**
+		 * @type {boolean}
+		 */
+		initialCropped: {
+			type: Boolean,
+			required: true
 		}
 	},
 	emits: [
-		'toggle-fullscreen',
+		'toggle-crop',
 		'share',
 		'download',
 		'download-file'
@@ -260,8 +271,17 @@ module.exports = exports = defineComponent( {
 			selectedDownloadWidth.value = value;
 		}
 
-		function onFullScreen() {
-			emit( 'toggle-fullscreen' );
+		// Below may be a little confusing because the values are inverted.
+		// Parent uses "cropped" terminology for convenience ("fullscreen"
+		// is a poor descriptor for the non-cropped state, and "uncropped"
+		// (are basically any inverted descriptors) are more annoying to
+		// reason with. However, we're handling a button, where the true
+		// state is the inverse of "cropped", so we're stuck with the
+		// inverted descriptor here, but we'll swap things around when it
+		// comes to interfacing with this component.
+		const isUncropped = ref( !props.initialCropped );
+		function onToggleCrop( value ) {
+			emit( 'toggle-crop', !value );
 		}
 
 		return {
@@ -272,9 +292,10 @@ module.exports = exports = defineComponent( {
 			onShare,
 			onDownload,
 			onFileDownload,
-			onFullScreen,
+			onToggleCrop,
 			onCopy,
 			onChangeDownloadSize,
+			isUncropped,
 			showDownloadPopover,
 			showSharePopover,
 			sharePopoverAction,
