@@ -27,7 +27,12 @@ describe( 'Overlay', () => {
 		};
 
 		wrapper = shallowMount( Overlay, {
-			props: mockProps
+			props: mockProps,
+			global: {
+				provide: {
+					submitInteraction: jest.fn()
+				}
+			}
 		} );
 	} );
 
@@ -41,19 +46,19 @@ describe( 'Overlay', () => {
 		expect( closeButton.exists() ).toBe( true );
 	} );
 
-	it( 'emits close-overlay event when close button is clicked', async () => {
+	it( 'emits `overlay-close` when the close button is clicked', async () => {
 		const closeButton = wrapper.find( '.ib-overlay__close' );
 		await closeButton.trigger( 'click' );
 
-		expect( wrapper.emitted( 'close-overlay' ) ).toBeTruthy();
-		expect( wrapper.emitted( 'close-overlay' ).length ).toBe( 1 );
+		expect( wrapper.emitted( 'overlay-close' ) ).toBeTruthy();
+		expect( wrapper.emitted( 'overlay-close' ).length ).toBe( 1 );
 	} );
 
-	it( 'emits close-overlay event when backdrop is clicked', async () => {
+	it( 'emits `overlay-close` when the backdrop is clicked', async () => {
 		const backdrop = wrapper.find( '.ib-overlay-backdrop' );
 		await backdrop.trigger( 'click' );
 
-		expect( wrapper.emitted( 'close-overlay' ) ).toBeTruthy();
-		expect( wrapper.emitted( 'close-overlay' ).length ).toBe( 1 );
+		expect( wrapper.emitted( 'overlay-close' ) ).toBeTruthy();
+		expect( wrapper.emitted( 'overlay-close' ).length ).toBe( 1 );
 	} );
 } );

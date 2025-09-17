@@ -21,7 +21,7 @@
 </template>
 
 <script>
-const { defineComponent, onMounted, ref, ComponentPublicInstance } = require( 'vue' );
+const { defineComponent, ref, inject, onMounted, ComponentPublicInstance } = require( 'vue' );
 const CarouselItem = require( './CarouselItem.vue' );
 
 // @vue/component
@@ -37,23 +37,28 @@ module.exports = exports = defineComponent( {
 		}
 	},
 	emits: [
-		'carousel-load',
 		'carousel-item-click'
 	],
 	expose: [
 		'focusActiveItem'
 	],
 	setup( props, { emit } ) {
-		// Track which carousel item is currently active for keyboard navigation
+		// Track which carousel item is currently active for keyboard navigation.
 		const activeIndex = ref( 0 );
 
 		// Set up a map to contain references to all carousel item elements, so
 		// that they can be programmatically focused.
-		// This follows Codex Tabs pattern
+		// This follows Codex Tabs pattern.
 		const carouselItemRefs = ref( new Map() );
 
+		// Instrumentation.
+		const clickCounter = ref( 0 );
+		const submitInteraction = inject( 'submitInteraction' );
+
+		/* eslint-disable camelcase */
 		onMounted( () => {
-			emit( 'carousel-load' );
+			// Instrument carousel load.
+			submitInteraction( 'image_carousel_load', { action_source: 'init' } );
 		} );
 
 		/**
@@ -83,8 +88,24 @@ module.exports = exports = defineComponent( {
 
 			// By now, this is either a mouse-induced click, a <Space> keyup,
 			// or an <Enter> keyup.
+
 			emit( 'carousel-item-click', image );
+
+			clickCounter.value += 1;
+
+			// Instrument click on a carousel image.
+			const interactionData = {
+				action_subtype: 'view_image',
+				action_source: 'image_carousel'
+			};
+			// Additional interaction field on the first image click only.
+			// To be used for click-through rate computation.
+			if ( clickCounter.value === 1 ) {
+				interactionData.action_context = 'image1';
+			}
+			submitInteraction( 'click', interactionData );
 		}
+		/* eslint-enable camelcase */
 
 		/**
 		 * Store pointers to each carousel item element following Codex Tabs pattern

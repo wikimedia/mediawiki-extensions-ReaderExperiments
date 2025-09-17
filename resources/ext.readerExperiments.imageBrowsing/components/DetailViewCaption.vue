@@ -38,7 +38,7 @@
 </template>
 
 <script>
-const { defineComponent, ref, useTemplateRef, onMounted, watch, nextTick, computed } = require( 'vue' );
+const { defineComponent, computed, ref, useTemplateRef, inject, onMounted, onUnmounted, watch, nextTick } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
 const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
@@ -70,38 +70,90 @@ module.exports = exports = defineComponent( {
 			const altText = props.image.alt && mw.html.escape( props.image.alt );
 			return label || figcaption || altText;
 		} );
-
 		const canCaptionExpand = ref( true );
 		const isCaptionExpanded = ref( false );
 		const captionTextElement = useTemplateRef( 'captionTextElement' );
 
-		function onCaptionExpand() {
-			isCaptionExpanded.value = true;
-		}
-
-		function onCaptionCollapse() {
-			isCaptionExpanded.value = false;
-		}
+		// Instrumentation plugin.
+		const submitInteraction = inject( 'submitInteraction' );
+		const manageLinkEventListeners = inject( 'manageLinkEventListeners' );
 
 		function calculateCaptionOverflow() {
 			canCaptionExpand.value = captionTextElement.value &&
 				captionTextElement.value.clientHeight !== captionTextElement.value.scrollHeight;
 		}
 
-		// Determine if the "more" button needs to be shown when component mounts
-		onMounted( calculateCaptionOverflow );
+		// When the component is mounted:
+		// - determine if the "More" button needs to be shown
+		// - add click event listeners to wikilinks
+		onMounted( () => {
+			calculateCaptionOverflow();
+			manageLinkEventListeners( captionTextElement, onCaptionLinkClick );
+		} );
 
-		// Check this again if the caption text changes
+		// When the component is unmounted,
+		// remove wikilinks' click event listeners.
+		onUnmounted( () => {
+			manageLinkEventListeners(
+				captionTextElement, onCaptionLinkClick, true
+			);
+		} );
+
+		// When the caption changes,
+		// run the same checks as above.
 		watch( caption, () => {
 			isCaptionExpanded.value = false;
-			nextTick( calculateCaptionOverflow );
+			nextTick( () => {
+				calculateCaptionOverflow();
+				manageLinkEventListeners( captionTextElement, onCaptionLinkClick );
+			} );
 		} );
+
+		// When the caption expands or collapses,
+		// update wikilinks' click event listeners.
+		watch( isCaptionExpanded, () => {
+			nextTick( manageLinkEventListeners( captionTextElement, onCaptionLinkClick ) );
+		} );
+
+		//
+		// Event handlers.
+		//
+
+		/* eslint-disable camelcase */
+		function onCaptionLinkClick() {
+			// Instrument click on a detail view caption's link.
+			submitInteraction(
+				'click',
+				{
+					action_subtype: 'caption_link',
+					action_source: 'detail_view'
+				}
+			);
+		}
+
+		function onCaptionExpand() {
+			isCaptionExpanded.value = true;
+
+			// Instrument click on the 'More' button.
+			submitInteraction(
+				'click',
+				{
+					action_subtype: 'more',
+					action_source: 'detail_view'
+				}
+			);
+		}
+		/* eslint-enable camelcase */
+
+		function onCaptionCollapse() {
+			isCaptionExpanded.value = false;
+		}
 
 		return {
 			caption,
-			captionTextElement,
 			canCaptionExpand,
 			isCaptionExpanded,
+			captionTextElement,
 			onCaptionExpand,
 			onCaptionCollapse,
 			cdxIconAdd,

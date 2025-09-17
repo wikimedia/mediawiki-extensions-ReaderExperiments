@@ -1,7 +1,7 @@
 /**
  * Instrumentation Plugin
  *
- * This plugin is adds a new `$submitInteraction` method to all components in the
+ * This plugin adds a new `$submitInteraction` method to all components in the
  * target Vue app. Depending on the configuration provided, that method will either
  * call `mw.eventLog.submitInteraction` with appropriate arguments (including event
  * stream name and schema provided in config) or it will do nothing.
@@ -32,6 +32,22 @@ module.exports = exports = {
 			}
 		};
 
+		// Add click event listeners to eventual links in a reactive container element.
+		const manageLinkEventListeners = ( container, handler, remove = false ) => {
+			const element = container.value;
+			if ( !element ) {
+				return;
+			}
+			const links = element.querySelectorAll( 'a' );
+			links.forEach( ( link ) => {
+				link.removeEventListener( 'click', handler );
+				if ( !remove ) {
+					link.addEventListener( 'click', handler );
+				}
+			} );
+		};
+
 		app.provide( 'submitInteraction', submitInteraction );
+		app.provide( 'manageLinkEventListeners', manageLinkEventListeners );
 	}
 };

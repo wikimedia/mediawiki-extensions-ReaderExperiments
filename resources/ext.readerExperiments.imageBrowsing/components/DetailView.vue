@@ -36,17 +36,17 @@
 			:image="activeImage"
 		></detail-view-caption>
 
-		<!-- controls -->
+		<!-- Controls -->
 		<detail-view-controls
 			:image="activeImage"
 			:initial-cropped="isCropped"
-			@toggle-crop="onToggleCrop"
+			@detail-view-crop-toggle="onCropToggle"
 		></detail-view-controls>
 	</div>
 </template>
 
 <script>
-const { ref, computed, defineComponent, useTemplateRef, onMounted, watch, nextTick, toRef } = require( 'vue' );
+const { ref, computed, defineComponent, useTemplateRef, onMounted, watch, nextTick, toRef, inject } = require( 'vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
@@ -77,8 +77,9 @@ module.exports = exports = defineComponent( {
 		const imageElement = useTemplateRef( 'imageElement' );
 		const cropStyle = ref( {} );
 		const loading = ref( true );
+		const isCropped = ref( true );
 
-		// Background color
+		// Background color.
 		const imageRef = toRef( props, 'activeImage' );
 		const color = useBackgroundColor( imageRef, imageElement );
 		const dominantColorHex = computed( () => {
@@ -92,7 +93,9 @@ module.exports = exports = defineComponent( {
 				null;
 		} );
 
-		// Per-instance guard
+		const submitInteraction = inject( 'submitInteraction' ); // Instrumentation plugin
+
+		// Per-instance guard.
 		let runId = 0;
 		onMounted( () => {
 			const imgEl = imageElement.value;
@@ -119,7 +122,7 @@ module.exports = exports = defineComponent( {
 			}
 		);
 
-		// Full-screen image src
+		// Full-screen image src.
 		const resizedSrc = computed( () => {
 			const fullscreenWidth = Math.max(
 				window.innerWidth,
@@ -140,11 +143,6 @@ module.exports = exports = defineComponent( {
 			return props.activeImage.resizeUrl( standardizedWidth );
 		} );
 
-		const isCropped = ref( true );
-		function onToggleCrop( value ) {
-			isCropped.value = value;
-		}
-
 		async function runSmartCrop( imgEl ) {
 			const myRun = ++runId;
 
@@ -152,12 +150,12 @@ module.exports = exports = defineComponent( {
 				if ( imgEl.decode ) {
 					await imgEl.decode();
 				} else {
-					// Ancient browser or the test suite; fail gracefully
+					// Ancient browser or the test suite; fail gracefully.
 					loading.value = true;
 					return;
 				}
 
-				// 9:16 portrait analysis box
+				// 9:16 portrait analysis box.
 				const analysisW = imgEl.clientWidth;
 				const analysisH = Math.round( ( analysisW / 9 ) * 16 );
 
@@ -178,15 +176,16 @@ module.exports = exports = defineComponent( {
 					return;
 				}
 
-				// Center of crop in the SAME analysis space (9:16)
+				// Center of crop in the SAME analysis space (9:16).
 				const centerX = crop.x + crop.width / 2;
 				const centerY = crop.y + crop.height / 2;
 				// Convert to object-position percentages relative to the
-				// SOURCE image SmartCrop analyzed
+				// SOURCE image SmartCrop analyzed.
 				const toPct = ( value, total ) => ( value / total ) * 100;
 				const clamp = ( v ) => Math.max( 0, Math.min( 100, v ) );
 
-				// use the returned dimensions from useSmartCrop, NOT analysisW/H or naturalW/H
+				// Use the returned dimensions from useSmartCrop,
+				// NOT analysisW/H or naturalW/H.
 				const xPercent = toPct( centerX, sourceWidth );
 				const yPercent = toPct( centerY, sourceHeight );
 				const xClamped = clamp( xPercent );
@@ -214,6 +213,31 @@ module.exports = exports = defineComponent( {
 			}
 		}
 
+		//
+		// Event handlers.
+		//
+
+		// The child component `DetailViewControls` emits an untoggled state.
+		// See comment in the same event handler there for an explanation.
+		function onCropToggle( untoggled ) {
+			isCropped.value = untoggled;
+
+			// Instrument click on the crop button.
+			// Not implemented in the child component,
+			// since the state check doesn't work there.
+			if ( !untoggled ) {
+				submitInteraction(
+					'click',
+					{
+						/* eslint-disable camelcase */
+						action_subtype: 'full_image',
+						action_source: 'detail_view'
+						/* eslint-enable camelcase */
+					}
+				);
+			}
+		}
+
 		return {
 			resizedSrc,
 			dominantColorHex,
@@ -222,8 +246,8 @@ module.exports = exports = defineComponent( {
 			cropStyle,
 			loading,
 			cdxIconImage,
-			onToggleCrop,
-			isCropped
+			isCropped,
+			onCropToggle
 		};
 	}
 } );

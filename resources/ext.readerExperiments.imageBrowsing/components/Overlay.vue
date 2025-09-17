@@ -29,13 +29,13 @@
 
 			<visual-table-of-contents
 				:images="images"
-				@vtoc-item-click="onItemClick"
-				@vtoc-view-in-article="onViewInArticle"
+				@vtoc-item-click="onVTOCItemClick"
+				@vtoc-view-in-article="onVTOCViewInArticle"
 			></visual-table-of-contents>
 
 			<visual-table-of-contents-other-wikis
 				:exclude-images="images"
-				@vtoc-item-click="onItemClick"
+				@vtoc-item-click="onVTOCItemClick"
 			></visual-table-of-contents-other-wikis>
 
 			<cdx-button
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-const { defineComponent, onMounted, onBeforeUnmount, useTemplateRef } = require( 'vue' );
+const { defineComponent, useTemplateRef, inject, onMounted, onBeforeUnmount } = require( 'vue' );
 const DetailView = require( './DetailView.vue' );
 const VisualTableOfContents = require( './VisualTableOfContents.vue' );
 const VisualTableOfContentsOtherWikis = require( './VisualTableOfContentsOtherWikis.vue' );
@@ -85,11 +85,17 @@ module.exports = exports = defineComponent( {
 		}
 	},
 	emits: [
-		'close-overlay',
+		'overlay-close',
 		'vtoc-item-click',
 		'vtoc-view-in-article'
 	],
 	setup( props, { emit } ) {
+		const overlayElement = useTemplateRef( 'overlayElement' );
+		const detailViewRef = useTemplateRef( 'detailViewRef' );
+		const existingBodyOverflow = document.body.style.overflow;
+
+		const submitInteraction = inject( 'submitInteraction' ); // Instrumentation plugin
+
 		function focusFirstFocusableElement( container, backwards = false ) {
 			// Find all focusable elements in the container.
 			// Exclude elements with a negative tabindex; those are technically focusable, but are
@@ -117,60 +123,82 @@ module.exports = exports = defineComponent( {
 			return false;
 		}
 
-		const overlayElement = useTemplateRef( 'overlayElement' );
-		const existingBodyOverflow = document.body.style.overflow;
+		//
+		// Event handlers.
+		//
+
 		onMounted( () => {
-			// Prevent body scroll
+			// Prevent body scroll.
 			document.body.style.overflow = 'hidden';
 			focusFirstFocusableElement( overlayElement.value, false );
 		} );
+
 		onBeforeUnmount( () => {
-			// Restore body scroll
+			// Restore body scroll.
 			document.body.style.overflow = existingBodyOverflow;
 		} );
+
 		const onFocusTrapStart = () => {
 			focusFirstFocusableElement( overlayElement.value, true );
 		};
+
 		const onFocusTrapEnd = () => {
 			focusFirstFocusableElement( overlayElement.value, false );
 		};
 
 		function onClose() {
-			emit( 'close-overlay' );
-		}
+			emit( 'overlay-close' );
 
-		const detailViewRef = useTemplateRef( 'detailViewRef' );
+			// Instrument overlay close.
+			// Same action as the carousel load, but 'close' instead of 'init'.
+			// eslint-disable-next-line camelcase
+			submitInteraction( 'image_carousel_load', { action_source: 'close' } );
+		}
 
 		/**
 		 * @param {import('../types').ImageData} image
 		 */
-		function onItemClick( image ) {
+		function onVTOCItemClick( image ) {
 			emit( 'vtoc-item-click', image );
+
 			if ( detailViewRef.value && detailViewRef.value.$el ) {
 				// Scroll the overlay back to the detail view at top.
 				detailViewRef.value.$el.scrollIntoView( {
 					behavior: 'smooth'
 				} );
 			}
+
+			// Instrument click on a VTOC image.
+			// There's no distinction between images in the article and from other wikis:
+			// the event is the same, thus firing here.
+			submitInteraction(
+				'click',
+				{
+					/* eslint-disable camelcase */
+					action_subtype: 'view_image',
+					action_source: 'visual_table_of_contents'
+					/* eslint-enable camelcase */
+				}
+			);
 		}
 
 		/**
 		 * @param {import('../types').ImageData} image
 		 */
-		function onViewInArticle( image ) {
+		function onVTOCViewInArticle( image ) {
 			emit( 'vtoc-view-in-article', image );
 		}
 
 		return {
+			cdxIconClose,
+			cdxIconArrowPrevious,
 			overlayElement,
 			detailViewRef,
 			onFocusTrapStart,
 			onFocusTrapEnd,
 			onClose,
-			onItemClick,
-			onViewInArticle,
-			cdxIconClose,
-			cdxIconArrowPrevious
+			onVTOCItemClick,
+			onVTOCViewInArticle
 		};
 	}
 } );

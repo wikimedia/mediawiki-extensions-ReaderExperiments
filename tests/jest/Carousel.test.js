@@ -117,6 +117,9 @@ describe( 'Carousel', () => {
 							return messages[ key ] || key;
 						}
 					} )
+				},
+				provide: {
+					submitInteraction: jest.fn()
 				}
 			}
 		} );

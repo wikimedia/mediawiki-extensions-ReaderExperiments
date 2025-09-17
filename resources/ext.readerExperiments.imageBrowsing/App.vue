@@ -4,8 +4,7 @@
 			v-if="contentImages.length > 2"
 			ref="carouselRef"
 			:images="contentImages"
-			@carousel-load="onCarouselLoad"
-			@carousel-item-click="onItemClick"
+			@carousel-item-click="onCarouselItemClick"
 		>
 		</carousel>
 
@@ -14,9 +13,9 @@
 				v-if="activeImage"
 				:images="contentImages"
 				:active-image="activeImage"
-				@close-overlay="onCloseOverlay"
-				@vtoc-item-click="onItemClick"
-				@vtoc-view-in-article="onViewInArticle"
+				@overlay-close="onOverlayClose"
+				@vtoc-item-click="onVTOCItemClick"
+				@vtoc-view-in-article="onVTOCViewInArticle"
 			></overlay>
 		</teleport>
 	</div>
@@ -39,12 +38,10 @@ module.exports = exports = defineComponent( {
 		Overlay
 	},
 	setup() {
-		const submitInteraction = inject( 'submitInteraction' );
-		const teleportTarget = inject( 'CdxTeleportTarget' );
-
 		const contentImages = ref( null );
 		const activeImage = ref( null );
-		const clickCounter = ref( 0 );
+
+		const teleportTarget = inject( 'CdxTeleportTarget' );
 
 		// Reference to the Carousel component for focus management
 		const carouselRef = useTemplateRef( 'carouselRef' );
@@ -139,41 +136,46 @@ module.exports = exports = defineComponent( {
 			router.navigate( path );
 		}
 
-		// Instrument carousel load
-		function onCarouselLoad() {
-			// eslint-disable-next-line camelcase
-			submitInteraction( 'image_carousel_load', { action_source: 'init' } );
-		}
+		//
+		// Carousel's event handlers.
+		//
 
 		/**
-		 * When a carousel item is clicked by the user, set that image as
-		 * the active image and show the overlay part of the UI.
-		 *
 		 * @param {import('./types').ImageData} image
 		 */
-		function onItemClick( image ) {
-			clickCounter.value += 1;
-
-			// Instrument click on a carousel image
-			/* eslint-disable camelcase */
-			const interactionData = {
-				action_subtype: 'view_image',
-				action_source: 'image_carousel'
-			};
-			if ( clickCounter.value === 1 ) {
-				interactionData.action_context = 'image1';
-			}
-			/* eslint-enable camelcase */
-			submitInteraction( 'click', interactionData );
-
+		function onCarouselItemClick( image ) {
+			// When a carousel image is clicked, set it as the active image
+			// and show the overlay part of the UI.
+			activeImage.value = image;
 			navigateTo( image );
 		}
 
+		//
+		// Detail view's event handlers.
+		//
+
+		function onOverlayClose() {
+			navigateTo( null );
+
+			// Return focus to the selected carousel item when the overlay closes
+			if ( carouselRef.value && carouselRef.value.focusActiveItem ) {
+				carouselRef.value.focusActiveItem();
+			}
+		}
+
+		//
+		// Visual table of contents' (VTOC) event handlers.
+		//
+
+		function onVTOCItemClick( image ) {
+			activeImage.value = image;
+		}
+
 		/**
 		 * @param {import('./types').ImageData} image
 		 */
-		function onViewInArticle( image ) {
-			onCloseOverlay();
+		function onVTOCViewInArticle( image ) {
+			activeImage.value = null;
 
 			// Scroll the main page view to the image in context.
 			// Do not use image.thumb, as that may be a lazy-load placeholder
@@ -194,32 +196,15 @@ module.exports = exports = defineComponent( {
 			}
 		}
 
-		/**
-		 * When a "close" event has been emitted from the Overlay component,
-		 * clear the active image and hide the overlay part of the UI.
-		 */
-		function onCloseOverlay() {
-			// Instrument overlay close
-			// eslint-disable-next-line camelcase
-			submitInteraction( 'image_carousel_load', { action_source: 'close' } );
-
-			navigateTo( null );
-
-			// Return focus to the selected carousel item when the overlay closes
-			if ( carouselRef.value && carouselRef.value.focusActiveItem ) {
-				carouselRef.value.focusActiveItem();
-			}
-		}
-
 		return {
 			contentImages,
-			onCarouselLoad,
-			onItemClick,
-			onViewInArticle,
-			onCloseOverlay,
 			activeImage,
 			teleportTarget,
-			carouselRef
+			carouselRef,
+			onCarouselItemClick,
+			onOverlayClose,
+			onVTOCItemClick,
+			onVTOCViewInArticle
 		};
 	}
 } );

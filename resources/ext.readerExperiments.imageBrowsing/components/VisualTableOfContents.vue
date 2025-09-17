@@ -39,6 +39,10 @@ module.exports = exports = defineComponent( {
 		'vtoc-view-in-article'
 	],
 	setup( props, { emit } ) {
+		//
+		// Event handlers.
+		//
+
 		/**
 		 * @param {import('../types').ImageData} image
 		 */

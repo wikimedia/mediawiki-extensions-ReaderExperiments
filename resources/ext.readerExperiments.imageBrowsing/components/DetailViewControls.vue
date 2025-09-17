@@ -1,13 +1,13 @@
 <template>
 	<div class="ib-detail-view-controls">
-		<!-- Fullscreen -->
+		<!-- Full screen -->
 		<cdx-toggle-button
 			v-model="isUncropped"
 			v-tooltip:left="$i18n( 'readerexperiments-imagebrowsing-detail-crop' ).text()"
 			class="ib-detail-view-controls__crop"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-crop' ).text()"
 			:disabled="loading"
-			@update:model-value="onToggleCrop"
+			@update:model-value="onCropToggle"
 		>
 			<cdx-icon :icon="cdxIconFullscreen"></cdx-icon>
 		</cdx-toggle-button>
@@ -19,7 +19,7 @@
 			class="ib-detail-view-controls__share"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-share' ).text()"
 			:disabled="loading"
-			@update:model-value="onShare"
+			@update:model-value="onShareToggle"
 		>
 			<cdx-icon :icon="cdxIconShare"></cdx-icon>
 		</cdx-toggle-button>
@@ -31,7 +31,7 @@
 			:render-in-place="true"
 			:title="$i18n( 'readerexperiments-imagebrowsing-detail-share' ).text()"
 			:default-action="sharePopoverAction"
-			@default="onCopy"
+			@default="onClipboardCopyTo"
 		>
 			<cdx-text-input
 				v-model="descriptionUrl"
@@ -41,7 +41,7 @@
 			</cdx-text-input>
 		</cdx-popover>
 
-		<!-- View on Commons -->
+		<!-- Go to Commons -->
 		<!-- https://doc.wikimedia.org/codex/latest/components/demos/button.html#link-buttons-and-other-elements -->
 		<a
 			v-if="( image.src || '' ).includes( '/wikipedia/commons/' )"
@@ -52,6 +52,7 @@
 			target="_blank"
 			rel="noreferrer noopener"
 			:disabled="loading"
+			@click="onCommonsGoTo"
 		>
 			<cdx-icon :icon="cdxIconLogoWikimediaCommons"></cdx-icon>
 		</a>
@@ -63,7 +64,7 @@
 			class="ib-detail-view-controls__download"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-download' ).text()"
 			:disabled="loading"
-			@update:model-value="onDownload"
+			@update:model-value="onDownloadToggle"
 		>
 			<cdx-icon :icon="cdxIconDownload"></cdx-icon>
 		</cdx-toggle-button>
@@ -81,7 +82,7 @@
 			<cdx-select
 				v-model:selected="selectedDownloadWidth"
 				:menu-items="downloadWidths"
-				@update:selected="onChangeDownloadSize"
+				@update:selected="onDownloadSizeChange"
 			>
 			</cdx-select>
 		</cdx-popover>
@@ -145,10 +146,7 @@ module.exports = exports = defineComponent( {
 		}
 	},
 	emits: [
-		'toggle-crop',
-		'share',
-		'download',
-		'download-file'
+		'detail-view-crop-toggle'
 	],
 	setup( props, { emit } ) {
 		const loading = ref( true );
@@ -159,6 +157,8 @@ module.exports = exports = defineComponent( {
 		const triggerDownloadElement = useTemplateRef( 'triggerDownloadElement' );
 
 		const imageInfo = ref( null );
+
+		const submitInteraction = inject( 'submitInteraction' ); // Instrumentation plugin
 
 		const fetchImageInfo = async ( image ) => {
 			loading.value = true;
@@ -180,10 +180,10 @@ module.exports = exports = defineComponent( {
 			loading.value = false;
 		};
 
-		// Initial fetch
+		// Initial fetch.
 		fetchImageInfo( props.image );
 
-		// Watch for image prop changes and refetch
+		// Watch for image prop changes and refetch.
 		watch( () => props.image, ( newImage ) => {
 			fetchImageInfo( newImage );
 		} );
@@ -221,11 +221,11 @@ module.exports = exports = defineComponent( {
 					let resizeWidth = width;
 					let resizeHeight = parseInt( height * width / imageInfo.value.width );
 
-					// if the source image is (comparatively, against the bounding
+					// If the source image is (comparatively, against the bounding
 					// box of the resize bucket) higher than it is wider, then we
 					// need to resize based on height; our resize function works off
 					// of width, though, so let's figure out what width matches the
-					// height we need to resize to
+					// height we need to resize to.
 					if ( ( imageInfo.value.width / width ) < ( imageInfo.value.height / height ) ) {
 						resizeWidth = parseInt( width * height / imageInfo.value.height );
 						resizeHeight = height;
@@ -261,29 +261,15 @@ module.exports = exports = defineComponent( {
 			label: $i18n( 'readerexperiments-imagebrowsing-detail-download' ).text()
 		};
 
-		function onShare() {
-			emit( 'share' );
-		}
+		const fakeButtonClasses = computed( () => {
+			return loading.value ?
+				fakeButtonClassesDisabled :
+				fakeButtonClassesEnabled;
+		} );
 
-		function onDownload() {
-			emit( 'download' );
-		}
-
-		function onCopy() {
-			// navigator.clipboard() is not supported in Safari 11.1, iOS Safari 11.3-11.4
-			if ( navigator.clipboard && navigator.clipboard.writeText ) {
-				navigator.clipboard.writeText( imageInfo.value.descriptionurl );
-			}
-		}
-
-		function onFileDownload() {
-			emit( 'download-file' );
-			window.location.href = props.image.resizeUrl( selectedDownloadWidth.value ) + '?download';
-		}
-
-		function onChangeDownloadSize( value ) {
-			selectedDownloadWidth.value = value;
-		}
+		//
+		// Event handlers.
+		//
 
 		// Below may be a little confusing because the values are inverted.
 		// Parent uses "cropped" terminology for convenience ("fullscreen"
@@ -294,27 +280,66 @@ module.exports = exports = defineComponent( {
 		// inverted descriptor here, but we'll swap things around when it
 		// comes to interfacing with this component.
 		const isUncropped = ref( !props.initialCropped );
-		function onToggleCrop( value ) {
-			emit( 'toggle-crop', !value );
+		function onCropToggle( toggled ) {
+			emit( 'detail-view-crop-toggle', !toggled );
 		}
 
-		const fakeButtonClasses = computed( () => {
-			return loading.value ?
-				fakeButtonClassesDisabled :
-				fakeButtonClassesEnabled;
-		} );
+		/* eslint-disable camelcase */
+		function onShareToggle( toggled ) {
+			if ( toggled ) {
+				submitInteraction(
+					'click',
+					{
+						action_subtype: 'share',
+						action_source: 'detail_view'
+					}
+				);
+			}
+		}
+
+		function onCommonsGoTo() {
+			submitInteraction(
+				'click',
+				{
+					action_subtype: 'commons',
+					action_source: 'detail_view'
+				}
+			);
+		}
+
+		function onDownloadToggle( toggled ) {
+			if ( toggled ) {
+				submitInteraction(
+					'click',
+					{
+						action_subtype: 'download',
+						action_source: 'detail_view'
+					}
+				);
+			}
+		}
+		/* eslint-enable camelcase */
+
+		function onClipboardCopyTo() {
+			// navigator.clipboard() is not supported in Safari 11.1, iOS Safari 11.3-11.4
+			if ( navigator.clipboard && navigator.clipboard.writeText ) {
+				navigator.clipboard.writeText( imageInfo.value.descriptionurl );
+			}
+		}
+
+		function onFileDownload() {
+			window.location.href = props.image.resizeUrl( selectedDownloadWidth.value ) + '?download';
+		}
+
+		function onDownloadSizeChange( value ) {
+			selectedDownloadWidth.value = value;
+		}
 
 		return {
 			loading,
 			descriptionUrl,
 			selectedDownloadWidth,
 			downloadWidths,
-			onShare,
-			onDownload,
-			onFileDownload,
-			onToggleCrop,
-			onCopy,
-			onChangeDownloadSize,
 			isUncropped,
 			showDownloadPopover,
 			showSharePopover,
@@ -326,7 +351,14 @@ module.exports = exports = defineComponent( {
 			cdxIconShare,
 			fakeButtonClasses,
 			triggerDownloadElement,
-			triggerShareElement
+			triggerShareElement,
+			onCropToggle,
+			onShareToggle,
+			onCommonsGoTo,
+			onDownloadToggle,
+			onClipboardCopyTo,
+			onFileDownload,
+			onDownloadSizeChange
 		};
 	}
 } );

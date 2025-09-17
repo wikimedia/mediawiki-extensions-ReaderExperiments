@@ -22,7 +22,7 @@ describe( 'VisualTableOfContentsItem', () => {
 		mockImage = {
 			src: '//url/to/full-image.jpg',
 			srcset: '//url/to/full-image.jpg 1x, //url/to/full-image@2x.jpg 2x',
-			alt: 'The image alt text',
+			alt: 'The image alt text with a <a href="wiki">link</a>',
 			name: 'The image file name',
 			width: 200,
 			height: 200,
@@ -48,6 +48,10 @@ describe( 'VisualTableOfContentsItem', () => {
 							return messages[ key ] || key;
 						}
 					} )
+				},
+				provide: {
+					submitInteraction: jest.fn(),
+					manageLinkEventListeners: jest.fn()
 				}
 			}
 		} );
@@ -77,10 +81,10 @@ describe( 'VisualTableOfContentsItem', () => {
 		const figcaption = wrapper.find( 'figcaption' );
 		// Since getCaptionIfAvailable is mocked to return null, it falls back to alt text.
 		// Verify the fallback behavior works correctly.
-		expect( figcaption.text() ).toBe( 'The image alt text' );
+		expect( figcaption.text() ).toBe( 'The image alt text with a link' );
 	} );
 
-	it( 'emits vtoc-item-click event when image is clicked', async () => {
+	it( 'emits `vtoc-item-click` when an image is clicked', async () => {
 		const imageButton = wrapper.find( '.ib-vtoc-item__figure button' );
 		await imageButton.trigger( 'click' );
 
@@ -89,7 +93,7 @@ describe( 'VisualTableOfContentsItem', () => {
 		expect( wrapper.emitted( 'vtoc-item-click' )[ 0 ][ 0 ] ).toStrictEqual( mockImage );
 	} );
 
-	it( 'emits vtoc-view-in-article event when view in article link is clicked', async () => {
+	it( 'emits `vtoc-view-in-article` when the `view in article` button is clicked', async () => {
 		const button = wrapper.find( '.ib-vtoc-item__view-in-article' );
 		await button.trigger( 'click' );
 
