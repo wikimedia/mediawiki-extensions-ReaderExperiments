@@ -51,6 +51,7 @@
 			"dependencies": [
 				"vue",
 				"mediawiki.ForeignApi",
+				"mediawiki.router",
 				"mediawiki.Title",
 				"mediawiki.util",
 				"smartcrop",
