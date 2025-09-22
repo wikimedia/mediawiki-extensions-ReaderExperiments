@@ -2,10 +2,6 @@
 	<div
 		v-if="caption"
 		class="ib-detail-view-caption"
-		:style="{
-			'--dominant-color-hex': dominantColorHex,
-			'--dominant-color-is-dark': dominantColorIsDark ? 1 : 0
-		}"
 	>
 		<!-- eslint-disable vue/no-v-html -->
 		<p
@@ -42,10 +38,9 @@
 </template>
 
 <script>
-const { defineComponent, ref, computed, useTemplateRef, onMounted, watch, nextTick, toRef } = require( 'vue' );
+const { defineComponent, ref, useTemplateRef, onMounted, watch, nextTick, toRef } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
-const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 const useImageCaption = require( '../composables/useImageCaption.js' );
 
 /**
@@ -69,10 +64,8 @@ module.exports = exports = defineComponent( {
 	setup( props ) {
 		const imageRef = toRef( props, 'image' );
 
-		// Background color
-		const color = useBackgroundColor( imageRef );
-		const dominantColorHex = computed( () => color.value && color.value.hex || '#000' );
-		const dominantColorIsDark = computed( () => color.value && color.value.isDark || false );
+		// Background color is set by the parent DetailView's
+		// style setup based on the active image.
 
 		// Use the composable for caption logic
 		const { caption } = useImageCaption( imageRef );
@@ -103,8 +96,6 @@ module.exports = exports = defineComponent( {
 		} );
 
 		return {
-			dominantColorHex,
-			dominantColorIsDark,
 			caption,
 			captionTextElement,
 			canCaptionExpand,
@@ -147,7 +138,7 @@ module.exports = exports = defineComponent( {
 	&__text,
 	&__expand.cdx-button,
 	&__collapse.cdx-button {
-		color: ~"oklch( from var( --dominant-color-hex ) calc( l * var( --dominant-color-is-dark ) * 100 ) c h )";
+		color: var( --dominant-color-contrasting )
 	}
 
 	&__expand.cdx-button,

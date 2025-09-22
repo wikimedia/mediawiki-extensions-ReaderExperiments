@@ -22,12 +22,10 @@
 				<cdx-icon :icon="cdxIconClose"></cdx-icon>
 			</cdx-button>
 
-			<suspense>
-				<detail-view
-					ref="detailViewRef"
-					:active-image="activeImage"
-				></detail-view>
-			</suspense>
+			<detail-view
+				ref="detailViewRef"
+				:active-image="activeImage"
+			></detail-view>
 
 			<visual-table-of-contents
 				:images="images"
@@ -198,4 +196,5 @@ module.exports = exports = defineComponent( {
 	right: @spacing-100;
 	z-index: @z-index-overlay;
 }
+
 </style>

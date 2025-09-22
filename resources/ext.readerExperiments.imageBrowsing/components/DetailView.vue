@@ -1,5 +1,13 @@
 <template>
-	<div class="ib-detail-view">
+	<div
+		class="ib-detail-view"
+		:class="{
+			'ib-detail-image-loading': loading
+		}"
+		:style="{
+			'--dominant-color-hex': dominantColorHex,
+			'--dominant-color-contrasting': dominantColorContrasting
+		}">
 		<!-- Image -->
 		<img
 			ref="imageElement"
@@ -10,8 +18,17 @@
 					'readerexperiments-imagebrowsing-image-alt-text',
 					activeImage.title.getFileNameTextWithoutExtension()
 				).text()"
+			crossorigin="anonymous"
 			:style="isCropped ? cropStyle : {}"
 		>
+		<div
+			v-if="loading"
+			class="ib-detail-progress">
+			<cdx-icon
+				:icon="cdxIconImage"
+				:aria-label="$i18n( 'readerexperiments-imagebrowsing-loading' )"
+			></cdx-icon>
+		</div>
 
 		<!-- Caption -->
 		<detail-view-caption
@@ -29,9 +46,13 @@
 </template>
 
 <script>
-const { ref, computed, defineComponent, useTemplateRef, onMounted, watch, nextTick } = require( 'vue' );
+const { ref, computed, defineComponent, useTemplateRef, onMounted, watch, nextTick, toRef } = require( 'vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );
+const { CdxIcon } = require( '@wikimedia/codex' );
+const { cdxIconImage } = require( '../icons.json' );
+
+const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 const useSmartCrop = require( '../composables/useSmartCrop.js' );
 
 /**
@@ -43,7 +64,8 @@ module.exports = exports = defineComponent( {
 	name: 'DetailView',
 	components: {
 		DetailViewCaption,
-		DetailViewControls
+		DetailViewControls,
+		CdxIcon
 	},
 	props: {
 		activeImage: {
@@ -51,9 +73,24 @@ module.exports = exports = defineComponent( {
 			required: true
 		}
 	},
-	async setup( props ) {
+	setup( props ) {
 		const imageElement = useTemplateRef( 'imageElement' );
 		const cropStyle = ref( {} );
+		const loading = ref( true );
+
+		// Background color
+		const imageRef = toRef( props, 'activeImage' );
+		const color = useBackgroundColor( imageRef );
+		const dominantColorHex = computed( () => {
+			return color.value ?
+				color.value.hex :
+				'var( --background-color-neutral, transparent )';
+		} );
+		const dominantColorContrasting = computed( () => {
+			return color.value ?
+				`oklch( from ${ color.value.hex } calc( l * ${ color.value.isDark ? 100 : 0 } ) c h )` :
+				null;
+		} );
 
 		// Per-instance guard
 		let runId = 0;
@@ -62,28 +99,21 @@ module.exports = exports = defineComponent( {
 			if ( !imgEl ) {
 				return;
 			}
-			if ( !imgEl.complete ) {
-				imgEl.addEventListener( 'load', () => runSmartCrop( imgEl ), { once: true } );
-			} else {
-				runSmartCrop( imgEl );
-			}
+			runSmartCrop( imgEl );
 		} );
 
 		// Re-run whenever the image changes.
 		watch(
 			() => props.activeImage && props.activeImage.name,
 			async () => {
+				loading.value = true;
 				// Wait for DOM to update with the new src.
 				await nextTick();
 				const imgEl = imageElement.value;
 				if ( !imgEl ) {
 					return;
 				}
-				if ( !imgEl.complete ) {
-					imgEl.addEventListener( 'load', () => runSmartCrop( imgEl ), { once: true } );
-				} else {
-					runSmartCrop( imgEl );
-				}
+				runSmartCrop( imgEl );
 			}
 		);
 
@@ -100,7 +130,7 @@ module.exports = exports = defineComponent( {
 			// and find one that looks like it'll fit or exceed the window; using
 			// a standard size increases the chances of one being ready to serve
 			// right away, having been rendered before.
-			const thumbLimits = mw.config.get( 'ReaderExperimentsImageBrowsingThumbLimits' );
+			const thumbLimits = mw.config.get( 'ReaderExperimentsImageBrowsingThumbLimits' ) || [];
 			const acceptableWidths = thumbLimits.filter( ( limit ) => limit >= fullscreenWidth );
 			const standardizedWidth = acceptableWidths.length ?
 				Math.min.apply( null, acceptableWidths ) :
@@ -117,6 +147,14 @@ module.exports = exports = defineComponent( {
 			const myRun = ++runId;
 
 			try {
+				if ( imgEl.decode ) {
+					await imgEl.decode();
+				} else {
+					// Ancient browser or the test suite; fail gracefully
+					loading.value = true;
+					return;
+				}
+
 				// 9:16 portrait analysis box
 				const analysisW = imgEl.clientWidth;
 				const analysisH = Math.round( ( analysisW / 9 ) * 16 );
@@ -172,15 +210,21 @@ module.exports = exports = defineComponent( {
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
 				console.error( '[SmartCrop] error:', err );
+			} finally {
+				loading.value = false;
 			}
 		}
 
 		return {
 			resizedSrc,
+			dominantColorHex,
+			dominantColorContrasting,
 			imageElement,
+			cropStyle,
+			loading,
+			cdxIconImage,
 			onToggleCrop,
-			isCropped,
-			cropStyle
+			isCropped
 		};
 	}
 } );
@@ -196,16 +240,40 @@ module.exports = exports = defineComponent( {
 	height: 100dvh;
 	flex-shrink: 0;
 
-	img {
+	img, .ib-detail-progress {
 		position: absolute;
 		top: 0;
 		left: 0;
 		width: @size-full;
 		height: @size-full;
 		z-index: @z-index-bottom;
+		background-color: @background-color-neutral;
+		transition: background-color @transition-duration-medium @transition-timing-function-system;
+	}
+
+	img {
 		// below is "fullscreen" style, which will be overridden by a more specific
 		// crop (calculated in JS) by default
 		object-fit: contain;
+	}
+
+	.ib-detail-progress {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		.cdx-icon {
+			color: var( --dominant-color-contrasting )
+		}
+	}
+
+	&.ib-detail-image-loading {
+		img {
+			display: none;
+		}
+		.ib-detail-progress {
+			background-color: var( --dominant-color-hex );
+		}
 	}
 }
 

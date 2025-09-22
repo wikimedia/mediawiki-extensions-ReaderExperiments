@@ -6,6 +6,7 @@
 			v-tooltip:left="$i18n( 'readerexperiments-imagebrowsing-detail-crop' ).text()"
 			class="ib-detail-view-controls__crop"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-crop' ).text()"
+			:disabled="loading"
 			@update:model-value="onToggleCrop"
 		>
 			<cdx-icon :icon="cdxIconFullscreen"></cdx-icon>
@@ -13,11 +14,11 @@
 
 		<!-- Share -->
 		<cdx-toggle-button
-			v-if="descriptionUrl"
 			ref="triggerShareElement"
 			v-model="showSharePopover"
 			class="ib-detail-view-controls__share"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-share' ).text()"
+			:disabled="loading"
 			@update:model-value="onShare"
 		>
 			<cdx-icon :icon="cdxIconShare"></cdx-icon>
@@ -42,24 +43,25 @@
 		<!-- View on Commons -->
 		<!-- https://doc.wikimedia.org/codex/latest/components/demos/button.html#link-buttons-and-other-elements -->
 		<a
-			v-if="( descriptionUrl || '' ).includes( '//commons.wikimedia.org' )"
+			v-if="( image.src || '' ).includes( '/wikipedia/commons/' )"
 			:class="fakeButtonClasses"
 			role="button"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-view-on-commons' ).text()"
 			:href="descriptionUrl"
 			target="_blank"
 			rel="noreferrer noopener"
+			:disabled="loading"
 		>
 			<cdx-icon :icon="cdxIconLogoWikimediaCommons"></cdx-icon>
 		</a>
 
 		<!-- Download -->
 		<cdx-toggle-button
-			v-if="imageInfo.width && imageInfo.height"
 			ref="triggerDownloadElement"
 			v-model="showDownloadPopover"
 			class="ib-detail-view-controls__download"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-download' ).text()"
+			:disabled="loading"
 			@update:model-value="onDownload"
 		>
 			<cdx-icon :icon="cdxIconDownload"></cdx-icon>
@@ -90,13 +92,18 @@ const useMwApi = require( '../composables/useMwApi.js' );
 const { CdxToggleButton, CdxIcon, CdxPopover, CdxTextInput, CdxTooltip, CdxSelect } = require( '@wikimedia/codex' );
 const { cdxIconFullscreen, cdxIconShare, cdxIconLogoWikimediaCommons, cdxIconDownload } = require( '../icons.json' );
 
-const fakeButtonClasses = [
+const fakeButtonClassesBase = [
 	'cdx-button',
 	'cdx-button--size-medium',
 	'cdx-button--icon-only',
-	'cdx-button--fake-button',
-	'cdx-button--fake-button--enabled'
+	'cdx-button--fake-button'
 ];
+const fakeButtonClassesEnabled = fakeButtonClassesBase.concat( [
+	'cdx-button--fake-button--enabled'
+] );
+const fakeButtonClassesDisabled = fakeButtonClassesBase.concat( [
+	'cdx-button--fake-button--disabled'
+] );
 
 /**
  * @typedef {import("../types").ImageData} ImageData
@@ -141,7 +148,8 @@ module.exports = exports = defineComponent( {
 		'download',
 		'download-file'
 	],
-	async setup( props, { emit } ) {
+	setup( props, { emit } ) {
+		const loading = ref( true );
 		const $i18n = inject( 'i18n' );
 		const api = useMwApi();
 
@@ -151,6 +159,8 @@ module.exports = exports = defineComponent( {
 		const imageInfo = ref( null );
 
 		const fetchImageInfo = async ( image ) => {
+			loading.value = true;
+
 			const { query } = await api.get( {
 				formatversion: 2,
 				action: 'query',
@@ -164,14 +174,16 @@ module.exports = exports = defineComponent( {
 			} else {
 				imageInfo.value = null;
 			}
+
+			loading.value = false;
 		};
 
 		// Initial fetch
-		await fetchImageInfo( props.image );
+		fetchImageInfo( props.image );
 
 		// Watch for image prop changes and refetch
-		watch( () => props.image, async ( newImage ) => {
-			await fetchImageInfo( newImage );
+		watch( () => props.image, ( newImage ) => {
+			fetchImageInfo( newImage );
 		} );
 
 		const descriptionUrl = computed( () => {
@@ -284,8 +296,14 @@ module.exports = exports = defineComponent( {
 			emit( 'toggle-crop', !value );
 		}
 
+		const fakeButtonClasses = computed( () => {
+			return loading.value ?
+				fakeButtonClassesDisabled :
+				fakeButtonClassesEnabled;
+		} );
+
 		return {
-			imageInfo,
+			loading,
 			descriptionUrl,
 			selectedDownloadWidth,
 			downloadWidths,

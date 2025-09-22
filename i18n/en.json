@@ -26,6 +26,7 @@
 	"readerexperiments-imagebrowsing-detail-download-size-large": "Large ($1x$2 px)",
 	"readerexperiments-imagebrowsing-detail-download-size-xl": "Extra large ($1x$2 px)",
 	"readerexperiments-imagebrowsing-image-alt-text": "$1",
+	"readerexperiments-imagebrowsing-loading": "Loading",
 	"readerexperiments-imagebrowsing-overlay-close-button-label": "Close",
 	"readerexperiments-imagebrowsing-vtoc-heading": "More from this article",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "View in article"
