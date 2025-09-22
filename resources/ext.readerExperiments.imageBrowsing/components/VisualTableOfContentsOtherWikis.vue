@@ -8,9 +8,12 @@
 			{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-other-wikis-heading' ).text() }}
 		</h3>
 
-		<div v-if="!done" class="ib-vtoc-other-wikis__loading">
-			<p>{{ $i18n( 'readerexperiments-imagebrowsing-vtoc-other-wikis-loading' ).text() }}</p>
-		</div>
+		<cdx-progress-bar
+			v-if="!done"
+			class="ib-vtoc-other-wikis__loading"
+			:inline="true"
+			aria-label="$i18n( 'readerexperiments-imagebrowsing-vtoc-other-wikis-loading' ).text()"
+		></cdx-progress-bar>
 
 		<div v-else class="ib-vtoc-other-wikis__grid">
 			<visual-table-of-contents-other-wikis-item
@@ -29,12 +32,14 @@ const { useIntersectionObserver } = require( '@wikimedia/codex' );
 const useEntityId = require( '../composables/useEntityId.js' );
 const useExternalImages = require( '../composables/useExternalImages.js' );
 const VisualTableOfContentsOtherWikisItem = require( './VisualTableOfContentsOtherWikisItem.vue' );
+const { CdxProgressBar } = require( '@wikimedia/codex' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'VisualTableOfContentsOtherWikis',
 	components: {
-		VisualTableOfContentsOtherWikisItem
+		VisualTableOfContentsOtherWikisItem,
+		CdxProgressBar
 	},
 	props: {
 		excludeImages: {
@@ -107,12 +112,6 @@ module.exports = exports = defineComponent( {
 		padding-top: @spacing-150;
 		padding-bottom: @spacing-150;
 		padding-left: @spacing-150;
-	}
-
-	&__loading {
-		text-align: center;
-		padding: @spacing-150;
-		color: @color-subtle;
 	}
 
 	// TODO: Create mixin for shared grid styles with VTOC

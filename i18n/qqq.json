@@ -31,7 +31,7 @@
 	"readerexperiments-imagebrowsing-overlay-close-button-label": "Visually-hidden button label for closing the Overlay.",
 	"readerexperiments-imagebrowsing-vtoc-heading": "Label for the article image section of the visual table of contents",
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Label for media from other projects",
-	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Temporary text to display while images from other projects are being loaded",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Label for progress bar that indicates images from other projects are being loaded",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Button label for images in the visual table of contents to jump to the article at the position of the selected image",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Text describing which external Wikipedia an image was found on.\n\nParameters:\n* $1: full hostname of the external Wikipedia (e.g. en.wikipedia.org)",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Text describing which external Wikipedias an image was found on.\n\nParameters:\n* $1: full hostname of one of the external Wikipedias (e.g. en.wikipedia.org)\n*2: the amount of other Wikipedias the file is also used on",
