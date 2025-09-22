@@ -159,11 +159,8 @@ module.exports = exports = defineComponent( {
 				const analysisW = imgEl.clientWidth;
 				const analysisH = Math.round( ( analysisW / 9 ) * 16 );
 
-				const fileTitle = `File:${ props.activeImage.name }`;
-
 				const { topCrop: crop, sourceWidth, sourceHeight } = await useSmartCrop(
-					'https://en.wikipedia.org/w/api.php',
-					fileTitle,
+					imgEl,
 					analysisW,
 					analysisH
 				);
