@@ -4,6 +4,7 @@
 		:aria-label="$i18n( 'readerexperiments-imagebrowsing-carousel-item-button-label' ).text()"
 	>
 		<img
+			ref="imageElement"
 			class="ib-carousel-item__image"
 			:src="thumbnailSrc"
 			:width="thumbnailWidth"
@@ -14,12 +15,14 @@
 					'readerexperiments-imagebrowsing-image-alt-text',
 					image.title.getFileNameTextWithoutExtension()
 				).text()"
+			crossorigin="anonymous"
 		>
 	</button>
 </template>
 
 <script>
-const { defineComponent } = require( 'vue' );
+const { defineComponent, useTemplateRef, toRef } = require( 'vue' );
+const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -49,10 +52,15 @@ module.exports = exports = defineComponent( {
 			null, acceptableThumbnailWidths.length ? acceptableThumbnailWidths : [ thumbnailWidth ]
 		);
 
+		const imageRef = toRef( props, 'image' );
+		const imageElement = useTemplateRef( 'imageElement' );
+		useBackgroundColor( imageRef, imageElement );
+
 		return {
 			thumbnailSrc: props.image.resizeUrl( standardizedThumbnailWidth ),
 			thumbnailWidth,
-			thumbnailHeight
+			thumbnailHeight,
+			imageElement
 		};
 	}
 } );

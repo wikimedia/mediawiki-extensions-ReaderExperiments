@@ -90,6 +90,7 @@ describe( 'Carousel', () => {
 			img.setAttribute( 'src', image.expectedUrl );
 			img.setAttribute( 'width', image.expectedWidth );
 			img.setAttribute( 'height', 175 );
+			img.setAttribute( 'crossorigin', 'anonymous' );
 
 			const alt = image.alt;
 			if ( alt !== null ) {

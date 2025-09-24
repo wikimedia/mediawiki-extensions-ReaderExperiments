@@ -5,6 +5,7 @@
 				@click.prevent="onItemClick( image )"
 			>
 				<img
+					ref="imageElement"
 					class="ib-vtoc-item__figure__image"
 					:src="image.src"
 					:srcset="image.srcset"
@@ -14,6 +15,7 @@
 							'readerexperiments-imagebrowsing-image-alt-text',
 							image.title.getFileNameTextWithoutExtension()
 						).text()"
+					crossorigin="anonymous"
 				>
 			</button>
 			<!-- eslint-disable-next-line vue/no-v-html -->
@@ -31,9 +33,10 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, computed } = require( 'vue' );
+const { defineComponent, useTemplateRef, computed, toRef } = require( 'vue' );
 const { CdxButton, useResizeObserver } = require( '@wikimedia/codex' );
 const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
+const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -94,12 +97,17 @@ module.exports = exports = defineComponent( {
 			emit( 'vtoc-view-in-article', image );
 		}
 
+		const imageRef = toRef( props, 'image' );
+		const imageElement = useTemplateRef( 'imageElement' );
+		useBackgroundColor( imageRef, imageElement );
+
 		return {
 			caption,
 			onItemClick,
 			onViewInArticle,
 			figure,
-			gridRowSpan
+			gridRowSpan,
+			imageElement
 		};
 	}
 } );

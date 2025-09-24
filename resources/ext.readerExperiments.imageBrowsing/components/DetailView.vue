@@ -18,8 +18,8 @@
 					'readerexperiments-imagebrowsing-image-alt-text',
 					activeImage.title.getFileNameTextWithoutExtension()
 				).text()"
-			crossorigin="anonymous"
 			:style="isCropped ? cropStyle : {}"
+			crossorigin="anonymous"
 		>
 		<div
 			v-if="loading"
@@ -80,7 +80,7 @@ module.exports = exports = defineComponent( {
 
 		// Background color
 		const imageRef = toRef( props, 'activeImage' );
-		const color = useBackgroundColor( imageRef );
+		const color = useBackgroundColor( imageRef, imageElement );
 		const dominantColorHex = computed( () => {
 			return color.value ?
 				color.value.hex :
@@ -107,12 +107,14 @@ module.exports = exports = defineComponent( {
 			() => props.activeImage && props.activeImage.name,
 			async () => {
 				loading.value = true;
-				// Wait for DOM to update with the new src.
-				await nextTick();
 				const imgEl = imageElement.value;
 				if ( !imgEl ) {
 					return;
 				}
+				// Force Firefox to clear the old image by setting src to empty
+				imgEl.src = '';
+				// Wait for DOM to update with the new src.
+				await nextTick();
 				runSmartCrop( imgEl );
 			}
 		);
@@ -204,11 +206,11 @@ module.exports = exports = defineComponent( {
 				imgEl.style.objectPosition = style.objectPosition;
 				// eslint-disable-next-line no-console
 				console.log( '[SmartCrop] Applied style:', style );
+
+				loading.value = false;
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
 				console.error( '[SmartCrop] error:', err );
-			} finally {
-				loading.value = false;
 			}
 		}
 
