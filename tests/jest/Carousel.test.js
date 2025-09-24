@@ -91,6 +91,7 @@ describe( 'Carousel', () => {
 			img.setAttribute( 'width', image.expectedWidth );
 			img.setAttribute( 'height', 175 );
 			img.setAttribute( 'crossorigin', 'anonymous' );
+			img.setAttribute( 'loading', 'lazy' );
 
 			const alt = image.alt;
 			if ( alt !== null ) {

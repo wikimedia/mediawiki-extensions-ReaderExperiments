@@ -28,7 +28,8 @@ describe( 'VisualTableOfContentsItem', () => {
 			height: 200,
 			container: {
 				querySelector: jest.fn( () => null )
-			}
+			},
+			loading: 'lazy'
 		};
 
 		// Default wrapper, override in test cases as needed
@@ -62,6 +63,7 @@ describe( 'VisualTableOfContentsItem', () => {
 		expect( img.attributes( 'src' ) ).toBe( mockImage.src );
 		expect( img.attributes( 'srcset' ) ).toBe( mockImage.srcset );
 		expect( img.attributes( 'alt' ) ).toBe( mockImage.alt );
+		expect( img.attributes( 'loading' ) ).toBe( mockImage.loading );
 	} );
 
 	it( 'includes a "view in article" button', () => {

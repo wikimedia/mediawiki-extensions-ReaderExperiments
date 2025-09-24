@@ -35,7 +35,7 @@ const backgroundMap = new Map();
 module.exports = exports = function useBackgroundColor( imageRef, imageElement ) {
 	const colorResult = ref( null );
 
-	watchEffect( async () => {
+	watchEffect( () => {
 		const image = imageRef.value;
 		if ( !image ) {
 			colorResult.value = null;
@@ -86,20 +86,35 @@ module.exports = exports = function useBackgroundColor( imageRef, imageElement )
 			colorResult.value = color;
 		};
 
-		// Note: this will force thumbnails to load even if lazy-loading
-		// would've kept them in limbo longer naturally.
-		//
-		// This *should* not be an issue at present, as we do not lazy-load
-		// the images in the carousel or vtoc/scroll view.
-
-		if ( imgEl.decode ) {
-			await imgEl.decode();
-		}
 		if ( imgEl.complete ) {
 			compute();
 		} else {
-			// Failed to load, but didn't throw an error.
-			// This may happen in the test suite which doesn't support imageEl.decode().
+			// Note: we can't use `await imgEl.decode()` because we want to respect
+			// lazy-loading and only calculate once one of the thumbs gets loaded.
+
+			// eslint-disable-next-line prefer-const
+			let cleanup;
+
+			const onLoad = () => {
+				cleanup();
+				if ( image === imageRef.value ) {
+					compute();
+				}
+			};
+
+			const onError = () => {
+				// Failed; likely a network error or the overlay was closed
+				// during loading.
+				cleanup();
+			};
+
+			cleanup = () => {
+				imgEl.removeEventListener( 'load', onLoad );
+				imgEl.removeEventListener( 'error', onError );
+			};
+
+			imgEl.addEventListener( 'load', onLoad );
+			imgEl.addEventListener( 'error', onError );
 		}
 	} );
 	return readonly( colorResult );

@@ -9,6 +9,8 @@
 					class="ib-vtoc-item__figure__image"
 					:src="image.src"
 					:srcset="image.srcset"
+					:width="image.width"
+					:height="image.height"
 					:alt="image.alt ?
 						image.alt :
 						$i18n(
@@ -16,6 +18,7 @@
 							image.title.getFileNameTextWithoutExtension()
 						).text()"
 					crossorigin="anonymous"
+					loading="lazy"
 				>
 			</button>
 			<!-- eslint-disable-next-line vue/no-v-html -->
@@ -128,8 +131,9 @@ module.exports = exports = defineComponent( {
 		text-align: center;
 
 		&__image {
-			max-height: @ib-vtoc-image-height;
-			max-width: @size-full;
+			width: @size-full;
+			height: @ib-vtoc-image-height;
+			object-fit: contain;
 		}
 
 		button:not( .cdx-button ) {

@@ -28,7 +28,7 @@ describe( 'CarouselItem', () => {
 			resizeUrl: resizeUrl.bind( null, src )
 		};
 
-		expected = `<img class="ib-carousel-item__image" src="${ resizeUrl( src, 100 ) }" width="${ width }" height="${ height }" alt="${ alt }" crossorigin="anonymous">`;
+		expected = `<img class="ib-carousel-item__image" src="${ resizeUrl( src, 100 ) }" width="${ width }" height="${ height }" alt="${ alt }" crossorigin="anonymous" loading="lazy">`;
 		wrapper = shallowMount( CarouselItem, { props: { image: image } } );
 	} );
 

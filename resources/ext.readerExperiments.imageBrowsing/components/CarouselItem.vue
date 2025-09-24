@@ -16,6 +16,7 @@
 					image.title.getFileNameTextWithoutExtension()
 				).text()"
 			crossorigin="anonymous"
+			loading="lazy"
 		>
 	</button>
 </template>
