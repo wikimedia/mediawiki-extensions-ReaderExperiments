@@ -31,9 +31,9 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, computed, toRef } = require( 'vue' );
+const { defineComponent, useTemplateRef, computed } = require( 'vue' );
 const { CdxButton, useResizeObserver } = require( '@wikimedia/codex' );
-const useImageCaption = require( '../composables/useImageCaption.js' );
+const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -76,9 +76,15 @@ module.exports = exports = defineComponent( {
 			return `span ${ computedHeight.value / 10 }`;
 		} );
 
-		// Use the composable for caption logic
-		const imageRef = toRef( props, 'image' );
-		const { caption } = useImageCaption( imageRef );
+		const caption = computed( () => {
+			if ( !props.image ) {
+				return;
+			}
+			const paragraphText = props.image.paragraph && props.image.paragraph;
+			const figcaption = getCaptionIfAvailable( props.image.container );
+			const altText = props.image.alt && mw.html.escape( props.image.alt );
+			return paragraphText || figcaption || altText;
+		} );
 
 		function onItemClick( image ) {
 			emit( 'vtoc-item-click', image );

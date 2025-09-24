@@ -38,10 +38,10 @@
 </template>
 
 <script>
-const { defineComponent, ref, useTemplateRef, onMounted, watch, nextTick, toRef } = require( 'vue' );
+const { defineComponent, ref, useTemplateRef, onMounted, watch, nextTick, computed } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
-const useImageCaption = require( '../composables/useImageCaption.js' );
+const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
 
 /**
  * @typedef {import('../types').ImageData} ImageData
@@ -55,20 +55,21 @@ module.exports = exports = defineComponent( {
 		CdxIcon
 	},
 	props: {
-		// eslint-disable-next-line vue/no-unused-properties
 		image: {
 			type: /** @type {import('vue').PropType<ImageData>} */ ( Object ),
 			required: true
 		}
 	},
 	setup( props ) {
-		const imageRef = toRef( props, 'image' );
+		const caption = computed( () => {
+			if ( !props.image ) {
+				return;
+			}
+			const figcaption = getCaptionIfAvailable( props.image.container );
+			const altText = props.image.alt && mw.html.escape( props.image.alt );
+			return figcaption || altText;
+		} );
 
-		// Background color is set by the parent DetailView's
-		// style setup based on the active image.
-
-		// Use the composable for caption logic
-		const { caption } = useImageCaption( imageRef );
 		const canCaptionExpand = ref( true );
 		const isCaptionExpanded = ref( false );
 		const captionTextElement = useTemplateRef( 'captionTextElement' );

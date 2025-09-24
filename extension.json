@@ -87,7 +87,6 @@
 				"composables/useBackgroundColor.js",
 				"composables/useSmartCrop.js",
 				"composables/useMwApi.js",
-				"composables/useImageCaption.js",
 				"plugins/instrumentationPlugin.js"
 			],
 			"styles": [],

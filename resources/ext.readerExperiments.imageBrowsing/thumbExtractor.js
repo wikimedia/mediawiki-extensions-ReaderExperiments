@@ -82,6 +82,7 @@ function thumbInfo( thumb ) {
 		 */
 		item.name = parsed.name;
 
+		// eslint-disable-next-line jsdoc/require-returns
 		/**
 		 * A function for producing new thumbnails with a target resolution on demand.
 		 * May or may not work with MobileFrontendContentProvider...
@@ -297,6 +298,43 @@ function isIncludedThumbInfo( info ) {
 function getCaptionIfAvailable( container ) {
 	if ( container && container.querySelector( 'figcaption' ) ) {
 		return container.querySelector( 'figcaption' ).innerHTML;
+	} else if ( container ) {
+		return findNearbyInfoboxCaption( container );
+	} else {
+		return null;
+	}
+}
+
+/**
+ * @param {Element|null} container The image element container
+ * @return {string|null} The caption's HTML string, if any
+ */
+function findNearbyInfoboxCaption( container ) {
+	let captionElement;
+
+	if ( !container || !container.closest ) {
+		return null;
+	}
+
+	if ( !container.closest( '.infobox' ) ) {
+		return null;
+	}
+
+	// Attempt to handle known infobox templates via DOM traversal;
+	// This heuristics-based approach is not going to capture everything
+	// but we can add more common patterns here as we find them.
+	if ( container.closest( '.infobox-image' ) ) {
+		captionElement = container
+			.closest( '.infobox-image' )
+			.querySelector( '.infobox-caption' );
+	} else if ( container.closest( '.tsingle' ) ) {
+		captionElement = container
+			.closest( '.tsingle' )
+			.querySelector( '.text-align-center' );
+	}
+
+	if ( captionElement ) {
+		return captionElement.innerHTML;
 	} else {
 		return null;
 	}
