@@ -55,6 +55,26 @@ module.exports = async function useExternalImages( entityId, excludes ) {
 		.map( resultToImageData )
 		// Access name on valid image data objects (null check), else a null reference error
 		// prevents other wikis UI from loading.
-		.filter( ( img ) => img && img.name );
+		.filter( ( img ) => img && img.name )
+		// Sort to ensure Wikipedia projects appear before other projects (like Wikidata)
+		.sort( ( a, b ) => {
+			const aHasWikipedia = a.externalSources.some(
+				( source ) => source.includes( 'wikipedia.org' )
+			) || false;
+			const bHasWikipedia = b.externalSources.some(
+				( source ) => source.includes( 'wikipedia.org' )
+			) || false;
+
+			// Wikipedia images first, then other wiki projects
+			if ( aHasWikipedia && !bHasWikipedia ) {
+				return -1; // a comes before b
+			}
+			if ( !aHasWikipedia && bHasWikipedia ) {
+				return 1; // b comes before a
+			}
+
+			// If both are Wikipedia or both are non-Wikipedia, maintain original order
+			return 0;
+		} );
 	return cacheExternalImages[ cacheKey ];
 };
