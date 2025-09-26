@@ -21,6 +21,7 @@
 		}
 	],
 	"ignorePatterns": [
-		"lib"
+		"lib/*",
+		"!lib/foreign-resources.*"
 	]
 }

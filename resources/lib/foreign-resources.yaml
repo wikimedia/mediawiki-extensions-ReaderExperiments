@@ -7,8 +7,8 @@ fast-average-color:
   src: https://registry.npmjs.org/fast-average-color/-/fast-average-color-9.5.0.tgz
   integrity: sha512-nC6x2YIlJ9xxgkMFMd1BNoM1ctMjNoRKfRliPmiEWW3S6rLTHiQcy9g3pt/xiKv/D0NAAkhb9VyV+WJFvTqMGg==
   dest:
-    package/dist/index.js:
-    package/LICENSE:
+    package/dist/index.js: .
+    package/LICENSE: .
 smartcrop:
   type: tar
   homepage: https://github.com/jwagner/smartcrop.js
@@ -17,4 +17,4 @@ smartcrop:
   src: https://registry.npmjs.org/smartcrop/-/smartcrop-2.0.5.tgz
   integrity: sha384-MFx/krFqqAwdVQcbFsG7NZ6io1/k+p/zRG1aJxYtjjnzaiwRUxVslq915QQ/c3Cl
   dest:
-    package/smartcrop.js:
+    package/smartcrop.js: .
