@@ -1,18 +1,27 @@
 <template>
-	<div class="ib-carousel">
+	<div
+		class="ib-carousel"
+		tabindex="-1"
+		@keydown.left="onLeftArrowKeypress"
+		@keydown.right="onRightArrowKeypress"
+		@keydown.home="onHomeKeypress"
+		@keydown.end="onEndKeypress"
+	>
 		<carousel-item
 			v-for="( image, index ) in images"
 			:key="index"
+			:ref="( ref ) => assignTemplateRefForCarouselItem( ref, index )"
 			:image="image"
 			@click="onItemClick( image, $event )"
 			@keyup.enter="onItemClick( image, $event )"
 			@keyup.space="onItemClick( image, $event )"
+			@focus="onItemFocus( index )"
 		></carousel-item>
 	</div>
 </template>
 
 <script>
-const { defineComponent, onMounted } = require( 'vue' );
+const { defineComponent, onMounted, ref, ComponentPublicInstance } = require( 'vue' );
 const CarouselItem = require( './CarouselItem.vue' );
 
 // @vue/component
@@ -31,7 +40,18 @@ module.exports = exports = defineComponent( {
 		'carousel-load',
 		'carousel-item-click'
 	],
+	expose: [
+		'focusActiveItem'
+	],
 	setup( props, { emit } ) {
+		// Track which carousel item is currently active for keyboard navigation
+		const activeIndex = ref( 0 );
+
+		// Set up a map to contain references to all carousel item elements, so
+		// that they can be programmatically focused.
+		// This follows Codex Tabs pattern
+		const carouselItemRefs = ref( new Map() );
+
 		onMounted( () => {
 			emit( 'carousel-load' );
 		} );
@@ -66,8 +86,138 @@ module.exports = exports = defineComponent( {
 			emit( 'carousel-item-click', image );
 		}
 
+		/**
+		 * Store pointers to each carousel item element following Codex Tabs pattern
+		 *
+		 * @param {Element|ComponentPublicInstance|null} templateRef
+		 * @param {number} index
+		 */
+		function assignTemplateRefForCarouselItem( templateRef, index ) {
+			// A templateRef that has an $el property indicates that it is a
+			// component instance as opposed to a regular HTML element. We only
+			// care to set up keyboard navigation for component instances.
+			if ( templateRef.$el ) {
+				carouselItemRefs.value.set( index, templateRef.$el );
+			}
+		}
+
+		/**
+		 * Focus on carousel item at specific index using template refs
+		 * Handles Left, Right, Home, and End key navigation
+		 *
+		 * @param {number} index
+		 */
+		function focusItem( index ) {
+			activeIndex.value = index;
+			const element = carouselItemRefs.value.get( index );
+
+			// Null check first that the entry exists, else `get` method returns undefined.
+			if ( element ) {
+				element.focus();
+			}
+		}
+
+		/**
+		 * Handle left arrow key: move to previous item (with RTL support)
+		 *
+		 * @param {Event} event
+		 */
+		function onLeftArrowKeypress( event ) {
+			event.preventDefault();
+			const currentDirection = document.documentElement.dir || 'ltr';
+
+			if ( currentDirection === 'rtl' ) {
+				// In RTL, left arrow moves to next item
+				const nextIndex = ( activeIndex.value + 1 ) % props.images.length;
+				focusItem( nextIndex );
+			} else {
+				// In LTR, left arrow moves to previous item
+				const prevIndex = activeIndex.value === 0 ?
+					props.images.length - 1 :
+					activeIndex.value - 1;
+
+				focusItem( prevIndex );
+			}
+		}
+
+		/**
+		 * Handle right arrow key: move to next item (with RTL support)
+		 *
+		 * @param {Event} event
+		 */
+		function onRightArrowKeypress( event ) {
+			event.preventDefault();
+			const currentDirection = document.documentElement.dir || 'ltr';
+
+			if ( currentDirection === 'rtl' ) {
+				// In RTL, right arrow moves to previous item
+				const prevIndex = activeIndex.value === 0 ?
+					props.images.length - 1 :
+					activeIndex.value - 1;
+				focusItem( prevIndex );
+			} else {
+				// In LTR, right arrow moves to next item
+				const nextIndex = ( activeIndex.value + 1 ) % props.images.length;
+
+				focusItem( nextIndex );
+			}
+		}
+
+		/**
+		 * Handle Home key: move to first item
+		 *
+		 * @param {Event} event
+		 */
+		function onHomeKeypress( event ) {
+			// Noted undesired behavior with End key so applying here to be safe
+			event.preventDefault();
+			focusItem( 0 );
+		}
+
+		/**
+		 * Handle End key: move to last item
+		 *
+		 * @param {Event} event
+		 */
+		function onEndKeypress( event ) {
+			// Prevent undesired scroll to the end of the document while
+			// maintaining focus on carousel item (Chrome, Firefox, and Safari)
+			event.preventDefault();
+			focusItem( props.images.length - 1 );
+		}
+
+		/**
+		 * Handle focus event on carousel item
+		 *
+		 * @param {number} index
+		 */
+		function onItemFocus( index ) {
+			// Keep left/right navigation state in sync with browser focus (tabbing)
+			activeIndex.value = index;
+		}
+
+		/**
+		 * Focus on the currently active carousel item using template refs
+		 * Called when overlay closes to restore focus to carousel item
+		 */
+		function focusActiveItem() {
+			const element = carouselItemRefs.value.get( activeIndex.value );
+
+			// Null check first that the entry exists, else `get` method returns undefined.
+			if ( element ) {
+				element.focus();
+			}
+		}
+
 		return {
-			onItemClick
+			onItemClick,
+			focusActiveItem,
+			assignTemplateRefForCarouselItem,
+			onLeftArrowKeypress,
+			onRightArrowKeypress,
+			onHomeKeypress,
+			onEndKeypress,
+			onItemFocus
 		};
 	}
 } );
@@ -79,5 +229,6 @@ module.exports = exports = defineComponent( {
 	white-space: nowrap;
 	overflow-x: auto;
 	margin-bottom: 10px;
+	padding: 6px;
 }
 </style>

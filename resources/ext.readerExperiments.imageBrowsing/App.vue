@@ -2,6 +2,7 @@
 	<div class="ib-app">
 		<carousel
 			v-if="contentImages.length > 2"
+			ref="carouselRef"
 			:images="contentImages"
 			@carousel-load="onCarouselLoad"
 			@carousel-item-click="onItemClick"
@@ -22,7 +23,7 @@
 </template>
 
 <script>
-const { defineComponent, ref, inject } = require( 'vue' );
+const { defineComponent, ref, inject, useTemplateRef } = require( 'vue' );
 const router = require( 'mediawiki.router' );
 const useContentImages = require( './composables/useContentImages.js' );
 const useExternalImages = require( './composables/useExternalImages.js' );
@@ -44,6 +45,9 @@ module.exports = exports = defineComponent( {
 		const contentImages = ref( null );
 		const activeImage = ref( null );
 		const clickCounter = ref( 0 );
+
+		// Reference to the Carousel component for focus management
+		const carouselRef = useTemplateRef( 'carouselRef' );
 
 		// Extract thumbnail image (as an array of ImageData objects)
 		// from the content of the underlying article page.
@@ -200,6 +204,11 @@ module.exports = exports = defineComponent( {
 			submitInteraction( 'image_carousel_load', { action_source: 'close' } );
 
 			navigateTo( null );
+
+			// Return focus to the selected carousel item when the overlay closes
+			if ( carouselRef.value && carouselRef.value.focusActiveItem ) {
+				carouselRef.value.focusActiveItem();
+			}
 		}
 
 		return {
@@ -209,7 +218,8 @@ module.exports = exports = defineComponent( {
 			onViewInArticle,
 			onCloseOverlay,
 			activeImage,
-			teleportTarget
+			teleportTarget,
+			carouselRef
 		};
 	}
 } );
