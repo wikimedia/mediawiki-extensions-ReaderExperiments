@@ -10,6 +10,12 @@ const maxGlobalUsage = 500;
  * @return {Promise<mw.Api~AbortablePromise>}
  */
 function search( entityId, language, limit, offset ) {
+	// Reject any entity IDs which are not structured like Q12345
+	// before interpolating this value into a URL param for an API request
+	if ( !/^Q\d+$/.test( entityId ) ) {
+		throw new Error( 'Invalid entity ID format' );
+	}
+
 	const api = new mw.ForeignApi(
 		'https://commons.wikimedia.org/w/api.php',
 		{ anonymous: true }
