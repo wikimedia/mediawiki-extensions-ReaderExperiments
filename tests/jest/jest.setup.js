@@ -18,13 +18,18 @@ function $i18nMock( key, ...args ) {
 		parse: () => serializeArgs()
 	};
 }
+
 // Mock Vue plugins in test suites.
 config.global.provide = {
-	i18n: $i18nMock
+	i18n: $i18nMock,
+	submitInteraction: jest.fn(),
+	manageLinkEventListeners: jest.fn()
 };
+
 config.global.mocks = {
 	$i18n: $i18nMock
 };
+
 config.global.directives = {
 	'i18n-html': ( el, binding ) => {
 		el.innerHTML = `${ binding.arg } (${ binding.value })`;

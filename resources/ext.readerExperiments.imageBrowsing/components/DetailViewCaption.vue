@@ -1,17 +1,29 @@
 <template>
 	<div
-		v-if="caption"
+		v-if="caption || image.label || image.alt"
 		class="ib-detail-view-caption"
 	>
 		<!-- eslint-disable vue/no-v-html -->
+		<!-- only use v-html for HTML content that has passed through MW's Sanitizer -->
 		<p
+			v-if="caption"
 			ref="captionTextElement"
 			class="ib-detail-view-caption__text"
 			:class="{ 'ib-detail-view-caption__collapsed': !isCaptionExpanded }"
 			v-html="caption"
 		>
 		</p>
+
 		<!-- eslint-enable vue/no-v-html -->
+		<!-- Do not pass plain-text content through v-html; use standard interpolation instead -->
+		<p
+			v-else
+			ref="captionTextElement"
+			class="ib-detail-view-caption__text"
+			:class="{ 'ib-detail-view-caption__collapsed': !isCaptionExpanded }"
+		>
+			{{ image.label || image.alt }}
+		</p>
 
 		<cdx-button
 			v-if="canCaptionExpand && !isCaptionExpanded"
@@ -65,10 +77,7 @@ module.exports = exports = defineComponent( {
 			if ( !props.image ) {
 				return;
 			}
-			const label = props.image.label;
-			const figcaption = getCaptionIfAvailable( props.image.container );
-			const altText = props.image.alt && mw.html.escape( props.image.alt );
-			return label || figcaption || altText;
+			return getCaptionIfAvailable( props.image.container );
 		} );
 		const canCaptionExpand = ref( true );
 		const isCaptionExpanded = ref( false );
@@ -91,26 +100,26 @@ module.exports = exports = defineComponent( {
 			manageLinkEventListeners( captionTextElement, onCaptionLinkClick );
 		} );
 
-		// When the component is unmounted,
-		// remove wikilinks' click event listeners.
+		// Check this again if the caption text changes (regardless of source)
+		watch(
+			() => caption.value || props.image.label || props.image.alt,
+			() => {
+				isCaptionExpanded.value = false;
+				nextTick( () => {
+					calculateCaptionOverflow();
+					manageLinkEventListeners( captionTextElement, onCaptionLinkClick );
+				} );
+			}
+		);
+
+		// When the component is unmounted, remove wikilinks' click event listeners.
 		onUnmounted( () => {
 			manageLinkEventListeners(
 				captionTextElement, onCaptionLinkClick, true
 			);
 		} );
 
-		// When the caption changes,
-		// run the same checks as above.
-		watch( caption, () => {
-			isCaptionExpanded.value = false;
-			nextTick( () => {
-				calculateCaptionOverflow();
-				manageLinkEventListeners( captionTextElement, onCaptionLinkClick );
-			} );
-		} );
-
-		// When the caption expands or collapses,
-		// update wikilinks' click event listeners.
+		// When the caption expands or collapses, update wikilinks' click event listeners.
 		watch( isCaptionExpanded, () => {
 			nextTick( manageLinkEventListeners( captionTextElement, onCaptionLinkClick ) );
 		} );

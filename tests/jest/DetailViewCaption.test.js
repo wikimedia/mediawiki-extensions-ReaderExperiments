@@ -72,4 +72,50 @@ describe( 'DetailViewCaption', () => {
 
 		expect( wrapper.vm.isCaptionExpanded ).toBe( true );
 	} );
+
+	it( 'escapes HTML markup in alt text to prevent XSS', () => {
+		const maliciousAlt = '<script>alert("xss")</script><img src=x onerror=alert(1)>';
+		const maliciousImage = {
+			...mockImage,
+			alt: maliciousAlt,
+			label: null,
+			container: null
+		};
+
+		const testWrapper = mount( DetailViewCaption, {
+			props: {
+				image: maliciousImage
+			}
+		} );
+
+		const captionText = testWrapper.find( '.ib-detail-view-caption__text' );
+		// The text should be rendered as plain text, not HTML
+		expect( captionText.text() ).toBe( maliciousAlt );
+		// The HTML should not contain unescaped script tags
+		expect( captionText.html() ).not.toContain( '<script>' );
+		expect( captionText.html() ).toContain( '&lt;script&gt;' );
+	} );
+
+	it( 'escapes HTML markup in label text to prevent XSS', () => {
+		const maliciousLabel = '<script>alert("xss")</script><img src=x onerror=alert(1)>';
+		const maliciousImage = {
+			...mockImage,
+			alt: null,
+			label: maliciousLabel,
+			container: null
+		};
+
+		const testWrapper = mount( DetailViewCaption, {
+			props: {
+				image: maliciousImage
+			}
+		} );
+
+		const captionText = testWrapper.find( '.ib-detail-view-caption__text' );
+		// The text should be rendered as plain text, not HTML
+		expect( captionText.text() ).toBe( maliciousLabel );
+		// The HTML should not contain unescaped script tags
+		expect( captionText.html() ).not.toContain( '<script>' );
+		expect( captionText.html() ).toContain( '&lt;script&gt;' );
+	} );
 } );

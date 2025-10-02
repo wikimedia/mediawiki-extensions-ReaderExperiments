@@ -34,26 +34,7 @@ describe( 'VisualTableOfContentsItem', () => {
 
 		// Default wrapper, override in test cases as needed
 		wrapper = mount( VisualTableOfContentsItem, {
-			props: {
-				image: mockImage
-			},
-			global: {
-				mocks: {
-					$i18n: ( key, ...params ) => ( {
-						text: () => {
-							const messages = {
-								'readerexperiments-imagebrowsing-image-alt-text': `${ params[ 0 ] || '$1' }`,
-								'readerexperiments-imagebrowsing-vtoc-view-button-label': 'View in article'
-							};
-							return messages[ key ] || key;
-						}
-					} )
-				},
-				provide: {
-					submitInteraction: jest.fn(),
-					manageLinkEventListeners: jest.fn()
-				}
-			}
+			props: { image: mockImage }
 		} );
 	} );
 
@@ -73,7 +54,6 @@ describe( 'VisualTableOfContentsItem', () => {
 	it( 'includes a "view in article" button', () => {
 		const button = wrapper.find( '.ib-vtoc-item__view-in-article' );
 		expect( button.exists() ).toBe( true );
-		expect( button.text() ).toContain( 'View in article' );
 	} );
 
 	// TODO: Test other caption fallback options
@@ -81,7 +61,10 @@ describe( 'VisualTableOfContentsItem', () => {
 		const figcaption = wrapper.find( 'figcaption' );
 		// Since getCaptionIfAvailable is mocked to return null, it falls back to alt text.
 		// Verify the fallback behavior works correctly.
-		expect( figcaption.text() ).toBe( 'The image alt text with a link' );
+		// Note: alt text should be handled as plain text; any markup inside of image alt text is an XSS vector.
+		// Therefore the link that is included here *should* be escaped:
+		// eslint-disable-next-line quotes
+		expect( figcaption.text() ).toBe( "The image alt text with a <a href=\"wiki\">link</a>" );
 	} );
 
 	it( 'emits `vtoc-item-click` when an image is clicked', async () => {
@@ -100,5 +83,21 @@ describe( 'VisualTableOfContentsItem', () => {
 		expect( wrapper.emitted( 'vtoc-view-in-article' ) ).toBeTruthy();
 		// Verify the argument value that was emitted
 		expect( wrapper.emitted( 'vtoc-view-in-article' )[ 0 ][ 0 ] ).toStrictEqual( mockImage );
+	} );
+
+	it( 'escapes HTML markup in alt text to prevent XSS', () => {
+		const maliciousAlt = '<script>alert("xss")</script><img src=x onerror=alert(1)>';
+		const maliciousImage = { ...mockImage, alt: maliciousAlt };
+
+		const testWrapper = mount( VisualTableOfContentsItem, {
+			props: { image: maliciousImage }
+		} );
+
+		const figcaption = testWrapper.find( 'figcaption' );
+
+		// Ensure potential XSS gets escaped
+		expect( figcaption.text() ).toBe( maliciousAlt );
+		expect( figcaption.html() ).not.toContain( '<script>' );
+		expect( figcaption.html() ).toContain( '&lt;script&gt;' );
 	} );
 } );

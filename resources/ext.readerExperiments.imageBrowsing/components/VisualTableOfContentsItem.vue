@@ -21,13 +21,23 @@
 					loading="lazy"
 				>
 			</button>
+
 			<!-- eslint-disable vue/no-v-html -->
 			<figcaption
+				v-if="caption"
 				ref="captionTextElement"
 				v-html="caption"
-			>
-			</figcaption>
+			></figcaption>
 			<!-- eslint-enable vue/no-v-html -->
+
+			<!-- Only use v-html if we have real, sanitized HTML content from
+			the parser. Otherwise use regular interpolation. -->
+			<figcaption
+				v-else-if="image.alt"
+				ref="captionTextElement"
+			>
+				{{ image.alt }}
+			</figcaption>
 
 			<cdx-button
 				class="ib-vtoc-item__view-in-article"
@@ -91,10 +101,9 @@ module.exports = exports = defineComponent( {
 			if ( !props.image ) {
 				return;
 			}
-			const paragraphText = props.image.paragraph && props.image.paragraph;
+			const paragraphText = props.image.paragraph;
 			const figcaption = getCaptionIfAvailable( props.image.container );
-			const altText = props.image.alt && mw.html.escape( props.image.alt );
-			return paragraphText || figcaption || altText;
+			return paragraphText || figcaption;
 		} );
 		const captionTextElement = useTemplateRef( 'captionTextElement' );
 
