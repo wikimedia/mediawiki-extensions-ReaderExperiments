@@ -119,18 +119,13 @@ module.exports = exports = defineComponent( {
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
 
-@ib-vtoc-image-height: 12em;
+@ib-vtoc-image-height: 300px;
 
 .ib-vtoc-item {
 	border-style: @border-style-base;
 	border-color: @border-color-subtle;
 	border-width: 0.5px; // Use a fractional width so overlapping borders appear normal
 	padding: @spacing-150;
-
-	&:last-of-type,
-	&:nth-last-of-type(2) {
-		border-bottom: none;
-	}
 
 	&__figure {
 		text-align: center;
@@ -141,20 +136,24 @@ module.exports = exports = defineComponent( {
 			object-fit: contain;
 		}
 
+		// Button wrapper for the image
 		button:not( .cdx-button ) {
 			border: none;
 			cursor: pointer;
 			padding: 0;
+			// Override Safari and iOS Chrome browser button background color
+			background-color: unset;
 		}
 
 		figcaption {
-			margin: @spacing-75 0;
+			margin-top: @spacing-75;
 			text-align: left;
 		}
 	}
 
 	&__view-in-article {
 		display: block;
+		margin-top: @spacing-75;
 	}
 }
 </style>

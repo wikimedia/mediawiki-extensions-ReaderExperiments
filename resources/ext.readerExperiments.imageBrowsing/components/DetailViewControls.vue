@@ -3,7 +3,6 @@
 		<!-- Fullscreen -->
 		<cdx-toggle-button
 			v-model="isUncropped"
-			v-tooltip:left="$i18n( 'readerexperiments-imagebrowsing-detail-crop' ).text()"
 			class="ib-detail-view-controls__crop"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-crop' ).text()"
 			:disabled="loading"
@@ -91,7 +90,7 @@
 <script>
 const { defineComponent, ref, inject, computed, useTemplateRef, watch } = require( 'vue' );
 const useMwApi = require( '../composables/useMwApi.js' );
-const { CdxToggleButton, CdxIcon, CdxPopover, CdxTextInput, CdxTooltip, CdxSelect } = require( '@wikimedia/codex' );
+const { CdxToggleButton, CdxIcon, CdxPopover, CdxTextInput, CdxSelect } = require( '@wikimedia/codex' );
 const { cdxIconFullscreen, cdxIconShare, cdxIconLogoWikimediaCommons, cdxIconDownload } = require( '../icons.json' );
 
 const fakeButtonClassesBase = [
@@ -124,9 +123,6 @@ module.exports = exports = defineComponent( {
 		CdxPopover,
 		CdxTextInput,
 		CdxSelect
-	},
-	directives: {
-		tooltip: CdxTooltip
 	},
 	props: {
 		/**

@@ -120,14 +120,15 @@ module.exports = exports = defineComponent( {
 	width: 100%;
 	max-height: calc( 100% - var( --caption-padding ) - var( --gradient-height ) );
 	margin: 0;
-	padding: var( --caption-padding );
+	padding-bottom: var( --caption-padding );
+	padding-left: var( --caption-padding );
 
 	// preserve space for buttons on the right: 32px (button width) + 2x 20px
 	// (button margin on either side)
 	padding-right: calc( var( --caption-padding ) + 32px + var( --caption-padding ) );
 
 	// colorize caption text & background (which comes in from a transparent top)
-	padding-top: calc( var( --caption-padding ) + var( --gradient-height ) );
+	padding-top: var( --gradient-height );
 	background-image: linear-gradient(
 		transparent, var( --dominant-color-hex ) var( --gradient-height )
 	);
@@ -135,6 +136,7 @@ module.exports = exports = defineComponent( {
 	// Override Minerva skin paragraph styles
 	p {
 		padding-bottom: 0;
+		margin-top: 0;
 	}
 
 	&__text,
@@ -146,6 +148,12 @@ module.exports = exports = defineComponent( {
 	&__expand.cdx-button,
 	&__collapse.cdx-button {
 		float: right;
+
+		// Override CdxButton hover styles to ensure button is visible T405992
+		&:enabled.cdx-button--weight-quiet:hover {
+			background-color: transparent;
+			mix-blend-mode: unset;
+		}
 	}
 
 	&__text {

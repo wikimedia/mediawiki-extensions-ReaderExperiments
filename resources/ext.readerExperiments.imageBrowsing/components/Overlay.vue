@@ -186,11 +186,16 @@ module.exports = exports = defineComponent( {
 		left: 0;
 		z-index: @z-index-overlay-backdrop;
 		width: @size-viewport-width-full;
-		height: @size-viewport-height-full;
+		height: @size-viewport-height-full; // Legacy browsers support viewport height (vh)
 		background-color: @background-color-backdrop-light;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
+		// Modern browsers support dynamic viewport height (dvh)
+		@supports ( height: 100dvh ) {
+			height: 100dvh; // Override height for modern browsers
+		}
 	}
 
 	&-container {
@@ -207,6 +212,15 @@ module.exports = exports = defineComponent( {
 		overflow-y: auto;
 		position: relative;
 		z-index: @z-index-overlay;
+		// Add bottom padding to prevent mobile browser UI (address bar, navigation buttons)
+		// from overlaying the button when the browser chrome is visible T405992
+		// Specifically needed for legacy browsers that do not support `dvh`.
+		padding-bottom: @spacing-400;
+
+		// If the browser supports the dynamic viewport height CSS feature, then remove padding.
+		@supports ( height: 100dvh ) {
+			padding-bottom: 0;
+		}
 	}
 
 	&__close {
@@ -217,13 +231,10 @@ module.exports = exports = defineComponent( {
 	}
 
 	&__back-button.cdx-button {
-		margin-top: @spacing-150;
-		margin-bottom: @spacing-150;
-
-		@media screen and ( min-width: @min-width-breakpoint-tablet ) {
-			margin-left: @spacing-150;
-			max-width: fit-content;
-		}
+		margin-top: @spacing-200;
+		margin-bottom: @spacing-200;
+		margin-left: @spacing-150;
+		max-width: fit-content;
 	}
 }
 

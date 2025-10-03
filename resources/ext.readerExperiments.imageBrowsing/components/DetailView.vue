@@ -270,6 +270,7 @@ module.exports = exports = defineComponent( {
 		img {
 			display: none;
 		}
+
 		.ib-detail-progress {
 			background-color: var( --dominant-color-hex );
 		}
