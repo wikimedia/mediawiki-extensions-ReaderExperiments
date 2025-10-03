@@ -359,6 +359,7 @@ module.exports = exports = defineComponent( {
 			// it is/will be rendered at
 			opacity: 0;
 		}
+
 		.ib-detail-progress {
 			background-color: var( --dominant-color-hex );
 		}

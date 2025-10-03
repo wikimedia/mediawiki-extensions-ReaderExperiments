@@ -136,6 +136,7 @@ module.exports = exports = defineComponent( {
 			const wikipedias = projectsMap[ 'wikipedia.org' ];
 			const highlightIndex = btoa( wikipedias )
 				.charCodeAt( wikipedias.length ) % wikipedias.length;
+
 			return $i18n(
 				'readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple',
 				wikipedias[ highlightIndex ],
@@ -160,7 +161,7 @@ module.exports = exports = defineComponent( {
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
 
-@ib-vtoc-image-height: 12em;
+@ib-vtoc-image-height: 300px;
 
 // TODO: Create less mixin to reuse existing VTOC item styles
 .ib-vtoc-other-wikis-item {
@@ -169,10 +170,17 @@ module.exports = exports = defineComponent( {
 	border-width: 0.5px; // Use a fractional width so overlapping borders appear normal
 	padding: @spacing-150;
 
-	// Remove extra bottom border for the last items in the grid
-	&:last-of-type,
-	&:nth-last-of-type(2) {
-		border-bottom: none;
+	// Override Minerva skin paragraph styles eg. wiki project text
+	p {
+		padding-bottom: 0;
+		margin-top: 0;
+
+		&.ib-vtoc-other-wikis-item__project {
+			font-weight: @font-weight-light;
+			color: @color-subtle;
+			text-align: start;
+			margin-top: @spacing-75;
+		}
 	}
 
 	&__figure {
@@ -190,15 +198,9 @@ module.exports = exports = defineComponent( {
 		}
 
 		figcaption {
-			margin: @spacing-75 0;
+			margin-top: @spacing-75;
 			text-align: left;
 		}
-	}
-
-	&__project {
-		font-weight: @font-weight-light;
-		color: @color-subtle;
-		text-align: start;
 	}
 }
 
