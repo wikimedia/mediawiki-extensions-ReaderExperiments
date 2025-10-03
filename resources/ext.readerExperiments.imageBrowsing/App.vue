@@ -59,10 +59,10 @@ module.exports = exports = defineComponent( {
 		// Client-side routing config
 		// Set up route for overlay images
 		const routePrefix = '/imagebrowsing/';
+		const routePrefixRegExp = /^\/imagebrowsing\/(.+)$/;
 		// Add a dynamic route that matches `/imagebrowsing/*` to support per-image navigation
 		router.addRoute(
-			// eslint-disable-next-line security/detect-non-literal-regexp
-			new RegExp( '^' + RegExp.escape( routePrefix ) + '(.+)$' ),
+			routePrefixRegExp,
 			async ( prefixedDbFileTitle ) => {
 				const uriDecoded = decodeURIComponent( prefixedDbFileTitle );
 
