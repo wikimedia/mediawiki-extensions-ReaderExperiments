@@ -129,4 +129,15 @@ describe( 'Carousel', () => {
 		const actual = wrapper.findAll( '.ib-carousel-item' ).map( ( item ) => item.wrapperElement );
 		expect( actual ).toEqual( expected );
 	} );
+
+	it( 'emits carousel-item-click event when an item is clicked', async () => {
+		const carouselItem = wrapper.findComponent( { name: 'CarouselItem' } );
+		const image = wrapper.props().images[ 0 ];
+
+		await carouselItem.vm.$emit( 'click', image );
+
+		expect( wrapper.emitted( 'carousel-item-click' ) ).toBeTruthy();
+		expect( wrapper.emitted( 'carousel-item-click' ).length ).toBe( 1 );
+		expect( wrapper.emitted( 'carousel-item-click' )[ 0 ][ 0 ] ).toEqual( image );
+	} );
 } );

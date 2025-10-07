@@ -5,6 +5,9 @@ let wrapper;
 
 describe( 'Overlay', () => {
 	beforeEach( () => {
+		// Mock scrollIntoView which is used by the overlay
+		Element.prototype.scrollIntoView = jest.fn();
+
 		const mockProps = {
 			images: [
 				{
@@ -60,5 +63,25 @@ describe( 'Overlay', () => {
 
 		expect( wrapper.emitted( 'overlay-close' ) ).toBeTruthy();
 		expect( wrapper.emitted( 'overlay-close' ).length ).toBe( 1 );
+	} );
+
+	it( 'emits `vtoc-item-click` when a VTOC item is clicked', async () => {
+		const vtoc = wrapper.findComponent( { name: 'VisualTableOfContents' } );
+		const testImage = { src: 'test.jpg' };
+
+		await vtoc.vm.$emit( 'vtoc-item-click', testImage );
+
+		expect( wrapper.emitted( 'vtoc-item-click' ) ).toBeTruthy();
+		expect( wrapper.emitted( 'vtoc-item-click' )[ 0 ][ 0 ] ).toEqual( testImage );
+	} );
+
+	it( 'emits `vtoc-view-in-article` when view in article is triggered', async () => {
+		const vtoc = wrapper.findComponent( { name: 'VisualTableOfContents' } );
+		const testImage = { src: 'test.jpg' };
+
+		await vtoc.vm.$emit( 'vtoc-view-in-article', testImage );
+
+		expect( wrapper.emitted( 'vtoc-view-in-article' ) ).toBeTruthy();
+		expect( wrapper.emitted( 'vtoc-view-in-article' )[ 0 ][ 0 ] ).toEqual( testImage );
 	} );
 } );
