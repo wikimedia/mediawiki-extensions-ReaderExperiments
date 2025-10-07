@@ -34,13 +34,6 @@ const extensions = {
  * @typedef {import('types-mediawiki')} MediaWikiTypes
  */
 
-function fullUrls( str ) {
-	if ( str === null ) {
-		return null;
-	}
-	return str.replace( /\/\//g, 'https://' );
-}
-
 /**
  * Extract data from a live or hidden thumbnail in the content area
  * of the wiki page, with a tiny bit of metadata.
@@ -76,7 +69,7 @@ function thumbInfo( thumb ) {
 
 	/* eslint-enable max-len */
 	// Get the title from one of the thumb URLs...
-	const url = fullUrls( thumb.src || thumb.dataset.mwSrc );
+	const url = thumb.src || thumb.dataset.mwSrc;
 	try {
 		const parsed = mw.util.parseImageUrl( url );
 
@@ -156,12 +149,12 @@ function thumbInfo( thumb ) {
 	/**
 	 * src attribute on the original (or hidden) image
 	 */
-	item.src = fullUrls( thumb.src || thumb.dataset.mwSrc );
+	item.src = thumb.src || thumb.dataset.mwSrc;
 
 	/**
 	 * srcset attribute on the original (or hidden) image
 	 */
-	item.srcset = fullUrls( thumb.srcset || thumb.dataset.mwSrcset );
+	item.srcset = thumb.srcset || thumb.dataset.mwSrcset;
 
 	/**
 	 * Specified width in CSS pixels on the original (or hidden) image
