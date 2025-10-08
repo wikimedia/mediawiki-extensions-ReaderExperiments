@@ -6,7 +6,10 @@
 			</span>
 		</div>
 
-		<div class="ib-vtoc__grid">
+		<div
+			:class="{ 'ib-vtoc__grid--legacy': isLegacy }"
+			class="ib-vtoc__grid"
+		>
 			<visual-table-of-contents-item
 				v-for="( image, index ) in images"
 				:key="index"
@@ -39,6 +42,10 @@ module.exports = exports = defineComponent( {
 		'vtoc-view-in-article'
 	],
 	setup( props, { emit } ) {
+		const isLegacy = !( 'ResizeObserver' in window );
+		// eslint-disable-next-line no-console
+		console.log( `ResizeObserver is ${ isLegacy ? 'NOT ' : '' }supported in this browser.` );
+
 		//
 		// Event handlers.
 		//
@@ -59,7 +66,8 @@ module.exports = exports = defineComponent( {
 
 		return {
 			onItemClick,
-			onViewInArticle
+			onViewInArticle,
+			isLegacy
 		};
 	}
 } );
@@ -81,9 +89,15 @@ module.exports = exports = defineComponent( {
 	&__grid {
 		@media screen and ( min-width: @min-width-breakpoint-tablet ) {
 			display: grid;
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat( 2, 1fr );
 			grid-auto-rows: 10px;
 			border-bottom: @border-subtle;
+		}
+	}
+
+	&__grid--legacy {
+		@media screen and ( min-width: @min-width-breakpoint-tablet ) {
+			grid-auto-rows: auto;
 		}
 	}
 }

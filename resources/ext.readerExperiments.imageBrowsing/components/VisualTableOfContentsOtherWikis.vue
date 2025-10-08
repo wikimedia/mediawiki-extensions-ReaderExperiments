@@ -15,7 +15,11 @@
 			aria-label="$i18n( 'readerexperiments-imagebrowsing-vtoc-other-wikis-loading' ).text()"
 		></cdx-progress-bar>
 
-		<div v-else class="ib-vtoc-other-wikis__grid">
+		<div
+			v-else
+			:class="{ 'ib-vtoc-other-wikis__grid--legacy': isLegacy }"
+			class="ib-vtoc-other-wikis__grid"
+		>
 			<visual-table-of-contents-other-wikis-item
 				v-for="( image, index ) in images"
 				:key="index"
@@ -54,6 +58,8 @@ module.exports = exports = defineComponent( {
 		const containerElement = useTemplateRef( 'containerElement' );
 		const done = ref( false );
 		const images = ref( [] );
+
+		const isLegacy = !( 'ResizeObserver' in window );
 
 		const isVisible = useIntersectionObserver( containerElement, {
 			// Start loading once element has crossed 50% below the viewport
@@ -94,7 +100,8 @@ module.exports = exports = defineComponent( {
 			containerElement,
 			done,
 			images,
-			onItemClick
+			onItemClick,
+			isLegacy
 		};
 	}
 } );
@@ -118,9 +125,15 @@ module.exports = exports = defineComponent( {
 	&__grid {
 		@media screen and ( min-width: @min-width-breakpoint-tablet ) {
 			display: grid;
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat( 2, 1fr );
 			grid-auto-rows: 10px;
 			border-bottom: @border-subtle;
+		}
+	}
+
+	&__grid--legacy {
+		@media screen and ( min-width: @min-width-breakpoint-tablet ) {
+			grid-auto-rows: auto;
 		}
 	}
 }

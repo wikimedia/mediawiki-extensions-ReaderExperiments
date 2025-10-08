@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="ib-vtoc-other-wikis-item"
-		:style="{ 'grid-row-end': gridRowSpan }"
+		:style="gridRowSpan ? { 'grid-row-end': gridRowSpan } : {}"
 	>
 		<figure
 			ref="figure"
@@ -47,9 +47,11 @@ module.exports = exports = defineComponent( {
 	],
 	setup( props, { emit } ) {
 		const $i18n = inject( 'i18n' );
-
+		const supportsResizeObserver = 'ResizeObserver' in window;
 		const figure = useTemplateRef( 'figure' );
-		const figureDimensions = useResizeObserver( figure );
+		const figureDimensions = supportsResizeObserver ?
+			useResizeObserver( figure ) :
+			{ value: { height: 0 } };
 
 		// TODO: Duplicate code to get masonry layout is shared with VTOC item
 		/**
@@ -67,10 +69,14 @@ module.exports = exports = defineComponent( {
 
 		/**
 		 * Translate the computedHeight property into a string
-		 * suitable for use in CSS
+		 * suitable for use in CSS. The string is conditionally applied to
+		 * grid-row-end style only when ResizeObserver is supported to avoid
+		 * 'span NaN' in legacy browsers.
 		 */
 		const gridRowSpan = computed( () => {
-			return `span ${ computedHeight.value / 10 }`;
+			return supportsResizeObserver ?
+				`span ${ computedHeight.value / 10 }` :
+				undefined;
 		} );
 
 		/**

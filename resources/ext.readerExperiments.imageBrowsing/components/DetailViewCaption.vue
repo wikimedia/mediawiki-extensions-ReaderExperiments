@@ -246,7 +246,7 @@ module.exports = exports = defineComponent( {
 			line-clamp: 8;
 		}
 
-		a:where( :not( [ role='button' ] ) ) {
+		a:not( [ role='button' ] ) {
 			color: inherit;
 			text-decoration: underline;
 			text-decoration-thickness: 1.5px; // Make the underline slightly more legible

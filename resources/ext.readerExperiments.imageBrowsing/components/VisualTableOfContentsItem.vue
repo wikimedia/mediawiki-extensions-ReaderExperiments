@@ -1,5 +1,8 @@
 <template>
-	<div class="ib-vtoc-item" :style="{ 'grid-row-end': gridRowSpan }">
+	<div
+		class="ib-vtoc-item"
+		:style="gridRowSpan ? { 'grid-row-end': gridRowSpan } : {}"
+	>
 		<figure ref="figure" class="ib-vtoc-item__figure">
 			<button
 				@click.prevent="onItemClick( image )"
@@ -73,8 +76,11 @@ module.exports = exports = defineComponent( {
 		'vtoc-view-in-article'
 	],
 	setup( props, { emit } ) {
+		const supportsResizeObserver = 'ResizeObserver' in window;
 		const figure = useTemplateRef( 'figure' );
-		const figureDimensions = useResizeObserver( figure );
+		const figureDimensions = supportsResizeObserver ?
+			useResizeObserver( figure ) :
+			{ value: { height: 0 } };
 
 		// Instrumentation plugin.
 		const submitInteraction = inject( 'submitInteraction' );
@@ -91,10 +97,16 @@ module.exports = exports = defineComponent( {
 			return roundedHeight;
 		} );
 
-		// Translate the computedHeight property into a string
-		// suitable for use in CSS.
+		/**
+		 * Translate the computedHeight property into a string
+		 * suitable for use in CSS. The string is conditionally applied to
+		 * grid-row-end style only when ResizeObserver is supported to avoid
+		 * 'span NaN' in legacy browsers.
+		 */
 		const gridRowSpan = computed( () => {
-			return `span ${ computedHeight.value / 10 }`;
+			return supportsResizeObserver ?
+				`span ${ computedHeight.value / 10 }` :
+				undefined;
 		} );
 
 		const caption = computed( () => {

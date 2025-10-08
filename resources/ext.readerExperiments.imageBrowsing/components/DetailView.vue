@@ -320,10 +320,15 @@ module.exports = exports = defineComponent( {
 
 .ib-detail-view {
 	display: flex;
-	align-items: end;
+	// Ensure flex items are aligned at the end of the flex container (`end` value broke in iOS 12)
+	align-items: flex-end;
 	position: relative;
-	height: 100dvh;
+	height: 100vh; // Legacy browser
 	flex-shrink: 0;
+
+	@supports ( height: 100dvh ) {
+		height: 100dvh; // Override for modern browsers
+	}
 
 	img, .ib-detail-progress {
 		position: absolute;
