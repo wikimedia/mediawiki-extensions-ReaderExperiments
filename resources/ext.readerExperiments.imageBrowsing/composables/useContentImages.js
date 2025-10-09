@@ -1,17 +1,18 @@
 const { extractThumbInfo } = require( '../thumbExtractor.js' );
 
-const cacheContentImages = {};
+const cacheContentImages = new WeakMap();
 
 /**
  * @param {Element} element
  * @return {import('./types').ImageData[]}
  */
 module.exports = function useContentImages( element ) {
-	if ( cacheContentImages[ element ] ) {
-		return cacheContentImages[ element ];
+	if ( cacheContentImages.has( element ) ) {
+		return cacheContentImages.get( element );
 	}
 
 	// Grab all image info, removing those that failed to parse
-	cacheContentImages[ element ] = extractThumbInfo( element ).filter( ( img ) => img.name );
-	return cacheContentImages[ element ];
+	const images = extractThumbInfo( element ).filter( ( img ) => img.name );
+	cacheContentImages.set( element, images );
+	return images;
 };
