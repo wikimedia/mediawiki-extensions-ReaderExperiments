@@ -66,6 +66,7 @@
 				"fast-average-color"
 			],
 			"packageFiles": [
+				"init.js",
 				{
 					"name": "icons.json",
 					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
@@ -81,7 +82,6 @@
 						"cdxIconArrowPrevious"
 					]
 				},
-				"init.js",
 				"excludedImageClasses.js",
 				"thumbExtractor.js",
 				"App.vue",
