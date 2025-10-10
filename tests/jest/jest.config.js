@@ -84,7 +84,9 @@ module.exports = {
 		// See https://www.mediawiki.org/wiki/Codex#Loading_a_subset_of_Codex_components_(recommended_for_skins_and_extensions)
 		'codex.js$': '@wikimedia/codex',
 		// Mock the dynamically generated icons.json file
-		'../icons.json$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/icons.json'
+		'../icons.json$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/icons.json',
+		// Mock the mediawiki.router module (provided by MediaWiki ResourceLoader at runtime)
+		'^mediawiki\\.router$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/mediawiki.router.js'
 	},
 
 	// An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

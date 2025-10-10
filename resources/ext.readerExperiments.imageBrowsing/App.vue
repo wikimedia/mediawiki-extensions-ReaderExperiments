@@ -146,7 +146,6 @@ module.exports = exports = defineComponent( {
 		function onCarouselItemClick( image ) {
 			// When a carousel image is clicked, set it as the active image
 			// and show the overlay part of the UI.
-			activeImage.value = image;
 			navigateTo( image );
 		}
 
@@ -168,14 +167,14 @@ module.exports = exports = defineComponent( {
 		//
 
 		function onVTOCItemClick( image ) {
-			activeImage.value = image;
+			navigateTo( image );
 		}
 
 		/**
 		 * @param {import('./types').ImageData} image
 		 */
 		function onVTOCViewInArticle( image ) {
-			activeImage.value = null;
+			navigateTo( null );
 
 			// Scroll the main page view to the image in context.
 			// Do not use image.thumb, as that may be a lazy-load placeholder

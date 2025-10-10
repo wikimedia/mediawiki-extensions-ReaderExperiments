@@ -111,3 +111,7 @@ jest.mock( 'fast-average-color', () => ( {
 		} )
 	} ) )
 } ) );
+
+// Mock mediawiki.router module (provided by MediaWiki ResourceLoader at runtime)
+// The mock implementation is in __mocks__/mediawiki.router.js
+jest.mock( 'mediawiki.router' );
