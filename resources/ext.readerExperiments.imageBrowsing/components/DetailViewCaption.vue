@@ -203,7 +203,14 @@ module.exports = exports = defineComponent( {
 	&__text,
 	&__expand.cdx-button,
 	&__collapse.cdx-button {
-		color: var( --dominant-color-contrasting )
+		@supports (color: oklch(from white l c h)) {
+			color: var( --dominant-color-contrasting );
+		}
+
+		// Fallback for browsers that don't support relative color syntax with `from`
+		@supports not (color: oklch(from white l c h)) {
+			color: var( --dominant-color-contrasting--legacy );
+		}
 	}
 
 	&__expand.cdx-button,

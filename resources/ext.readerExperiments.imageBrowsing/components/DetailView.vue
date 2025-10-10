@@ -6,7 +6,8 @@
 		}"
 		:style="{
 			'--dominant-color-hex': dominantColorHex,
-			'--dominant-color-contrasting': dominantColorContrasting
+			'--dominant-color-contrasting': dominantColorContrasting,
+			'--dominant-color-contrasting--legacy': dominantColorContrastingLegacy
 		}">
 		<!-- Image -->
 		<img
@@ -96,6 +97,11 @@ module.exports = exports = defineComponent( {
 		const dominantColorContrasting = computed( () => {
 			return color.value ?
 				`oklch( from ${ color.value.hex } calc( l * ${ color.value.isDark ? 100 : 0 } ) c h )` :
+				null;
+		} );
+		const dominantColorContrastingLegacy = computed( () => {
+			return color.value ?
+				( color.value.isDark ? 'white' : 'black' ) :
 				null;
 		} );
 
@@ -304,6 +310,7 @@ module.exports = exports = defineComponent( {
 			resizedSrc,
 			dominantColorHex,
 			dominantColorContrasting,
+			dominantColorContrastingLegacy,
 			imageElement,
 			cropStyle,
 			loading,
