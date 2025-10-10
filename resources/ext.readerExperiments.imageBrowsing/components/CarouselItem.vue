@@ -6,6 +6,7 @@
 		<img
 			ref="imageElement"
 			class="ib-carousel-item__image"
+			crossorigin="anonymous"
 			:src="thumbnailSrc"
 			:width="thumbnailWidth"
 			:height="thumbnailHeight"
@@ -15,7 +16,6 @@
 					'readerexperiments-imagebrowsing-image-alt-text',
 					image.title.getFileNameTextWithoutExtension()
 				).text()"
-			crossorigin="anonymous"
 			loading="lazy"
 		>
 	</button>

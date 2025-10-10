@@ -87,10 +87,10 @@ describe( 'Carousel', () => {
 
 			const img = document.createElement( 'img' );
 			img.setAttribute( 'class', 'ib-carousel-item__image' );
+			img.setAttribute( 'crossorigin', 'anonymous' );
 			img.setAttribute( 'src', image.expectedUrl );
 			img.setAttribute( 'width', image.expectedWidth );
 			img.setAttribute( 'height', 175 );
-			img.setAttribute( 'crossorigin', 'anonymous' );
 			img.setAttribute( 'loading', 'lazy' );
 
 			const alt = image.alt;

@@ -10,6 +10,7 @@
 				<img
 					ref="imageElement"
 					class="ib-vtoc-item__figure__image"
+					crossorigin="anonymous"
 					:src="image.src"
 					:srcset="image.srcset"
 					:width="image.width"
@@ -20,7 +21,6 @@
 							'readerexperiments-imagebrowsing-image-alt-text',
 							image.title.getFileNameTextWithoutExtension()
 						).text()"
-					crossorigin="anonymous"
 					loading="lazy"
 				>
 			</button>

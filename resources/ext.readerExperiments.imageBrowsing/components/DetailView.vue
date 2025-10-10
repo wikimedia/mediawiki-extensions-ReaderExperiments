@@ -11,6 +11,7 @@
 		<!-- Image -->
 		<img
 			ref="imageElement"
+			crossorigin="anonymous"
 			:src="resizedSrc"
 			:alt="activeImage.alt ?
 				activeImage.alt :
@@ -19,7 +20,6 @@
 					activeImage.title.getFileNameTextWithoutExtension()
 				).text()"
 			:style="isCropped ? cropStyle : {}"
-			crossorigin="anonymous"
 		>
 		<div
 			v-if="loading"
