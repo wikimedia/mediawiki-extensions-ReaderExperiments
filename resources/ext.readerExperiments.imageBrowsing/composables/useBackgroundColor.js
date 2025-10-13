@@ -17,6 +17,93 @@ const { ref, watchEffect, readonly } = require( 'vue' );
 const backgroundMap = new Map();
 
 /**
+ * Store a list of promises for images that are currently loading.
+ *
+ * @type {Map<HTMLImageElement, Promise<HTMLImageElement>>}
+ */
+const loadMap = new Map();
+
+/**
+ * @param {HTMLImageElement} imageElement
+ * @return {Promise<HTMLImageElement>}
+ */
+function waitForImageLoad( imageElement ) {
+	const existing = loadMap.get( imageElement );
+	if ( existing ) {
+		// Prevent attaching multiple event listeners to the same node if we're
+		// already monitoring it.
+		return existing;
+	}
+
+	const promise = new Promise( ( resolve, reject ) => {
+		if ( imageElement.complete ) {
+			resolve( imageElement );
+		} else {
+			// Note: we can't use `await imageElement.decode()` because we want to respect
+			// lazy-loading and only calculate once one of the thumbs gets loaded.
+
+			// eslint-disable-next-line prefer-const
+			let cleanup;
+
+			const onLoad = () => {
+				cleanup();
+				resolve( imageElement );
+			};
+
+			const onError = () => {
+				// Failed; likely a network error or the overlay was closed
+				// during loading.
+				cleanup();
+				reject( 'Failed to load image ' + imageElement.src );
+			};
+
+			cleanup = () => {
+				imageElement.removeEventListener( 'load', onLoad );
+				imageElement.removeEventListener( 'error', onError );
+			};
+
+			imageElement.addEventListener( 'load', onLoad );
+			imageElement.addEventListener( 'error', onError );
+		}
+	} );
+
+	loadMap.set( imageElement, promise );
+	return promise;
+}
+
+/**
+ * @param {HTMLImageElement} imageElement
+ * @param {ImageData} imageData
+ * @return {ColorResult}
+ */
+function computeColor( imageElement, imageData ) {
+	const cached = backgroundMap.get( imageData.name );
+	if ( cached ) {
+		// Another instance of this image loaded first, return cached data.
+		return cached;
+	}
+
+	if ( !imageElement.complete ) {
+		// Failure to load thumbnail, ignore.
+		throw new Error( 'Failed to load image ' + imageElement.src );
+	}
+
+	const color = new FastAverageColor().getColor( imageElement, {
+		algorithm: 'simple',
+		silent: true,
+		width: imageElement.naturalWidth,
+		height: imageElement.naturalHeight
+	} );
+
+	if ( color.error ) {
+		throw new Error( 'Failed to use image ' + imageElement.src );
+	}
+
+	backgroundMap.set( imageData.name, color );
+	return color;
+}
+
+/**
  * Calculate the background color for the given ImageData reference,
  * using the given `<img>` reference as a source.
  *
@@ -28,93 +115,64 @@ const backgroundMap = new Map();
  * can be read into a canvas. If it's not already loaded it will be
  * triggered to load.
  *
- * @param {import('vue').Ref<ImageData>} imageRef reference to ImageData struct
- * @param {import('vue').Ref<Image>} imageElement reference to live img
+ * @param {import('vue').Ref<ImageData>} imageDataRef reference to ImageData struct
+ * @param {import('vue').Ref<HTMLImageElement>} imageElementRef reference to live img
  * @return {ReadonlyColorRef}
  */
-module.exports = exports = function useBackgroundColor( imageRef, imageElement ) {
+module.exports = exports = function useBackgroundColor( imageDataRef, imageElementRef ) {
 	const colorResult = ref( null );
 
 	watchEffect( () => {
-		const image = imageRef.value;
-		if ( !image ) {
+		const imageData = imageDataRef.value;
+		const imageElement = imageElementRef.value;
+
+		if ( !imageData ) {
 			colorResult.value = null;
 			return;
 		}
 
-		const cached = backgroundMap.get( image.name );
+		const cached = backgroundMap.get( imageData.name );
 		if ( cached ) {
 			colorResult.value = cached;
 			return;
 		}
 
-		// No cached value ready, so we have to go looking at the HTML.
-		const imgEl = imageElement.value;
-		if ( !imgEl ) {
-			return;
-		}
-
-		const compute = () => {
-			if ( colorResult.value ||
-				imageRef.value !== image ||
-				imageElement.value !== imgEl
-			) {
-				// Stale load, ignore.
-				return;
+		const isStale = () => imageData !== imageDataRef.value || imageElement !== imageElementRef.value;
+		const updateIfNotStale = ( color ) => {
+			// It could take some time for images to have completed loading,
+			// and this data having become available, so it is possible that
+			// the data we worked on is no longer relevant.
+			// We've cached whatever we could get from the image that was
+			// loaded (in case we need it again later), but before we
+			// actually update the result, we need to make sure it is still
+			// accurate/relevant for the current input.
+			if ( !isStale() ) {
+				colorResult.value = color;
 			}
-
-			const recached = backgroundMap.get( image.name );
-			if ( recached ) {
-				// Another instance of this image loaded first, return cached data.
-				colorResult.value = recached;
-				return;
-			}
-
-			if ( !imgEl.complete ) {
-				// Failure to load thumbnail, ignore.
-				return;
-			}
-
-			// Check if the cache has been updated, otherwise calculate from the
-			// loaded image.
-			const color = new FastAverageColor().getColor( imgEl, {
-				algorithm: 'simple',
-				width: imgEl.naturalWidth,
-				height: imgEl.naturalHeight
-			} );
-			backgroundMap.set( image.name, color );
-			colorResult.value = color;
 		};
 
-		if ( imgEl.complete ) {
-			compute();
-		} else {
-			// Note: we can't use `await imgEl.decode()` because we want to respect
-			// lazy-loading and only calculate once one of the thumbs gets loaded.
+		// Bind to the given image event, to calculate the color as soon as the
+		// image becomes available.
+		if ( imageElement ) {
+			waitForImageLoad( imageElement )
+				.then( ( node ) => computeColor( node, imageData ) )
+				.then( ( color ) => updateIfNotStale( color ) )
+				.catch( () => {
+					// Failures are acceptable, we just don't want them
+					// polluting console
+				} );
+		}
 
-			// eslint-disable-next-line prefer-const
-			let cleanup;
-
-			const onLoad = () => {
-				cleanup();
-				if ( image === imageRef.value ) {
-					compute();
-				}
-			};
-
-			const onError = () => {
-				// Failed; likely a network error or the overlay was closed
-				// during loading.
-				cleanup();
-			};
-
-			cleanup = () => {
-				imgEl.removeEventListener( 'load', onLoad );
-				imgEl.removeEventListener( 'error', onError );
-			};
-
-			imgEl.addEventListener( 'load', onLoad );
-			imgEl.addEventListener( 'error', onError );
+		// Also bind to thumbnail (insofar a valid one is available), which may
+		// already be (or sooner become) available.
+		if ( imageData.thumb && imageData.thumb instanceof HTMLImageElement ) {
+			waitForImageLoad( imageData.thumb )
+				.then( ( node ) => computeColor( node, imageData ) )
+				.then( ( color ) => updateIfNotStale( color ) )
+				.catch( () => {
+					// Failures are acceptable, we just don't want them
+					// polluting console
+				} );
 		}
 	} );
 	return readonly( colorResult );

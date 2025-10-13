@@ -53,6 +53,9 @@ module.exports = exports = defineComponent( {
 			null, acceptableThumbnailWidths.length ? acceptableThumbnailWidths : [ thumbnailWidth ]
 		);
 
+		// Nit: background color is not actively used here, but it pre-populates the
+		// color cache for when these images may later be loaded in different dimensions
+		// elsewhere
 		const imageRef = toRef( props, 'image' );
 		const imageElement = useTemplateRef( 'imageElement' );
 		useBackgroundColor( imageRef, imageElement );
