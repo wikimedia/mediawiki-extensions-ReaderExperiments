@@ -1,4 +1,5 @@
 const { mount } = require( '@vue/test-utils' );
+const { when } = require( 'jest-when' );
 const VisualTableOfContentsItem = require( '../../resources/ext.readerExperiments.imageBrowsing/components/VisualTableOfContentsItem' );
 
 // Mock the thumbExtractor module
@@ -7,16 +8,16 @@ jest.mock( '../../resources/ext.readerExperiments.imageBrowsing/thumbExtractor.j
 } ) );
 
 // Mock the mw global object
-global.mw = {
-	html: {
-		escape: jest.fn( ( text ) => text )
-	}
-};
+global.mw.html.escape = jest.fn( ( text ) => text );
 
 let mockImage, wrapper;
 
 describe( 'VisualTableOfContentsItem', () => {
 	beforeEach( () => {
+		when( global.mw.config.get )
+			.calledWith( 'ReaderExperimentsImageBrowsingThumbLimits' )
+			.mockReturnValue( [ 50, 100, 200 ] );
+
 		// Reset mocks
 		jest.clearAllMocks();
 		mockImage = {
@@ -29,7 +30,7 @@ describe( 'VisualTableOfContentsItem', () => {
 			container: {
 				querySelector: jest.fn( () => null )
 			},
-			loading: 'lazy'
+			resizeUrl: ( width ) => `//url/to/full-image.jpg?width=${ width }`
 		};
 
 		// Default wrapper, override in test cases as needed
@@ -45,10 +46,9 @@ describe( 'VisualTableOfContentsItem', () => {
 	it( 'displays an article image', () => {
 		const img = wrapper.find( 'img' );
 		expect( img.exists() ).toBe( true );
-		expect( img.attributes( 'src' ) ).toBe( mockImage.src );
-		expect( img.attributes( 'srcset' ) ).toBe( mockImage.srcset );
+		expect( img.attributes( 'src' ) ).toBe( '//url/to/full-image.jpg?width=50' );
 		expect( img.attributes( 'alt' ) ).toBe( mockImage.alt );
-		expect( img.attributes( 'loading' ) ).toBe( mockImage.loading );
+		expect( img.attributes( 'loading' ) ).toBe( 'lazy' );
 	} );
 
 	it( 'includes a "view in article" button', () => {

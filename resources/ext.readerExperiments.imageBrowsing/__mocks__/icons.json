@@ -6,5 +6,6 @@
 	"cdxIconDownload": "<path d=\"M10 13.207L6.146 9.354l1.414-1.414L9 9.379V1h2v8.379l1.44-1.44 1.414 1.415L10 13.207zM1 15h18v2H1v-2z\"/>",
 	"cdxIconAdd": "<path d=\"M11 9V1H9v8H1v2h8v8h2v-8h8V9h-8z\"/>",
 	"cdxIconSubtract": "<path d=\"M1 9v2h18V9H1z\"/>",
-	"cdxIconArrowPrevious": "<path d=\"M5.83 9 5.58-5.58L10 2l-8 8 8 8 1.41-1.41L5.83 11H18V9z\"/>"
+	"cdxIconArrowPrevious": "<path d=\"M5.83 9 5.58-5.58L10 2l-8 8 8 8 1.41-1.41L5.83 11H18V9z\"/>",
+	"cdxIconImage": "<path d=\"M2 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-.17 13 4.09-5.25 2.92 3.51L12.92 8l5.25 7z\"/>"
 }

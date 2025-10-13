@@ -5,24 +5,21 @@
 	>
 		<figure ref="figure" class="ib-vtoc-item__figure">
 			<button
+				class="ib-vtoc-item__figure__button"
+				:style="imageDimensionsStyle"
 				@click.prevent="onItemClick( image )"
 			>
-				<img
-					ref="imageElement"
+				<cropped-image
 					class="ib-vtoc-item__figure__image"
-					crossorigin="anonymous"
-					:src="image.src"
-					:srcset="image.srcset"
-					:width="image.width"
-					:height="image.height"
+					:image="image"
 					:alt="image.alt ?
 						image.alt :
 						$i18n(
 							'readerexperiments-imagebrowsing-image-alt-text',
 							image.title.getFileNameTextWithoutExtension()
 						).text()"
-					loading="lazy"
-				>
+					:style="imageDimensionsStyle"
+				></cropped-image>
 			</button>
 
 			<!-- eslint-disable vue/no-v-html -->
@@ -54,15 +51,16 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, inject, computed, toRef, onMounted, onUnmounted } = require( 'vue' );
+const { defineComponent, useTemplateRef, inject, computed, onMounted, onUnmounted } = require( 'vue' );
 const { CdxButton, useResizeObserver } = require( '@wikimedia/codex' );
+const CroppedImage = require( './CroppedImage.vue' );
 const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
-const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'VisualTableOfContentsItem',
 	components: {
+		CroppedImage,
 		CdxButton
 	},
 	props: {
@@ -81,10 +79,6 @@ module.exports = exports = defineComponent( {
 		const figureDimensions = supportsResizeObserver ?
 			useResizeObserver( figure ) :
 			{ value: { height: 0 } };
-
-		// Instrumentation plugin.
-		const submitInteraction = inject( 'submitInteraction' );
-		const manageLinkEventListeners = inject( 'manageLinkEventListeners' );
 
 		// For desktop display, get the "masonry" block height
 		// of the current VTOC item by calculating the current
@@ -119,9 +113,20 @@ module.exports = exports = defineComponent( {
 		} );
 		const captionTextElement = useTemplateRef( 'captionTextElement' );
 
+		// Calculate width corresponding to fixed height.
+		const imageHeight = 300;
+		const imageDimensionsStyle = computed( () => ( {
+			width: 'min( 100%, ' + props.image.width / props.image.height * imageHeight + 'px )',
+			height: imageHeight + 'px'
+		} ) );
+
 		//
 		// Event handlers.
 		//
+
+		// Instrumentation plugin.
+		const submitInteraction = inject( 'submitInteraction' );
+		const manageLinkEventListeners = inject( 'manageLinkEventListeners' );
 
 		onMounted( () => {
 			manageLinkEventListeners( captionTextElement, onCaptionLinkClick );
@@ -164,10 +169,6 @@ module.exports = exports = defineComponent( {
 		}
 		/* eslint-enable camelcase */
 
-		const imageRef = toRef( props, 'image' );
-		const imageElement = useTemplateRef( 'imageElement' );
-		useBackgroundColor( imageRef, imageElement );
-
 		return {
 			caption,
 			captionTextElement,
@@ -175,7 +176,7 @@ module.exports = exports = defineComponent( {
 			onViewInArticle,
 			figure,
 			gridRowSpan,
-			imageElement
+			imageDimensionsStyle
 		};
 	}
 } );
@@ -183,8 +184,6 @@ module.exports = exports = defineComponent( {
 
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
-
-@ib-vtoc-image-height: 300px;
 
 .ib-vtoc-item {
 	border-style: @border-style-base;
@@ -195,14 +194,10 @@ module.exports = exports = defineComponent( {
 	&__figure {
 		text-align: center;
 
-		&__image {
-			width: @size-full;
-			height: @ib-vtoc-image-height;
-			object-fit: contain;
-		}
-
 		// Button wrapper for the image
 		button:not( .cdx-button ) {
+			display: block;
+			margin: 1em auto;
 			border: none;
 			cursor: pointer;
 			padding: 0;

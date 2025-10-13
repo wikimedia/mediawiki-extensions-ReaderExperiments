@@ -87,6 +87,7 @@
 				"App.vue",
 				"components/Carousel.vue",
 				"components/CarouselItem.vue",
+				"components/CroppedImage.vue",
 				"components/DetailView.vue",
 				"components/DetailViewCaption.vue",
 				"components/DetailViewControls.vue",

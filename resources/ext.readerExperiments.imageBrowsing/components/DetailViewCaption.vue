@@ -173,6 +173,8 @@ module.exports = exports = defineComponent( {
 </script>
 
 <style lang="less">
+@import 'mediawiki.skin.variables.less';
+
 .ib-detail-view-caption {
 	--caption-padding: 20px;
 	--gradient-height: 60px;
@@ -183,6 +185,7 @@ module.exports = exports = defineComponent( {
 	margin: 0;
 	padding-bottom: var( --caption-padding );
 	padding-left: var( --caption-padding );
+	z-index: @z-index-overlay;
 
 	// preserve space for buttons on the right: 32px (button width) + 2x 20px
 	// (button margin on either side)

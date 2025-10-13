@@ -361,6 +361,8 @@ module.exports = exports = defineComponent( {
 </script>
 
 <style lang="less">
+@import 'mediawiki.skin.variables.less';
+
 .ib-detail-view-controls {
 	position: absolute;
 	bottom: 16px;
@@ -369,6 +371,8 @@ module.exports = exports = defineComponent( {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+
+	z-index: @z-index-overlay;
 
 	&__download-popover .cdx-popover__body {
 		overflow-y: unset;

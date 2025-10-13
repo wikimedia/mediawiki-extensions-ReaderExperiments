@@ -7,17 +7,21 @@
 			ref="figure"
 			class="ib-vtoc-other-wikis-item__figure"
 		>
-			<button @click.prevent="onItemClick( image )">
-				<img
+			<button
+				:style="imageDimensionsStyle"
+				@click.prevent="onItemClick( image )"
+			>
+				<cropped-image
 					class="ib-vtoc-other-wikis-item__figure__image"
-					:src="image.src"
+					:image="image"
 					:alt="image.label ?
 						image.label :
 						$i18n(
 							'readerexperiments-imagebrowsing-image-alt-text',
 							image.title.getFileNameTextWithoutExtension()
 						).text()"
-				>
+					:style="imageDimensionsStyle"
+				></cropped-image>
 			</button>
 			<figcaption>
 				{{ image.label }}
@@ -32,10 +36,14 @@
 <script>
 const { defineComponent, computed, inject, useTemplateRef } = require( 'vue' );
 const { useResizeObserver } = require( '@wikimedia/codex' );
+const CroppedImage = require( './CroppedImage.vue' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'VisualTableOfContentsOtherWikisItem',
+	components: {
+		CroppedImage
+	},
 	props: {
 		image: {
 			type: Object,
@@ -150,6 +158,13 @@ module.exports = exports = defineComponent( {
 			);
 		}
 
+		// Calculate width corresponding to fixed height.
+		const imageHeight = 300;
+		const imageDimensionsStyle = computed( () => ( {
+			width: 'min( 100%, ' + props.image.width / props.image.height * imageHeight + 'px )',
+			height: imageHeight + 'px'
+		} ) );
+
 		function onItemClick( image ) {
 			emit( 'vtoc-item-click', image );
 		}
@@ -158,7 +173,8 @@ module.exports = exports = defineComponent( {
 			figure,
 			gridRowSpan,
 			getImageSources,
-			onItemClick
+			onItemClick,
+			imageDimensionsStyle
 		};
 	}
 } );
@@ -166,8 +182,6 @@ module.exports = exports = defineComponent( {
 
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
-
-@ib-vtoc-image-height: 300px;
 
 // TODO: Create less mixin to reuse existing VTOC item styles
 .ib-vtoc-other-wikis-item {
@@ -192,15 +206,15 @@ module.exports = exports = defineComponent( {
 	&__figure {
 		text-align: center;
 
-		&__image {
-			max-height: @ib-vtoc-image-height;
-			max-width: @size-full;
-		}
-
+		// Button wrapper for the image
 		button:not( .cdx-button ) {
+			display: block;
+			margin: 1em auto;
 			border: none;
 			cursor: pointer;
 			padding: 0;
+			// Override Safari and iOS Chrome browser button background color
+			background-color: unset;
 		}
 
 		figcaption {
