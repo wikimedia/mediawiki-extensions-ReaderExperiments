@@ -35,7 +35,8 @@ describe( 'VisualTableOfContents', () => {
 
 		wrapper = shallowMount( VisualTableOfContents, {
 			props: {
-				images: mockImages
+				images: mockImages,
+				activeImage: null
 			}
 		} );
 	} );

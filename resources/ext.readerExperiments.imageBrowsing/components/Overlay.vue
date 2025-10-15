@@ -8,6 +8,11 @@
 		<div
 			ref="overlayElement"
 			class="ib-overlay-container"
+			role="dialog"
+			aria-modal="true"
+			:aria-label="$i18n(
+				'readerexperiments-imagebrowsing-overlay-label'
+			).text()"
 			tabindex="-1"
 			@keydown.esc="onClose"
 			@click.stop
@@ -29,12 +34,14 @@
 
 			<visual-table-of-contents
 				:images="images"
+				:active-image="activeImage"
 				@vtoc-item-click="onVTOCItemClick"
 				@vtoc-view-in-article="onVTOCViewInArticle"
 			></visual-table-of-contents>
 
 			<visual-table-of-contents-other-wikis
 				:exclude-images="images"
+				:active-image="activeImage"
 				@vtoc-item-click="onVTOCItemClick"
 			></visual-table-of-contents-other-wikis>
 
@@ -63,6 +70,27 @@ const VisualTableOfContents = require( './VisualTableOfContents.vue' );
 const VisualTableOfContentsOtherWikis = require( './VisualTableOfContentsOtherWikis.vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconClose, cdxIconArrowPrevious } = require( '../icons.json' );
+
+/*
+ * Note for buttons used within this widget:
+ *
+ * Clicking the image is supposed to open the overlay, or
+ * keep the overlay open if it's already open.
+ * <Space> and <Enter> key presses will generate clicks
+ * (and thus will also open the overlay).
+ * <Space> and <Enter> are inconsistent, though: the former
+ * causes a "click" event on "keyup", the latter on "keydown".
+ * Because of this difference, there's this weird bug where
+ * an <Enter>-key based "click" will cause the overlay to open,
+ * which will in turn move the focus to the close button,
+ * and they <Enter>-based "click" will once again fire on that
+ * new button that now has focus, effectively immediately
+ * closing the overlay again.
+ *
+ * Instead of that, we're binding keydown/keyup handlers for
+ * enter specifically on thos buttons so we trigger on the
+ * keyup instead of the keydown and avoid breaking the overlay.
+ */
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -96,7 +124,7 @@ module.exports = exports = defineComponent( {
 
 		const submitInteraction = inject( 'submitInteraction' ); // Instrumentation plugin
 
-		function focusFirstFocusableElement( container, backwards = false ) {
+		function focusFirstFocusableElement( container, backwards = false, preventScroll = false ) {
 			// Find all focusable elements in the container.
 			// Exclude elements with a negative tabindex; those are technically focusable, but are
 			// skipped when tabbing
@@ -114,7 +142,9 @@ module.exports = exports = defineComponent( {
 
 			for ( const candidate of candidates ) {
 				// Try to focus each element.
-				candidate.focus();
+				candidate.focus( {
+					preventScroll
+				} );
 				// Once it works, return true.
 				if ( document.activeElement === candidate ) {
 					return true;
@@ -162,6 +192,9 @@ module.exports = exports = defineComponent( {
 			emit( 'vtoc-item-click', image );
 
 			if ( detailViewRef.value && detailViewRef.value.$el ) {
+				if ( overlayElement.value ) {
+					focusFirstFocusableElement( overlayElement.value, false, true );
+				}
 				// Scroll the overlay back to the detail view at top.
 				detailViewRef.value.$el.scrollIntoView( {
 					behavior: 'smooth'

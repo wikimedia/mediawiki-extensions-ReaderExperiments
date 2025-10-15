@@ -13,12 +13,7 @@
 		<img
 			ref="imageElement"
 			:src="resizedSrc"
-			:alt="image.alt ?
-				image.alt :
-				$i18n(
-					'readerexperiments-imagebrowsing-image-alt-text',
-					image.title.getFileNameTextWithoutExtension()
-				).text()"
+			:alt="altText"
 			:style="cropStyle"
 			crossorigin="anonymous"
 			loading="lazy"
@@ -42,6 +37,7 @@ const { CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconImage } = require( '../icons.json' );
 const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 const useSmartCrop = require( '../composables/useSmartCrop.js' );
+const useAltText = require( '../composables/useAltText.js' );
 
 /**
  * @typedef {import("../types").ImageData} ImageData
@@ -275,6 +271,8 @@ module.exports = exports = defineComponent( {
 			};
 		}
 
+		const altText = computed( () => useAltText( props.image ) );
+
 		return {
 			resizedSrc,
 			dominantColorHex,
@@ -283,7 +281,8 @@ module.exports = exports = defineComponent( {
 			imageElement,
 			cropStyle,
 			loading,
-			cdxIconImage
+			cdxIconImage,
+			altText
 		};
 	}
 } );

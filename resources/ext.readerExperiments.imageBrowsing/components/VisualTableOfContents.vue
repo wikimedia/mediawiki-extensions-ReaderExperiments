@@ -9,11 +9,14 @@
 		<div
 			:class="{ 'ib-vtoc__grid--legacy': isLegacy }"
 			class="ib-vtoc__grid"
+			role="list"
 		>
 			<visual-table-of-contents-item
 				v-for="( image, index ) in images"
 				:key="index"
 				:image="image"
+				:selected="image === activeImage"
+				role="listitem"
 				@vtoc-item-click="onItemClick( image )"
 				@vtoc-view-in-article="onViewInArticle( image )"
 			></visual-table-of-contents-item>
@@ -34,6 +37,13 @@ module.exports = exports = defineComponent( {
 	props: {
 		images: {
 			type: Array,
+			required: true
+		},
+		activeImage: {
+			type: [
+				/** @type {import('vue').PropType<ImageData>} */ Object,
+				null
+			],
 			required: true
 		}
 	},

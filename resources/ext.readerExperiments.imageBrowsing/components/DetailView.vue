@@ -1,5 +1,6 @@
 <template>
 	<cropped-image
+		id="mw-ext-readerExperiments-imageBrowsing-detail-view"
 		class="ib-detail-view"
 		:class="{ 'ib-detail-view__cropped': isCropped }"
 		:image="activeImage"
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-const { ref, defineComponent, inject } = require( 'vue' );
+const { defineComponent, inject, ref } = require( 'vue' );
 const CroppedImage = require( './CroppedImage.vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );

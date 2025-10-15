@@ -192,13 +192,19 @@ module.exports = exports = defineComponent( {
 			}
 		} );
 
-		const selectedDownloadWidth = computed( () => {
-			if ( imageInfo.value ) {
-				return imageInfo.value.width;
-			} else {
-				return null;
+		// This gets bound as v-model to the select widget, so
+		// must be a modifable ref with an initial value for each
+		// image, not a computed value.
+		const selectedDownloadWidth = ref( null );
+		watch(
+			imageInfo,
+			() => {
+				// Reset to original size on new selection
+				selectedDownloadWidth.value = imageInfo.value && imageInfo.value.width ?
+					imageInfo.value.width :
+					null;
 			}
-		} );
+		);
 
 		const downloadWidths = computed( () => {
 			const widthOptions = [];

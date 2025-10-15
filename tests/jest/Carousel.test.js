@@ -81,9 +81,20 @@ describe( 'Carousel', () => {
 		expected = [];
 
 		for ( const image of images ) {
+			const alt = image.alt ?
+				image.alt :
+				`readerexperiments-imagebrowsing-image-alt-text:[${
+					image.title.getFileNameTextWithoutExtension()
+				}]`;
+
 			const carouselItem = document.createElement( 'button' );
 			carouselItem.setAttribute( 'class', 'ib-carousel-item' );
-			carouselItem.setAttribute( 'aria-label', 'Select an image' );
+			carouselItem.setAttribute( 'aria-controls', 'mw-ext-readerExperiments-imageBrowsing-detail-view' );
+			carouselItem.setAttribute( 'aria-label',
+				`readerexperiments-imagebrowsing-carousel-item-button-label:[${ alt }]`
+			);
+			carouselItem.setAttribute( 'aria-selected', 'false' );
+			carouselItem.setAttribute( 'aria-disabled', 'false' );
 
 			const img = document.createElement( 'img' );
 			img.setAttribute( 'class', 'ib-carousel-item__image' );
@@ -92,32 +103,18 @@ describe( 'Carousel', () => {
 			img.setAttribute( 'width', image.expectedWidth );
 			img.setAttribute( 'height', 175 );
 			img.setAttribute( 'loading', 'lazy' );
-
-			const alt = image.alt;
-			if ( alt !== null ) {
-				img.setAttribute( 'alt', alt );
-			} else {
-				img.setAttribute( 'alt', image.title.getFileNameTextWithoutExtension() );
-			}
+			img.setAttribute( 'alt', alt );
 
 			carouselItem.append( img );
 			expected.push( carouselItem );
 		}
 
 		wrapper = mount( Carousel, {
-			props: { images: images },
+			props: {
+				images: images,
+				activeImage: null
+			},
 			global: {
-				mocks: {
-					$i18n: ( key, ...params ) => ( {
-						text: () => {
-							const messages = {
-								'readerexperiments-imagebrowsing-carousel-item-button-label': 'Select an image',
-								'readerexperiments-imagebrowsing-image-alt-text': `${ params[ 0 ] || '$1' }`
-							};
-							return messages[ key ] || key;
-						}
-					} )
-				},
 				provide: {
 					submitInteraction: jest.fn()
 				}
@@ -131,10 +128,10 @@ describe( 'Carousel', () => {
 	} );
 
 	it( 'emits carousel-item-click event when an item is clicked', async () => {
-		const carouselItem = wrapper.findComponent( { name: 'CarouselItem' } );
+		const button = wrapper.find( 'button' );
 		const image = wrapper.props().images[ 0 ];
 
-		await carouselItem.vm.$emit( 'click', image );
+		button.element.click();
 
 		expect( wrapper.emitted( 'carousel-item-click' ) ).toBeTruthy();
 		expect( wrapper.emitted( 'carousel-item-click' ).length ).toBe( 1 );

@@ -2,6 +2,11 @@
 	<div
 		class="ib-carousel"
 		tabindex="-1"
+		:aria-label="$i18n(
+			'readerexperiments-imagebrowsing-carousel-label'
+		).text()"
+		role="region"
+		aria-roledescription="carousel"
 		@keydown.left="onLeftArrowKeypress"
 		@keydown.right="onRightArrowKeypress"
 		@keydown.home="onHomeKeypress"
@@ -12,10 +17,9 @@
 			:key="index"
 			:ref="( ref ) => assignTemplateRefForCarouselItem( ref, index )"
 			:image="image"
-			@click="onItemClick( image, $event )"
-			@keyup.enter="onItemClick( image, $event )"
-			@keyup.space="onItemClick( image, $event )"
+			:selected="image === activeImage"
 			@focus="onItemFocus( index )"
+			@carousel-item-click="onItemClick( image )"
 		></carousel-item>
 	</div>
 </template>
@@ -33,6 +37,13 @@ module.exports = exports = defineComponent( {
 	props: {
 		images: {
 			type: Array,
+			required: true
+		},
+		activeImage: {
+			type: [
+				/** @type {import('vue').PropType<ImageData>} */ Object,
+				null
+			],
 			required: true
 		}
 	},
@@ -63,29 +74,8 @@ module.exports = exports = defineComponent( {
 
 		/**
 		 * @param {import("../types").ImageData} image
-		 * @param {Event} e
 		 */
-		function onItemClick( image, e ) {
-			if ( e.type === 'click' && e.detail === 0 ) {
-				// Clicking the image is supposed to open the overlay.
-				// <Space> and <Enter> key presses are also considered clicks
-				// (and should thus also open the overlay)
-				// <Space> and <Enter> are inconsistent, though: the former
-				// causes a "click" event on "keyup", the latter on "keydown".
-				// Because of this difference, there's this weird bug where
-				// an <Enter>-key based "click" will cause the overlay to open,
-				// which will in turn move the focus to the close button,
-				// and they <Enter>-based "click" will once again fire on that
-				// new button that now has focus, effectively immediately
-				// closing the overlay again.
-				// The "click" event provides no way to differentiate between
-				// these 2 keys (<Space> and <Enter>), so we can't meaningfully
-				// change how they behave. Instead, we're just going to ignore
-				// any keyboard-induced "click", and  explicitly bind separate
-				// event handlers for <Space> and <Enter> "keyup" events instead.
-				return;
-			}
-
+		function onItemClick( image ) {
 			// By now, this is either a mouse-induced click, a <Space> keyup,
 			// or an <Enter> keyup.
 

@@ -1,9 +1,12 @@
 <template>
-	<div class="ib-app">
+	<div
+		class="ib-app"
+	>
 		<carousel
 			v-if="contentImages.length > 2"
 			ref="carouselRef"
 			:images="contentImages"
+			:active-image="activeImage"
 			@carousel-item-click="onCarouselItemClick"
 		>
 		</carousel>

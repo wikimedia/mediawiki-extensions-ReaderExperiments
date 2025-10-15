@@ -7,17 +7,17 @@
 			<button
 				class="ib-vtoc-item__figure__button"
 				:style="imageDimensionsStyle"
+				aria-controls="mw-ext-readerExperiments-imageBrowsing-detail-view"
+				:aria-disabled="selected"
+				:aria-selected="selected"
+				:aria-label="imageLabel"
+				@keydown.enter.prevent="void 0"
+				@keyup.enter.prevent="onItemClick( image )"
 				@click.prevent="onItemClick( image )"
 			>
 				<cropped-image
 					class="ib-vtoc-item__figure__image"
 					:image="image"
-					:alt="image.alt ?
-						image.alt :
-						$i18n(
-							'readerexperiments-imagebrowsing-image-alt-text',
-							image.title.getFileNameTextWithoutExtension()
-						).text()"
 					:style="imageDimensionsStyle"
 				></cropped-image>
 			</button>
@@ -51,10 +51,11 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, inject, computed, onMounted, onUnmounted } = require( 'vue' );
+const { computed, defineComponent, inject, onMounted, onUnmounted, useTemplateRef } = require( 'vue' );
 const { CdxButton, useResizeObserver } = require( '@wikimedia/codex' );
 const CroppedImage = require( './CroppedImage.vue' );
 const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
+const useImageLabel = require( '../composables/useImageLabel.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -66,6 +67,10 @@ module.exports = exports = defineComponent( {
 	props: {
 		image: {
 			type: Object,
+			required: true
+		},
+		selected: {
+			type: Boolean,
 			required: true
 		}
 	},
@@ -169,6 +174,8 @@ module.exports = exports = defineComponent( {
 		}
 		/* eslint-enable camelcase */
 
+		const imageLabel = computed( () => useImageLabel( props.image ) );
+
 		return {
 			caption,
 			captionTextElement,
@@ -176,7 +183,8 @@ module.exports = exports = defineComponent( {
 			onViewInArticle,
 			figure,
 			gridRowSpan,
-			imageDimensionsStyle
+			imageDimensionsStyle,
+			imageLabel
 		};
 	}
 } );

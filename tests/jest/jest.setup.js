@@ -65,11 +65,8 @@ const mw = {
 		add: jest.fn(),
 		fire: jest.fn()
 	} ),
-	message: jest.fn( ( key ) => ( {
-		text: jest.fn( () => key ),
-		parse: jest.fn( () => key )
-	} ) ),
-	msg: jest.fn( ( key ) => key ),
+	message: $i18nMock,
+	msg: ( ...args ) => $i18nMock( ...args ).text(),
 	user: {
 		getId: jest.fn(),
 		getName: jest.fn(),

@@ -9,17 +9,17 @@
 		>
 			<button
 				:style="imageDimensionsStyle"
+				aria-controls="mw-ext-readerExperiments-imageBrowsing-detail-view"
+				:aria-disabled="selected"
+				:aria-selected="selected"
+				:aria-label="imageLabel"
+				@keydown.enter.prevent="void 0"
+				@keyup.enter.prevent="onItemClick( image )"
 				@click.prevent="onItemClick( image )"
 			>
 				<cropped-image
 					class="ib-vtoc-other-wikis-item__figure__image"
 					:image="image"
-					:alt="image.label ?
-						image.label :
-						$i18n(
-							'readerexperiments-imagebrowsing-image-alt-text',
-							image.title.getFileNameTextWithoutExtension()
-						).text()"
 					:style="imageDimensionsStyle"
 				></cropped-image>
 			</button>
@@ -34,9 +34,10 @@
 </template>
 
 <script>
-const { defineComponent, computed, inject, useTemplateRef } = require( 'vue' );
+const { computed, defineComponent, inject, useTemplateRef } = require( 'vue' );
 const { useResizeObserver } = require( '@wikimedia/codex' );
 const CroppedImage = require( './CroppedImage.vue' );
+const useImageLabel = require( '../composables/useImageLabel.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -47,6 +48,10 @@ module.exports = exports = defineComponent( {
 	props: {
 		image: {
 			type: Object,
+			required: true
+		},
+		selected: {
+			type: Boolean,
 			required: true
 		}
 	},
@@ -169,12 +174,15 @@ module.exports = exports = defineComponent( {
 			emit( 'vtoc-item-click', image );
 		}
 
+		const imageLabel = computed( () => useImageLabel( props.image ) );
+
 		return {
 			figure,
 			gridRowSpan,
 			getImageSources,
 			onItemClick,
-			imageDimensionsStyle
+			imageDimensionsStyle,
+			imageLabel
 		};
 	}
 } );

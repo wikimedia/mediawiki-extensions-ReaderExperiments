@@ -1,7 +1,13 @@
 <template>
 	<button
 		class="ib-carousel-item"
-		:aria-label="$i18n( 'readerexperiments-imagebrowsing-carousel-item-button-label' ).text()"
+		aria-controls="mw-ext-readerExperiments-imageBrowsing-detail-view"
+		:aria-disabled="selected"
+		:aria-selected="selected"
+		:aria-label="imageLabel"
+		@keydown.enter.prevent="void 0"
+		@keyup.enter.prevent="onClick( image, $event )"
+		@click="onClick( image, $event )"
 	>
 		<img
 			ref="imageElement"
@@ -10,20 +16,17 @@
 			:src="thumbnailSrc"
 			:width="thumbnailWidth"
 			:height="thumbnailHeight"
-			:alt="image.alt ?
-				image.alt :
-				$i18n(
-					'readerexperiments-imagebrowsing-image-alt-text',
-					image.title.getFileNameTextWithoutExtension()
-				).text()"
+			:alt="imageAlt"
 			loading="lazy"
 		>
 	</button>
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, toRef } = require( 'vue' );
+const { computed, defineComponent, toRef, useTemplateRef } = require( 'vue' );
+const useAltText = require( '../composables/useAltText.js' );
 const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
+const useImageLabel = require( '../composables/useImageLabel.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -33,9 +36,16 @@ module.exports = exports = defineComponent( {
 		image: {
 			type: Object,
 			required: true
+		},
+		selected: {
+			type: Boolean,
+			required: true
 		}
 	},
-	setup( props ) {
+	emits: [
+		'carousel-item-click'
+	],
+	setup( props, { emit } ) {
 		const thumbnailHeight = 175;
 		const minThumbnailWidth = 100;
 
@@ -59,12 +69,23 @@ module.exports = exports = defineComponent( {
 		const imageRef = toRef( props, 'image' );
 		const imageElement = useTemplateRef( 'imageElement' );
 		useBackgroundColor( imageRef, imageElement );
+		const imageAlt = computed( () => useAltText( imageRef.value ) );
+		const imageLabel = computed( () => useImageLabel( imageRef.value ) );
+
+		const onClick = ( image ) => {
+			// By now, this is either a mouse-induced click, a <Space> keyup,
+			// an <Enter> keyup, or a synthetic event from accessibility tools.
+			emit( 'carousel-item-click', image );
+		};
 
 		return {
 			thumbnailSrc: props.image.resizeUrl( standardizedThumbnailWidth ),
 			thumbnailWidth,
 			thumbnailHeight,
-			imageElement
+			imageElement,
+			onClick,
+			imageAlt,
+			imageLabel
 		};
 	}
 } );

@@ -29,7 +29,12 @@ describe( 'CarouselItem', () => {
 		};
 
 		expected = `<img class="ib-carousel-item__image" crossorigin="anonymous" src="${ resizeUrl( src, 100 ) }" width="${ width }" height="${ height }" alt="${ alt }" loading="lazy">`;
-		wrapper = shallowMount( CarouselItem, { props: { image: image } } );
+		wrapper = shallowMount( CarouselItem, {
+			props: {
+				image: image,
+				selected: false
+			}
+		} );
 	} );
 
 	it( 'renders an image', () => {

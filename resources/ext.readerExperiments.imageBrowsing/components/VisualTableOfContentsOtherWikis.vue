@@ -19,11 +19,14 @@
 			v-else
 			:class="{ 'ib-vtoc-other-wikis__grid--legacy': isLegacy }"
 			class="ib-vtoc-other-wikis__grid"
+			role="list"
 		>
 			<visual-table-of-contents-other-wikis-item
 				v-for="( image, index ) in images"
 				:key="index"
 				:image="image"
+				:selected="image === activeImage"
+				role="listitem"
 				@vtoc-item-click="onItemClick"
 			></visual-table-of-contents-other-wikis-item>
 		</div>
@@ -48,6 +51,13 @@ module.exports = exports = defineComponent( {
 	props: {
 		excludeImages: {
 			type: Array,
+			required: true
+		},
+		activeImage: {
+			type: [
+				/** @type {import('vue').PropType<ImageData>} */ Object,
+				null
+			],
 			required: true
 		}
 	},

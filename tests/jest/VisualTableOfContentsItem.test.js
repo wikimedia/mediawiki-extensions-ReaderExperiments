@@ -7,9 +7,6 @@ jest.mock( '../../resources/ext.readerExperiments.imageBrowsing/thumbExtractor.j
 	getCaptionIfAvailable: jest.fn( () => null )
 } ) );
 
-// Mock the mw global object
-global.mw.html.escape = jest.fn( ( text ) => text );
-
 let mockImage, wrapper;
 
 describe( 'VisualTableOfContentsItem', () => {
@@ -35,7 +32,16 @@ describe( 'VisualTableOfContentsItem', () => {
 
 		// Default wrapper, override in test cases as needed
 		wrapper = mount( VisualTableOfContentsItem, {
-			props: { image: mockImage }
+			props: {
+				image: mockImage,
+				selected: false
+			},
+			global: {
+				provide: {
+					submitInteraction: jest.fn(),
+					manageLinkEventListeners: jest.fn()
+				}
+			}
 		} );
 	} );
 
@@ -54,6 +60,7 @@ describe( 'VisualTableOfContentsItem', () => {
 	it( 'includes a "view in article" button', () => {
 		const button = wrapper.find( '.ib-vtoc-item__view-in-article' );
 		expect( button.exists() ).toBe( true );
+		expect( button.text() ).toContain( 'readerexperiments-imagebrowsing-vtoc-view-button-label' );
 	} );
 
 	// TODO: Test other caption fallback options
@@ -90,7 +97,10 @@ describe( 'VisualTableOfContentsItem', () => {
 		const maliciousImage = { ...mockImage, alt: maliciousAlt };
 
 		const testWrapper = mount( VisualTableOfContentsItem, {
-			props: { image: maliciousImage }
+			props: {
+				image: maliciousImage,
+				selected: false
+			}
 		} );
 
 		const figcaption = testWrapper.find( 'figcaption' );
