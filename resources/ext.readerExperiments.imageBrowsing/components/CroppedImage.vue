@@ -293,6 +293,8 @@ module.exports = exports = defineComponent( {
 
 .ib-cropped-image {
 	position: relative;
+	width: 100%;
+	height: 100%;
 
 	img, .ib-cropped-image__progress {
 		position: absolute;

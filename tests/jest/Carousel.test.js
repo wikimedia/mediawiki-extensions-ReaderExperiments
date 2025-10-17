@@ -2,7 +2,7 @@ const { mount } = require( '@vue/test-utils' );
 const { when } = require( 'jest-when' );
 const Carousel = require( '../../resources/ext.readerExperiments.imageBrowsing/components/Carousel' );
 
-let expected, wrapper;
+let images, wrapper;
 
 describe( 'Carousel', () => {
 	beforeEach( () => {
@@ -21,7 +21,7 @@ describe( 'Carousel', () => {
 
 		const resizeUrl = ( src, width ) => src + '?width=' + width;
 
-		const images = [
+		images = [
 			{
 				thumb: one,
 				alt: 'Elvis in a tuxedo',
@@ -78,37 +78,6 @@ describe( 'Carousel', () => {
 			}
 		];
 
-		expected = [];
-
-		for ( const image of images ) {
-			const alt = image.alt ?
-				image.alt :
-				`readerexperiments-imagebrowsing-image-alt-text:[${
-					image.title.getFileNameTextWithoutExtension()
-				}]`;
-
-			const carouselItem = document.createElement( 'button' );
-			carouselItem.setAttribute( 'class', 'ib-carousel-item' );
-			carouselItem.setAttribute( 'aria-controls', 'mw-ext-readerExperiments-imageBrowsing-detail-view' );
-			carouselItem.setAttribute( 'aria-label',
-				`readerexperiments-imagebrowsing-carousel-item-button-label:[${ alt }]`
-			);
-			carouselItem.setAttribute( 'aria-selected', 'false' );
-			carouselItem.setAttribute( 'aria-disabled', 'false' );
-
-			const img = document.createElement( 'img' );
-			img.setAttribute( 'class', 'ib-carousel-item__image' );
-			img.setAttribute( 'crossorigin', 'anonymous' );
-			img.setAttribute( 'src', image.expectedUrl );
-			img.setAttribute( 'width', image.expectedWidth );
-			img.setAttribute( 'height', 175 );
-			img.setAttribute( 'loading', 'lazy' );
-			img.setAttribute( 'alt', alt );
-
-			carouselItem.append( img );
-			expected.push( carouselItem );
-		}
-
 		wrapper = mount( Carousel, {
 			props: {
 				images: images,
@@ -122,9 +91,9 @@ describe( 'Carousel', () => {
 		} );
 	} );
 
-	it( 'renders a carousel of images', () => {
-		const actual = wrapper.findAll( '.ib-carousel-item' ).map( ( item ) => item.wrapperElement );
-		expect( actual ).toEqual( expected );
+	it( 'renders a carousel of items', () => {
+		const actual = wrapper.findAllComponents( '.ib-carousel-item' ).map( ( component ) => component.props() );
+		expect( actual ).toEqual( images.map( ( image ) => ( { image, selected: false } ) ) );
 	} );
 
 	it( 'emits carousel-item-click event when an item is clicked', async () => {
