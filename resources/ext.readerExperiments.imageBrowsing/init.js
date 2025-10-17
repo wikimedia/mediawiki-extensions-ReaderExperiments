@@ -6,26 +6,33 @@ const Vue = require( 'vue' );
 const App = require( './App.vue' );
 const instrumentation = require( './plugins/instrumentationPlugin.js' );
 
-// Analytics configuration
+// Instrumentation setup.
+const EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
+const SCHEMA_NAME = '/analytics/product_metrics/web/base/1.4.3';
 // Naming convention: mediawiki.product_metrics.<product>_<component>_<interaction>.
 // See https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Stream_configuration#Choosing_a_stream_name
-const EVENT_STREAM = 'mediawiki.product_metrics.readerexperiments_imagebrowsing';
-const SCHEMA = '/analytics/product_metrics/web/base/1.4.3';
+const STREAM_NAME = 'mediawiki.product_metrics.readerexperiments_imagebrowsing';
+const INSTRUMENT_NAME = 'ImageBrowsingInstrument';
 
 /**
  * @type {InstrumentationPluginConfig}
  */
 const analyticsConfig = {
 	enabled: false,
-	eventStream: EVENT_STREAM,
-	schema: SCHEMA
+	experiment: null,
+	instrumentName: INSTRUMENT_NAME
 };
 
-mw.loader.using( [ 'ext.eventLogging' ] )
-	// Use a soft-require to determine  whether the event logging system is
-	// available; if so use it, if not then don't enable the instrumentation
+mw.loader.using( 'ext.xLab' )
+	// Use a soft-require to determine whether xLab is available;
+	// if so use it, if not then don't enable the instrumentation.
 	.then( () => {
+		const experiment = mw.xLab.getExperiment( EXPERIMENT_NAME );
+		experiment.setSchema( SCHEMA_NAME );
+		experiment.setStream( STREAM_NAME );
+
 		analyticsConfig.enabled = true;
+		analyticsConfig.experiment = experiment;
 	} )
 	// Mount the Vue app regardless of whether logging is enabled, but if so
 	// then ensure the instrumentation plugin gets the appropriate config

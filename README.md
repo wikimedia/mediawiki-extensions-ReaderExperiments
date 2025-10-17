@@ -215,3 +215,13 @@ npm run eventgate-devserver
 mw.eventLog.submitInteraction('foo', '/analytics/product_metrics/web/base/1.4.3', 'bar')
 ```
 - You should see the event JSON in `events.json`
+
+
+## A/B tests
+A/B tests live in the [Experimentation Lab](https://wikitech.wikimedia.org/wiki/Experimentation_Lab) (xLab) as _experiments_.
+
+There are 3 layers where you can test an experiment before launch:
+
+1. Local development environment - [set up](#Instrumentation), then use the [HTTP headers method](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#Test_and_debug)
+2. Beta cluster - same as above, but in a production-like environment
+3. Production - [override enrollment](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#Override_enrollment)

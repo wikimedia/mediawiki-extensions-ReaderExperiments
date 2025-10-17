@@ -3,8 +3,8 @@
  *
  * This plugin adds a new `$submitInteraction` method to all components in the
  * target Vue app. Depending on the configuration provided, that method will either
- * call `mw.eventLog.submitInteraction` with appropriate arguments (including event
- * stream name and schema provided in config) or it will do nothing.
+ * call `mw.xLab.Experiment#send` with appropriate arguments (including experiment
+ * instance and instrument name provided in config) or it will do nothing.
  *
  * @see https://vuejs.org/guide/reusability/plugins
  */
@@ -19,10 +19,11 @@ module.exports = exports = {
 		 * @param {Object} interactionData
 		 */
 		const submitInteraction = ( action, interactionData ) => {
-			if ( options.enabled ) {
-				mw.eventLog.submitInteraction(
-					options.eventStream,
-					options.schema,
+			if ( options.enabled && options.experiment ) {
+				// eslint-disable-next-line camelcase
+				interactionData.instrument_name = options.instrumentName;
+
+				options.experiment.send(
 					action,
 					interactionData
 				);
