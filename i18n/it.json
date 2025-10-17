@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Beta16"
+		]
+	},
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Seleziona un'immagine",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Altro",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Meno",
+	"readerexperiments-imagebrowsing-detail-share": "Condividi",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Copia",
+	"readerexperiments-imagebrowsing-detail-download": "Scarica",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "File originale ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Piccolo ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Medio ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Grande ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Molto grande ($1x$2 px)",
+	"readerexperiments-imagebrowsing-loading": "Caricamento",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Torna alla voce",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Chiudi",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Altro da questa voce",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Caricamento immagini da altri progetti",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Da $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Da $1"
+}

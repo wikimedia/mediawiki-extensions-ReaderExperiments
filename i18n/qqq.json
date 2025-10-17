@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Marco Fossati",
+			"Brooke Vibber",
 			"Eric Gardner",
-			"Roan Kattouw",
-			"Matthias Mullie",
 			"Jon Robson",
 			"Kimberly Sarabia",
-			"Brooke Vibber",
-			"Lauralyn Watson"
+			"Lauralyn Watson",
+			"Marco Fossati",
+			"Matthias Mullie",
+			"Roan Kattouw"
 		]
 	},
 	"readerexperiments-desc": "{{desc|name=ReaderExperiments|url=https://www.mediawiki.org/wiki/Extension:ReaderExperiments}}",

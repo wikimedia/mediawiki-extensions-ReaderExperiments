@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"WillyM"
+		]
+	},
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Plus",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Moins",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Copier",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Fichier original ( $1 x $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Petit ( $1 x $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Moyen ( $1 x $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Très grand ( $1 x $2 px)",
+	"readerexperiments-imagebrowsing-loading": "Chargement",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Retour à l'article",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Fermer",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Plus d'informations sur cet article",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Médias d'autres projets",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "De $1"
+}
