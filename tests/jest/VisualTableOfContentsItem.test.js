@@ -52,7 +52,7 @@ describe( 'VisualTableOfContentsItem', () => {
 	it( 'displays an article image', () => {
 		const img = wrapper.find( 'img' );
 		expect( img.exists() ).toBe( true );
-		expect( img.attributes( 'src' ) ).toBe( '//url/to/full-image.jpg?width=50' );
+		expect( img.attributes( 'src' ) ).toBe( '//url/to/full-image.jpg' );
 		expect( img.attributes( 'alt' ) ).toBe( mockImage.alt );
 		expect( img.attributes( 'loading' ) ).toBe( 'lazy' );
 	} );

@@ -156,6 +156,15 @@ module.exports = exports = defineComponent( {
 				Math.round( displayHeight * imageAspectRatio ) // image is wider
 			);
 
+			// For images that are smaller than or within 25% of the width of the
+			// content image, use those instead of getting a resized version:
+			// those are more likely to already be available (or if not, we'll be
+			// preloading them for when they potentially scroll the content later),
+			// so we can skip another http request
+			if ( coverWidth <= props.image.width * 1.25 ) {
+				return props.image.src;
+			}
+
 			// Take a list of standardized image rendering widths (e.g. 1280, 2560)
 			// and find one that looks like it'll fit or exceed the required width;
 			// using a standard size increases the chances of one being ready to
