@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"readerexperiments-desc": "Een reeks prototypes die gericht zijn op het vergroten van het aantal Wikipedia-lezers",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Kies een afbeelding uit",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Meer",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Minder",
+	"readerexperiments-imagebrowsing-detail-crop": "Tussen volledige en bijgesneden afbeelding schakelen",
+	"readerexperiments-imagebrowsing-detail-share": "Delen",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Kopiëren",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Op Commons bekijken",
+	"readerexperiments-imagebrowsing-detail-download": "Downloaden",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Origineel bestand ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Klein ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Gemiddeld ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Groot ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Extra groot ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-loading": "Aan het laden",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Terug naar artikel",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Sluiten",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Meer uit dit artikel",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Media uit andere projecten",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Afbeeldingen uit andere projecten worden geladen",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "In artikel bekijken",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Van $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Van $1 en nog {{PLURAL:$2|een|$2}} taaleditie{{PLURAL:$2||s}} van Wikipedia",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Van $1"
+}

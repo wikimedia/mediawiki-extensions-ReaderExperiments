@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Volvox"
+		]
+	},
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Sicht e Bild eraus",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Méi",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Manner",
+	"readerexperiments-imagebrowsing-detail-share": "Deelen",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Kopéieren",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Op Commons weisen",
+	"readerexperiments-imagebrowsing-detail-download": "Eroflueden",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Originalfichier ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Kleng ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Mëttel ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Grouss ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Extragrouss ($1x$2 px)",
+	"readerexperiments-imagebrowsing-loading": "Lueden",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Zeréck op den Artikel",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Zoumaachen",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Méi vun dësem Artikel",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Medie vun anere Projeten",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Biller vun anere Projete gi gelueden",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Am Artikel weisen",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Vu(n) $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Vu(n) $1 {{PLURAL:$2|an $2 anerer Sproochversioun|a(n) $2 anere Sproochversioune}} vu Wikipedia",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Vu $1"
+}

@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jeeputer"
+		]
+	},
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "انتخاب یک تصویر",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "بیشتر",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "کمتر",
+	"readerexperiments-imagebrowsing-detail-share": "اشتراک‌گذاری",
+	"readerexperiments-imagebrowsing-detail-share-copy": "رونویسی",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "مشاهده در ویکی‌انبار",
+	"readerexperiments-imagebrowsing-detail-download": "دریافت",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "پروندهٔ اصلی ($1x$2 پیکسل)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "کوچک ($1x$2 پیکسل)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "متوسط ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "بزرگ ($1x$2 پیکسل)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "بسیار بزرگ ($1x$2 پیکسل)",
+	"readerexperiments-imagebrowsing-loading": "در حال بارگیری",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "بازگشت به مقاله",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "بستن",
+	"readerexperiments-imagebrowsing-vtoc-heading": "بیشتر از این مقاله",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "رسانه‌ها از سایر پروژه‌ها",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "در حال بارگیری تصاویر از دیگر پروژه‌ها",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "مشاهده در مقاله",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "از $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "از $1 و $2 {{PLURAL:$2|نسخهٔ}} زبانی دیگر ویکی‌پدیا",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "از $1"
+}

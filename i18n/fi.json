@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Samoasambia"
+		]
+	},
+	"readerexperiments-desc": "Kokoelma prototyyppejä, joiden tavoitteena on kasvattaa Wikipedian lukijamäärää",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Valitse kuva",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Lisää",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Piilota",
+	"readerexperiments-imagebrowsing-detail-crop": "Vaihda täysi/rajattu kuva",
+	"readerexperiments-imagebrowsing-detail-share": "Jaa",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Kopioi",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Näytä Commonsissa",
+	"readerexperiments-imagebrowsing-detail-download": "Lataa",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Alkuperäinen tiedosto ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Pieni ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Keskikokoinen ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Suuri ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Erittäin suuri ($1x$2 px)",
+	"readerexperiments-imagebrowsing-loading": "Ladataan",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Takaisin artikkeliin",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Sulje",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Lisää tästä artikkelista",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Medioita muista hankkeista",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Ladataan kuvia muista hankkeista",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Näytä artikkelissa",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Hankkeesta $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Hankkeesta $1 ja $2 {{PLURAL:$2|muusta Wikipedian kieliversiosta}}",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "{{GRAMMAR:elative|$1}}"
+}
