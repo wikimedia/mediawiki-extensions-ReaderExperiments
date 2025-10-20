@@ -48,6 +48,7 @@ module.exports = async function useEntityId() {
 			data[ 0 ].pageprops &&
 			data[ 0 ].pageprops.wikibase_item ||
 			null;
-		return cacheEntityId;
 	}
+
+	return cacheEntityId;
 };
