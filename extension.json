@@ -82,7 +82,7 @@
 						"cdxIconArrowPrevious"
 					]
 				},
-				"excludedImageClasses.js",
+				"excludedImageSelectors.js",
 				"thumbExtractor.js",
 				"App.vue",
 				"components/Carousel.vue",
