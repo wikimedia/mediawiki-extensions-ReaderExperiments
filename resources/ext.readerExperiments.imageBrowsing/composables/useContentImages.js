@@ -13,6 +13,11 @@ module.exports = function useContentImages( element ) {
 
 	// Grab all image info, removing those that failed to parse
 	const images = extractThumbInfo( element ).filter( ( img ) => img.name );
-	cacheContentImages.set( element, images );
-	return images;
+	const uniqueImages = images.filter( ( image, i ) => {
+		const firstIndex = images.findIndex( ( img ) => img.title.getPrefixedDb() === image.title.getPrefixedDb() );
+		return i === firstIndex;
+	} );
+
+	cacheContentImages.set( element, uniqueImages );
+	return uniqueImages;
 };
