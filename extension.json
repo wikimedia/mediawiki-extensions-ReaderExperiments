@@ -139,6 +139,13 @@
 				"wikibase-otherprojects-wikidata"
 			]
 		},
+		"ext.readerExperiments.imageBrowsing.styles": {
+			"localBasePath": "resources/ext.readerExperiments.imageBrowsing",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.imageBrowsing",
+			"styles": [
+				"styles/app.less"
+			]
+		},
 		"fast-average-color": {
 			"localBasePath": "resources/lib/fast-average-color",
 			"packageFiles": [
