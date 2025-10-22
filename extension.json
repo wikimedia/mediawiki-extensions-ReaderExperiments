@@ -42,7 +42,8 @@
 		}
 	},
 	"Hooks": {
-		"ArticleViewHeader": "ReaderExperimentsHooks"
+		"ArticleViewHeader": "ReaderExperimentsHooks",
+		"BeforePageDisplay": "ReaderExperimentsHooks"
 	},
 	"MessagesDirs": {
 		"ReaderExperiments": [

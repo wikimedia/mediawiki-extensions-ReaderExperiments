@@ -19,11 +19,11 @@
 
 namespace MediaWiki\Extension\ReaderExperiments;
 
-use Article;
 use MediaWiki\Extension\MetricsPlatform\XLab\ExperimentManager;
-use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
+use MediaWiki\Page\Hook\ArticleViewHeaderHook;
 
-class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
+class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 
 	/** @var string */
 	private const EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
@@ -47,11 +47,8 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 	}
 
 	/**
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ArticleViewHeaderHook
-	 *
-	 * @param Article $article
-	 * @param bool|ParserOutput|null &$outputDone
-	 * @param bool &$pcache
+	 * ImageBrowsing hook handler.
+	 * @inheritDoc
 	 */
 	public function onArticleViewHeader( $article, &$outputDone, &$pcache ): void {
 		$out = $article->getContext()->getOutput();
@@ -100,4 +97,27 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 		}
 	}
 
+	/**
+	 * StickyHeaders hook handler.
+	 * @inheritDoc
+	 */
+	public function onBeforePageDisplay( $out, $skin ): void {
+		$title = $out->getTitle();
+
+		if ( $title && $title->getNamespace() === NS_MAIN ) {
+			// Check presence of URL query parameter (feature flag).
+			$hasFeatureFlag = $out->getContext()->getRequest()->getFuzzyBool( 'stickyHeaders' );
+
+			// Check usage of Minerva skin.
+			$isMinervaSkin = $skin->getSkinName() === 'minerva';
+
+			// Enable feature IF Minerva AND feature flag.
+			if ( $isMinervaSkin && $hasFeatureFlag ) {
+				// This CSS class triggers a pre-existing feature (added for DiscussionTools),
+				// which achieves what we want in terms of auto-expanding sections
+				// (regardless of whether parsoid or legacy parser is used).
+				$out->addBodyClasses( 'collapsible-headings-expanded' );
+			}
+		}
+	}
 }
