@@ -12,8 +12,8 @@
 		]
 	},
 	"readerexperiments-desc": "{{desc|name=ReaderExperiments|url=https://www.mediawiki.org/wiki/Extension:ReaderExperiments}}",
-	"readerexperiments-imagebrowsing-carousel-item-button-label": "Visually-hidden button label for selecting an image with the given description.\n\nParameters:\n* $1: provided alt text from the document or filename",
 	"readerexperiments-imagebrowsing-carousel-label": "Accessibility label for the overall image browsing widget",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Visually-hidden button label for selecting an image with the given description.\n\nParameters:\n* $1: provided alt text from the document or filename",
 	"readerexperiments-imagebrowsing-detail-caption-expand": "Label for button to expand the text associates with the displayed image",
 	"readerexperiments-imagebrowsing-detail-caption-collapse": "Label for button to collapse the text associates with the displayed image",
 	"readerexperiments-imagebrowsing-detail-crop": "Label for button to toggle between the cropped & full image",
