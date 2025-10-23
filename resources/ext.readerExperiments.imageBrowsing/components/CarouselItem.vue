@@ -92,6 +92,7 @@ module.exports = exports = defineComponent( {
 	box-sizing: content-box;
 	border: 1px solid transparent;
 	padding: 0;
+	color: inherit;
 
 	&:not( :last-child ) {
 		margin-right: 10px;
