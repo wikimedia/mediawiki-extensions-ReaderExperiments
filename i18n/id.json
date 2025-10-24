@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"BAPerdana-WMF"
+		]
+	},
+	"readerexperiments-desc": "Serangkaian sistem uji coba untuk meningkatkan pengalaman membaca di Wikipedia",
+	"readerexperiments-imagebrowsing-carousel-label": "Penelusuran gambar",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Pilih gambar \"$1\"",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Lainnya",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Kurangi",
+	"readerexperiments-imagebrowsing-detail-crop": "Layar penuh",
+	"readerexperiments-imagebrowsing-detail-share": "Bagikan",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Salin",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Lihat di Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Unduh",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Berkas asli ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Kecil ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Sedang ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Besar ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Sangat besar ($1x$2 px)",
+	"readerexperiments-imagebrowsing-loading": "Memuat",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Kembali ke artikel",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Tutup",
+	"readerexperiments-imagebrowsing-overlay-label": "Rincian gambar",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Selengkapnya dari artikel ini",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Media dari proyek lain",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Memuat gambar dari proyek lain",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Lihat di artikel",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Dari $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Berasal dari $1 dan $2 bahasa lainnya di Wikipedia",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Dari $1"
+}

@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mansil alfalb"
+		]
+	},
+	"readerexperiments-imagebrowsing-carousel-label": "Navegação de imagens",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Selecione a imagem \"$1\"",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Mais",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Menos",
+	"readerexperiments-imagebrowsing-detail-crop": "Ecrã completo",
+	"readerexperiments-imagebrowsing-detail-share": "Partilhar",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Copiar",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Ver na Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Transferir",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "ficheiro original ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Pequeno ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Grande ($1x$2 px)",
+	"readerexperiments-imagebrowsing-loading": "A carregar",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Voltar ao artigo",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Fechar",
+	"readerexperiments-imagebrowsing-overlay-label": "Detalhes da imagem",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Mais deste artigo",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Carregar imagens de outros projetos",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Ver no artigo",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "De $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "De $1"
+}

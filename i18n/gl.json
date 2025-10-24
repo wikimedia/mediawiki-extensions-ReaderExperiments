@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toliño"
+		]
+	},
+	"readerexperiments-desc": "Un conxunto de prototipos que teñen como obxectivo aumentar o número de lectores da Wikipedia",
+	"readerexperiments-imagebrowsing-carousel-label": "Navegación de imaxes",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Selecciona a imaxe «$1»",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Máis",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Menos",
+	"readerexperiments-imagebrowsing-detail-crop": "Pantalla completa",
+	"readerexperiments-imagebrowsing-detail-share": "Compartir",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Copiar",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Ver en Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Descargar",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Ficheiro orixinal ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Pequeno ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Mediano ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Grande ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Moi grande ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-loading": "Cargando",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Volver ao artigo",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Pechar",
+	"readerexperiments-imagebrowsing-overlay-label": "Detalles da imaxe",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Máis deste artigo",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Multimedia doutros proxectos",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Cargando imaxes doutros proxectos",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Ver no artigo",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "De $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "De $1 e {{PLURAL:$2|outra edición|outras $2 edicións}} da Wikipedia",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "De $1"
+}
