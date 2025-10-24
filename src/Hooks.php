@@ -68,11 +68,8 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 
 			// Enable if Minerva skin AND (URL param is set OR user is in treatment group).
 			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInTreatmentGroup() ) ) {
-				$html = $out->getHTML();
-				$out->clearHTML();
-				$out->addHTML(
-					'<div id="ext-readerExperiments-imageBrowsing"></div>' .
-					$html
+				$out->prependHTML(
+					'<div id="ext-readerExperiments-imageBrowsing"></div>'
 				);
 
 				$out->addJsConfigVars(
