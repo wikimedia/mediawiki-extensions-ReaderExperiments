@@ -1,4 +1,4 @@
-const excludedImageClasses = require( './excludedImageClasses.js' );
+const excludedImageSelectors = require( './excludedImageSelectors.js' );
 
 // Defaults from MMV's MediaViewerExtensions config map
 // This is used in MMV both for limiting which extensions
@@ -258,26 +258,13 @@ function isValidExtension( title ) {
 }
 
 /**
- * Check if this thumbnail appears in an infobox template.
- *
- * Assumes all infoboxes use the 'infobox' class on their top-level table;
- * this can be expanded if necessary.
- *
- * @param {Element} thumb
- * @return {boolean} true if it's in the infobox, false otherwise
- */
-function isInfoboxThumb( thumb ) {
-	return !!thumb.closest( '.infobox' );
-}
-
-/**
  * Check if the image is excluded by any of the CSS classes
  *
  * @param {Element} thumb The image element
  * @return {boolean} Whether the image should be excluded. If true, then it's excluded.
  */
-function isExcludedByClass( thumb ) {
-	return excludedImageClasses.some( ( className ) => thumb.closest( `.${ className }` ) );
+function isExcludedBySelector( thumb ) {
+	return excludedImageSelectors.some( ( selector ) => thumb.closest( selector ) );
 }
 
 /**
@@ -290,12 +277,12 @@ function isExcludedByClass( thumb ) {
 function isIncludedThumbInfo( info ) {
 	// The file extension is in the `extensions` allow-list
 	return isValidExtension( info.title ) &&
+		// The image is large enough to be meaningful content rather than used as icon
+		( info.width > 30 || info.height > 30 ) &&
 		// The image element doesn't have exclusion markup
 		isAllowedThumb( info.thumb ) &&
-		// The image isn't an SVG that appears in an infobox
-		!( info.extension === 'svg' && isInfoboxThumb( info.thumb ) ) &&
-		// The image isn't excluded by CSS classes
-		!isExcludedByClass( info.thumb );
+		// The image isn't excluded by CSS selectors
+		!isExcludedBySelector( info.thumb );
 }
 
 /**

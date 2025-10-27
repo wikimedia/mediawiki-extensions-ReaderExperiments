@@ -68,7 +68,9 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 
 			// Enable if Minerva skin AND (URL param is set OR user is in treatment group).
 			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInTreatmentGroup() ) ) {
-				$out->addHTML( '<div id="ext-readerExperiments-imageBrowsing"></div>' );
+				$out->prependHTML(
+					'<div id="ext-readerExperiments-imageBrowsing"></div>'
+				);
 
 				$out->addJsConfigVars(
 					'ReaderExperimentsApiBaseUri',
@@ -89,6 +91,8 @@ class Hooks implements \MediaWiki\Page\Hook\ArticleViewHeaderHook {
 					'ReaderExperimentsImageBrowsingThumbLimits',
 					$thumbLimits
 				);
+
+				$out->addModuleStyles( 'ext.readerExperiments.imageBrowsing.styles' );
 
 				// Load heavy module since already gated server-side.
 				$out->addModules( 'ext.readerExperiments.imageBrowsing' );

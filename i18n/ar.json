@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Dyolf77 (WMF)"
+		]
+	},
+	"readerexperiments-desc": "مجموعة من النماذج الأولية التي تهدف إلى زيادة عدد قراء ويكيبيديا",
+	"readerexperiments-imagebrowsing-carousel-label": "تصفح الصور",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "تحديد الصورة «$1»",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "المزيد",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "أقل",
+	"readerexperiments-imagebrowsing-detail-crop": "ملء الشاشة",
+	"readerexperiments-imagebrowsing-detail-share": "مشاركة",
+	"readerexperiments-imagebrowsing-detail-share-copy": "نسخ",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "عرض على كومنز",
+	"readerexperiments-imagebrowsing-detail-download": "تنزيل",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "الملف الأصلي ($1 × $2 بكسل)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "صغير ($1 × $2 بكسل)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "متوسط ($1 × $2 بكسل)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "كبير ($1 × $2 بكسل)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "كبير جدًا ($1 × $2 بكسل)",
+	"readerexperiments-imagebrowsing-loading": "جارٍ التحميل",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "الرجوع إلى المقالة",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "إغلاق",
+	"readerexperiments-imagebrowsing-overlay-label": "تفاصيل الصورة",
+	"readerexperiments-imagebrowsing-vtoc-heading": "المزيد من هذه المقالة",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "وسائط من مشاريع أخرى",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "تحميل الصور من مشاريع أخرى",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "العرض في المقالة",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "من $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "من $1 و{{PLURAL:$2||نسخة|نسختين|$2 نسخ|$2 نسخة}} لغوية أخرى من ويكيبيديا",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "من $1"
+}

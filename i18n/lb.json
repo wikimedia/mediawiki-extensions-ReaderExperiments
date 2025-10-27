@@ -4,7 +4,7 @@
 			"Volvox"
 		]
 	},
-	"readerexperiments-imagebrowsing-carousel-item-button-label": "Sicht e Bild eraus",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Sicht d'Bild „$1“ eraus",
 	"readerexperiments-imagebrowsing-detail-caption-expand": "Méi",
 	"readerexperiments-imagebrowsing-detail-caption-collapse": "Manner",
 	"readerexperiments-imagebrowsing-detail-share": "Deelen",
@@ -19,6 +19,7 @@
 	"readerexperiments-imagebrowsing-loading": "Lueden",
 	"readerexperiments-imagebrowsing-overlay-back-button-label": "Zeréck op den Artikel",
 	"readerexperiments-imagebrowsing-overlay-close-button-label": "Zoumaachen",
+	"readerexperiments-imagebrowsing-overlay-label": "Detailer vum Bild",
 	"readerexperiments-imagebrowsing-vtoc-heading": "Méi vun dësem Artikel",
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Medie vun anere Projeten",
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Biller vun anere Projete gi gelueden",

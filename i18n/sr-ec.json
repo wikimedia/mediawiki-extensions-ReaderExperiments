@@ -4,9 +4,10 @@
 			"Milicevic01"
 		]
 	},
-	"readerexperiments-imagebrowsing-carousel-item-button-label": "Изаберите слику",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Изаберите слику „$1”",
 	"readerexperiments-imagebrowsing-detail-caption-expand": "Више",
 	"readerexperiments-imagebrowsing-detail-caption-collapse": "Мање",
+	"readerexperiments-imagebrowsing-detail-crop": "Цео екран",
 	"readerexperiments-imagebrowsing-detail-share": "Дели",
 	"readerexperiments-imagebrowsing-detail-share-copy": "Копирај",
 	"readerexperiments-imagebrowsing-detail-view-on-commons": "Види на Остави",
@@ -19,6 +20,7 @@
 	"readerexperiments-imagebrowsing-loading": "Учитавање",
 	"readerexperiments-imagebrowsing-overlay-back-button-label": "Назад на чланак",
 	"readerexperiments-imagebrowsing-overlay-close-button-label": "Затвори",
+	"readerexperiments-imagebrowsing-overlay-label": "Детаљи слике",
 	"readerexperiments-imagebrowsing-vtoc-heading": "Веше из овог чланка",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Види у чланку",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Од $1",

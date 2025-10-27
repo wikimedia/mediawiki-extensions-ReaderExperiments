@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"readerexperiments-desc": "Un insimul de prototypos que visa a augmentar le numero de lectores de Wikipedia",
+	"readerexperiments-imagebrowsing-carousel-label": "Percurrer imagines",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Selige imagine “$1”",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Plus",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Minus",
+	"readerexperiments-imagebrowsing-detail-crop": "Plen schermo",
+	"readerexperiments-imagebrowsing-detail-share": "Condivider",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Copiar",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Vider in Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Discargar",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "File original ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Micre ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Medie ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Grande ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Extra grande ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-loading": "Cargamento in curso",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Retornar al articulo",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Clauder",
+	"readerexperiments-imagebrowsing-overlay-label": "Detalios del imagine",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Plus de iste artiuclo",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Multimedia de altere projectos",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Cargamento de imagines de altere projectos in curso",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Vider in articulo",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "De $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "De $1 e $2 altere edition{{PLURAL:$2||es}} de Wikipedia in altere linguas",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "De $1"
+}

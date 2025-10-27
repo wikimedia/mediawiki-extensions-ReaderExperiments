@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jeeputer"
+			"Jeeputer",
+			"LordProfo"
 		]
 	},
 	"readerexperiments-imagebrowsing-carousel-item-button-label": "انتخاب یک تصویر",
 	"readerexperiments-imagebrowsing-detail-caption-expand": "بیشتر",
 	"readerexperiments-imagebrowsing-detail-caption-collapse": "کمتر",
-	"readerexperiments-imagebrowsing-detail-share": "اشتراک‌گذاری",
+	"readerexperiments-imagebrowsing-detail-share": "هم‌رسانی",
 	"readerexperiments-imagebrowsing-detail-share-copy": "رونویسی",
 	"readerexperiments-imagebrowsing-detail-view-on-commons": "مشاهده در ویکی‌انبار",
 	"readerexperiments-imagebrowsing-detail-download": "دریافت",

@@ -2,7 +2,7 @@ const { shallowMount } = require( '@vue/test-utils' );
 const { when } = require( 'jest-when' );
 const CarouselItem = require( '../../resources/ext.readerExperiments.imageBrowsing/components/CarouselItem' );
 
-let expected, wrapper;
+let image, wrapper;
 
 describe( 'CarouselItem', () => {
 	beforeEach( () => {
@@ -19,7 +19,7 @@ describe( 'CarouselItem', () => {
 
 		thumb.setAttribute( 'src', src );
 
-		const image = {
+		image = {
 			thumb,
 			alt,
 			src,
@@ -28,7 +28,6 @@ describe( 'CarouselItem', () => {
 			resizeUrl: resizeUrl.bind( null, src )
 		};
 
-		expected = `<img class="ib-carousel-item__image" crossorigin="anonymous" src="${ resizeUrl( src, 100 ) }" width="${ width }" height="${ height }" alt="${ alt }" loading="lazy">`;
 		wrapper = shallowMount( CarouselItem, {
 			props: {
 				image: image,
@@ -37,8 +36,8 @@ describe( 'CarouselItem', () => {
 		} );
 	} );
 
-	it( 'renders an image', () => {
-		const actual = wrapper.get( 'img' ).html();
-		expect( actual ).toBe( expected );
+	it( 'renders a cropped image', async () => {
+		const croppedImage = wrapper.findComponent( '.ib-carousel-item__image' );
+		expect( croppedImage.props() ).toEqual( { image } );
 	} );
 } );

@@ -213,6 +213,33 @@ module.exports = exports = defineComponent( {
 </script>
 
 <style lang="less">
+// Hack to smoothly collapse the carousel when there are not enough images.
+// Context: we want to avoid the FOUC when the carousel first renders by
+// immediately preserving space for where it will be. The carousel may not
+// render, however, if there are insufficient images that meet the criteria
+// (i.e. not of a certain filetype, or within a class that we ignore)
+// Ideally, in such case, we would never preserve the space to begin with,
+// but that would require duplicating (or moving) that image extraction
+// logic on the back-end, which is somewhat overkill for now, as this
+// extension is still experimental.
+// Instead, based on an assumed strong correlation between view & edit
+// popularity, and a strong correlation between edit popularity and
+// presence of images, it's believed likely that the majority of pageviews
+// will have a carousel, and we should optimize for that case by
+// reserving the height upfront (in Hooks.php). If/once this file has
+// completed loading/executing, and we learn that there is no carousel,
+// we'll override that and animate (in order to make this feel slightly
+// less jumpy/jarring) back to zero height.
+#ext-readerExperiments-imageBrowsing:not( :has( .ib-carousel ) ) {
+	height: 0 !important;
+	transition: height 0.1s ease-in;
+}
+
+// Make use of full height preserved in container
+.ib-app {
+	height: 100%;
+}
+
 // @hack why is this necessary to get the overlay to show up properly? Fix and remove
 #mw-teleport-target {
 	top: 0;

@@ -82,7 +82,7 @@
 						"cdxIconArrowPrevious"
 					]
 				},
-				"excludedImageClasses.js",
+				"excludedImageSelectors.js",
 				"thumbExtractor.js",
 				"App.vue",
 				"components/Carousel.vue",
@@ -137,6 +137,13 @@
 				"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple",
 				"readerexperiments-imagebrowsing-vtoc-external-wikis-others",
 				"wikibase-otherprojects-wikidata"
+			]
+		},
+		"ext.readerExperiments.imageBrowsing.styles": {
+			"localBasePath": "resources/ext.readerExperiments.imageBrowsing",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.imageBrowsing",
+			"styles": [
+				"styles/app.less"
 			]
 		},
 		"fast-average-color": {

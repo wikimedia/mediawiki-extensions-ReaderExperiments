@@ -4,7 +4,7 @@
 			"Beta16"
 		]
 	},
-	"readerexperiments-imagebrowsing-carousel-item-button-label": "Seleziona un'immagine",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Seleziona l'immagine \"$1\"",
 	"readerexperiments-imagebrowsing-detail-caption-expand": "Altro",
 	"readerexperiments-imagebrowsing-detail-caption-collapse": "Meno",
 	"readerexperiments-imagebrowsing-detail-share": "Condividi",

@@ -211,6 +211,7 @@ module.exports = exports = defineComponent( {
 			padding: 0;
 			// Override Safari and iOS Chrome browser button background color
 			background-color: unset;
+			color: inherit;
 		}
 
 		figcaption {

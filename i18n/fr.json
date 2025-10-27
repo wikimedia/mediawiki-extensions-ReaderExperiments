@@ -1,20 +1,34 @@
 {
 	"@metadata": {
 		"authors": [
+			"Dyolf77 (WMF)",
 			"WillyM"
 		]
 	},
+	"readerexperiments-desc": "Un ensemble de prototypes visant à accroître le nombre de lecteurs de Wikipédia",
+	"readerexperiments-imagebrowsing-carousel-label": "Navigation dans les images",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Sélectionnez l'image « $1 »",
 	"readerexperiments-imagebrowsing-detail-caption-expand": "Plus",
 	"readerexperiments-imagebrowsing-detail-caption-collapse": "Moins",
+	"readerexperiments-imagebrowsing-detail-crop": "Plein écran",
+	"readerexperiments-imagebrowsing-detail-share": "Partager",
 	"readerexperiments-imagebrowsing-detail-share-copy": "Copier",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Afficher sur Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Télécharger",
 	"readerexperiments-imagebrowsing-detail-download-size-original": "Fichier original ( $1 x $2 px)",
 	"readerexperiments-imagebrowsing-detail-download-size-small": "Petit ( $1 x $2 px)",
 	"readerexperiments-imagebrowsing-detail-download-size-medium": "Moyen ( $1 x $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Grand ($1 x $2 px)",
 	"readerexperiments-imagebrowsing-detail-download-size-xl": "Très grand ( $1 x $2 px)",
 	"readerexperiments-imagebrowsing-loading": "Chargement",
 	"readerexperiments-imagebrowsing-overlay-back-button-label": "Retour à l'article",
 	"readerexperiments-imagebrowsing-overlay-close-button-label": "Fermer",
+	"readerexperiments-imagebrowsing-overlay-label": "Détails de l’image",
 	"readerexperiments-imagebrowsing-vtoc-heading": "Plus d'informations sur cet article",
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Médias d'autres projets",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Chargement d'images provenant d'autres projets",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Afficher dans l’article",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "De $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "De $1 et $2 {{PLURAL:$2|autre version linguistique|autres versions linguistiques}} de Wikipédia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "De $1"
 }

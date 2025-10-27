@@ -239,6 +239,9 @@ module.exports = exports = defineComponent( {
 	display: block;
 	white-space: nowrap;
 	overflow-x: auto;
+	overflow-y: hidden;
+	box-sizing: border-box;
+	height: 100%;
 	margin-bottom: 10px;
 	padding: 6px;
 }
