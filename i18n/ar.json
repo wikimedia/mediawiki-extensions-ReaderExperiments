@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dyolf77 (WMF)"
+			"Dyolf77 (WMF)",
+			"Mohammed Qays"
 		]
 	},
 	"readerexperiments-desc": "مجموعة من النماذج الأولية التي تهدف إلى زيادة عدد قراء ويكيبيديا",
@@ -13,7 +14,7 @@
 	"readerexperiments-imagebrowsing-detail-share": "مشاركة",
 	"readerexperiments-imagebrowsing-detail-share-copy": "نسخ",
 	"readerexperiments-imagebrowsing-detail-view-on-commons": "عرض على كومنز",
-	"readerexperiments-imagebrowsing-detail-download": "تنزيل",
+	"readerexperiments-imagebrowsing-detail-download": "نزّل",
 	"readerexperiments-imagebrowsing-detail-download-size-original": "الملف الأصلي ($1 × $2 بكسل)",
 	"readerexperiments-imagebrowsing-detail-download-size-small": "صغير ($1 × $2 بكسل)",
 	"readerexperiments-imagebrowsing-detail-download-size-medium": "متوسط ($1 × $2 بكسل)",

@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80"
+		]
+	},
+	"readerexperiments-desc": "ערכת אבות טיפוס של עיצובים שמיועדים להגדלת מספר הקוראים של ויקיפדיה",
+	"readerexperiments-imagebrowsing-carousel-label": "עיון בתמונות",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "בחירת התמונה \"$1\"",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "יותר",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "פחות",
+	"readerexperiments-imagebrowsing-detail-crop": "מסך מלא",
+	"readerexperiments-imagebrowsing-detail-share": "שיתוף",
+	"readerexperiments-imagebrowsing-detail-share-copy": "העתקה",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "צפייה בוויקישיתוף",
+	"readerexperiments-imagebrowsing-detail-download": "הורדה",
+	"readerexperiments-imagebrowsing-loading": "בטעינה",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "חזרה לערך",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "סגירה",
+	"readerexperiments-imagebrowsing-overlay-label": "פרטי התמונה",
+	"readerexperiments-imagebrowsing-vtoc-heading": "עוד מהערך הזה",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "מדיה ממיזמים אחרים",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "טעינת תמונות ממיזמים אחרים",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "צפייה בתוך הערך",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "מתוך $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "מתוך $1 ומתוך {{PLURAL:$2|מהדורה של ויקיפדיה בעוד שפה|מהדורות של ויקיפדיה בעוד $2 שפות}}",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "מתוך $1"
+}

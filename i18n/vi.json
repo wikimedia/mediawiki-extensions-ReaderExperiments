@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bluetpp",
+			"Nvdtn19"
+		]
+	},
+	"readerexperiments-desc": "Một bộ nguyên mẫu nhằm mục đích tăng lượng độc giả Wikipedia",
+	"readerexperiments-imagebrowsing-carousel-label": "Duyệt ảnh",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Chọn hình ảnh \"$1\"",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Thêm",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Bớt",
+	"readerexperiments-imagebrowsing-detail-crop": "Toàn màn hình",
+	"readerexperiments-imagebrowsing-detail-share": "Chia sẻ",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Sao chép",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Xem trên Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Tải về",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Tập tin gốc ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Nhỏ ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Trung bình ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Lớn ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Cực lớn ($1×$2 px)",
+	"readerexperiments-imagebrowsing-loading": "Đang tải",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Quay trở lại bài viết",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Đóng",
+	"readerexperiments-imagebrowsing-overlay-label": "Chi tiết hình ảnh",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Thông tin thêm từ bài viết này",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Phương tiện từ các dự án khác",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Tải hình ảnh từ các dự án khác",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Xem trong bài viết",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Từ $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Từ $1 và $2 {{PLURAL:$2|phiên bản}} ngôn ngữ khác của Wikipedia",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Từ $1"
+}
