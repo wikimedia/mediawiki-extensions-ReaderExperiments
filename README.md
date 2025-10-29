@@ -20,7 +20,7 @@ A set of prototypes that aim at growing Wikipedia readers.
 ``` sh
 USERNAME=  # Fill in your shell user name here
 git clone ssh://${USERNAME}@gerrit.wikimedia.org:29418/mediawiki/skins/MinervaNeue skins/MinervaNeue
-for extension in MobileFrontend MobileFrontendContentProvider WikimediaMessages ReaderExperiments; do
+for extension in MobileFrontend MobileFrontendContentProvider ReaderExperiments; do
     git clone "ssh://${USERNAME}@gerrit.wikimedia.org:29418/mediawiki/extensions/${extension}" "extensions/${extension}"
 done
 ```
@@ -30,7 +30,6 @@ done
 wfLoadExtensions( [
     'MobileFrontend',
     'MobileFrontendContentProvider',
-    'WikimediaMessages',
     'ReaderExperiments'
 ] );
 
@@ -42,6 +41,8 @@ $wgMFMwApiContentProviderBaseUri = "https://$wgLanguageCode.wikipedia.org/w/api.
 $wgReaderExperimentsApiBaseUri = $wgMFMwApiContentProviderBaseUri;
 $wgGenerateThumbnailOnParse = false;
 ```
+
+Consider using [Fresh](https://github.com/wikimedia/fresh) to handle Node.js and/or npm.
 
 
 ### Enable Image Browsing
@@ -61,6 +62,7 @@ Notes:
 
 ## Development
 The following instructions apply to the local development quickstart.
+
 
 ### Lint
 
@@ -106,9 +108,6 @@ This recipe sets up a full environment to develop instruments.
 for extension in EventBus EventLogging EventStreamConfig MetricsPlatform WikimediaEvents; do
     git clone "https://gerrit.wikimedia.org/r/mediawiki/extensions/${extension}" "extensions/${extension}"
 done
-for schema in primary secondary; do
-    git clone "https://gitlab.wikimedia.org/repos/data-engineering/schemas-event-${schema}.git" "extensions/EventLogging/schemas/${schema}"
-done
 ```
 
 - Install `EventLogging` dependencies:
@@ -147,10 +146,9 @@ if ( defined( 'MW_PHPUNIT_TEST' ) ) {
 	$wgEventLoggingServiceUri = false;
 }
 
-# MetricsPlatform
+# MetricsPlatform (AKA xLab)
 # https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Local_development_setup#Install_MetricsPlatform_extension
 $wgMetricsPlatformEnable = true;
-$wgMetricsPlatformInstrumentConfiguratorBaseUrl = 'http://localhost';  # MPIC URL
 $wgMetricsPlatformEnableExperiments = true;
 $wgMetricsPlatformEnableExperimentOverrides = true;
 
@@ -189,16 +187,7 @@ $wgEventStreams = [
 		],
 	],
 ];
-$wgEventLoggingStreamNames = array_keys( $wgEventStreams );
-# Uncomment this to treat all streams as if they are configured and registered
-//$wgEventLoggingStreamNames = false;
-```
-
-- Edit `extensions/EventLogging/devserver/eventgate.config.yaml`:
-``` yaml
-schema_base_uris:
-  - "../schemas/primary/jsonschema"
-  - "../schemas/secondary/jsonschema"
+$wgMetricsPlatformExperimentStreamNames = array_keys( $wgEventStreams );
 ```
 
 - Spin up the events server:
@@ -220,8 +209,8 @@ mw.eventLog.submitInteraction('foo', '/analytics/product_metrics/web/base/1.4.3'
 ## A/B tests
 A/B tests live in the [Experimentation Lab](https://wikitech.wikimedia.org/wiki/Experimentation_Lab) (xLab) as _experiments_.
 
-There are 3 layers where you can test an experiment before launch:
+There are 3 layers where you can test an experiment:
 
-1. Local development environment - [set up](#Instrumentation), then use the [HTTP headers method](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#Test_and_debug)
-2. Beta cluster - same as above, but in a production-like environment
-3. Production - [override enrollment](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#Override_enrollment)
+1. Local development environment - [set up instrumentation](#Instrumentation), then use the [HTTP headers method](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#HTTP_header)
+2. Beta cluster - [override enrollment](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#Enrollment_override)
+3. Production - [override enrollment](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#Enrollment_override) 
