@@ -150,6 +150,8 @@ function thumbInfo( thumb ) {
 
 	/**
 	 * HTML element of the figcaption if present.
+	 * @todo: probably should remove this because it doesn't capture .thumbcaption not infobox captions
+	 * @deprecated
 	 */
 	item.caption = item.container ? item.container.querySelector( 'figcaption' ) : null;
 
@@ -290,13 +292,24 @@ function isIncludedThumbInfo( info ) {
  * @return {string|null} the caption's HTML string, if any
  */
 function getCaptionIfAvailable( container ) {
-	if ( container && container.querySelector( 'figcaption' ) ) {
+	const figcaption = container && container.querySelector( 'figcaption' );
+	if ( figcaption ) {
 		return container.querySelector( 'figcaption' ).innerHTML;
-	} else if ( container ) {
-		return findNearbyInfoboxCaption( container );
-	} else {
-		return null;
 	}
+
+	const thumbcaption = container &&
+		container.closest( '.thumbimage' ) &&
+		container.closest( '.thumbimage' ).parentElement &&
+		container.closest( '.thumbimage' ).parentElement.querySelector( '.thumbcaption' );
+	if ( thumbcaption ) {
+		return thumbcaption.innerHTML;
+	}
+
+	if ( container ) {
+		return findNearbyInfoboxCaption( container );
+	}
+
+	return null;
 }
 
 /**

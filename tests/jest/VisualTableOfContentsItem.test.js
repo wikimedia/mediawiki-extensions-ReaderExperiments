@@ -25,6 +25,7 @@ describe( 'VisualTableOfContentsItem', () => {
 			width: 200,
 			height: 200,
 			container: {
+				closest: jest.fn( () => null ),
 				querySelector: jest.fn( () => null )
 			},
 			resizeUrl: ( width ) => `//url/to/full-image.jpg?width=${ width }`
