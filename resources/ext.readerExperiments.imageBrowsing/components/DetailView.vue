@@ -14,14 +14,14 @@
 		<!-- Controls -->
 		<detail-view-controls
 			:image="activeImage"
-			:initial-cropped="isCropped"
+			:cropped="isCropped"
 			@detail-view-crop-toggle="onCropToggle"
 		></detail-view-controls>
 	</cropped-image>
 </template>
 
 <script>
-const { defineComponent, inject, ref } = require( 'vue' );
+const { defineComponent, inject, ref, watch } = require( 'vue' );
 const CroppedImage = require( './CroppedImage.vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );
@@ -44,8 +44,14 @@ module.exports = exports = defineComponent( {
 			required: true
 		}
 	},
-	setup() {
-		const isCropped = ref( true );
+	setup( props ) {
+		const initialCropped = true;
+		const isCropped = ref( initialCropped );
+
+		watch(
+			() => props.activeImage,
+			() => ( isCropped.value = initialCropped )
+		);
 
 		//
 		// Event handlers.

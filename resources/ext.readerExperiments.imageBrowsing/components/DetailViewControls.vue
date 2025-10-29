@@ -136,7 +136,7 @@ module.exports = exports = defineComponent( {
 		/**
 		 * @type {boolean}
 		 */
-		initialCropped: {
+		cropped: {
 			type: Boolean,
 			required: true
 		}
@@ -281,7 +281,11 @@ module.exports = exports = defineComponent( {
 		// state is the inverse of "cropped", so we're stuck with the
 		// inverted descriptor here, but we'll swap things around when it
 		// comes to interfacing with this component.
-		const isUncropped = ref( !props.initialCropped );
+		const isUncropped = ref( !props.cropped );
+		watch(
+			() => props.cropped,
+			( cropped ) => ( isUncropped.value = !cropped )
+		);
 		function onCropToggle( toggled ) {
 			emit( 'detail-view-crop-toggle', !toggled );
 		}

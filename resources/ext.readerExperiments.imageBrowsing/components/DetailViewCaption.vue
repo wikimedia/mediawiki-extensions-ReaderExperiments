@@ -180,6 +180,8 @@ module.exports = exports = defineComponent( {
 	--gradient-height: 60px;
 
 	font-weight: bold;
+	font-size: 0.9rem;
+	line-height: 1.75;
 	width: 100%;
 	max-height: calc( 100% - var( --caption-padding ) - var( --gradient-height ) );
 	margin: 0;
@@ -231,29 +233,22 @@ module.exports = exports = defineComponent( {
 		padding: 0;
 		max-height: 75vh;
 		overflow: hidden;
-
-		&.ib-detail-view-caption__collapsed,
-		&:not( .ib-detail-view-caption__collapsed ) {
-			display: -webkit-box;
-			-webkit-box-orient: vertical;
-			-moz-box-orient: vertical;
-			-ms-box-orient: vertical;
-			box-orient: vertical;
-		}
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-moz-box-orient: vertical;
+		-ms-box-orient: vertical;
+		box-orient: vertical;
+		-webkit-line-clamp: var( --line-clamp );
+		-moz-line-clamp: var( --line-clamp );
+		-ms-line-clamp: var( --line-clamp );
+		line-clamp: var( --line-clamp );
 
 		&.ib-detail-view-caption__collapsed {
-			-webkit-line-clamp: 3;
-			-moz-line-clamp: 3;
-			-ms-line-clamp: 3;
-			line-clamp: 3;
+			--line-clamp: 3;
 		}
 
 		&:not( .ib-detail-view-caption__collapsed ) {
-			// Use a static line clamp for simplicity
-			-webkit-line-clamp: 8;
-			-moz-line-clamp: 8;
-			-ms-line-clamp: 8;
-			line-clamp: 8;
+			--line-clamp: 8;
 		}
 
 		a:not( [ role='button' ] ) {
@@ -261,6 +256,48 @@ module.exports = exports = defineComponent( {
 			text-decoration: underline;
 			text-decoration-thickness: 1.5px; // Make the underline slightly more legible
 		}
+
+		> * {
+			// Some captions are explicitly center-aligned inside the page (e.g. through
+			// {{center}} template, but we don't want that in our viewer...
+			text-align: unset !important;
+		}
 	}
 }
+
+// override mobilefrontend font sizes; captions should be smaller than body text
+.mf-font-size-clientpref-small {
+	.mw-body .ib-detail-view-caption p,
+	.content .ib-detail-view-caption p {
+		font-size: unit( ( 14 / 16 ), rem );
+	}
+
+	.content .ib-detail-view-caption {
+		line-height: 1.75;
+	}
+}
+
+.mf-font-size-clientpref-regular {
+	.mw-body .ib-detail-view-caption p,
+	.content .ib-detail-view-caption p {
+		font-size: 1rem;
+	}
+
+	.content .ib-detail-view-caption {
+		line-height: 1.65;
+	}
+}
+
+.mf-font-size-clientpref-large,
+.mf-font-size-clientpref-xlarge {
+	.mw-body .ib-detail-view-caption p,
+	.content .ib-detail-view-caption p {
+		font-size: unit( ( 18 / 16 ), rem );
+	}
+
+	.content .ib-detail-view-caption {
+		line-height: 1.6;
+	}
+}
+
 </style>
