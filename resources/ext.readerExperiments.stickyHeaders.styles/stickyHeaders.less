@@ -1,0 +1,19 @@
+@import 'mediawiki.skin.variables.less';
+
+.ext-readerExperiments-stickyHeaders {
+	background-color: @background-color-base;
+	position: sticky;
+	top: 0;
+
+	// Ensure that sub-headings are visible when jumped to
+	// stylelint-disable selector-class-pattern
+	& + .mf-collapsible-content {
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			scroll-margin-top: @spacing-400;
+		}
+	}
+}

@@ -165,6 +165,36 @@
 			],
 			"localBasePath": "resources",
 			"remoteExtPath": "ReaderExperiments/resources"
+		},
+		"ext.readerExperiments.stickyHeaders": {
+			"localBasePath": "resources/ext.readerExperiments.stickyHeaders",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.stickyHeaders",
+			"packageFiles": [
+				"init.js"
+			],
+			"dependencies": [
+				"ext.readerExperiments.stickyHeaders.styles"
+			]
+		},
+		"ext.readerExperiments.stickyHeaders.legacy": {
+			"localBasePath": "resources/ext.readerExperiments.stickyHeaders.legacy",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.stickyHeaders.legacy",
+			"packageFiles": [
+				"init.js"
+			],
+			"styles": [
+				"styles/overrides.less"
+			],
+			"dependencies": [
+				"ext.readerExperiments.stickyHeaders.styles"
+			]
+		},
+		"ext.readerExperiments.stickyHeaders.styles": {
+			"localBasePath": "resources/ext.readerExperiments.stickyHeaders.styles",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.stickyHeaders.styles",
+			"styles": [
+				"stickyHeaders.less"
+			]
 		}
 	},
 	"manifest_version": 2

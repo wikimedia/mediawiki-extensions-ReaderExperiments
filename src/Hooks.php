@@ -20,8 +20,10 @@
 namespace MediaWiki\Extension\ReaderExperiments;
 
 use MediaWiki\Extension\MetricsPlatform\XLab\ExperimentManager;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Page\Hook\ArticleViewHeaderHook;
+use MediaWiki\Registration\ExtensionRegistry;
 
 class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 
@@ -102,11 +104,20 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 	 * @inheritDoc
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
+		$context = $out->getContext();
+		$request = $context->getRequest();
 		$title = $out->getTitle();
+		$shouldUseParsoid = false;
+
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'ParserMigration' ) ) {
+			$oracle = MediaWikiServices::getInstance()->getService( 'ParserMigration.Oracle' );
+			$shouldUseParsoid =
+				$oracle->shouldUseParsoid( $context->getUser(), $context->getRequest(), $title );
+		}
 
 		if ( $title && $title->getNamespace() === NS_MAIN ) {
 			// Check presence of URL query parameter (feature flag).
-			$hasFeatureFlag = $out->getContext()->getRequest()->getFuzzyBool( 'stickyHeaders' );
+			$hasFeatureFlag = $request->getFuzzyBool( 'stickyHeaders' );
 
 			// Check usage of Minerva skin.
 			$isMinervaSkin = $skin->getSkinName() === 'minerva';
@@ -117,6 +128,20 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 				// which achieves what we want in terms of auto-expanding sections
 				// (regardless of whether parsoid or legacy parser is used).
 				$out->addBodyClasses( 'collapsible-headings-expanded' );
+
+				// Load the commen styles module
+				$out->addModules( 'ext.readerExperiments.stickyHeaders.styles' );
+
+				// Mobile section headers use different markup and styles depending on whether
+				// parsoid or legacy parser is used, so we need to determine how the page was
+				// rendered.
+				if ( $shouldUseParsoid ) {
+					// load the ext.readerExperiments.stickyHeaders module
+					$out->addModules( 'ext.readerExperiments.stickyHeaders' );
+				} else {
+					// load the ext.readerExperiments.stickyHeaders.legacy module
+					$out->addModules( 'ext.readerExperiments.stickyHeaders.legacy' );
+				}
 			}
 		}
 	}
