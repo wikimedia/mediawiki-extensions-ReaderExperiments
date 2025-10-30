@@ -162,18 +162,6 @@ module.exports = exports = function useBackgroundColor( imageDataRef, imageEleme
 					// polluting console
 				} );
 		}
-
-		// Also bind to thumbnail (insofar a valid one is available), which may
-		// already be (or sooner become) available.
-		if ( imageData.thumb && imageData.thumb instanceof HTMLImageElement ) {
-			waitForImageLoad( imageData.thumb )
-				.then( ( node ) => computeColor( node, imageData ) )
-				.then( ( color ) => updateIfNotStale( color ) )
-				.catch( () => {
-					// Failures are acceptable, we just don't want them
-					// polluting console
-				} );
-		}
 	} );
 	return readonly( colorResult );
 };
