@@ -2,6 +2,7 @@
 /composer.lock
 /vendor
 /node_modules
+/coverage
 .eslintcache
 /.stylelintcache
 

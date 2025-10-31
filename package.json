@@ -5,7 +5,8 @@
 		"fix": "grunt lint --fix",
 		"jest": "jest --config tests/jest/jest.config.js",
 		"lint": "grunt lint",
-		"test": "grunt lint && npm run jest"
+		"test": "grunt lint && npm run jest",
+		"coverage": "npm run jest"
 	},
 	"devDependencies": {
 		"@babel/preset-env": "7.25.4",
