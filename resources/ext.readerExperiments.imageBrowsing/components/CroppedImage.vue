@@ -98,6 +98,10 @@ module.exports = exports = defineComponent( {
 		watch(
 			() => imageElement.value !== null && props.image && props.image.name,
 			async () => {
+				if ( !imageElement.value ) {
+					// Overlay was probably closed while we were shuffling updates.
+					return;
+				}
 				if ( imageElement.value.src !== initSrc ) {
 					// After we've set a new src, Firefox still seems to hold on to
 					// the old image until the new has completed loading. We'd
@@ -121,6 +125,10 @@ module.exports = exports = defineComponent( {
 				// might kick off immediately, or might take a while given that
 				// loading=lazy)
 				const updateCropStyle = async () => {
+					if ( !imageElement.value ) {
+						// Overlay was probably closed, killing the live element.
+						return;
+					}
 					imageElement.value.removeEventListener( 'load', updateCropStyle );
 
 					// Calculate crop style for new image
