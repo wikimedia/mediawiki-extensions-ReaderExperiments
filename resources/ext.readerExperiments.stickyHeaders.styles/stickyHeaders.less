@@ -5,14 +5,10 @@
 	position: sticky;
 	top: 0;
 
-	// Ensure that sub-headings are visible when jumped to
+	// Ensure that sub-headings and other fragment links are visible when jumped to
 	// stylelint-disable selector-class-pattern
 	& + .mf-collapsible-content {
-		h2,
-		h3,
-		h4,
-		h5,
-		h6 {
+		[ id ] {
 			scroll-margin-top: @spacing-400;
 		}
 	}

@@ -1,5 +1,7 @@
 // Sticky Headers Prototype – Legacy Parser support
 
+const { checkHash } = require( 'ext.readerExperiments.stickyHeaders.common' );
+
 /**
  * @type {HTMLElement[]}
  */
@@ -13,6 +15,10 @@ function setupStickyHeaders() {
 	headings.forEach( ( heading ) => {
 		heading.classList.add( 'ext-readerExperiments-stickyHeaders' );
 	} );
+
+	// Scroll overrides:
+	mw.hook( 'wikipage.content' ).add( checkHash );
+	window.addEventListener( 'hashchange', checkHash );
 }
 
 /**
