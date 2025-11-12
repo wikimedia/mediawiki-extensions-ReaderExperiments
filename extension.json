@@ -173,7 +173,18 @@
 				"init.js"
 			],
 			"dependencies": [
+				"ext.readerExperiments.stickyHeaders.common",
 				"ext.readerExperiments.stickyHeaders.styles"
+			]
+		},
+		"ext.readerExperiments.stickyHeaders.common": {
+			"localBasePath": "resources/ext.readerExperiments.stickyHeaders.common",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.stickyHeaders.common",
+			"packageFiles": [
+				"init.js"
+			],
+			"dependencies": [
+				"mediawiki.util"
 			]
 		},
 		"ext.readerExperiments.stickyHeaders.legacy": {
@@ -186,6 +197,7 @@
 				"styles/overrides.less"
 			],
 			"dependencies": [
+				"ext.readerExperiments.stickyHeaders.common",
 				"ext.readerExperiments.stickyHeaders.styles"
 			]
 		},

@@ -1,8 +1,19 @@
 // These styles are only needed for legacy parser output, which applies
 // When parser migration is complete, these styles can be removed.
 
+@import 'mediawiki.skin.variables.less';
+
 // stylelint-disable selector-class-pattern
-.client-js .collapsible-heading {
-	position: sticky;
-	z-index: 1;
+.client-js {
+	.collapsible-heading {
+		position: sticky;
+		z-index: 1;
+	}
+
+	// Ensure that sub-headings and other fragment links are visible when jumped to
+	.collapsible-block {
+		[ id ] {
+			scroll-margin-top: @spacing-400;
+		}
+	}
 }
