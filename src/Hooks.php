@@ -27,10 +27,19 @@ use MediaWiki\Registration\ExtensionRegistry;
 
 class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 
+	// Tier 1 experiment: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
+	// https://mpic.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
 	/** @var string */
-	private const EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
+	private const TIER_ONE_EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
 	/** @var string */
-	private const TREATMENT_GROUP = 'image-browsing-test';
+	private const TIER_ONE_TREATMENT_GROUP = 'image-browsing-test';
+
+	// Tier 2 experiment: 0.1% English Wikipedia.
+	// https://mpic.wikimedia.org/experiment/image-browsing-enwiki
+	/** @var string */
+	private const TIER_TWO_EXPERIMENT_NAME = 'image-browsing-enwiki';
+	/** @var string */
+	private const TIER_TWO_TREATMENT_GROUP = 'treatment';
 
 	private ?ExperimentManager $experimentManager;
 
@@ -38,14 +47,19 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 		$this->experimentManager = $experimentManager;
 	}
 
-	private function isInTreatmentGroup(): bool {
+	private function isInAnyTreatmentGroup(): bool {
 		if ( !$this->experimentManager ) {
 			return false;
 		}
 
-		$experiment = $this->experimentManager->getExperiment( self::EXPERIMENT_NAME );
-		$assignedGroup = $experiment->getAssignedGroup();
-		return $assignedGroup === self::TREATMENT_GROUP;
+		$tierOne = $this->experimentManager->getExperiment( self::TIER_ONE_EXPERIMENT_NAME );
+		$tierOneAssignedGroup = $tierOne->getAssignedGroup();
+
+		$tierTwo = $this->experimentManager->getExperiment( self::TIER_TWO_EXPERIMENT_NAME );
+		$tierTwoAssignedGroup = $tierTwo->getAssignedGroup();
+
+		return ( $tierOneAssignedGroup === self::TIER_ONE_TREATMENT_GROUP ) ||
+			( $tierTwoAssignedGroup === self::TIER_TWO_TREATMENT_GROUP );
 	}
 
 	/**
@@ -65,8 +79,8 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 			// Check if we're using Minerva skin
 			$isMinervaSkin = $out->getSkin()->getSkinName() === 'minerva';
 
-			// Enable if Minerva skin AND (URL param is set OR user is in treatment group).
-			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInTreatmentGroup() ) ) {
+			// Enable if Minerva skin AND (URL param is set OR user is in any experiment's treatment group).
+			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInAnyTreatmentGroup() ) ) {
 				$out->prependHTML(
 					'<div id="ext-readerExperiments-imageBrowsing"></div>'
 				);

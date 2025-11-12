@@ -58,6 +58,6 @@ export interface ImageData {
 
 export interface InstrumentationPluginConfig {
 	enabled: boolean;
-	eventStream: string;
-	schema: string;
+	instrumentName: string;
+	experiments: mw.xLab.Experiment[] | null;
 }
