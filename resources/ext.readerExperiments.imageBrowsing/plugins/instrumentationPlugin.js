@@ -19,14 +19,18 @@ module.exports = exports = {
 		 * @param {Object} interactionData
 		 */
 		const submitInteraction = ( action, interactionData ) => {
-			if ( options.enabled && options.experiment ) {
+			if ( options.enabled && options.experiments ) {
 				// eslint-disable-next-line camelcase
 				interactionData.instrument_name = options.instrumentName;
 
-				options.experiment.send(
-					action,
-					interactionData
-				);
+				options.experiments.forEach( ( experiment ) => {
+					if ( experiment ) {
+						experiment.send(
+							action,
+							interactionData
+						);
+					}
+				} );
 			} else {
 				// Do nothing if logging is not enabled explicitly.
 				return;

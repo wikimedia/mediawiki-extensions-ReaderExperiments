@@ -150,6 +150,7 @@ function thumbInfo( thumb ) {
 
 	/**
 	 * HTML element of the figcaption if present.
+	 *
 	 * @todo: probably should remove this because it doesn't capture .thumbcaption not infobox captions
 	 * @deprecated
 	 */

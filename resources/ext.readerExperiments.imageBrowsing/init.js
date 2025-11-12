@@ -52,8 +52,16 @@ if ( !isSupportedBrowser() ) {
 	return;
 }
 
-// Instrumentation setup.
-const EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
+//
+// Instrumentation setup
+//
+
+// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
+// https://mpic.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
+const TIER_ONE_EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
+// Tier 2: 0.1% English Wikipedia.
+// https://mpic.wikimedia.org/experiment/image-browsing-enwiki
+const TIER_TWO_EXPERIMENT_NAME = 'image-browsing-enwiki';
 const SCHEMA_NAME = '/analytics/product_metrics/web/base/1.4.3';
 // Naming convention: mediawiki.product_metrics.<product>_<component>_<interaction>.
 // See https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Stream_configuration#Choosing_a_stream_name
@@ -65,20 +73,24 @@ const INSTRUMENT_NAME = 'ImageBrowsingInstrument';
  */
 const analyticsConfig = {
 	enabled: false,
-	experiment: null,
-	instrumentName: INSTRUMENT_NAME
+	instrumentName: INSTRUMENT_NAME,
+	experiments: null
 };
 
 mw.loader.using( 'ext.xLab' )
 	// Use a soft-require to determine whether xLab is available;
 	// if so use it, if not then don't enable the instrumentation.
 	.then( () => {
-		const experiment = mw.xLab.getExperiment( EXPERIMENT_NAME );
-		experiment.setSchema( SCHEMA_NAME );
-		experiment.setStream( STREAM_NAME );
+		const tierOne = mw.xLab.getExperiment( TIER_ONE_EXPERIMENT_NAME );
+		tierOne.setSchema( SCHEMA_NAME );
+		tierOne.setStream( STREAM_NAME );
+
+		const tierTwo = mw.xLab.getExperiment( TIER_TWO_EXPERIMENT_NAME );
+		tierTwo.setSchema( SCHEMA_NAME );
+		tierTwo.setStream( STREAM_NAME );
 
 		analyticsConfig.enabled = true;
-		analyticsConfig.experiment = experiment;
+		analyticsConfig.experiments = [ tierOne, tierTwo ];
 	} )
 	// Mount the Vue app regardless of whether logging is enabled, but if so
 	// then ensure the instrumentation plugin gets the appropriate config
