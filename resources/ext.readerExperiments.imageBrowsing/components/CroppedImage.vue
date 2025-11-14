@@ -34,6 +34,7 @@
 <script>
 const { ref, computed, defineComponent, useTemplateRef, watch, toRef } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
+const { thumbLimits } = require( '../config.json' );
 const { cdxIconImage } = require( '../icons.json' );
 const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
 const useSmartCrop = require( '../composables/useSmartCrop.js' );
@@ -177,7 +178,6 @@ module.exports = exports = defineComponent( {
 			// and find one that looks like it'll fit or exceed the required width;
 			// using a standard size increases the chances of one being ready to
 			// serve right away, having been rendered before.
-			const thumbLimits = mw.config.get( 'ReaderExperimentsImageBrowsingThumbLimits' ) || [];
 			const acceptableWidths = thumbLimits.filter( ( limit ) => limit >= coverWidth );
 			const standardizedWidth = acceptableWidths.length ?
 				Math.min.apply( null, acceptableWidths ) :

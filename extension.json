@@ -69,6 +69,10 @@
 			"packageFiles": [
 				"init.js",
 				{
+					"name": "config.json",
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getConfig"
+				},
+				{
 					"name": "icons.json",
 					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
 					"callbackParam": [

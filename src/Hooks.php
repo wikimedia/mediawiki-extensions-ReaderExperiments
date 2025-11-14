@@ -19,11 +19,13 @@
 
 namespace MediaWiki\Extension\ReaderExperiments;
 
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\MetricsPlatform\XLab\ExperimentManager;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Page\Hook\ArticleViewHeaderHook;
 use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\ResourceLoader\Context;
 
 class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 
@@ -45,6 +47,31 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 
 	public function __construct( ?ExperimentManager $experimentManager = null ) {
 		$this->experimentManager = $experimentManager;
+	}
+
+	/**
+	 * ResourceLoader callback to generate virtual config.json for ImageBrowsing module,
+	 * to provides configuration data as a packageFiles virtual module
+	 *
+	 * @see https://www.mediawiki.org/wiki/ResourceLoader/Package_files#Generated_content
+	 *
+	 * @param Context $context
+	 * @param Config $config
+	 * @return array
+	 */
+	public static function getConfig( Context $context, Config $config ): array {
+		$thumbLimits = array_unique( array_merge(
+			$config->get( 'ThumbLimits' ),
+			$config->get( 'ThumbnailSteps' ) ?? [],
+			[ 1280, 2560 ]
+		) );
+		sort( $thumbLimits, SORT_NUMERIC );
+
+		return [
+			'apiBaseUri' => $config->get( 'ReaderExperimentsApiBaseUri' ),
+			'externalWikis' => $config->get( 'ReaderExperimentsImageBrowsingExternalWikis' ),
+			'thumbLimits' => $thumbLimits,
+		];
 	}
 
 	private function isInAnyTreatmentGroup(): bool {
@@ -83,26 +110,6 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInAnyTreatmentGroup() ) ) {
 				$out->prependHTML(
 					'<div id="ext-readerExperiments-imageBrowsing"></div>'
-				);
-
-				$out->addJsConfigVars(
-					'ReaderExperimentsApiBaseUri',
-					$config->get( 'ReaderExperimentsApiBaseUri' )
-				);
-				$out->addJsConfigVars(
-					'ReaderExperimentsImageBrowsingExternalWikis',
-					$config->get( 'ReaderExperimentsImageBrowsingExternalWikis' )
-				);
-
-				$thumbLimits = array_unique( array_merge(
-					$config->get( 'ThumbLimits' ),
-					$config->get( 'ThumbnailSteps' ) ?? [],
-					[ 1280, 2560 ]
-				) );
-				sort( $thumbLimits, SORT_NUMERIC );
-				$out->addJsConfigVars(
-					'ReaderExperimentsImageBrowsingThumbLimits',
-					$thumbLimits
 				);
 
 				$out->addModuleStyles( 'ext.readerExperiments.imageBrowsing.styles' );

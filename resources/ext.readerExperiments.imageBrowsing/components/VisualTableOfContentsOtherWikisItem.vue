@@ -36,6 +36,7 @@
 <script>
 const { computed, defineComponent, inject, useTemplateRef } = require( 'vue' );
 const { useResizeObserver } = require( '@wikimedia/codex' );
+const { externalWikis } = require( '../config.json' );
 const CroppedImage = require( './CroppedImage.vue' );
 const useImageLabel = require( '../composables/useImageLabel.js' );
 
@@ -99,7 +100,6 @@ module.exports = exports = defineComponent( {
 		 * @return {string}
 		 */
 		function getImageSources( image ) {
-			const externalWikis = mw.config.get( 'ReaderExperimentsImageBrowsingExternalWikis' );
 			const projectsMap = ( image.externalSources || [] ).reduce(
 				( map, hostname ) => {
 					const domain = Object.keys( externalWikis )

@@ -1,5 +1,4 @@
 const { mount } = require( '@vue/test-utils' );
-const { when } = require( 'jest-when' );
 const VisualTableOfContentsItem = require( '../../resources/ext.readerExperiments.imageBrowsing/components/VisualTableOfContentsItem' );
 
 // Mock the thumbExtractor module
@@ -11,10 +10,6 @@ let mockImage, wrapper;
 
 describe( 'VisualTableOfContentsItem', () => {
 	beforeEach( () => {
-		when( global.mw.config.get )
-			.calledWith( 'ReaderExperimentsImageBrowsingThumbLimits' )
-			.mockReturnValue( [ 50, 100, 200 ] );
-
 		// Reset mocks
 		jest.clearAllMocks();
 		mockImage = {

@@ -83,6 +83,8 @@ module.exports = {
 		// so tell Jest it can load the full library instead.
 		// See https://www.mediawiki.org/wiki/Codex#Loading_a_subset_of_Codex_components_(recommended_for_skins_and_extensions)
 		'codex.js$': '@wikimedia/codex',
+		// Mock the dynamically generated config.json file
+		'../config.json$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/config.json',
 		// Mock the dynamically generated icons.json file
 		'../icons.json$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/icons.json',
 		// Mock the mediawiki.router module (provided by MediaWiki ResourceLoader at runtime)

@@ -1,15 +1,10 @@
 const { mount } = require( '@vue/test-utils' );
-const { when } = require( 'jest-when' );
 const Carousel = require( '../../resources/ext.readerExperiments.imageBrowsing/components/Carousel' );
 
 let images, wrapper;
 
 describe( 'Carousel', () => {
 	beforeEach( () => {
-		when( global.mw.config.get )
-			.calledWith( 'ReaderExperimentsImageBrowsingThumbLimits' )
-			.mockReturnValue( [ 50, 100, 200 ] );
-
 		const one = document.createElement( 'img' );
 		one.setAttribute( 'src', '//url/to/Elvis.jpg' );
 

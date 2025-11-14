@@ -1,15 +1,10 @@
 const { shallowMount } = require( '@vue/test-utils' );
-const { when } = require( 'jest-when' );
 const CarouselItem = require( '../../resources/ext.readerExperiments.imageBrowsing/components/CarouselItem' );
 
 let image, wrapper;
 
 describe( 'CarouselItem', () => {
 	beforeEach( () => {
-		when( global.mw.config.get )
-			.calledWith( 'ReaderExperimentsImageBrowsingThumbLimits' )
-			.mockReturnValue( [ 50, 100, 200 ] );
-
 		const src = '//url/to/Jailhouse_Rock.jpg';
 		const alt = 'Presley posing over a white background';
 		const thumb = document.createElement( 'img' );

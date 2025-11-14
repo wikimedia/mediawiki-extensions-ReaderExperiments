@@ -1,3 +1,4 @@
+const { apiBaseUri } = require( '../config.json' );
 const useMwApi = require( './useMwApi.js' );
 
 let cacheEntityId = null;
@@ -24,7 +25,7 @@ module.exports = async function useEntityId() {
 	// Images from other wiki are based on the page's associated Wikibase entity ID
 	cacheEntityId = mw.config.get( 'wgWikibaseItemId' );
 
-	if ( cacheEntityId === null && mw.config.get( 'ReaderExperimentsApiBaseUri' ) ) {
+	if ( cacheEntityId === null && apiBaseUri ) {
 		// Instances that reach out to an external endpoint to serve their data
 		// (e.g. local environments, patchdemo) are unlikely to have the associated
 		// entity ID set, which makes things rather annoying to test.

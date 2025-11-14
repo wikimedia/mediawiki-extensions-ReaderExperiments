@@ -37,17 +37,6 @@ describe( 'useMediaSearchResults', () => {
 			[
 				'wgServerName',
 				'localhost'
-			],
-			[
-				'ReaderExperimentsApiBaseUri',
-				'https://en.wikipedia.org/w/api.php'
-			],
-			[
-				'ReaderExperimentsImageBrowsingExternalWikis',
-				{
-					'wikipedia.org': '/* i18n-unused */',
-					'wikidata.org': 'wikibase-otherprojects-wikidata'
-				}
 			]
 		] );
 

@@ -1,3 +1,5 @@
+const { apiBaseUri, externalWikis } = require( '../config.json' );
+
 /**
  * @param {Array<{title: string, wiki: string, url: string}>} globalusage
  * @return {Array<string>}
@@ -9,7 +11,6 @@ module.exports = function useUniqueExternalGlobalUsageWikis( globalusage ) {
 	// We only care about external wikis, so we're going to filter
 	// out the local wiki
 	let localWiki = mw.config.get( 'wgServerName' );
-	const apiBaseUri = mw.config.get( 'ReaderExperimentsApiBaseUri' );
 	if ( apiBaseUri ) {
 		// Wikis for which we're mirroring content from another source
 		// (e.g. local dev & patchdemo, through
@@ -20,7 +21,7 @@ module.exports = function useUniqueExternalGlobalUsageWikis( globalusage ) {
 	}
 
 	// And we only allow select domains (our main content projects)
-	const allowedWikis = Object.keys( mw.config.get( 'ReaderExperimentsImageBrowsingExternalWikis' ) );
+	const allowedWikis = Object.keys( externalWikis );
 
 	return uniqueGlobalUsage
 		.filter( ( wiki ) => wiki !== localWiki )
