@@ -43,6 +43,10 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 	/** @var string */
 	private const TIER_TWO_TREATMENT_GROUP = 'treatment';
 
+	// StickyHeaders experiment
+	private const SH_EXPERIMENT_NAME = 'fy2025-26-we3.1.14-session-header-ab-test';
+	private const SH_TREATMENT_GROUP = 'treatment';
+
 	private ?ExperimentManager $experimentManager;
 
 	public function __construct( ?ExperimentManager $experimentManager = null ) {
@@ -120,6 +124,17 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 		}
 	}
 
+	private function isInStickyTreatmentGroup(): bool {
+		if ( !$this->experimentManager ) {
+			return false;
+		}
+
+		$stickyHeadersExperiment = $this->experimentManager->getExperiment( self::SH_EXPERIMENT_NAME );
+		$isInAnyTreatmentGroup = $stickyHeadersExperiment->getAssignedGroup();
+
+		return ( $isInAnyTreatmentGroup === self::SH_TREATMENT_GROUP );
+	}
+
 	/**
 	 * StickyHeaders hook handler.
 	 * @inheritDoc
@@ -164,6 +179,16 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 					$out->addModules( 'ext.readerExperiments.stickyHeaders.legacy' );
 				}
 			}
+		}
+
+		// When enrolled in StickyHeaders and Special:MobileOptions
+		if (
+			$title &&
+			$title->getNamespace() === NS_SPECIAL &&
+			$title->getBaseText() === 'MobileOptions' &&
+			$this->isInStickyTreatmentGroup()
+			) {
+				$out->addJsConfigVars( 'wgReaderExperimentsStickyHeaders', 'enrolled' );
 		}
 	}
 }
