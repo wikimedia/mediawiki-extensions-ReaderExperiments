@@ -50,13 +50,23 @@ function onHeadingToggle( options ) {
 			}
 		} );
 
-		if ( index !== -1 && headings[ index + 1 ] ) {
-			const nextHeading = headings[ index + 1 ];
-			if ( nextHeading ) {
-				nextHeading.scrollIntoView( {
-					behavior: 'smooth',
-					block: 'start'
-				} );
+		if ( index !== -1 ) {
+			const contents = headings[ index ].nextElementSibling;
+			if ( contents ) {
+				// position:sticky moves our offset while it's still active
+				// so to get where we should belong we just have to offset
+				// it ourselves from the following section
+				let offset = 0;
+				for ( let node = contents; node; node = node.offsetParent ) {
+					offset += node.offsetTop;
+				}
+				offset -= headings[ index ].offsetHeight;
+				if ( window.scrollY > offset ) {
+					window.scroll( {
+						top: offset,
+						left: 0
+					} );
+				}
 			}
 		}
 	}

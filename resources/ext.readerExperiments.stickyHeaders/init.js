@@ -37,13 +37,20 @@ function onHeadingToggle( options ) {
 		// by DOM id instead.
 		const index = headings.findIndex( ( node ) => node.id === heading.id );
 
-		if ( index !== -1 && headings[ index + 1 ] ) {
-			const section = headings[ index + 1 ].closest( 'section' );
+		if ( index !== -1 ) {
+			const section = headings[ index ].parentElement;
 			if ( section ) {
-				section.scrollIntoView( {
-					behavior: 'smooth',
-					block: 'start'
-				} );
+				// Use the offsetTop of the <section>
+				let offset = 0;
+				for ( let node = section; node; node = node.offsetParent ) {
+					offset += node.offsetTop;
+				}
+				if ( window.scrollY > offset ) {
+					window.scroll( {
+						top: offset,
+						left: 0
+					} );
+				}
 			}
 		}
 	}
