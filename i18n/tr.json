@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"SaldırganSincap"
+		]
+	},
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Orijinal dosya ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Küçük ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Orta ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Büyük ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Ekstra büyük ($1×$2 px)"
+}
