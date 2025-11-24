@@ -165,7 +165,7 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 				// (regardless of whether parsoid or legacy parser is used).
 				$out->addBodyClasses( 'collapsible-headings-expanded' );
 
-				// Load the commen styles module
+				// Load the common styles module
 				$out->addModules( 'ext.readerExperiments.stickyHeaders.styles' );
 
 				// Mobile section headers use different markup and styles depending on whether

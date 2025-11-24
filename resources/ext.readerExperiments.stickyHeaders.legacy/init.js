@@ -1,25 +1,11 @@
 // Sticky Headers Prototype – Legacy Parser support
 
-const { checkHash } = require( 'ext.readerExperiments.stickyHeaders.common' );
+const { setupStickyHeaders } = require( 'ext.readerExperiments.stickyHeaders.common' );
 
 /**
  * @type {HTMLElement[]}
  */
 let headings = [];
-
-/**
- * Adds a new CSS class to the mobile headers, making them sticky.
- */
-function setupStickyHeaders() {
-	headings = Array.from( document.querySelectorAll( '.collapsible-heading' ) );
-	headings.forEach( ( heading ) => {
-		heading.classList.add( 'ext-readerExperiments-stickyHeaders' );
-	} );
-
-	// Scroll overrides:
-	mw.hook( 'wikipage.content' ).add( checkHash );
-	window.addEventListener( 'hashchange', checkHash );
-}
 
 /**
  * If a given header is collapsed, find it in the sequence of headers
@@ -72,5 +58,11 @@ function onHeadingToggle( options ) {
 	}
 }
 
-mw.loader.using( 'mobile.init' ).then( setupStickyHeaders );
-mw.hook( 'readerExperiments.section-toggled' ).add( onHeadingToggle );
+const setupPromise = mw.loader.using( 'mobile.init' ).then( () => {
+	headings = Array.from( document.querySelectorAll( '.collapsible-heading:has( + .collapsible-block )' ) );
+	setupStickyHeaders( headings );
+} );
+// Out of an abundance of caution: make sure not to toggle heading until setup is complete
+mw.hook( 'readerExperiments.section-toggled' ).add( ( options ) => {
+	setupPromise.then( () => onHeadingToggle( options ) );
+} );
