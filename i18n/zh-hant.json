@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"EBlackorby-WMF"
+			"EBlackorby-WMF",
+			"Kly"
 		]
 	},
 	"readerexperiments-desc": "一套旨在增加維基百科讀者的原型版本",
@@ -28,6 +29,6 @@
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "正在加載來自其他專案的圖片",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "在文章中查看",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "從$1",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "從 $1 和 $2 其他語言{{PLURAL:$2|版本|版本}} 的維基百科",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "從 $1 和 $2 個其他語言{{PLURAL:$2|版本}}的維基百科",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "從$1"
 }
