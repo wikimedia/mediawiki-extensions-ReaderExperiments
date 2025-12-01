@@ -15,5 +15,25 @@
 		[ id ] {
 			scroll-margin-top: @spacing-400;
 		}
+
+		ul,
+		ol {
+			// Minerva styles set this to 1em
+			// but use a reduced font size for Safari devices that
+			// support an Apple-specific font selector.
+			//
+			// This made the padding smaller on Safari than in Chrome
+			// on a Mac, presumably thus smaller in any browser on iOS
+			// than any browser on Android.
+			//
+			// That allowed the bullet point to "peek out" into the
+			// margin, where the headings don't set a background color.
+			//
+			// todo: merge this into upstream styles
+			// todo: is there a better way to call the runtime CSS max
+			//       function while using our compile-time less variable
+			//       expansions? Take @spacing-100 and add a couple px.
+			padding-left: ~'max( 1em, 18px )';
+		}
 	}
 }
