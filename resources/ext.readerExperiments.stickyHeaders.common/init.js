@@ -47,6 +47,9 @@ function setupStickyHeaders( headings ) {
 	} );
 
 	headings.forEach( ( heading ) => {
+		const background = document.createElement( 'div' );
+		background.classList.add( 'ext-readerExperiments-stickyHeaders-background' );
+		heading.insertBefore( background, heading.firstChild );
 		insersectionObserver.observe( heading.nextSibling );
 	} );
 
