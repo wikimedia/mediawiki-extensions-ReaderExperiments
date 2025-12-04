@@ -1,5 +1,14 @@
 @import 'mediawiki.skin.variables.less';
 
+// Override the `display: inline-block` set in
+// skins/MinervaNeue/skinStyles/mobile.init.styles/images.less,
+// which, for some as of yet unknown reason, ends up (only for
+// some images) breaking sticky headers
+// stylelint-disable-next-line selector-class-pattern
+body:not( [ data-mw-parsoid-version ] ) .lazy-image-placeholder {
+	display: table-cell;
+}
+
 .ext-readerExperiments-stickyHeaders {
 	background-color: @background-color-base;
 	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
@@ -19,7 +28,7 @@
 	}
 
 	// Ensure that sub-headings and other fragment links are visible when jumped to
-	// stylelint-disable selector-class-pattern
+	// stylelint-disable-next-line selector-class-pattern
 	& + .mf-collapsible-content {
 		[ id ] {
 			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
