@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"EBlackorby-WMF"
+			"EBlackorby-WMF",
+			"Peterxy12"
 		]
 	},
 	"readerexperiments-desc": "一套旨在增加维基百科读者的原型版本",
@@ -28,6 +29,6 @@
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "正在加载来自其他项目的图片",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "在文章中查看",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "来自$1",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "来自 $1 和 $2 个其他语言{{PLURAL:$2|版本|版本}}的维基百科",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "来自$1和$2个其他语言{{PLURAL:$2|版本}}的维基百科",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "来自$1"
 }
