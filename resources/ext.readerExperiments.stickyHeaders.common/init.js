@@ -86,7 +86,7 @@ function setupStickyHeaders( headings ) {
 	const scrollHandler = () => {
 		intersectingHeadings.forEach( setHeadingPosition );
 	};
-	window.addEventListener( 'scroll', mw.util.throttle( scrollHandler, 100 ) );
+	window.addEventListener( 'scroll', mw.util.throttle( scrollHandler, 100 ), { capture: true }, true );
 
 	// Scroll overrides:
 	mw.hook( 'wikipage.content' ).add( checkHash );
