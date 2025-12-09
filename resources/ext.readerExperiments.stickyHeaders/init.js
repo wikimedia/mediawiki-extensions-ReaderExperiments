@@ -32,8 +32,11 @@ function onHeadingToggle( options ) {
 				for ( let node = section; node; node = node.offsetParent ) {
 					offset += node.offsetTop;
 				}
-				if ( window.scrollY > offset ) {
-					window.scroll( {
+				// we'll scroll document.body rather than window, as the html node has an
+				// 'overflow: hidden' (to fix another annoying bug) that prevents it from
+				// scrolling
+				if ( document.body.scrollTop > offset ) {
+					document.body.scroll( {
 						top: offset,
 						left: 0
 					} );
