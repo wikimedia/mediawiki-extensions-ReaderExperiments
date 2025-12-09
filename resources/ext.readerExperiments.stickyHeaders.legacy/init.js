@@ -8,10 +8,10 @@ const { setupStickyHeaders } = require( 'ext.readerExperiments.stickyHeaders.com
 let headings = [];
 
 /**
- * If a given header is collapsed, find it in the sequence of headers
- * we set up earlier. If we can locate the element in the list *and* if
- * there is another subsequent header element, then scroll the start of
- * the section corresponding to the next header into view.
+ * If a given header is collapsed, it'll drag the remaining content up.
+ * We'll find the collapsed header in the  sequence of headers we set
+ * up earlier, try to locate the element in the list, then scroll the
+ * starting position of that header back into view.
  *
  * @param {Object} options
  * @param {boolean} options.isExpanded Whether the given section was previously expanded
@@ -36,33 +36,32 @@ function onHeadingToggle( options ) {
 			}
 		} );
 
-		if ( index !== -1 ) {
-			const contents = headings[ index ].nextElementSibling;
-			if ( contents ) {
-				// position:sticky moves our offset while it's still active
-				// so to get where we should belong we just have to offset
-				// it ourselves from the following section
-				let offset = 0;
-				for ( let node = contents; node; node = node.offsetParent ) {
-					offset += node.offsetTop;
-				}
-				offset -= headings[ index ].offsetHeight;
-				if ( window.scrollY > offset ) {
-					window.scroll( {
-						top: offset,
-						left: 0
-					} );
-				}
+		if ( headings[ index ] ) {
+			// In order to find the actual position to scroll to, we can't rely
+			// on the heading's position, as position:sticky moves the offset;
+			// we also can't rely on the position of its content, because iOS
+			// Safari reports that as 0 when the element is collapsed.
+			// Let's just temporarily insert a dummy node instead & get that
+			// one's position...
+			const dummy = document.createElement( 'div' );
+			heading.before( dummy );
+			let offset = 0;
+			for ( let node = dummy; node; node = node.offsetParent ) {
+				offset += node.offsetTop;
+			}
+			dummy.remove();
+			if ( window.scrollY > offset ) {
+				window.scroll( {
+					top: offset,
+					left: 0
+				} );
 			}
 		}
 	}
 }
 
-const setupPromise = mw.loader.using( 'mobile.init' ).then( () => {
+mw.loader.using( 'mobile.init' ).then( () => {
 	headings = Array.from( document.querySelectorAll( '.collapsible-heading:has( + .collapsible-block )' ) );
 	setupStickyHeaders( headings );
-} );
-// Out of an abundance of caution: make sure not to toggle heading until setup is complete
-mw.hook( 'readerExperiments.section-toggled' ).add( ( options ) => {
-	setupPromise.then( () => onHeadingToggle( options ) );
+	mw.hook( 'readerExperiments.section-toggled' ).add( onHeadingToggle );
 } );

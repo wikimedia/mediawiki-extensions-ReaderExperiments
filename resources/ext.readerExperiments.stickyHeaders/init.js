@@ -6,10 +6,10 @@ const { setupStickyHeaders } = require( 'ext.readerExperiments.stickyHeaders.com
 let headings = [];
 
 /**
- * If a given header is collapsed, find it in the sequence of headers
- * we set up earlier. If we can locate the element in the list *and* if
- * there is another subsequent header element, then scroll the start of
- * the section corresponding to the next header into view.
+ * If a given header is collapsed, it'll drag the remaining content up.
+ * We'll find the collapsed header in the  sequence of headers we set
+ * up earlier, try to locate the element in the list, then scroll the
+ * starting position of that header back into view.
  *
  * @param {Object} options
  * @param {boolean} options.isExpanded Whether the given section was previously expanded
@@ -43,11 +43,8 @@ function onHeadingToggle( options ) {
 	}
 }
 
-const setupPromise = mw.loader.using( 'mobile.init' ).then( () => {
+mw.loader.using( 'mobile.init' ).then( () => {
 	headings = Array.from( document.querySelectorAll( '.mf-collapsible-heading:has( + .mf-collapsible-content )' ) );
 	setupStickyHeaders( headings );
-} );
-// Out of an abundance of caution: make sure not to toggle heading until setup is complete
-mw.hook( 'readerExperiments.section-toggled' ).add( ( options ) => {
-	setupPromise.then( () => onHeadingToggle( options ) );
+	mw.hook( 'readerExperiments.section-toggled' ).add( onHeadingToggle );
 } );

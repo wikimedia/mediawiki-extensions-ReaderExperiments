@@ -29,22 +29,27 @@ use MediaWiki\ResourceLoader\Context;
 
 class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 
-	// Tier 1 experiment: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
+	//
+	// ImageBrowsing experiments.
+	//
+
+	// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
 	// https://mpic.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
 	/** @var string */
 	private const TIER_ONE_EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
 	/** @var string */
 	private const TIER_ONE_TREATMENT_GROUP = 'image-browsing-test';
 
-	// Tier 2 experiment: 0.1% English Wikipedia.
+	// Tier 2: 0.1% English Wikipedia.
 	// https://mpic.wikimedia.org/experiment/image-browsing-enwiki
 	/** @var string */
 	private const TIER_TWO_EXPERIMENT_NAME = 'image-browsing-enwiki';
 	/** @var string */
 	private const TIER_TWO_TREATMENT_GROUP = 'treatment';
 
-	// StickyHeaders experiment
-	private const SH_EXPERIMENT_NAME = 'fy2025-26-we3.1.14-session-header-ab-test';
+	// StickyHeaders experiment:
+	// https://mpic.wikimedia.org/experiment/sticky-headers
+	private const SH_EXPERIMENT_NAME = 'sticky-headers';
 	private const SH_TREATMENT_GROUP = 'treatment';
 
 	private ?ExperimentManager $experimentManager;
@@ -78,7 +83,7 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 		];
 	}
 
-	private function isInAnyTreatmentGroup(): bool {
+	private function isInAnyImageBrowsingTreatmentGroup(): bool {
 		if ( !$this->experimentManager ) {
 			return false;
 		}
@@ -111,7 +116,7 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 			$isMinervaSkin = $out->getSkin()->getSkinName() === 'minerva';
 
 			// Enable if Minerva skin AND (URL param is set OR user is in any experiment's treatment group).
-			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInAnyTreatmentGroup() ) ) {
+			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInAnyImageBrowsingTreatmentGroup() ) ) {
 				$out->prependHTML(
 					'<div id="ext-readerExperiments-imageBrowsing"></div>'
 				);
@@ -158,8 +163,8 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 			// Check usage of Minerva skin.
 			$isMinervaSkin = $skin->getSkinName() === 'minerva';
 
-			// Enable feature IF Minerva AND feature flag.
-			if ( $isMinervaSkin && $hasFeatureFlag ) {
+			// Enable if Minerva skin AND (URL param is set OR user is in any experiment's treatment group).
+			if ( $isMinervaSkin && ( $hasFeatureFlag || $this->isInStickyTreatmentGroup() ) ) {
 				// This CSS class triggers a pre-existing feature (added for DiscussionTools),
 				// which achieves what we want in terms of auto-expanding sections
 				// (regardless of whether parsoid or legacy parser is used).
