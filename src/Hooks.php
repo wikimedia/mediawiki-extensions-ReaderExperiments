@@ -29,30 +29,47 @@ use MediaWiki\ResourceLoader\Context;
 
 class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 
-	//
-	// ImageBrowsing experiments.
-	//
+	// Keys are experiment machine-readable names and
+	// values are treatment group names,
+	// as configured in https://mpic.wikimedia.org/
+	private const IMAGE_BROWSING_EXPERIMENTS = [
+		// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
+		// https://mpic.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
+		'fy2025-26-we3.1-image-browsing-ab-test' => 'image-browsing-test',
+		// Tier 2: 0.1% English Wikipedia.
+		// https://mpic.wikimedia.org/experiment/image-browsing-enwiki
+		'image-browsing-enwiki' => 'treatment',
+	];
 
-	// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
-	// https://mpic.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
-	/** @var string */
-	private const TIER_ONE_EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
-	/** @var string */
-	private const TIER_ONE_TREATMENT_GROUP = 'image-browsing-test';
-
-	// Tier 2: 0.1% English Wikipedia.
-	// https://mpic.wikimedia.org/experiment/image-browsing-enwiki
-	/** @var string */
-	private const TIER_TWO_EXPERIMENT_NAME = 'image-browsing-enwiki';
-	/** @var string */
-	private const TIER_TWO_TREATMENT_GROUP = 'treatment';
-
-	// StickyHeaders experiment:
-	// https://mpic.wikimedia.org/experiment/sticky-headers
-	private const SH_EXPERIMENT_NAME = 'sticky-headers';
-	private const SH_TREATMENT_GROUP = 'treatment';
+	private const STICKY_HEADERS_EXPERIMENTS = [
+		// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
+		// https://mpic.wikimedia.org/experiment/sticky-headers
+		'sticky-headers' => 'treatment',
+	];
 
 	private ?ExperimentManager $experimentManager;
+
+	private function isInAnyTreatmentGroup( array $experiments ): bool {
+		if ( !$this->experimentManager ) {
+			return false;
+		}
+
+		// Populate an array of booleans that indicates
+		// whether the current user is enrolled into
+		// every experiment's treatment group.
+		$isInTreatment = [];
+		foreach ( $experiments as $name => $treatmentGroup ) {
+			$experiment = $this->experimentManager->getExperiment( $name );
+			$isInTreatment[] = $experiment->getAssignedGroup() === $treatmentGroup;
+		}
+
+		// Reduce the array by logical OR.
+		return array_reduce(
+			$isInTreatment,
+			static fn ( $previous, $current ) => $previous || $current,
+			false
+		);
+	}
 
 	public function __construct( ?ExperimentManager $experimentManager = null ) {
 		$this->experimentManager = $experimentManager;
@@ -83,21 +100,6 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 		];
 	}
 
-	private function isInAnyImageBrowsingTreatmentGroup(): bool {
-		if ( !$this->experimentManager ) {
-			return false;
-		}
-
-		$tierOne = $this->experimentManager->getExperiment( self::TIER_ONE_EXPERIMENT_NAME );
-		$tierOneAssignedGroup = $tierOne->getAssignedGroup();
-
-		$tierTwo = $this->experimentManager->getExperiment( self::TIER_TWO_EXPERIMENT_NAME );
-		$tierTwoAssignedGroup = $tierTwo->getAssignedGroup();
-
-		return ( $tierOneAssignedGroup === self::TIER_ONE_TREATMENT_GROUP ) ||
-			( $tierTwoAssignedGroup === self::TIER_TWO_TREATMENT_GROUP );
-	}
-
 	/**
 	 * ImageBrowsing hook handler.
 	 * @inheritDoc
@@ -116,7 +118,10 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 			$isMinervaSkin = $out->getSkin()->getSkinName() === 'minerva';
 
 			// Enable if Minerva skin AND (URL param is set OR user is in any experiment's treatment group).
-			if ( $isMinervaSkin && ( $urlParamEnabled || $this->isInAnyImageBrowsingTreatmentGroup() ) ) {
+			if (
+				$isMinervaSkin &&
+				( $urlParamEnabled || $this->isInAnyTreatmentGroup( self::IMAGE_BROWSING_EXPERIMENTS ) )
+			) {
 				$out->prependHTML(
 					'<div id="ext-readerExperiments-imageBrowsing"></div>'
 				);
@@ -127,17 +132,6 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 				$out->addModules( 'ext.readerExperiments.imageBrowsing' );
 			}
 		}
-	}
-
-	private function isInStickyTreatmentGroup(): bool {
-		if ( !$this->experimentManager ) {
-			return false;
-		}
-
-		$stickyHeadersExperiment = $this->experimentManager->getExperiment( self::SH_EXPERIMENT_NAME );
-		$isInAnyTreatmentGroup = $stickyHeadersExperiment->getAssignedGroup();
-
-		return ( $isInAnyTreatmentGroup === self::SH_TREATMENT_GROUP );
 	}
 
 	/**
@@ -164,7 +158,10 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 			$isMinervaSkin = $skin->getSkinName() === 'minerva';
 
 			// Enable if Minerva skin AND (URL param is set OR user is in any experiment's treatment group).
-			if ( $isMinervaSkin && ( $hasFeatureFlag || $this->isInStickyTreatmentGroup() ) ) {
+			if (
+				$isMinervaSkin &&
+				( $hasFeatureFlag || $this->isInAnyTreatmentGroup( self::STICKY_HEADERS_EXPERIMENTS ) )
+			) {
 				// This CSS class triggers a pre-existing feature (added for DiscussionTools),
 				// which achieves what we want in terms of auto-expanding sections
 				// (regardless of whether parsoid or legacy parser is used).
@@ -191,9 +188,9 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 			$title &&
 			$title->getNamespace() === NS_SPECIAL &&
 			$title->getBaseText() === 'MobileOptions' &&
-			$this->isInStickyTreatmentGroup()
-			) {
-				$out->addJsConfigVars( 'wgReaderExperimentsStickyHeaders', 'enrolled' );
+			$this->isInAnyTreatmentGroup( self::STICKY_HEADERS_EXPERIMENTS )
+		) {
+			$out->addJsConfigVars( 'wgReaderExperimentsStickyHeaders', 'enrolled' );
 		}
 	}
 }
