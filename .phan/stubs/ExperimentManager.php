@@ -1,6 +1,6 @@
 <?php
 // Stub: never loaded at runtime.
-namespace MediaWiki\Extension\MetricsPlatform\XLab;
+namespace MediaWiki\Extension\TestKitchen\Sdk;
 
 class ExperimentManager {
 	/**

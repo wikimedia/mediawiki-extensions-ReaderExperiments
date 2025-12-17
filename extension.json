@@ -37,7 +37,7 @@
 		"ReaderExperimentsHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Hooks",
 			"optional_services": [
-				"MetricsPlatform.XLab.ExperimentManager"
+				"TestKitchen.ExperimentManager"
 			]
 		}
 	},

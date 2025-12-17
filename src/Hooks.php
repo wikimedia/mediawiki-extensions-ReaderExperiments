@@ -20,7 +20,7 @@
 namespace MediaWiki\Extension\ReaderExperiments;
 
 use MediaWiki\Config\Config;
-use MediaWiki\Extension\MetricsPlatform\XLab\ExperimentManager;
+use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Hook\BeforeInitializeHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
@@ -33,19 +33,19 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
 
 	// Keys are experiment machine-readable names and
 	// values are treatment group names,
-	// as configured in https://mpic.wikimedia.org/
+	// as configured in https://test-kitchen.wikimedia.org/
 	private const IMAGE_BROWSING_EXPERIMENTS = [
 		// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
-		// https://mpic.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
+		// https://test-kitchen.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
 		'fy2025-26-we3.1-image-browsing-ab-test' => 'image-browsing-test',
 		// Tier 2: 0.1% English Wikipedia.
-		// https://mpic.wikimedia.org/experiment/image-browsing-enwiki
+		// https://test-kitchen.wikimedia.org/experiment/image-browsing-enwiki
 		'image-browsing-enwiki' => 'treatment',
 	];
 
 	private const STICKY_HEADERS_EXPERIMENTS = [
 		// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
-		// https://mpic.wikimedia.org/experiment/sticky-headers
+		// https://test-kitchen.wikimedia.org/experiment/sticky-headers
 		'sticky-headers' => 'treatment',
 	];
 

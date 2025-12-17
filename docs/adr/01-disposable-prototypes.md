@@ -68,7 +68,7 @@ A typical prototype life-cycle will include the following stages:
 * Development stage (locally or on Beta cluster, [Patchdemo][2], etc.)
 * Experiment stage (may last a few weeks or months depending on how much data we need):
   the prototype is presented to a small subset of anonymous users as part of an
-  A/B test (which is coordinated through [xLab][3]). Other users may be able to manually
+  A/B test (which is coordinated through [Test Kitchen][3]). Other users may be able to manually
   trigger the new feature where relevant by using a URL parameter; this functionality
   is intended to allow visibility and feedback from the community or from other Foundation
   staff.
@@ -82,4 +82,4 @@ A typical prototype life-cycle will include the following stages:
 
 [1]: https://docs.google.com/document/d/1CdzSowVINSalHlhxzG50bHNHShaKivxpeommRnwxaho/edit?tab=t.0
 [2]: https://toolhub.wikimedia.org/tools/patchdemo
-[3]: https://wikitech.wikimedia.org/wiki/Experimentation_Lab
+[3]: https://wikitech.wikimedia.org/wiki/Test_Kitchen

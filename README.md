@@ -35,7 +35,7 @@ wfLoadExtensions( [
 
 wfLoadSkin( 'MinervaNeue' );
 $wgDefaultMobileSkin = 'minerva';
- 
+
 $wgLanguageCode = "en";  # You can set another language here
 $wgMFMwApiContentProviderBaseUri = "https://$wgLanguageCode.wikipedia.org/w/api.php";
 $wgReaderExperimentsApiBaseUri = $wgMFMwApiContentProviderBaseUri;
@@ -105,7 +105,7 @@ This recipe sets up a full environment to develop instruments.
 
 - Clone these repositories:
 ``` sh
-for extension in EventBus EventLogging EventStreamConfig MetricsPlatform WikimediaEvents; do
+for extension in EventBus EventLogging EventStreamConfig TestKitchen WikimediaEvents; do
     git clone "https://gerrit.wikimedia.org/r/mediawiki/extensions/${extension}" "extensions/${extension}"
 done
 ```
@@ -123,7 +123,7 @@ wfLoadExtensions( [
 	'EventBus',
 	'EventLogging',
 	'EventStreamConfig',
-    'MetricsPlatform',
+	'TestKitchen',
 	'WikimediaEvents'
 ] );
 
@@ -146,11 +146,11 @@ if ( defined( 'MW_PHPUNIT_TEST' ) ) {
 	$wgEventLoggingServiceUri = false;
 }
 
-# MetricsPlatform (AKA xLab)
-# https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Local_development_setup#Install_MetricsPlatform_extension
-$wgMetricsPlatformEnable = true;
-$wgMetricsPlatformEnableExperiments = true;
-$wgMetricsPlatformEnableExperimentOverrides = true;
+# Test Kitchen (FKA xLab)
+# https://wikitech.wikimedia.org/wiki/Test_Kitchen/Local_development_setup#Install_TestKitchen_extension
+$wgTestKitchenEnable = true;
+$wgTestKitchenEnableExperiments = true;
+$wgTestKitchenEnableExperimentOverrides = true;
 
 # Image browsing experiment's stream, pasted from
 # https://github.com/wikimedia/operations-mediawiki-config/blob/f9cafeb65f80a685b64eb519691e8e4a95486e56/wmf-config/ext-EventStreamConfig.php#L2518
@@ -162,7 +162,7 @@ $wgEventStreams = [
 			'metrics_platform_client' => [
 				'provide_values' => [
 					// Contextual attributes, see
-					// https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Contextual_attributes
+					// https://wikitech.wikimedia.org/wiki/Test_Kitchen/Contextual_attributes
 					'agent_client_platform',
 					'agent_client_platform_family',
 					'mediawiki_database',
@@ -187,7 +187,7 @@ $wgEventStreams = [
 		],
 	],
 ];
-$wgMetricsPlatformExperimentStreamNames = array_keys( $wgEventStreams );
+$wgTestKitchenExperimentStreamNames = array_keys( $wgEventStreams );
 ```
 
 - Spin up the events server:
@@ -201,16 +201,16 @@ npm run eventgate-devserver
 - Load a page like `http://localhost:4000/index.php/Eddie_Cochran`
 - In the browser console, fire a test event:
 ``` js
-mw.eventLog.submitInteraction('foo', '/analytics/product_metrics/web/base/1.4.3', 'bar')
+mw.eventLog.submitInteraction('foo', '/analytics/product_metrics/web/base/2.0.0', 'bar')
 ```
 - You should see the event JSON in `events.json`
 
 
 ## A/B tests
-A/B tests live in the [Experimentation Lab](https://wikitech.wikimedia.org/wiki/Experimentation_Lab) (xLab) as _experiments_.
+A/B tests live in the [Test_Kitchen](https://wikitech.wikimedia.org/wiki/Test_Kitchen) (FKA xLab) as _experiments_.
 
 There are 3 layers where you can test an experiment:
 
 1. Local development environment - [set up instrumentation](#Instrumentation), then use the [HTTP headers method](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#HTTP_header)
-2. Beta cluster - [override enrollment](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#Enrollment_override)
-3. Production - [override enrollment](https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Conduct_an_experiment#Enrollment_override) 
+2. Beta cluster - [override enrollment](https://wikitech.wikimedia.org/wiki/Test_Kitchen/Conduct_an_experiment#Enrollment_override)
+3. Production - [override enrollment](https://wikitech.wikimedia.org/wiki/Test_Kitchen/Conduct_an_experiment#Enrollment_override)

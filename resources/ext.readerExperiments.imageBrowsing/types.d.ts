@@ -59,5 +59,5 @@ export interface ImageData {
 export interface InstrumentationPluginConfig {
 	enabled: boolean;
 	instrumentName: string;
-	experiments: mw.xLab.Experiment[] | null;
+	experiments: mw.testKitchen.Experiment[] | null;
 }

@@ -3,7 +3,7 @@
  *
  * This plugin adds a new `$submitInteraction` method to all components in the
  * target Vue app. Depending on the configuration provided, that method will either
- * call `mw.xLab.Experiment#send` with appropriate arguments (including experiment
+ * call `mw.testKitchen.Experiment#send` with appropriate arguments (including experiment
  * instance and instrument name provided in config) or it will do nothing.
  *
  * @see https://vuejs.org/guide/reusability/plugins

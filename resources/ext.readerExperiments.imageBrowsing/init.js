@@ -62,9 +62,9 @@ const TIER_ONE_EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
 // Tier 2: 0.1% English Wikipedia.
 // https://mpic.wikimedia.org/experiment/image-browsing-enwiki
 const TIER_TWO_EXPERIMENT_NAME = 'image-browsing-enwiki';
-const SCHEMA_NAME = '/analytics/product_metrics/web/base/1.4.3';
+const SCHEMA_NAME = '/analytics/product_metrics/web/base/2.0.0';
 // Naming convention: mediawiki.product_metrics.<product>_<component>_<interaction>.
-// See https://wikitech.wikimedia.org/wiki/Experimentation_Lab/Stream_configuration#Choosing_a_stream_name
+// See https://wikitech.wikimedia.org/wiki/Test_Kitchen/Stream_configuration#Choosing_a_stream_name
 const STREAM_NAME = 'mediawiki.product_metrics.readerexperiments_imagebrowsing';
 const INSTRUMENT_NAME = 'ImageBrowsingInstrument';
 
@@ -77,15 +77,15 @@ const analyticsConfig = {
 	experiments: null
 };
 
-mw.loader.using( 'ext.xLab' )
-	// Use a soft-require to determine whether xLab is available;
+mw.loader.using( 'ext.testKitchen' )
+	// Use a soft-require to determine whether Test Kitchen is available;
 	// if so use it, if not then don't enable the instrumentation.
 	.then( () => {
-		const tierOne = mw.xLab.getExperiment( TIER_ONE_EXPERIMENT_NAME );
+		const tierOne = mw.testKitchen.getExperiment( TIER_ONE_EXPERIMENT_NAME );
 		tierOne.setSchema( SCHEMA_NAME );
 		tierOne.setStream( STREAM_NAME );
 
-		const tierTwo = mw.xLab.getExperiment( TIER_TWO_EXPERIMENT_NAME );
+		const tierTwo = mw.testKitchen.getExperiment( TIER_TWO_EXPERIMENT_NAME );
 		tierTwo.setSchema( SCHEMA_NAME );
 		tierTwo.setStream( STREAM_NAME );
 

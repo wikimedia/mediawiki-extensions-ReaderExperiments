@@ -1,5 +1,5 @@
 <?php
-namespace MediaWiki\Extension\MetricsPlatform\XLab;
+namespace MediaWiki\Extension\TestKitchen\Sdk;
 
 class Experiment {
 	/**
