@@ -38,5 +38,7 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Button label for images in the visual table of contents to jump to the article at the position of the selected image",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Text describing which external Wikipedia an image was found on.\n\nParameters:\n* $1: full hostname of the external Wikipedia (e.g. en.wikipedia.org)",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Text describing which external Wikipedias an image was found on.\n\nParameters:\n* $1: full hostname of one of the external Wikipedias (e.g. en.wikipedia.org)\n* $2: the amount of other Wikipedias the file is also used on",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Text describing which external non-Wikipedia projects an image was found on.\n\nParameters:\n* $1: localized list of project names (e.g. 'Wikidata, Wikivoyage, and Wikiquote')"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Text describing which external non-Wikipedia projects an image was found on.\n\nParameters:\n* $1: localized list of project names (e.g. 'Wikidata, Wikivoyage, and Wikiquote')",
+	"readerexperiments-minerva-toc-toggle-text-open": "Text for the button to open the table of contents.",
+	"readerexperiments-minerva-toc-toggle-text-close": "Text for the button to close the table of contents."
 }

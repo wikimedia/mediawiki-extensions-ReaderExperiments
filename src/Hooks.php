@@ -21,13 +21,15 @@ namespace MediaWiki\Extension\ReaderExperiments;
 
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\MetricsPlatform\XLab\ExperimentManager;
+use MediaWiki\Hook\BeforeInitializeHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
-use MediaWiki\Page\Hook\ArticleViewHeaderHook;
+use MediaWiki\Output\OutputPage;
 use MediaWiki\Registration\ExtensionRegistry;
+use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader\Context;
 
-class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
+class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
 
 	// Keys are experiment machine-readable names and
 	// values are treatment group names,
@@ -47,28 +49,57 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 		'sticky-headers' => 'treatment',
 	];
 
+	private const MINERVA_TOC_STICKY_EXPERIMENTS = [
+		// @todo below is just a placeholder name; experiment hasn't actually been created yet
+		'minerva-toc-sticky' => 'treatment',
+	];
+
+	private const MINERVA_TOC_BUTTON_EXPERIMENTS = [
+		// @todo below is just a placeholder name; experiment hasn't actually been created yet
+		'minerva-toc-button' => 'treatment',
+	];
+
+	private const MINERVA_TOC_EXPERIMENTS = self::MINERVA_TOC_STICKY_EXPERIMENTS + self::MINERVA_TOC_BUTTON_EXPERIMENTS;
+
 	private ?ExperimentManager $experimentManager;
 
-	private function isInAnyTreatmentGroup( array $experiments ): bool {
-		if ( !$this->experimentManager ) {
-			return false;
+	private function isInAnyTreatmentGroup( WebRequest $request, array $experiments ): bool {
+		$assignedGroups = [];
+		if ( $this->experimentManager ) {
+			foreach ( $experiments as $experimentName => $treatmentGroup ) {
+				$experiment = $this->experimentManager->getExperiment( $experimentName );
+				$assignedGroup = $experiment->getAssignedGroup();
+				if ( $assignedGroup !== null ) {
+					$assignedGroups[ $experimentName ] = $assignedGroup;
+				}
+			}
 		}
 
-		// Populate an array of booleans that indicates
-		// whether the current user is enrolled into
-		// every experiment's treatment group.
-		$isInTreatment = [];
-		foreach ( $experiments as $name => $treatmentGroup ) {
-			$experiment = $this->experimentManager->getExperiment( $name );
-			$isInTreatment[] = $experiment->getAssignedGroup() === $treatmentGroup;
+		if ( $assignedGroups ) {
+			// If any of the experiments exist and is assigned, we will only ever
+			// use actual experiment enrollment status
+			foreach ( $assignedGroups as $experimentName => $group ) {
+				if ( $group === $experiments[ $experimentName ] ) {
+					return true;
+				}
+			}
+		} else {
+			// For dev convenience, when no experiments are active, we'll mimic
+			// test kitchen's enrollment override URL param so that we can start
+			// development before having set up experiments (or test in
+			// environments where setting it up is inconvenient)
+			// This looks something like: ?mpo=minerva-toc-sticky:treatment
+			$mpo = $request->getRawVal( 'mpo' );
+			if ( $mpo !== null ) {
+				foreach ( $experiments as $experimentName => $treatmentGroup ) {
+					if ( $mpo === $experimentName . ':' . $treatmentGroup ) {
+						return true;
+					}
+				}
+			}
 		}
 
-		// Reduce the array by logical OR.
-		return array_reduce(
-			$isInTreatment,
-			static fn ( $previous, $current ) => $previous || $current,
-			false
-		);
+		return false;
 	}
 
 	public function __construct( ?ExperimentManager $experimentManager = null ) {
@@ -85,7 +116,7 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 	 * @param Config $config
 	 * @return array
 	 */
-	public static function getConfig( Context $context, Config $config ): array {
+	public static function getImageBrowsingConfig( Context $context, Config $config ): array {
 		$thumbLimits = array_unique( array_merge(
 			$config->get( 'ThumbLimits' ),
 			$config->get( 'ThumbnailSteps' ) ?? [],
@@ -101,85 +132,106 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 	}
 
 	/**
-	 * ImageBrowsing hook handler.
-	 * @inheritDoc
-	 */
-	public function onArticleViewHeader( $article, &$outputDone, &$pcache ): void {
-		$out = $article->getContext()->getOutput();
-		$title = $out->getContext()->getTitle();
-		$config = $out->getConfig();
-
-		if ( $title && $title->getNamespace() === NS_MAIN ) {
-			// Check URL parameter for manual enablement
-			$request = $article->getContext()->getRequest();
-			$urlParamEnabled = $request->getFuzzyBool( 'imageBrowsing' );
-
-			// Check if we're using Minerva skin
-			$isMinervaSkin = $out->getSkin()->getSkinName() === 'minerva';
-
-			// Enable if Minerva skin AND (URL param is set OR user is in any experiment's treatment group).
-			if (
-				$isMinervaSkin &&
-				( $urlParamEnabled || $this->isInAnyTreatmentGroup( self::IMAGE_BROWSING_EXPERIMENTS ) )
-			) {
-				$out->prependHTML(
-					'<div id="ext-readerExperiments-imageBrowsing"></div>'
-				);
-
-				$out->addModuleStyles( 'ext.readerExperiments.imageBrowsing.styles' );
-
-				// Load heavy module since already gated server-side.
-				$out->addModules( 'ext.readerExperiments.imageBrowsing' );
-			}
-		}
-	}
-
-	/**
 	 * StickyHeaders hook handler.
 	 * @inheritDoc
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
+		$this->maybeInitImageBrowsing( $out );
+		$this->maybeInitStickyHeaders( $out );
+		$this->maybeInitToc( $out );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onBeforeInitialize(
+		$title,
+		$unused,
+		$output,
+		$user,
+		$request,
+		$mediaWikiEntryPoint
+	): void {
+		if (
+			$title && $title->getNamespace() === NS_MAIN &&
+			$output->getSkin()->getSkinName() === 'minerva' &&
+			$this->isInAnyTreatmentGroup( $request, self::MINERVA_TOC_EXPERIMENTS )
+		) {
+			// TOC experiments require sections to not be expand-/collapsable.
+			global $wgMFNamespacesWithoutCollapsibleSections;
+			$wgMFNamespacesWithoutCollapsibleSections[] = NS_MAIN;
+
+			// MobileFrontend does not respect above when Parsoid is used, though,
+			// so let's make sure that it is not.
+			$request->setVal( 'useparsoid', 0 );
+		}
+	}
+
+	private function maybeInitImageBrowsing( OutputPage $out ): void {
+		$context = $out->getContext();
+		$request = $context->getRequest();
+		$title = $context->getTitle();
+
+		// Enable if Minerva skin AND (URL param is set OR user is in any experiment's treatment group).
+		if (
+			$title && $title->getNamespace() === NS_MAIN &&
+			$out->getSkin()->getSkinName() === 'minerva' &&
+			(
+				$this->isInAnyTreatmentGroup( $request, self::IMAGE_BROWSING_EXPERIMENTS ) ||
+				$request->getFuzzyBool( 'imageBrowsing' )
+			)
+		) {
+			$out->prependHTML(
+				'<div id="ext-readerExperiments-imageBrowsing"></div>'
+			);
+
+			$out->addModuleStyles( 'ext.readerExperiments.imageBrowsing.styles' );
+
+			// Load heavy module since already gated server-side.
+			$out->addModules( 'ext.readerExperiments.imageBrowsing' );
+		}
+	}
+
+	private function maybeInitStickyHeaders( OutputPage $out ): void {
 		$context = $out->getContext();
 		$request = $context->getRequest();
 		$title = $out->getTitle();
-		$shouldUseParsoid = false;
 
-		if ( ExtensionRegistry::getInstance()->isLoaded( 'ParserMigration' ) ) {
-			$oracle = MediaWikiServices::getInstance()->getService( 'ParserMigration.Oracle' );
-			$shouldUseParsoid =
-				$oracle->shouldUseParsoid( $context->getUser(), $context->getRequest(), $title );
-		}
+		// Enable if Minerva skin AND (URL param is set OR user is in any experiment's treatment group).
+		if (
+			$title && $title->getNamespace() === NS_MAIN &&
+			$out->getSkin()->getSkinName() === 'minerva' &&
+			(
+				$this->isInAnyTreatmentGroup( $request, self::STICKY_HEADERS_EXPERIMENTS ) ||
+				$request->getFuzzyBool( 'stickyHeaders' )
+			)
+		) {
+			// This CSS class triggers a pre-existing feature (added for DiscussionTools),
+			// which achieves what we want in terms of auto-expanding sections
+			// (regardless of whether Parsoid or legacy parser is used).
+			$out->addBodyClasses( 'collapsible-headings-expanded' );
 
-		if ( $title && $title->getNamespace() === NS_MAIN ) {
-			// Check presence of URL query parameter (feature flag).
-			$hasFeatureFlag = $request->getFuzzyBool( 'stickyHeaders' );
+			// Load the common styles module
+			$out->addModules( 'ext.readerExperiments.stickyHeaders.styles' );
 
-			// Check usage of Minerva skin.
-			$isMinervaSkin = $skin->getSkinName() === 'minerva';
-
-			// Enable if Minerva skin AND (URL param is set OR user is in any experiment's treatment group).
-			if (
-				$isMinervaSkin &&
-				( $hasFeatureFlag || $this->isInAnyTreatmentGroup( self::STICKY_HEADERS_EXPERIMENTS ) )
-			) {
-				// This CSS class triggers a pre-existing feature (added for DiscussionTools),
-				// which achieves what we want in terms of auto-expanding sections
-				// (regardless of whether parsoid or legacy parser is used).
-				$out->addBodyClasses( 'collapsible-headings-expanded' );
-
-				// Load the common styles module
-				$out->addModules( 'ext.readerExperiments.stickyHeaders.styles' );
-
-				// Mobile section headers use different markup and styles depending on whether
-				// parsoid or legacy parser is used, so we need to determine how the page was
-				// rendered.
-				if ( $shouldUseParsoid ) {
-					// load the ext.readerExperiments.stickyHeaders module
-					$out->addModules( 'ext.readerExperiments.stickyHeaders' );
-				} else {
-					// load the ext.readerExperiments.stickyHeaders.legacy module
-					$out->addModules( 'ext.readerExperiments.stickyHeaders.legacy' );
-				}
+			// Mobile section headers use different markup and styles depending on whether
+			// Parsoid or legacy parser is used, so we need to determine how the page was
+			// rendered.
+			$shouldUseParsoid = false;
+			if ( ExtensionRegistry::getInstance()->isLoaded( 'ParserMigration' ) ) {
+				$oracle = MediaWikiServices::getInstance()->getService( 'ParserMigration.Oracle' );
+				$shouldUseParsoid = $oracle->shouldUseParsoid(
+					$context->getUser(),
+					$context->getRequest(),
+					$title
+				);
+			}
+			if ( $shouldUseParsoid ) {
+				// load the ext.readerExperiments.stickyHeaders module
+				$out->addModules( 'ext.readerExperiments.stickyHeaders' );
+			} else {
+				// load the ext.readerExperiments.stickyHeaders.legacy module
+				$out->addModules( 'ext.readerExperiments.stickyHeaders.legacy' );
 			}
 		}
 
@@ -188,9 +240,27 @@ class Hooks implements ArticleViewHeaderHook, BeforePageDisplayHook {
 			$title &&
 			$title->getNamespace() === NS_SPECIAL &&
 			$title->getBaseText() === 'MobileOptions' &&
-			$this->isInAnyTreatmentGroup( self::STICKY_HEADERS_EXPERIMENTS )
+			$this->isInAnyTreatmentGroup( $request, self::STICKY_HEADERS_EXPERIMENTS )
 		) {
 			$out->addJsConfigVars( 'wgReaderExperimentsStickyHeaders', 'enrolled' );
+		}
+	}
+
+	private function maybeInitToc( OutputPage $out ): void {
+		$context = $out->getContext();
+		$request = $context->getRequest();
+		$title = $context->getTitle();
+
+		if (
+			$title && $title->getNamespace() === NS_MAIN &&
+			$out->getSkin()->getSkinName() === 'minerva'
+		) {
+			if ( $this->isInAnyTreatmentGroup( $request, self::MINERVA_TOC_STICKY_EXPERIMENTS ) ) {
+				$out->addModules( 'ext.readerExperiments.minervaToc/sticky' );
+			}
+			if ( $this->isInAnyTreatmentGroup( $request, self::MINERVA_TOC_BUTTON_EXPERIMENTS ) ) {
+				$out->addModules( 'ext.readerExperiments.minervaToc/button' );
+			}
 		}
 	}
 }

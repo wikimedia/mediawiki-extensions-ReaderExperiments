@@ -42,8 +42,8 @@
 		}
 	},
 	"Hooks": {
-		"ArticleViewHeader": "ReaderExperimentsHooks",
-		"BeforePageDisplay": "ReaderExperimentsHooks"
+		"BeforePageDisplay": "ReaderExperimentsHooks",
+		"BeforeInitialize": "ReaderExperimentsHooks"
 	},
 	"MessagesDirs": {
 		"ReaderExperiments": [
@@ -70,7 +70,7 @@
 				"init.js",
 				{
 					"name": "config.json",
-					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getConfig"
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getImageBrowsingConfig"
 				},
 				{
 					"name": "icons.json",
@@ -210,6 +210,56 @@
 			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.stickyHeaders.styles",
 			"styles": [
 				"stickyHeaders.less"
+			]
+		},
+		"ext.readerExperiments.minervaToc": {
+			"localBasePath": "resources/ext.readerExperiments.minervaToc",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.minervaToc",
+			"packageFiles": [
+				"export.js",
+				{
+					"name": "icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconClose",
+						"cdxIconEdit",
+						"cdxIconListBullet"
+					]
+				},
+				"FloatingButtonApp.vue",
+				"StickyHeaderApp.vue",
+				"components/StickyHeader.vue",
+				"components/TableOfContents.vue",
+				"composables/useTableOfContentsCoordinator.js"
+			],
+			"messages": [
+				"edit",
+				"readerexperiments-minerva-toc-toggle-text-open",
+				"readerexperiments-minerva-toc-toggle-text-close"
+			],
+			"dependencies": [
+				"vue",
+				"@wikimedia/codex"
+			]
+		},
+		"ext.readerExperiments.minervaToc/sticky": {
+			"localBasePath": "resources/ext.readerExperiments.minervaToc",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.minervaToc",
+			"packageFiles": [
+				"initStickyHeader.js"
+			],
+			"dependencies": [
+				"ext.readerExperiments.minervaToc"
+			]
+		},
+		"ext.readerExperiments.minervaToc/button": {
+			"localBasePath": "resources/ext.readerExperiments.minervaToc",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.minervaToc",
+			"packageFiles": [
+				"initFloatingButton.js"
+			],
+			"dependencies": [
+				"ext.readerExperiments.minervaToc"
 			]
 		}
 	},
