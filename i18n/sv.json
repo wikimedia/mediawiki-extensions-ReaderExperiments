@@ -1,8 +1,34 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik"
+			"Yupik",
+			"Stefan2255"
 		]
 	},
-	"readerexperiments-imagebrowsing-detail-share": "Dela"
+	"readerexperiments-desc": "En uppsättning prototyper som syftar till att öka Wikipedia-läsarnas popularitet",
+	"readerexperiments-imagebrowsing-carousel-label": "Bildbläddring",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Välj bilden \"$1\"",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Mer",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Mindre",
+	"readerexperiments-imagebrowsing-detail-crop": "Helskärm",
+	"readerexperiments-imagebrowsing-detail-share": "Dela",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Kopiera",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Visa på Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Ladda ner",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Originalfil ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Liten ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Mellan ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Stor ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Extra stor ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-loading": "Läser in",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Tillbaka till artikeln",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Stäng",
+	"readerexperiments-imagebrowsing-overlay-label": "Bilddetaljer",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Mer från den här artikeln",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Media från andra projekt",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Laddar bilder från andra projekt",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Visa i artikeln",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Från $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Från $1 och $2 andra språkliga {{PLURAL:$2|utgåvor}} av Wikipedia",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Från $1"
 }
