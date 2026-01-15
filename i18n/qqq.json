@@ -40,5 +40,6 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Text describing which external Wikipedias an image was found on.\n\nParameters:\n* $1: full hostname of one of the external Wikipedias (e.g. en.wikipedia.org)\n* $2: the amount of other Wikipedias the file is also used on",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Text describing which external non-Wikipedia projects an image was found on.\n\nParameters:\n* $1: localized list of project names (e.g. 'Wikidata, Wikivoyage, and Wikiquote')",
 	"readerexperiments-minerva-toc-toggle-text-open": "Text for the button to open the table of contents.",
-	"readerexperiments-minerva-toc-toggle-text-close": "Text for the button to close the table of contents."
+	"readerexperiments-minerva-toc-toggle-text-close": "Text for the button to close the table of contents.",
+	"readerexperiments-minerva-toc-top-link": "Text for the link at the top of the table of contents that scrolls the user back to the beginning of the page."
 }
