@@ -160,10 +160,6 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
 			// TOC experiments require sections to not be expand-/collapsable.
 			global $wgMFNamespacesWithoutCollapsibleSections;
 			$wgMFNamespacesWithoutCollapsibleSections[] = NS_MAIN;
-
-			// MobileFrontend does not respect above when Parsoid is used, though,
-			// so let's make sure that it is not.
-			$request->setVal( 'useparsoid', 0 );
 		}
 	}
 
