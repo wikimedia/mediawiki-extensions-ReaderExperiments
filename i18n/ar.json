@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Dyolf77 (WMF)",
+			"Meno25",
 			"Mohammed Qays"
 		]
 	},
@@ -30,5 +31,7 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "العرض في المقالة",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "من $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "من $1 و{{PLURAL:$2||نسخة|نسختين|$2 نسخ|$2 نسخة}} لغوية أخرى من ويكيبيديا",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "من $1"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "من $1",
+	"readerexperiments-minerva-toc-toggle-text-open": "محتويات",
+	"readerexperiments-minerva-toc-toggle-text-close": "محتويات"
 }
