@@ -15,6 +15,7 @@
 
 		<teleport :to="teleportTarget">
 			<Transition name="ext-readerExperiments-minerva-toc-fade">
+				<!-- eslint-disable vue/no-unused-refs -->
 				<div
 					v-if="isOpen"
 					ref="tocWrapperRef"
@@ -25,6 +26,7 @@
 						@close="onTocClose">
 					</table-of-contents>
 				</div>
+				<!-- eslint-enable vue/no-unused-refs -->
 			</Transition>
 		</teleport>
 	</div>
@@ -147,15 +149,8 @@ module.exports = exports = defineComponent( {
 }
 
 body {
-	// Hide the button when the editor overlay is visible aka edit mode
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-	&:has( > .mw-overlays-container > .editor-overlay.visible ) {
-		.ext-readerExperiments-minerva-toc__button {
-			display: none;
-		}
-	}
 	// Reposition the button and toc when the toast message is visible
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+	/* stylelint-disable-next-line selector-class-pattern, plugin/no-unsupported-browser-features */
 	&:has( > .mw-notification-area > .mw-notification-visible ) {
 		.ext-readerExperiments-minerva-toc__button {
 			bottom: 80px;
@@ -163,6 +158,14 @@ body {
 			&__toc {
 				bottom: 140px;
 			}
+		}
+	}
+
+	// Hide the button when the editor overlay is visible aka edit mode
+	/* stylelint-disable-next-line selector-class-pattern, plugin/no-unsupported-browser-features */
+	&:has( > .mw-overlays-container > .editor-overlay.visible ) {
+		.ext-readerExperiments-minerva-toc__button {
+			display: none;
 		}
 	}
 }

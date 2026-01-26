@@ -206,7 +206,7 @@ module.exports = exports = defineComponent( {
 		button:not( .cdx-button ) {
 			display: block;
 			margin: 1em auto;
-			border: none;
+			border-width: 0;
 			cursor: pointer;
 			padding: 0;
 			// Override Safari and iOS Chrome browser button background color

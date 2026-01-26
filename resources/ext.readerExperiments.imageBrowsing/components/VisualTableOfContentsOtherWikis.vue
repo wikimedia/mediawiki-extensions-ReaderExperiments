@@ -134,15 +134,18 @@ module.exports = exports = defineComponent( {
 	// TODO: Create mixin for shared grid styles with VTOC
 	&__grid {
 		@media screen and ( min-width: @min-width-breakpoint-tablet ) {
+			// stylelint-disable plugin/no-unsupported-browser-features
 			display: grid;
 			grid-template-columns: repeat( 2, 1fr );
 			grid-auto-rows: 10px;
+			// stylelint-enable plugin/no-unsupported-browser-features
 			border-bottom: @border-subtle;
 		}
 	}
 
 	&__grid--legacy {
 		@media screen and ( min-width: @min-width-breakpoint-tablet ) {
+			// stylelint-disable-next-line plugin/no-unsupported-browser-features
 			grid-auto-rows: auto;
 		}
 	}

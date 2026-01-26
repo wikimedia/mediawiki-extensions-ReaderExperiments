@@ -254,7 +254,9 @@ module.exports = exports = defineComponent( {
 		justify-content: center;
 
 		// Modern browsers support dynamic viewport height (dvh)
+		// stylelint-disable-next-line plugin/no-unsupported-browser-features
 		@supports ( height: 100dvh ) {
+			// stylelint-disable-next-line plugin/no-unsupported-browser-features
 			height: 100dvh; // Override height for modern browsers
 		}
 	}
@@ -279,6 +281,7 @@ module.exports = exports = defineComponent( {
 		padding-bottom: @spacing-400;
 
 		// If the browser supports the dynamic viewport height CSS feature, then remove padding.
+		// stylelint-disable-next-line plugin/no-unsupported-browser-features
 		@supports ( height: 100dvh ) {
 			padding-bottom: 0;
 		}

@@ -230,14 +230,19 @@ module.exports = exports = defineComponent( {
 // completed loading/executing, and we learn that there is no carousel,
 // we'll override that and animate (in order to make this feel slightly
 // less jumpy/jarring) back to zero height.
-#ext-readerExperiments-imageBrowsing:not( :has( .ib-carousel ) ) {
-	height: 0 !important;
-	transition: height 0.1s ease-in;
-}
+// stylelint-disable selector-max-id
+#ext-readerExperiments-imageBrowsing {
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
+	&:not( :has( .ib-carousel ) ) {
+		// stylelint-disable-next-line declaration-no-important
+		height: 0 !important;
+		transition: height 0.1s ease-in;
+	}
 
-// Make use of full height preserved in container
-.ib-app {
-	height: 100%;
+	// Make use of full height preserved in container
+	.ib-app {
+		height: 100%;
+	}
 }
 
 // @hack why is this necessary to get the overlay to show up properly? Fix and remove

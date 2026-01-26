@@ -185,14 +185,13 @@ module.exports = exports = defineComponent( {
 // rather than overflowing up to the root element (which messes
 // up sticky/fixed positioned elements elsewhere in the DOM),
 // set the overflow window on the content element itself
-body:has( #ext-readerExperiments-minerva-toc ) {
-	.mw-parser-output {
-		overflow-x: auto;
-	}
+// stylelint-disable-next-line selector-class-pattern, selector-max-id, plugin/no-unsupported-browser-features
+body:has( #ext-readerExperiments-minerva-toc ) .mw-parser-output {
+	overflow-x: auto;
 }
 
-/* stylelint-disable selector-class-pattern */
 // Prevent body scroll when TOC is open
+// stylelint-disable-next-line plugin/no-unsupported-browser-features
 body:has( .ext-readerExperiments-minerva-toc__toc ) {
 	overflow: hidden;
 }

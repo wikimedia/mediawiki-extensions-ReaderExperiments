@@ -373,15 +373,14 @@ module.exports = exports = defineComponent( {
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
 
+// stylelint-disable-next-line plugin/no-unsupported-browser-features
 .ib-detail-view-controls {
 	position: absolute;
 	bottom: 16px;
 	right: 16px;
-
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-
 	z-index: @z-index-overlay;
 
 	&__download-popover .cdx-popover__body {

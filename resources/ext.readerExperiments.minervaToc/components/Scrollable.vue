@@ -57,7 +57,11 @@ module.exports = exports = defineComponent( {
 @import 'mediawiki.skin.variables.less';
 
 .ext-readerExperiments-minerva-toc__scrollable {
-	@content-padding: @spacing-65; // @todo
+	@content-padding: @spacing-65;
+	box-sizing: border-box;
+	height: 100%;
+	overflow-y: auto;
+	padding: @content-padding;
 
 	// Scroll indicator gradients for TOC
 	// Show a 56px gradient when there's content above/below to scroll to
@@ -66,15 +70,11 @@ module.exports = exports = defineComponent( {
 	// Use negative margin to extend into padding area
 	@gradient-offset: -@content-padding;
 
-	box-sizing: border-box;
-	height: 100%;
-	overflow-y: auto;
-	padding: @content-padding;
-
 	&::before,
 	&::after {
 		content: '';
 		display: block;
+		// stylelint-disable-next-line plugin/no-unsupported-browser-features
 		position: sticky;
 		height: @gradient-height;
 		// Extend horizontally into padding

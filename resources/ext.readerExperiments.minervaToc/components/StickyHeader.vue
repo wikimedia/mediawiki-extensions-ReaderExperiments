@@ -3,8 +3,8 @@
 	<div
 		class="ext-readerExperiments-minerva-toc__sticky-header"
 		:class="{ 'ext-readerExperiments-minerva-toc__sticky-header__active': isActive }"
-		@click="$emit( 'toggle' )"
 		aria-hidden="true"
+		@click="$emit( 'toggle' )"
 	>
 		<div class="ext-readerExperiments-minerva-toc__sticky-header__content">
 			<cdx-toggle-button
@@ -162,6 +162,7 @@ module.exports = exports = defineComponent( {
 			line-height: @line-height-large;
 			display: -webkit-box;
 			-webkit-box-orient: vertical;
+			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 			-webkit-line-clamp: 2; // Truncate after 2 lines
 			overflow: hidden;
 			word-break: break-word;
@@ -175,6 +176,7 @@ module.exports = exports = defineComponent( {
 		justify-self: end;
 	}
 
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features, selector-not-notation */
 	&:not( &__active ):not( :focus-within ) {
 		// Hide the sticky header off-screen without `display: none` so that
 		// getBoundingClientRect() still returns its rendered height (used

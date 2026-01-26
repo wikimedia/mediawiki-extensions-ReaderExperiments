@@ -129,6 +129,25 @@ module.exports = exports = {
 	box-sizing: border-box;
 	overflow: hidden;
 
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
+	&__source {
+		display: flex;
+		align-items: center;
+		gap: @spacing-25;
+		font-size: @font-size-small;
+		font-style: normal;
+	}
+
+	&__branding {
+		position: absolute;
+		bottom: @spacing-50;
+		right: @spacing-50;
+		font-size: @font-size-x-small;
+		font-family: @font-family-system-sans;
+		letter-spacing: 0.02em;
+		opacity: @opacity-medium;
+	}
+
 	// Aspect ratio dimensions (preview size, rendered at 2x for image)
 	&--1x1 {
 		width: 320px;
@@ -197,7 +216,6 @@ module.exports = exports = {
 		all: unset;
 		display: block;
 		color: inherit;
-
 		font-family: @font-family-serif;
 		line-height: @line-height-medium;
 		margin: 0 0 @spacing-75;
@@ -215,24 +233,6 @@ module.exports = exports = {
 		&--small {
 			font-size: 1rem;
 		}
-	}
-
-	&__source {
-		display: flex;
-		align-items: center;
-		gap: @spacing-25;
-		font-size: @font-size-small;
-		font-style: normal;
-	}
-
-	&__branding {
-		position: absolute;
-		bottom: @spacing-50;
-		right: @spacing-50;
-		font-size: @font-size-x-small;
-		font-family: @font-family-system-sans;
-		letter-spacing: 0.02em;
-		opacity: @opacity-medium;
 	}
 }
 </style>

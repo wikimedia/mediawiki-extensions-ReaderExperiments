@@ -313,7 +313,8 @@ module.exports = exports = defineComponent( {
 	width: 100%;
 	height: 100%;
 
-	img, .ib-cropped-image__progress {
+	img,
+	.ib-cropped-image__progress {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -330,7 +331,7 @@ module.exports = exports = defineComponent( {
 		justify-content: center;
 
 		.cdx-icon {
-			color: var( --dominant-color-contrasting )
+			color: var( --dominant-color-contrasting );
 		}
 	}
 

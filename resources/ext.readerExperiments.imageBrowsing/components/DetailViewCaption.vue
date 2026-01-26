@@ -178,7 +178,6 @@ module.exports = exports = defineComponent( {
 .ib-detail-view-caption {
 	--caption-padding: 20px;
 	--gradient-height: 60px;
-
 	font-weight: bold;
 	font-size: 0.9rem;
 	line-height: 1.75;
@@ -194,10 +193,9 @@ module.exports = exports = defineComponent( {
 	padding-right: calc( var( --caption-padding ) + 32px + var( --caption-padding ) );
 
 	// colorize caption text & background (which comes in from a transparent top)
+	// stylelint-disable-next-line declaration-block-no-redundant-longhand-properties
 	padding-top: var( --gradient-height );
-	background-image: linear-gradient(
-		transparent, var( --dominant-color-hex ) var( --gradient-height )
-	);
+	background-image: linear-gradient( transparent, var( --dominant-color-hex ) var( --gradient-height ) );
 
 	// Override Minerva skin paragraph styles
 	p {
@@ -237,10 +235,13 @@ module.exports = exports = defineComponent( {
 		-webkit-box-orient: vertical;
 		-moz-box-orient: vertical;
 		-ms-box-orient: vertical;
+		// stylelint-disable-next-line property-no-unknown
 		box-orient: vertical;
+		// stylelint-disable-next-line plugin/no-unsupported-browser-features
 		-webkit-line-clamp: var( --line-clamp );
 		-moz-line-clamp: var( --line-clamp );
 		-ms-line-clamp: var( --line-clamp );
+		// stylelint-disable-next-line plugin/no-unsupported-browser-features
 		line-clamp: var( --line-clamp );
 
 		&.ib-detail-view-caption__collapsed {
@@ -260,41 +261,53 @@ module.exports = exports = defineComponent( {
 		> * {
 			// Some captions are explicitly center-aligned inside the page (e.g. through
 			// {{center}} template, but we don't want that in our viewer...
+			// stylelint-disable-next-line declaration-no-important
 			text-align: unset !important;
 		}
 	}
 }
 
 // override mobilefrontend font sizes; captions should be smaller than body text
+// stylelint-disable-next-line selector-class-pattern
 .mf-font-size-clientpref-small {
+	// stylelint-disable-next-line selector-class-pattern
 	.mw-body .ib-detail-view-caption p,
 	.content .ib-detail-view-caption p {
+		// stylelint-disable-next-line function-no-unknown
 		font-size: unit( ( 14 / 16 ), rem );
 	}
 
+	// stylelint-disable-next-line selector-class-pattern
 	.content .ib-detail-view-caption {
 		line-height: 1.75;
 	}
 }
 
+// stylelint-disable-next-line selector-class-pattern
 .mf-font-size-clientpref-regular {
+	// stylelint-disable-next-line selector-class-pattern
 	.mw-body .ib-detail-view-caption p,
 	.content .ib-detail-view-caption p {
 		font-size: 1rem;
 	}
 
+	// stylelint-disable-next-line selector-class-pattern
 	.content .ib-detail-view-caption {
 		line-height: 1.65;
 	}
 }
 
+// stylelint-disable-next-line selector-class-pattern
 .mf-font-size-clientpref-large,
 .mf-font-size-clientpref-xlarge {
+	// stylelint-disable-next-line selector-class-pattern
 	.mw-body .ib-detail-view-caption p,
 	.content .ib-detail-view-caption p {
+		// stylelint-disable-next-line function-no-unknown
 		font-size: unit( ( 18 / 16 ), rem );
 	}
 
+	// stylelint-disable-next-line selector-class-pattern
 	.content .ib-detail-view-caption {
 		line-height: 1.6;
 	}

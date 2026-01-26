@@ -137,7 +137,7 @@ module.exports = exports = defineComponent( {
 
 			const toggler = getTogglerRef();
 			if ( toggler === buttonRef ) {
-				buttonRef.value.$el.focus();
+				buttonRef.value.focus();
 			} else {
 				stickyHeadingRef.value.focusOnContentsButton();
 			}
@@ -205,6 +205,7 @@ module.exports = exports = defineComponent( {
 @import './mixins/minerva-toc.less';
 
 // Position the page title button & page title right next to one another
+// stylelint-disable-next-line selector-class-pattern, plugin/no-unsupported-browser-features
 .page-heading:has( .ext-readerExperiments-minerva-toc__page-heading-button-container ) {
 	display: flex;
 	align-items: baseline;

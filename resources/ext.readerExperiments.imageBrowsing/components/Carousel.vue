@@ -238,8 +238,7 @@ module.exports = exports = defineComponent( {
 .ib-carousel {
 	display: block;
 	white-space: nowrap;
-	overflow-x: auto;
-	overflow-y: hidden;
+	overflow: auto hidden;
 	box-sizing: border-box;
 	height: 100%;
 	margin-bottom: 10px;

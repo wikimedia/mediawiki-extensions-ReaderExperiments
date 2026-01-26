@@ -95,7 +95,9 @@ module.exports = exports = defineComponent( {
 	height: 100vh; // Legacy browser
 	flex-shrink: 0;
 
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	@supports ( height: 100dvh ) {
+		// stylelint-disable-next-line plugin/no-unsupported-browser-features
 		height: 100dvh; // Override for modern browsers
 	}
 
@@ -103,6 +105,7 @@ module.exports = exports = defineComponent( {
 		// by default, <cropped-image> will render an `object-fit: cover` (applied
 		// as style specific to the element), which we will want to override when
 		// we want to see the full, uncropped, image
+		// stylelint-disable-next-line declaration-no-important
 		object-fit: contain !important;
 	}
 }

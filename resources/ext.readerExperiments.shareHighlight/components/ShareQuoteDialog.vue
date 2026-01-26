@@ -320,6 +320,7 @@ module.exports = exports = {
 		margin-bottom: @spacing-100;
 	}
 
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	&__options {
 		display: flex;
 		flex-direction: column;
@@ -339,6 +340,7 @@ module.exports = exports = {
 		}
 	}
 
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	&__radio-group {
 		display: flex;
 		gap: @spacing-100;
@@ -352,6 +354,7 @@ module.exports = exports = {
 		margin-top: @spacing-100;
 	}
 
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	&__loading {
 		display: flex;
 		align-items: center;
@@ -372,6 +375,7 @@ module.exports = exports = {
 		width: 100%;
 	}
 
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	&__footer-actions {
 		display: flex;
 		gap: @spacing-50;
