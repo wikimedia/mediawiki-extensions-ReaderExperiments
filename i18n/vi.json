@@ -30,5 +30,7 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Xem trong bài viết",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Từ $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Từ $1 và $2 {{PLURAL:$2|phiên bản}} ngôn ngữ khác của Wikipedia",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Từ $1"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Từ $1",
+	"readerexperiments-minerva-toc-toggle-text-open": "Nội dung",
+	"readerexperiments-minerva-toc-toggle-text-close": "Nội dung"
 }
