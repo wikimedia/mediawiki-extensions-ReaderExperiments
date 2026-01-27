@@ -1,9 +1,17 @@
 <template>
 	<div
 		v-if="hasToc"
-		class="readerExperiments-minerva-toc__button"
+		class="ext-readerExperiments-minerva-toc__button"
+		:class="[
+			isOpen ?
+				'ext-readerExperiments-minerva-toc__button--toc-open' :
+				'ext-readerExperiments-minerva-toc__button--toc-closed'
+		]"
 	>
-		<cdx-button @click="onToggle">
+		<cdx-button
+			class="ext-readerExperiments-minerva-toc__button__action"
+			@click="onToggle"
+		>
 			<cdx-icon :icon="isOpen ? cdxIconClose : cdxIconListBullet"></cdx-icon>
 			{{
 				isOpen ?
@@ -16,7 +24,7 @@
 			v-if="isOpen"
 			:to="teleportTarget"
 		>
-			<div class="readerExperiments-minerva-toc__button__toc">
+			<div class="ext-readerExperiments-minerva-toc__button__toc">
 				<table-of-contents></table-of-contents>
 			</div>
 		</teleport>
@@ -64,22 +72,51 @@ module.exports = exports = defineComponent( {
 </script>
 
 <style lang="less">
-.readerExperiments-minerva-toc__button {
+@import 'mediawiki.skin.variables.less';
+@import './mixins/minerva-toc.less';
+
+.ext-readerExperiments-minerva-toc__button {
 	position: fixed;
 	bottom: 20px;
 	left: 50%;
 	transform: translate( -50% );
+
+	// Specificity needed to override Codex styles
+	& &__action {
+		background-color: @background-color-progressive-subtle;
+		border-radius: @border-radius-pill;
+		border-color: @border-color-progressive;
+		box-shadow: @box-shadow-large;
+	}
+
+	// When the TOC is closed
+	&--toc-closed {
+		& .ext-readerExperiments-minerva-toc__button__action {
+			color: @color-progressive;
+		}
+	}
+
+	// When the TOC is open
+	&--toc-open {
+		& .ext-readerExperiments-minerva-toc__button__action {
+			background-color: @background-color-progressive-subtle--active;
+			color: @color-progressive--active;
+			padding-right: @spacing-250;
+			padding-left: @spacing-250;
+
+			& .cdx-icon {
+				color: @color-progressive;
+			}
+		}
+	}
+
+	&__toc {
+		.minerva-toc__toc();
+		top: 10px;
+		left: 10px;
+		right: 10px;
+		bottom: 80px;
+	}
 }
 
-.readerExperiments-minerva-toc__button__toc {
-	background: #fff;
-	border: 1px solid #000;
-	position: fixed;
-	top: 10px;
-	left: 10px;
-	right: 10px;
-	bottom: 80px;
-	overflow: auto;
-	padding: 10px;
-}
 </style>

@@ -152,15 +152,14 @@ module.exports = exports = defineComponent( {
 </script>
 
 <style lang="less">
+@import 'mediawiki.skin.variables.less';
+@import './mixins/minerva-toc.less';
+
 .readerExperiments-minerva-toc__sticky__toc {
-	background: #fff;
-	border: 1px solid #000;
-	position: fixed;
+	.minerva-toc__toc();
 	top: 40px;
 	left: 10px;
 	right: 10px;
 	bottom: 10px;
-	overflow: auto;
-	padding: 10px;
 }
 </style>
