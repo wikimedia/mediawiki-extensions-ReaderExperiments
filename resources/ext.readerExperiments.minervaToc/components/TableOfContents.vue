@@ -80,7 +80,7 @@ module.exports = exports = defineComponent( {
 				);
 			} else {
 				// Update the URL without triggering scroll then manually fire hashchange
-				history.replaceState(
+				history.pushState(
 					'',
 					document.title,
 					window.location.pathname + window.location.search
