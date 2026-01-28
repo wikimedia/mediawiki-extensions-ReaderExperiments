@@ -2,15 +2,10 @@
 	<div
 		v-if="hasToc"
 		class="ext-readerExperiments-minerva-toc__button"
-		:class="[
-			isOpen ?
-				'ext-readerExperiments-minerva-toc__button--toc-open' :
-				'ext-readerExperiments-minerva-toc__button--toc-closed'
-		]"
 	>
-		<cdx-button
+		<cdx-toggle-button
+			v-model="isOpen"
 			class="ext-readerExperiments-minerva-toc__button__action"
-			@click="onToggle"
 		>
 			<cdx-icon :icon="isOpen ? cdxIconClose : cdxIconListBullet"></cdx-icon>
 			{{
@@ -18,7 +13,7 @@
 					$i18n( 'readerexperiments-minerva-toc-toggle-text-close' ).text() :
 					$i18n( 'readerexperiments-minerva-toc-toggle-text-open' ).text()
 			}}
-		</cdx-button>
+		</cdx-toggle-button>
 
 		<teleport
 			v-if="isOpen"
@@ -33,7 +28,7 @@
 
 <script>
 const { defineComponent, inject, ref } = require( 'vue' );
-const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
+const { CdxIcon, CdxToggleButton } = require( '@wikimedia/codex' );
 const { cdxIconClose, cdxIconListBullet } = require( './icons.json' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useTableOfContentsCoordinator = require( './composables/useTableOfContentsCoordinator.js' );
@@ -42,7 +37,7 @@ const useTableOfContentsCoordinator = require( './composables/useTableOfContents
 module.exports = exports = defineComponent( {
 	name: 'FloatingButtonApp',
 	components: {
-		CdxButton,
+		CdxToggleButton,
 		CdxIcon,
 		TableOfContents
 	},
@@ -57,15 +52,13 @@ module.exports = exports = defineComponent( {
 			isOpen = ref( false );
 			hasToc = true;
 		}
-		const onToggle = () => ( isOpen.value = !isOpen.value );
 
 		return {
 			teleportTarget,
 			cdxIconClose,
 			cdxIconListBullet,
 			hasToc,
-			isOpen,
-			onToggle
+			isOpen
 		};
 	}
 } );
@@ -82,34 +75,32 @@ module.exports = exports = defineComponent( {
 	transform: translate( -50% );
 
 	// Specificity needed to override Codex styles
-	& &__action.cdx-button {
-		background-color: @background-color-progressive-subtle;
+	& &__action.cdx-toggle-button {
 		border-radius: @border-radius-pill;
-		border-color: @border-color-progressive;
 		box-shadow: @box-shadow-large;
 
-		&:hover {
-			background-color: @background-color-progressive-subtle--hover;
-			border-color: @border-color-progressive--hover;
+		// When the TOC is closed
+		&--toggled-off:enabled {
+			background-color: @background-color-progressive-subtle;
+			border-color: @border-color-progressive;
+			color: @color-progressive;
+
+			&:hover {
+				background-color: @background-color-progressive-subtle--hover;
+				border-color: @border-color-progressive--hover;
+			}
 		}
 
-		&:active {
+		// When the TOC is open
+		&--toggled-on:enabled {
 			background-color: @background-color-progressive-subtle--active;
 			border-color: @border-color-progressive--active;
-		}
-	}
-
-	// When the TOC is closed
-	&--toc-closed {
-		& .ext-readerExperiments-minerva-toc__button__action {
-			color: @color-progressive;
-		}
-	}
-
-	// When the TOC is open
-	&--toc-open {
-		& .ext-readerExperiments-minerva-toc__button__action {
 			color: @color-progressive--active;
+
+			&:hover {
+				background-color: @background-color-progressive-subtle--hover;
+				border-color: @border-color-progressive--hover;
+			}
 
 			& .cdx-icon {
 				color: @color-progressive;
