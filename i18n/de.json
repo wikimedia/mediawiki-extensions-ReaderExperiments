@@ -29,5 +29,6 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Aus $1 und $2 in {{PLURAL:$2|anderer Spracheausgabe|anderen Spracheausgaben}} von Wikipedia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Von $1",
 	"readerexperiments-minerva-toc-toggle-text-open": "Inhalte",
-	"readerexperiments-minerva-toc-toggle-text-close": "Inhalte"
+	"readerexperiments-minerva-toc-toggle-text-close": "Inhalte",
+	"readerexperiments-minerva-toc-top-link": "(Anfang)"
 }

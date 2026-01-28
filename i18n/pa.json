@@ -4,6 +4,19 @@
 			"Cabal"
 		]
 	},
+	"readerexperiments-imagebrowsing-detail-caption-expand": "ਹੋਰ",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "ਘੱਟ",
+	"readerexperiments-imagebrowsing-detail-share": "ਸਾਂਝਾ ਕਰੋ",
+	"readerexperiments-imagebrowsing-detail-share-copy": "ਨਕਲ ਕਰੋ",
+	"readerexperiments-imagebrowsing-detail-download": "ਲਾਹੋ",
+	"readerexperiments-imagebrowsing-loading": "ਲੱਦ ਰਿਹਾ ਏ",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "ਲੇਖ 'ਤੇ ਵਾਪਸ ਜਾਓ",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "ਬੰਦ",
+	"readerexperiments-imagebrowsing-overlay-label": "ਚਿੱਤਰ ਵੇਰਵੇ",
+	"readerexperiments-imagebrowsing-vtoc-heading": "ਇਸ ਲੇਖ ਤੋਂ ਹੋਰ",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "ਲੇਖ ਵਿੱਚ ਵੇਖੋ",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "$1 ਤੋਂ",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "$1 ਤੋਂ",
 	"readerexperiments-minerva-toc-toggle-text-open": "ਵਸਤ-ਵਲ਼ੇਵਾਂ",
 	"readerexperiments-minerva-toc-toggle-text-close": "ਵਸਤ-ਵਲ਼ੇਵਾਂ"
 }

@@ -29,5 +29,8 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Näytä artikkelissa",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Hankkeesta $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Hankkeesta $1 ja $2 {{PLURAL:$2|muusta Wikipedian kieliversiosta}}",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "{{GRAMMAR:elative|$1}}"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "{{GRAMMAR:elative|$1}}",
+	"readerexperiments-minerva-toc-toggle-text-open": "Sisällys",
+	"readerexperiments-minerva-toc-toggle-text-close": "Sisällys",
+	"readerexperiments-minerva-toc-top-link": "(Johdanto)"
 }
