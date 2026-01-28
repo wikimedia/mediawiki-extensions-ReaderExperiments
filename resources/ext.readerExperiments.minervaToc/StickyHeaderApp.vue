@@ -158,8 +158,6 @@ module.exports = exports = defineComponent( {
 .readerExperiments-minerva-toc__sticky__toc {
 	.minerva-toc__toc();
 	top: 40px;
-	left: 10px;
-	right: 10px;
 	bottom: 10px;
 }
 </style>

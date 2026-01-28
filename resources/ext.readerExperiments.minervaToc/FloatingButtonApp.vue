@@ -82,11 +82,21 @@ module.exports = exports = defineComponent( {
 	transform: translate( -50% );
 
 	// Specificity needed to override Codex styles
-	& &__action {
+	& &__action.cdx-button {
 		background-color: @background-color-progressive-subtle;
 		border-radius: @border-radius-pill;
 		border-color: @border-color-progressive;
 		box-shadow: @box-shadow-large;
+
+		&:hover {
+			background-color: @background-color-progressive-subtle--hover;
+			border-color: @border-color-progressive--hover;
+		}
+
+		&:active {
+			background-color: @background-color-progressive-subtle--active;
+			border-color: @border-color-progressive--active;
+		}
 	}
 
 	// When the TOC is closed
@@ -99,10 +109,7 @@ module.exports = exports = defineComponent( {
 	// When the TOC is open
 	&--toc-open {
 		& .ext-readerExperiments-minerva-toc__button__action {
-			background-color: @background-color-progressive-subtle--active;
 			color: @color-progressive--active;
-			padding-right: @spacing-250;
-			padding-left: @spacing-250;
 
 			& .cdx-icon {
 				color: @color-progressive;
@@ -113,9 +120,10 @@ module.exports = exports = defineComponent( {
 	&__toc {
 		.minerva-toc__toc();
 		top: 10px;
-		left: 10px;
-		right: 10px;
-		bottom: 80px;
+		// Create a gap between bottom edge of viewport
+		// and about 24px gap between the button and TOC
+		// (calculate both elements bottom position and button height)
+		bottom: 76px;
 	}
 }
 
