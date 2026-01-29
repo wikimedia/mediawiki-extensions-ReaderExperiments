@@ -33,5 +33,6 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "من $1 و{{PLURAL:$2||نسخة|نسختين|$2 نسخ|$2 نسخة}} لغوية أخرى من ويكيبيديا",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "من $1",
 	"readerexperiments-minerva-toc-toggle-text-open": "محتويات",
-	"readerexperiments-minerva-toc-toggle-text-close": "محتويات"
+	"readerexperiments-minerva-toc-toggle-text-close": "محتويات",
+	"readerexperiments-minerva-toc-top-link": "(رأس الصفحة)"
 }
