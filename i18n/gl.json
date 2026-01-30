@@ -31,5 +31,6 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "De $1 e {{PLURAL:$2|outra edición|outras $2 edicións}} da Wikipedia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "De $1",
 	"readerexperiments-minerva-toc-toggle-text-open": "Contidos",
-	"readerexperiments-minerva-toc-toggle-text-close": "Contidos"
+	"readerexperiments-minerva-toc-toggle-text-close": "Contidos",
+	"readerexperiments-minerva-toc-top-link": "(Inicio)"
 }
