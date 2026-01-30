@@ -68,9 +68,18 @@ module.exports = exports = defineComponent( {
 @import 'mediawiki.skin.variables.less';
 @import './mixins/minerva-toc.less';
 
+:root {
+	--min-height-button: @min-size-interactive-touch; // 44px default
+
+	@media ( min-width: @min-width-breakpoint-desktop ) {
+		--min-height-button: @min-size-interactive-pointer; // 32px on desktop
+	}
+}
+
 .ext-readerExperiments-minerva-toc__button {
+	@position-bottom-button: 20px;
 	position: fixed;
-	bottom: 20px;
+	bottom: @position-bottom-button;
 	left: 50%;
 	transform: translate( -50% );
 
@@ -78,6 +87,7 @@ module.exports = exports = defineComponent( {
 	& &__action.cdx-toggle-button {
 		border-radius: @border-radius-pill;
 		box-shadow: @box-shadow-large;
+		min-height: var( --min-height-button );
 
 		// When the TOC is closed
 		&--toggled-off:enabled {
@@ -111,10 +121,9 @@ module.exports = exports = defineComponent( {
 	&__toc {
 		.minerva-toc__toc();
 		top: 10px;
-		// Create a gap between bottom edge of viewport
-		// and about 24px gap between the button and TOC
-		// (calculate both elements bottom position and button height)
-		bottom: 76px;
+		// Calculate the space from the viewport bottom and
+		// create a 24px gap between the button and TOC
+		bottom: calc( @position-bottom-button + @spacing-150 + var( --min-height-button ) );
 	}
 }
 
