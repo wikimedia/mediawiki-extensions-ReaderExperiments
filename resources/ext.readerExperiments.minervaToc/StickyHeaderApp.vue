@@ -45,7 +45,7 @@ module.exports = exports = defineComponent( {
 			hasToc = true;
 		} catch ( e ) {
 			isOpen = ref( false );
-			hasToc = true;
+			hasToc = false;
 		}
 		const onToggle = () => ( isOpen.value = !isOpen.value );
 
