@@ -38,7 +38,6 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "From $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "From $1 and $2 other language {{PLURAL:$2|edition|editions}} of Wikipedia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "From $1",
-	"readerexperiments-minerva-toc-toggle-text-open": "Contents",
-	"readerexperiments-minerva-toc-toggle-text-close": "Contents",
+	"readerexperiments-minerva-toc-button-label": "Contents",
 	"readerexperiments-minerva-toc-top-link": "(Top)"
 }

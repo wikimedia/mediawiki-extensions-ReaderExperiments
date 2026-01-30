@@ -235,8 +235,7 @@
 			],
 			"messages": [
 				"edit",
-				"readerexperiments-minerva-toc-toggle-text-open",
-				"readerexperiments-minerva-toc-toggle-text-close",
+				"readerexperiments-minerva-toc-button-label",
 				"readerexperiments-minerva-toc-top-link"
 			],
 			"dependencies": [

@@ -9,11 +9,7 @@
 			class="ext-readerExperiments-minerva-toc__button__action"
 		>
 			<cdx-icon :icon="isOpen ? cdxIconClose : cdxIconListBullet"></cdx-icon>
-			{{
-				isOpen ?
-					$i18n( 'readerexperiments-minerva-toc-toggle-text-close' ).text() :
-					$i18n( 'readerexperiments-minerva-toc-toggle-text-open' ).text()
-			}}
+			{{ $i18n( 'readerexperiments-minerva-toc-button-label' ).text() }}
 		</cdx-toggle-button>
 
 		<teleport
@@ -145,6 +141,11 @@ module.exports = exports = defineComponent( {
 		// Calculate the space from the viewport bottom and
 		// create a 24px gap between the button and TOC
 		bottom: calc( @position-bottom-button + @spacing-150 + var( --min-height-button ) );
+
+		@media ( min-width: 740px ) {
+			display: flex;
+			justify-self: center;
+		}
 	}
 }
 

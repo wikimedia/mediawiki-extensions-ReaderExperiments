@@ -3,12 +3,20 @@ and sticky headers.
 */
 
 .minerva-toc__toc() {
+	@horizontal-margin: @spacing-100;
 	background: @background-color-base;
 	border: @border-subtle;
 	position: fixed;
-	left: 10px;
-	right: 10px;
+	left: @horizontal-margin;
+	right: @horizontal-margin;
+	box-sizing: border-box;
+	width: calc( 100% - 2 * @horizontal-margin );
+	max-width: 640px;
 	overflow: auto;
 	padding: @spacing-65;
-	max-width: 640px;
+
+	@media ( min-width: @min-width-breakpoint-tablet ) {
+		left: 3.35em;
+		right: 3.35em;
+	}
 }
