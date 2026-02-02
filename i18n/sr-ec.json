@@ -25,5 +25,6 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Види у чланку",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Од $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Са $1 и $2 других језичких {{PLURAL:$2|издања}} Википедије",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Са $1"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Са $1",
+	"readerexperiments-minerva-toc-top-link": "(Врх)"
 }

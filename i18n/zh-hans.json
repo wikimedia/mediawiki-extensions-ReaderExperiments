@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"EBlackorby-WMF",
+			"GuoPC",
 			"Peterxy12"
 		]
 	},
@@ -30,5 +31,8 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "在文章中查看",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "来自$1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "来自$1和$2个其他语言{{PLURAL:$2|版本}}的维基百科",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "来自$1"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "来自$1",
+	"readerexperiments-minerva-toc-toggle-text-open": "目录",
+	"readerexperiments-minerva-toc-toggle-text-close": "目录",
+	"readerexperiments-minerva-toc-top-link": "（首段）"
 }

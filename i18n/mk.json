@@ -31,5 +31,6 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Од $1 и $2 {{PLURAL:$2|друго јазично  издание|други јазични изданија}} на Википедија",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Од $1",
 	"readerexperiments-minerva-toc-toggle-text-open": "Содржина",
-	"readerexperiments-minerva-toc-toggle-text-close": "Содржина"
+	"readerexperiments-minerva-toc-toggle-text-close": "Содржина",
+	"readerexperiments-minerva-toc-top-link": "(Најгоре)"
 }
