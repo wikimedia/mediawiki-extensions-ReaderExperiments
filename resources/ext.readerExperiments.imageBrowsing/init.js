@@ -57,10 +57,10 @@ if ( !isSupportedBrowser() ) {
 //
 
 // Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
-// https://mpic.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
+// https://test-kitchen.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
 const TIER_ONE_EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
 // Tier 2: 0.1% English Wikipedia.
-// https://mpic.wikimedia.org/experiment/image-browsing-enwiki
+// https://test-kitchen.wikimedia.org/experiment/image-browsing-enwiki
 const TIER_TWO_EXPERIMENT_NAME = 'image-browsing-enwiki';
 const SCHEMA_NAME = '/analytics/product_metrics/web/base/2.0.0';
 // Naming convention: mediawiki.product_metrics.<product>_<component>_<interaction>.
