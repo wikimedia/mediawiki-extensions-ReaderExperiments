@@ -118,6 +118,10 @@ module.exports = exports = defineComponent( {
 
 		// Do not launch until heading is rendered and its height is known
 		nextTick( () => {
+			if ( !stickyHeadingRef.value ) {
+				return;
+			}
+
 			stickyHeadingRect = stickyHeadingRef.value.$el.getBoundingClientRect();
 			// eslint-disable-next-line compat/compat
 			const intersectionObserver = new IntersectionObserver(
