@@ -10,6 +10,7 @@
 	>
 		<a
 			class="readerExperiments-minerva-toc__toc__top-link"
+			:class="{ 'readerExperiments-minerva-toc__toc__active': [ null, 'firstHeading' ].includes( activeHeadingId ) }"
 			href="#"
 			@click="onTopLinkClick"
 		>
@@ -57,7 +58,13 @@ function focusFirstFocusableElement( container, backwards = false ) {
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'TableOfContents',
-	setup() {
+	props: {
+		activeHeadingId: {
+			type: String,
+			default: null
+		}
+	},
+	setup( props ) {
 		const tocRef = useTemplateRef( 'tocRef' );
 
 		const original = document.querySelector( '#toc > ul' );
@@ -65,7 +72,16 @@ module.exports = exports = defineComponent( {
 			throw new Error( 'TOC not found' );
 		}
 
-		const toc = original.outerHTML;
+		// Clone the TOC HTML & parse, then add a class indicating the currently active heading
+		const clone = document.createElement( 'div' );
+		clone.innerHTML = original.outerHTML;
+		// using [id="..."] instead of #... selector, as the latter may be invalid
+		// when ids start with numbers
+		const activeHeading = clone.querySelector( `a[href="#${ props.activeHeadingId }"]` );
+		if ( activeHeading ) {
+			activeHeading.classList.add( 'readerExperiments-minerva-toc__toc__active' );
+		}
+		const toc = clone.innerHTML;
 
 		const closeToc = ( { scrollToTop = false } = {} ) => {
 			if ( scrollToTop ) {
@@ -145,7 +161,6 @@ body:has( .readerExperiments-minerva-toc__toc ) {
 
 	&__top-link {
 		color: inherit;
-		font-weight: @font-weight-bold;
 		// Vertically align the top link to Minerva <ul> element
 		padding-left: 1em;
 		padding-inline: 1em 0;
@@ -154,6 +169,10 @@ body:has( .readerExperiments-minerva-toc__toc ) {
 	&__contents {
 		// Match spacing between Minerva <li> elements
 		margin-top: 10px;
+	}
+
+	&__active {
+		font-weight: @font-weight-bold;
 	}
 }
 </style>

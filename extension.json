@@ -230,6 +230,7 @@
 				"StickyHeaderApp.vue",
 				"components/StickyHeader.vue",
 				"components/TableOfContents.vue",
+				"composables/useActiveHeading.js",
 				"composables/useTableOfContentsCoordinator.js"
 			],
 			"messages": [

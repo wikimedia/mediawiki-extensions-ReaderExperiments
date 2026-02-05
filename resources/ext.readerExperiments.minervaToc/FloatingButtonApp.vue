@@ -20,17 +20,21 @@
 			:to="teleportTarget"
 		>
 			<div class="ext-readerExperiments-minerva-toc__button__toc">
-				<table-of-contents></table-of-contents>
+				<table-of-contents
+					:active-heading-id="activeHeadingId"
+				></table-of-contents>
 			</div>
 		</teleport>
 	</div>
 </template>
 
 <script>
-const { defineComponent, inject, ref } = require( 'vue' );
+
+const { computed, defineComponent, inject, ref } = require( 'vue' );
 const { CdxIcon, CdxToggleButton } = require( '@wikimedia/codex' );
 const { cdxIconClose, cdxIconListBullet } = require( './icons.json' );
 const TableOfContents = require( './components/TableOfContents.vue' );
+const useActiveHeading = require( './composables/useActiveHeading.js' );
 const useTableOfContentsCoordinator = require( './composables/useTableOfContentsCoordinator.js' );
 
 // @vue/component
@@ -53,12 +57,17 @@ module.exports = exports = defineComponent( {
 			hasToc = false;
 		}
 
+		const activeHeading = useActiveHeading( 0 );
+		const activeHeadingHx = computed( () => activeHeading.value && activeHeading.value.querySelector( 'h1, h2, h3, h4, h5, h6' ) || null );
+		const activeHeadingId = computed( () => activeHeadingHx.value && activeHeadingHx.value.attributes.id && activeHeadingHx.value.attributes.id.value || null );
+
 		return {
 			teleportTarget,
 			cdxIconClose,
 			cdxIconListBullet,
 			hasToc,
-			isOpen
+			isOpen,
+			activeHeadingId
 		};
 	}
 } );

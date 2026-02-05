@@ -1,5 +1,8 @@
 <template>
-	<div class="readerExperiments-minerva-toc__sticky-header">
+	<div
+		class="readerExperiments-minerva-toc__sticky-header"
+		:class="{ 'readerExperiments-minerva-toc__sticky-header__active': isActive }"
+	>
 		<cdx-button
 			:action="isOpen ? 'progressive' : 'default'"
 			:aria-label="isOpen ?
@@ -40,6 +43,10 @@ module.exports = exports = defineComponent( {
 			type: Boolean,
 			required: true
 		},
+		isActive: {
+			type: Boolean,
+			required: true
+		},
 		headingHtml: {
 			type: String,
 			required: true
@@ -69,7 +76,7 @@ module.exports = exports = defineComponent( {
 } );
 </script>
 
-<style>
+<style lang="less">
 // rather than overflowing up to the root element (which messes
 // up sticky/fixed positioned elements elsewhere in the DOM),
 // set the overflow window on the content element itself
@@ -88,5 +95,13 @@ body:has( .readerExperiments-minerva-toc__sticky-header ) {
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
+	transition: opacity 0.3s;
+
+	&:not( &__active ) {
+		// Ensure the sticky, insofar there is one, is not visible without
+		// setting it to display: none so that we can still get the dimensions
+		// it is/will be rendered at
+		opacity: 0;
+	}
 }
 </style>
