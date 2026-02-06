@@ -4,6 +4,7 @@
 		class="ext-readerExperiments-minerva-toc__button"
 	>
 		<cdx-toggle-button
+			ref="toggleButtonRef"
 			v-model="isOpen"
 			class="ext-readerExperiments-minerva-toc__button__action"
 		>
@@ -22,7 +23,8 @@
 			<div class="ext-readerExperiments-minerva-toc__button__toc">
 				<table-of-contents
 					:active-heading-id="activeHeadingId"
-				></table-of-contents>
+					@close="onTocClose">
+				</table-of-contents>
 			</div>
 		</teleport>
 	</div>
@@ -30,7 +32,7 @@
 
 <script>
 
-const { computed, defineComponent, inject, ref } = require( 'vue' );
+const { computed, defineComponent, inject, ref, useTemplateRef } = require( 'vue' );
 const { CdxIcon, CdxToggleButton } = require( '@wikimedia/codex' );
 const { cdxIconClose, cdxIconListBullet } = require( './icons.json' );
 const TableOfContents = require( './components/TableOfContents.vue' );
@@ -47,6 +49,7 @@ module.exports = exports = defineComponent( {
 	},
 	setup() {
 		const teleportTarget = inject( 'CdxTeleportTarget' );
+		const toggleButtonRef = useTemplateRef( 'toggleButtonRef' );
 
 		let isOpen, hasToc;
 		try {
@@ -61,13 +64,22 @@ module.exports = exports = defineComponent( {
 		const activeHeadingHx = computed( () => activeHeading.value && activeHeading.value.querySelector( 'h1, h2, h3, h4, h5, h6' ) || null );
 		const activeHeadingId = computed( () => activeHeadingHx.value && activeHeadingHx.value.attributes.id && activeHeadingHx.value.attributes.id.value || null );
 
+		const onTocClose = ( { restoreFocus = true } = {} ) => {
+			if ( restoreFocus ) {
+				// eslint-disable-next-line no-jquery/no-event-shorthand
+				toggleButtonRef.value.$el.focus();
+			}
+		};
+
 		return {
 			teleportTarget,
+			toggleButtonRef,
 			cdxIconClose,
 			cdxIconListBullet,
 			hasToc,
 			isOpen,
-			activeHeadingId
+			activeHeadingId,
+			onTocClose
 		};
 	}
 } );

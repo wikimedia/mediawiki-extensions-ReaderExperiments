@@ -4,6 +4,7 @@
 		:class="{ 'readerExperiments-minerva-toc__sticky-header__active': isActive }"
 	>
 		<cdx-button
+			ref="contentsButton"
 			:action="isOpen ? 'progressive' : 'default'"
 			:aria-label="isOpen ?
 				$i18n( 'readerexperiments-minerva-toc-toggle-text-close' ).text() :
@@ -27,7 +28,7 @@
 </template>
 
 <script>
-const { defineComponent } = require( 'vue' );
+const { defineComponent, useTemplateRef } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconClose, cdxIconListBullet, cdxIconEdit } = require( '../icons.json' );
 
@@ -64,13 +65,25 @@ module.exports = exports = defineComponent( {
 		'toggle'
 	],
 	setup( props ) {
+		const contentsButton = useTemplateRef( 'contentsButton' );
+
+		const focusOnContentsButton = () => {
+			if ( contentsButton.value ) {
+				// eslint-disable-next-line no-jquery/no-event-shorthand
+				contentsButton.value.$el.focus();
+			}
+		};
+
 		const onClickLink = () => window.open( props.linkUrl, '_blank' );
 
 		return {
 			cdxIconClose,
 			cdxIconListBullet,
 			cdxIconEdit,
-			onClickLink
+			onClickLink,
+			contentsButton,
+			// eslint-disable-next-line vue/no-unused-properties
+			focusOnContentsButton // The parent (StickyHeaderApp) calls this function
 		};
 	}
 } );

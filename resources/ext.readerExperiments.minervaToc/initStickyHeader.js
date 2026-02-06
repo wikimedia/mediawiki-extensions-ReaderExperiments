@@ -5,5 +5,5 @@ const { StickyHeaderApp } = require( 'ext.readerExperiments.minervaToc' );
 
 const container = document.createElement( 'div' );
 container.setAttribute( 'id', 'readerExperiments-minerva-toc' );
-document.getElementById( 'content' ).appendChild( container );
+document.getElementById( 'content' ).prepend( container );
 Vue.createMwApp( StickyHeaderApp ).mount( '#readerExperiments-minerva-toc' );

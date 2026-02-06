@@ -20,7 +20,8 @@
 			<div class="readerExperiments-minerva-toc__sticky__toc">
 				<table-of-contents
 					:active-heading-id="activeHeadingId"
-				></table-of-contents>
+					@close="onTocClose">
+				</table-of-contents>
 			</div>
 		</teleport>
 	</div>
@@ -42,6 +43,7 @@ module.exports = exports = defineComponent( {
 	},
 	setup() {
 		const teleportTarget = inject( 'CdxTeleportTarget' );
+		const stickyHeadingRef = useTemplateRef( 'stickyHeadingRef' );
 
 		let isOpen, hasToc;
 		try {
@@ -51,9 +53,15 @@ module.exports = exports = defineComponent( {
 			isOpen = ref( false );
 			hasToc = false;
 		}
+
 		const onToggle = () => ( isOpen.value = !isOpen.value );
 
-		const stickyHeadingRef = useTemplateRef( 'stickyHeadingRef' );
+		const onTocClose = ( { restoreFocus = true } = {} ) => {
+			if ( restoreFocus && stickyHeadingRef.value ) {
+				stickyHeadingRef.value.focusOnContentsButton();
+			}
+		};
+
 		const shortDescription = document.querySelector( '.shortdescription' );
 
 		const activeHeading = ref( null );
@@ -85,6 +93,7 @@ module.exports = exports = defineComponent( {
 			hasToc,
 			isOpen,
 			onToggle,
+			onTocClose,
 			activeHeadingId,
 			headingHtml,
 			subheadingText,

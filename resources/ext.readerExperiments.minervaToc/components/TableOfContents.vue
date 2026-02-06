@@ -64,7 +64,8 @@ module.exports = exports = defineComponent( {
 			default: null
 		}
 	},
-	setup( props ) {
+	emits: [ 'close' ],
+	setup( props, { emit } ) {
 		const tocRef = useTemplateRef( 'tocRef' );
 
 		const original = document.querySelector( '#toc > ul' );
@@ -83,7 +84,7 @@ module.exports = exports = defineComponent( {
 		}
 		const toc = clone.innerHTML;
 
-		const closeToc = ( { scrollToTop = false } = {} ) => {
+		const closeToc = ( { scrollToTop = false, restoreFocus = true } = {} ) => {
 			if ( scrollToTop ) {
 				// Trigger hashchange: clear the hash and fire toc close hook
 				// Setting hash triggers scroll
@@ -103,11 +104,14 @@ module.exports = exports = defineComponent( {
 				);
 				window.dispatchEvent( new HashChangeEvent( 'hashchange' ) );
 			}
+
+			emit( 'close', { restoreFocus } );
 		};
 
 		const onTopLinkClick = ( event ) => {
 			event.preventDefault();
-			closeToc( { scrollToTop: true } );
+			// Don't restore focus since user is navigating to the top of the page
+			closeToc( { scrollToTop: true, restoreFocus: false } );
 		};
 
 		const onFocusTrapStart = () => {
@@ -120,6 +124,16 @@ module.exports = exports = defineComponent( {
 
 		onMounted( () => {
 			focusFirstFocusableElement( tocRef.value, false );
+
+			// Handle clicks on TOC links to emit close event
+			tocRef.value.addEventListener( 'click', ( event ) => {
+				const link = event.target.closest( 'a[href^="#"]' );
+				if ( link && link.getAttribute( 'href' ) !== '#' ) {
+					// Let the browser handle the navigation, then emit close
+					// Don't restore focus since user is navigating to a section
+					emit( 'close', { restoreFocus: false } );
+				}
+			} );
 		} );
 
 		function onClose() {
