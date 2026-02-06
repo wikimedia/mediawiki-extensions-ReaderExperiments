@@ -59,6 +59,11 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
 		'minerva-toc-button' => 'treatment',
 	];
 
+	private const SHARE_HIGHLIGHT_EXPERIMENTS = [
+		// @todo below is just a placeholder name; experiment hasn't actually been created yet
+		'share-highlight' => 'treatment',
+	];
+
 	private const MINERVA_TOC_EXPERIMENTS = self::MINERVA_TOC_STICKY_EXPERIMENTS + self::MINERVA_TOC_BUTTON_EXPERIMENTS;
 
 	private ?ExperimentManager $experimentManager;
@@ -139,6 +144,7 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
 		$this->maybeInitImageBrowsing( $out );
 		$this->maybeInitStickyHeaders( $out );
 		$this->maybeInitToc( $out );
+		$this->maybeInitShareHighlight( $out );
 	}
 
 	/**
@@ -257,6 +263,28 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
 			if ( $this->isInAnyTreatmentGroup( $request, self::MINERVA_TOC_BUTTON_EXPERIMENTS ) ) {
 				$out->addModules( 'ext.readerExperiments.minervaToc/button' );
 			}
+		}
+	}
+
+	private function maybeInitShareHighlight( OutputPage $out ): void {
+		$context = $out->getContext();
+		$request = $context->getRequest();
+		$title = $context->getTitle();
+
+		if (
+			$title && $title->getNamespace() === NS_MAIN &&
+			$out->getSkin()->getSkinName() === 'minerva' &&
+			(
+				$this->isInAnyTreatmentGroup( $request, self::SHARE_HIGHLIGHT_EXPERIMENTS ) ||
+				$request->getFuzzyBool( 'shareHighlight' )
+			)
+		) {
+			$out->prependHTML(
+				'<div id="ext-readerExperiments-shareHighlight"></div>'
+			);
+
+			$out->addModuleStyles( 'ext.readerExperiments.shareHighlight.styles' );
+			$out->addModules( 'ext.readerExperiments.shareHighlight' );
 		}
 	}
 }

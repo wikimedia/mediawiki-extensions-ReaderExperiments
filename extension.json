@@ -262,6 +262,73 @@
 			"dependencies": [
 				"ext.readerExperiments.minervaToc"
 			]
+		},
+		"html-to-image": {
+			"localBasePath": "resources/lib/html-to-image",
+			"packageFiles": [
+				"html-to-image.js"
+			]
+		},
+		"ext.readerExperiments.shareHighlight": {
+			"localBasePath": "resources/ext.readerExperiments.shareHighlight",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.shareHighlight",
+			"dependencies": [
+				"vue",
+				"@wikimedia/codex",
+				"mediawiki.util",
+				"html-to-image"
+			],
+			"packageFiles": [
+				"init.js",
+				{
+					"name": "icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconShare",
+						"cdxIconLink",
+						"cdxIconLogoWikipedia"
+					]
+				},
+				"App.vue",
+				"components/ShareQuoteButton.vue",
+				"components/ShareQuoteDialog.vue",
+				"components/QuoteCard.vue",
+				"composables/useTextSelection.js",
+				"composables/useShareQuote.js",
+				"utils/textFragment.js",
+				"utils/truncateText.js",
+				"utils/imageGenerator.js"
+			],
+			"styles": [],
+			"messages": [
+				"readerexperiments-sharehighlight-share-quote",
+				"readerexperiments-sharehighlight-dialog-title",
+				"readerexperiments-sharehighlight-aspect-ratio-legend",
+				"readerexperiments-sharehighlight-aspect-ratio-square",
+				"readerexperiments-sharehighlight-aspect-ratio-portrait",
+				"readerexperiments-sharehighlight-aspect-ratio-wide",
+				"readerexperiments-sharehighlight-background-legend",
+				"readerexperiments-sharehighlight-background-light",
+				"readerexperiments-sharehighlight-background-dark",
+				"readerexperiments-sharehighlight-background-wikipedia",
+				"readerexperiments-sharehighlight-copy-link",
+				"readerexperiments-sharehighlight-link-copied",
+				"readerexperiments-sharehighlight-cancel",
+				"readerexperiments-sharehighlight-share",
+				"readerexperiments-sharehighlight-download",
+				"readerexperiments-sharehighlight-generating-image",
+				"readerexperiments-sharehighlight-share-title",
+				"readerexperiments-sharehighlight-share-text",
+				"readerexperiments-sharehighlight-quote-format",
+				"readerexperiments-sharehighlight-branding"
+			]
+		},
+		"ext.readerExperiments.shareHighlight.styles": {
+			"localBasePath": "resources/ext.readerExperiments.shareHighlight",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.shareHighlight",
+			"styles": [
+				"styles/app.less"
+			]
 		}
 	},
 	"manifest_version": 2
