@@ -110,7 +110,7 @@ body:has( .readerExperiments-minerva-toc__sticky-header ) {
 	justify-content: space-between;
 	transition: opacity 0.3s;
 
-	&:not( &__active ) {
+	&:not( &__active ):not( :focus-within ) {
 		// Ensure the sticky, insofar there is one, is not visible without
 		// setting it to display: none so that we can still get the dimensions
 		// it is/will be rendered at
