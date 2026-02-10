@@ -146,15 +146,6 @@ module.exports = exports = defineComponent( {
 	}
 }
 
-// rather than overflowing up to the root element (which messes
-// up sticky/fixed positioned elements elsewhere in the DOM),
-// set the overflow window on the content element itself
-body:has( .readerExperiments-minerva-toc__sticky-header ) {
-	.collapsible-block, .mf-collapsible-content {
-		overflow-x: auto;
-	}
-}
-
 .ext-readerExperiments-minerva-toc__sticky-header {
 	z-index: @z-index-above-content;
 	background: @background-color-base;
