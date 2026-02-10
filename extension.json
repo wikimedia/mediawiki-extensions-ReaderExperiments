@@ -250,6 +250,13 @@
 				"@wikimedia/codex"
 			]
 		},
+		"ext.readerExperiments.minervaToc.instrumentation": {
+			"localBasePath": "resources/ext.readerExperiments.minervaToc",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.minervaToc",
+			"packageFiles": [
+				"instrumentation.js"
+			]
+		},
 		"ext.readerExperiments.minervaToc/sticky": {
 			"localBasePath": "resources/ext.readerExperiments.minervaToc",
 			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.minervaToc",
@@ -257,7 +264,8 @@
 				"initStickyHeader.js"
 			],
 			"dependencies": [
-				"ext.readerExperiments.minervaToc"
+				"ext.readerExperiments.minervaToc",
+				"ext.readerExperiments.minervaToc.instrumentation"
 			]
 		},
 		"ext.readerExperiments.minervaToc/button": {
@@ -267,7 +275,8 @@
 				"initFloatingButton.js"
 			],
 			"dependencies": [
-				"ext.readerExperiments.minervaToc"
+				"ext.readerExperiments.minervaToc",
+				"ext.readerExperiments.minervaToc.instrumentation"
 			]
 		},
 		"html-to-image": {

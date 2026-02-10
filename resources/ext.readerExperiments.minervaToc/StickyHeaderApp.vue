@@ -64,7 +64,10 @@ module.exports = exports = defineComponent( {
 
 		const { canScrollUp, canScrollDown } = useTocScrollIndicators( tocWrapperRef, isOpen );
 
-		const onToggle = () => ( isOpen.value = !isOpen.value );
+		const onToggle = () => {
+			mw.hook( 'readerExperiments.toc.iconClick' ).fire( 'sticky-header' );
+			isOpen.value = !isOpen.value;
+		};
 
 		const onTocClose = ( { restoreFocus = true } = {} ) => {
 			if ( restoreFocus && stickyHeadingRef.value ) {

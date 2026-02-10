@@ -53,34 +53,16 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 		'sticky-headers' => 'treatment',
 	];
 
-	private const MINERVA_TOC_STICKY_EXPERIMENTS = [
-		// @todo below is just a placeholder name; experiment hasn't actually been created yet
-		'minerva-toc-sticky' => 'treatment',
-	];
-
-	private const MINERVA_TOC_BUTTON_EXPERIMENTS = [
-		// @todo below is just a placeholder name; experiment hasn't actually been created yet
-		'minerva-toc-button' => 'treatment',
-	];
-
-	private const MINERVA_FORCE_PARSOID_TREATMENT = [
-		// @todo below is just a placeholder name; experiment hasn't actually been created yet
-		'minerva-toc-sticky' => 'treatment',
-		'minerva-toc-button' => 'treatment',
-	];
-
-	private const MINERVA_FORCE_PARSOID_CONTROL = [
-		// @todo below is just a placeholder name; experiment hasn't actually been created yet
-		'minerva-toc-sticky' => 'control',
-		'minerva-toc-button' => 'control',
-	];
-
 	private const SHARE_HIGHLIGHT_EXPERIMENTS = [
-		// @todo below is just a placeholder name; experiment hasn't actually been created yet
-		'share-highlight' => 'treatment',
+		// TODO: Populate with TestKitchen experiment name => treatment group once defined.
 	];
 
-	private const MINERVA_TOC_EXPERIMENTS = self::MINERVA_TOC_STICKY_EXPERIMENTS + self::MINERVA_TOC_BUTTON_EXPERIMENTS;
+	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
+	// https://test-kitchen.wikimedia.org/experiment/mobile-toc-abc
+	private const MINERVA_TOC_EXPERIMENT_NAME = 'mobile-toc-abc';
+	private const MINERVA_TOC_GROUP_STICKY = 'treatment1';
+	private const MINERVA_TOC_GROUP_BUTTON = 'treatment2';
+	// END MINERVA_TOC_EXPERIMENTS (T415611)
 
 	private ?ExperimentManager $experimentManager;
 
@@ -122,6 +104,85 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 
 		return false;
 	}
+
+	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
+	private function getAssignedGroup( WebRequest $request, string $experimentName ): ?string {
+		// Prefer explicit overrides, since they must work even if TestKitchen hasn't
+		// run enrollment sampling yet (e.g. hook order on BeforeInitialize).
+		$override = $this->getAssignedGroupFromMpo( $request->getRawVal( 'mpo' ), $experimentName );
+		if ( $override !== null ) {
+			return $override;
+		}
+
+		$override = $this->getAssignedGroupFromMpo(
+			$request->getCookie( 'mpo', null, '' ),
+			$experimentName
+		);
+		if ( $override !== null ) {
+			return $override;
+		}
+
+		// Support everyone-experiment enrollment simulation via request headers (e.g. Inssman).
+		// Format: "experiment-name=group;" (multiple separated by ';').
+		$header = $request->getHeader( 'X-Experiment-Enrollments' );
+		if ( $header ) {
+			$assignedGroup = $this->getAssignedGroupFromEnrollmentHeader( $header, $experimentName );
+			if ( $assignedGroup !== null ) {
+				return $assignedGroup;
+			}
+		}
+
+		if ( $this->experimentManager ) {
+			$experiment = $this->experimentManager->getExperiment( $experimentName );
+			$assignedGroup = $experiment->getAssignedGroup();
+			if ( $assignedGroup !== null ) {
+				return $assignedGroup;
+			}
+		}
+
+		return null;
+	}
+
+	private function getAssignedGroupFromMpo( ?string $rawOverrides, string $experimentName ): ?string {
+		// Format: "experiment-name:group" (multiple separated by ';').
+		if ( $rawOverrides === null || $rawOverrides === '' ) {
+			return null;
+		}
+
+		foreach ( explode( ';', $rawOverrides ) as $override ) {
+			$override = trim( $override );
+			if ( $override === '' ) {
+				continue;
+			}
+
+			$prefix = $experimentName . ':';
+			if ( str_starts_with( $override, $prefix ) ) {
+				return substr( $override, strlen( $prefix ) );
+			}
+		}
+
+		return null;
+	}
+
+	private function getAssignedGroupFromEnrollmentHeader( string $header, string $experimentName ): ?string {
+		// Mirror parsing behavior of TestKitchen's EveryoneExperimentsEnrollmentAuthority.
+		// The header may include a trailing ';' so rtrim it.
+		foreach ( explode( ';', rtrim( $header, ';' ) ) as $rawAssignment ) {
+			$assignment = explode( '=', $rawAssignment, 2 );
+			if ( count( $assignment ) !== 2 ) {
+				continue;
+			}
+
+			if ( trim( $assignment[0] ) === $experimentName ) {
+				$group = trim( $assignment[1] );
+				return $group !== '' ? $group : null;
+			}
+		}
+
+		return null;
+	}
+
+	// END MINERVA_TOC_EXPERIMENTS (T415611)
 
 	public function __construct( ?ExperimentManager $experimentManager = null ) {
 		$this->experimentManager = $experimentManager;
@@ -174,15 +235,25 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 		$request,
 		$mediaWikiEntryPoint
 	): void {
+		// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
 		if (
 			$title && $title->getNamespace() === NS_MAIN &&
-			$output->getSkin()->getSkinName() === 'minerva' &&
-			$this->isInAnyTreatmentGroup( $request, self::MINERVA_TOC_EXPERIMENTS )
+			$output->getSkin()->getSkinName() === 'minerva'
 		) {
-			// TOC experiments require sections to not be expand-/collapsable.
-			global $wgMFNamespacesWithoutCollapsibleSections;
-			$wgMFNamespacesWithoutCollapsibleSections[] = NS_MAIN;
+			$assignedGroup = $this->getAssignedGroup( $request, self::MINERVA_TOC_EXPERIMENT_NAME );
+			if ( $assignedGroup !== null ) {
+				if ( in_array(
+					$assignedGroup,
+					[ self::MINERVA_TOC_GROUP_STICKY, self::MINERVA_TOC_GROUP_BUTTON ],
+					true
+				) ) {
+					// TOC experiments require sections to not be expand-/collapsable.
+					global $wgMFNamespacesWithoutCollapsibleSections;
+					$wgMFNamespacesWithoutCollapsibleSections[] = NS_MAIN;
+				}
+			}
 		}
+		// END MINERVA_TOC_EXPERIMENTS (T415611)
 	}
 
 	private function maybeInitImageBrowsing( OutputPage $out ): void {
@@ -273,10 +344,17 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			$title && $title->getNamespace() === NS_MAIN &&
 			$out->getSkin()->getSkinName() === 'minerva'
 		) {
-			if ( $this->isInAnyTreatmentGroup( $request, self::MINERVA_TOC_STICKY_EXPERIMENTS ) ) {
+			// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
+			$assignedGroup = $this->getAssignedGroup( $request, self::MINERVA_TOC_EXPERIMENT_NAME );
+
+			if ( $assignedGroup !== null ) {
+				$out->addModules( 'ext.readerExperiments.minervaToc.instrumentation' );
+			}
+
+			if ( $assignedGroup === self::MINERVA_TOC_GROUP_STICKY ) {
 				$out->addModules( 'ext.readerExperiments.minervaToc/sticky' );
 			}
-			if ( $this->isInAnyTreatmentGroup( $request, self::MINERVA_TOC_BUTTON_EXPERIMENTS ) ) {
+			if ( $assignedGroup === self::MINERVA_TOC_GROUP_BUTTON ) {
 				$out->addModules( 'ext.readerExperiments.minervaToc/button' );
 			}
 		}
@@ -316,17 +394,16 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			$title->getNamespace() === NS_MAIN &&
 			RequestContext::getMain()->getSkin()->getSkinName() === 'minerva'
 		) {
-			if (
-				$this->isInAnyTreatmentGroup( $request, self::MINERVA_FORCE_PARSOID_TREATMENT ) ||
-				$this->isInAnyTreatmentGroup( $request, self::MINERVA_FORCE_PARSOID_CONTROL )
-			) {
-				// Force both control and treatment groups to use parsoid if they
-				// haven't set a preference or query string, as the legacy browser has
-				// big differences in lead section transform behavior and it doesn't
-				// look worth fixing the legacy browser when we're about to sunset it
-				// for primary page views.
+			// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
+			$assignedGroup = $this->getAssignedGroup( $request, self::MINERVA_TOC_EXPERIMENT_NAME );
+			if ( $assignedGroup !== null ) {
+				// Force all experiment participants (any group) to use Parsoid.
+				// The legacy parser has significant differences in lead section
+				// transform behavior and it's not worth fixing when we're about
+				// to sunset it for primary page views.
 				$enable = true;
 			}
+			// END MINERVA_TOC_EXPERIMENTS (T415611)
 		}
 	}
 }

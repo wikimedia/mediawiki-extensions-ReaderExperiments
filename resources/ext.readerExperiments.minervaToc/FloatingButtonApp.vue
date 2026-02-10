@@ -7,6 +7,7 @@
 			ref="toggleButtonRef"
 			v-model="isOpen"
 			class="ext-readerExperiments-minerva-toc__button__action"
+			@click="onIconClick"
 		>
 			<cdx-icon :icon="cdxIconListBullet"></cdx-icon>
 			{{ $i18n( 'readerexperiments-minerva-toc-contents-button-label' ).text() }}
@@ -78,6 +79,10 @@ module.exports = exports = defineComponent( {
 			}
 		};
 
+		const onIconClick = () => {
+			mw.hook( 'readerExperiments.toc.iconClick' ).fire( 'floating-button' );
+		};
+
 		return {
 			teleportTarget,
 			toggleButtonRef,
@@ -88,7 +93,8 @@ module.exports = exports = defineComponent( {
 			onTocClose,
 			tocWrapperRef,
 			canScrollUp,
-			canScrollDown
+			canScrollDown,
+			onIconClick
 		};
 	}
 } );
