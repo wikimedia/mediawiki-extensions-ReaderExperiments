@@ -180,9 +180,18 @@ body:has( .readerExperiments-minerva-toc__toc ) {
 		padding-inline: 1em 0;
 	}
 
-	&__contents {
-		// Match spacing between Minerva <li> elements
-		margin-top: 10px;
+	// Instead of relying on the existing `.content li` margin-bottom,
+	// we'll get rid of that one and apply it to the links instead.
+	// Reason: nested lists will otherwise not have spacing between the
+	// parent link and the first child (which is still part of the
+	// parent li)
+	li {
+		margin-bottom: 0;
+	}
+	a&__top-link,
+	&__contents li > a {
+		display: inline-block;
+		margin-bottom: 10px;
 	}
 
 	&__active {
