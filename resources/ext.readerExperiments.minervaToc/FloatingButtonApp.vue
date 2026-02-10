@@ -8,7 +8,7 @@
 			v-model="isOpen"
 			class="ext-readerExperiments-minerva-toc__button__action"
 		>
-			<cdx-icon :icon="isOpen ? cdxIconClose : cdxIconListBullet"></cdx-icon>
+			<cdx-icon :icon="cdxIconListBullet"></cdx-icon>
 			{{ $i18n( 'readerexperiments-minerva-toc-button-label' ).text() }}
 		</cdx-toggle-button>
 
@@ -30,7 +30,7 @@
 
 const { computed, defineComponent, inject, ref, useTemplateRef } = require( 'vue' );
 const { CdxIcon, CdxToggleButton } = require( '@wikimedia/codex' );
-const { cdxIconClose, cdxIconListBullet } = require( './icons.json' );
+const { cdxIconListBullet } = require( './icons.json' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useActiveHeading = require( './composables/useActiveHeading.js' );
 const useTableOfContentsCoordinator = require( './composables/useTableOfContentsCoordinator.js' );
@@ -70,7 +70,6 @@ module.exports = exports = defineComponent( {
 		return {
 			teleportTarget,
 			toggleButtonRef,
-			cdxIconClose,
 			cdxIconListBullet,
 			hasToc,
 			isOpen,
@@ -106,32 +105,10 @@ module.exports = exports = defineComponent( {
 		box-shadow: @box-shadow-large;
 		min-height: var( --min-height-button );
 
-		// When the TOC is closed
-		&--toggled-off:enabled {
-			background-color: @background-color-progressive-subtle;
-			border-color: @border-color-progressive;
-			color: @color-progressive;
-
-			&:hover {
-				background-color: @background-color-progressive-subtle--hover;
-				border-color: @border-color-progressive--hover;
-			}
-		}
-
-		// When the TOC is open
+		// When the TOC is open (toggled-on state)
 		&--toggled-on:enabled {
-			background-color: @background-color-progressive-subtle--active;
-			border-color: @border-color-progressive--active;
-			color: @color-progressive--active;
-
-			&:hover {
-				background-color: @background-color-progressive-subtle--hover;
-				border-color: @border-color-progressive--hover;
-			}
-
-			& .cdx-icon {
-				color: @color-progressive;
-			}
+			// Override Codex styles
+			.minerva-toc-button();
 		}
 	}
 

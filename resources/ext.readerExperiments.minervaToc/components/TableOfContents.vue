@@ -183,8 +183,10 @@ body:has( .readerExperiments-minerva-toc__toc ) {
 		list-style-type: none;
 	}
 
-	&__top-link {
-		color: inherit;
+	&__top-link,
+	&__top-link:where( :not( [ role="button" ] ):not( .cdx-menu-item__content ) ):visited {
+		// Override Minerva anchor link styles
+		color: @color-base;
 		// Vertically align the top link to Minerva <ul> element
 		padding-left: 1em;
 		padding-inline: 1em 0;

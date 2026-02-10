@@ -221,7 +221,6 @@
 					"name": "icons.json",
 					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
 					"callbackParam": [
-						"cdxIconClose",
 						"cdxIconEdit",
 						"cdxIconListBullet"
 					]

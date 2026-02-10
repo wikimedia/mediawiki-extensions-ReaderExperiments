@@ -2,6 +2,7 @@
 and sticky headers.
 */
 
+// Table of contents
 .minerva-toc__toc() {
 	@horizontal-margin: @spacing-100;
 	background: @background-color-base;
@@ -18,5 +19,18 @@ and sticky headers.
 	@media ( min-width: @min-width-breakpoint-tablet ) {
 		left: 3.35em;
 		right: 3.35em;
+	}
+}
+
+// Button
+.minerva-toc-button() {
+	background-color: @background-color-interactive-subtle--active;
+	border-color: @border-color-interactive--active;
+	color: @color-base;
+
+	&:hover {
+		background-color: @background-color-interactive-subtle--hover;
+		border-color: @border-color-interactive--hover;
+		color: @color-base;
 	}
 }

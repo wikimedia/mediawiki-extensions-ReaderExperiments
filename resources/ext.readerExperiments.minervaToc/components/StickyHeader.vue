@@ -13,7 +13,7 @@
 				:aria-label="$i18n( 'readerexperiments-minerva-toc-button-label' ).text()"
 				@update:model-value="$emit( 'toggle' )"
 			>
-				<cdx-icon :icon="isOpen ? cdxIconClose : cdxIconListBullet"></cdx-icon>
+				<cdx-icon :icon="cdxIconListBullet"></cdx-icon>
 			</cdx-toggle-button>
 			<div class="ext-readerExperiments-minerva-toc__sticky-header__title">
 				<h2
@@ -38,7 +38,7 @@
 <script>
 const { defineComponent, useTemplateRef, ref, onMounted, onUnmounted, watch, nextTick, toRef } = require( 'vue' );
 const { CdxToggleButton, CdxButton, CdxIcon } = require( '@wikimedia/codex' );
-const { cdxIconClose, cdxIconListBullet, cdxIconEdit } = require( '../icons.json' );
+const { cdxIconListBullet, cdxIconEdit } = require( '../icons.json' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -116,7 +116,7 @@ module.exports = exports = defineComponent( {
 		} );
 
 		return {
-			cdxIconClose,
+
 			cdxIconListBullet,
 			cdxIconEdit,
 			onClickLink,
@@ -131,6 +131,7 @@ module.exports = exports = defineComponent( {
 
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
+@import '../mixins/minerva-toc.less';
 
 :root {
 	// Calculate sticky header's width considering the parent container's margin
@@ -175,15 +176,14 @@ module.exports = exports = defineComponent( {
 	}
 
 	&__toc-button {
-		color: inherit;
 		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		grid-column: 1;
 		justify-self: start;
 
 		&.cdx-toggle-button--toggled-on.cdx-toggle-button--quiet {
 			// Override Codex styles
-			background-color: @background-color-progressive--active;
-			color: @color-inverted-fixed;
+			.minerva-toc-button();
+
 		}
 	}
 
