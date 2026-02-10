@@ -15,12 +15,7 @@
 			>
 				<cdx-icon :icon="isOpen ? cdxIconClose : cdxIconListBullet"></cdx-icon>
 			</cdx-toggle-button>
-			<div
-				class="ext-readerExperiments-minerva-toc__sticky-header__title"
-				:class="{
-					'ext-readerExperiments-minerva-toc__sticky-header__title--multiline': isMultiline
-				}"
-			>
+			<div class="ext-readerExperiments-minerva-toc__sticky-header__title">
 				<h2
 					ref="titleRef"
 					v-html="headingHtml"
@@ -91,27 +86,33 @@ module.exports = exports = defineComponent( {
 		const onClickLink = () => window.open( props.linkUrl, '_blank' );
 
 		const titleRef = ref( null );
-		const isMultiline = ref( false );
 
-		const checkMultiline = () => {
-			if ( titleRef.value ) {
-				const lineHeight = parseFloat( getComputedStyle( titleRef.value ).lineHeight );
-				isMultiline.value = titleRef.value.scrollHeight > lineHeight * 1.5;
+		const setHeadingFontSize = () => {
+			if ( !titleRef.value ) {
+				return;
+			}
+
+			const fontSizes = [ 'xx-large', 'x-large', 'large', 'medium' ];
+			for ( const size of fontSizes ) {
+				titleRef.value.dataset.size = size;
+				if ( titleRef.value.scrollHeight <= titleRef.value.clientHeight ) {
+					return;
+				}
 			}
 		};
 
 		onMounted( () => {
-			checkMultiline();
-			window.addEventListener( 'resize', checkMultiline );
+			setHeadingFontSize();
+			window.addEventListener( 'resize', setHeadingFontSize );
 		} );
 
-		// Recheck when heading changes (eg. scrolling to new section)
+		// Recheck when heading changes (e.g. scrolling to new section)
 		watch( toRef( props, 'headingHtml' ), () => {
-			nextTick( checkMultiline );
+			nextTick( setHeadingFontSize );
 		} );
 
 		onUnmounted( () => {
-			window.removeEventListener( 'resize', checkMultiline );
+			window.removeEventListener( 'resize', setHeadingFontSize );
 		} );
 
 		return {
@@ -120,7 +121,6 @@ module.exports = exports = defineComponent( {
 			cdxIconEdit,
 			onClickLink,
 			titleRef,
-			isMultiline,
 			contentsButton,
 			// eslint-disable-next-line vue/no-unused-properties
 			focusOnContentsButton // The parent (StickyHeaderApp) calls this function
@@ -134,6 +134,7 @@ module.exports = exports = defineComponent( {
 
 :root {
 	// Calculate sticky header's width considering the parent container's margin
+	--height-header: 57px;
 	--width-header: calc( 100% - 32px );
 
 	@media ( min-width: @min-width-breakpoint-tablet ) {
@@ -164,10 +165,8 @@ body:has( .readerExperiments-minerva-toc__sticky-header ) {
 	transition: opacity 0.3s;
 
 	&__content {
-		height: 35px;
-		padding-top: @spacing-75;
-		padding-bottom: @spacing-65;
 		border-bottom: 1px solid @border-color-subtle;
+		height: var( --height-header );
 		// Align with Minerva
 		width: var( --width-header );
 		margin: 0 auto;
@@ -176,7 +175,7 @@ body:has( .readerExperiments-minerva-toc__sticky-header ) {
 		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		grid-template-columns: auto auto 1fr;
 		gap: @spacing-35;
-		align-items: start;
+		align-items: center;
 
 		@media ( min-width: 993.3px ) {
 			// Align with Minerva
@@ -201,24 +200,43 @@ body:has( .readerExperiments-minerva-toc__sticky-header ) {
 		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		grid-column: 2;
 		color: @color-emphasized;
-		align-self: center;
 
 		h2 {
 			font-family: @font-family-serif;
 			font-size: @font-size-xx-large;
-			line-height: @line-height-xx-large;
 			display: -webkit-box;
 			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 2; // Truncate after 2 lines
 			overflow: hidden;
 			word-break: break-word;
 			white-space: normal;
-		}
+			max-height: var( --height-header );
 
-		&--multiline {
-			h2 {
+			&[data-size="xx-large"] {
+				// single-line only; 2+ lines immediately overflow
+				font-size: @font-size-xx-large;
+				line-height: @line-height-xx-large;
+			}
+
+			&[data-size="x-large"] {
+				// single-line only; 2+ lines immediately overflow
+				font-size: @font-size-x-large;
+				line-height: @line-height-x-large;
+			}
+
+			&[data-size="large"] {
+				font-size: @font-size-large;
+				// The smaller line height will not have an effect on single-line headers,
+				// but will ensure that those that do wrap to multiple lines can fit within the
+				// header's height constraint
+				line-height: @line-height-x-small;
+			}
+
+			&[data-size="medium"] {
 				font-size: @font-size-medium;
-				// Use smaller line height to fit content in header
+				// The smaller line height will not have an effect on single-line headers,
+				// but will ensure that those that do wrap to multiple lines can fit within the
+				// header's height constraint
 				line-height: @line-height-x-small;
 			}
 		}
