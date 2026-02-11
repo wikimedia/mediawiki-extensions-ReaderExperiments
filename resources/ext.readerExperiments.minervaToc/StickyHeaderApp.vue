@@ -130,8 +130,9 @@ module.exports = exports = defineComponent( {
 
 	&__toc {
 		.minerva-toc__toc();
+		.minerva-toc__fade-in();
 		top: 58px;
-		bottom: 10px;
+		bottom: 25%;
 
 		@media ( min-width: 740px ) {
 			// Align TOC with the start of the sticky header toggle button

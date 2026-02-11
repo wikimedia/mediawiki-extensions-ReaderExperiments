@@ -185,13 +185,9 @@ body:has( .readerExperiments-minerva-toc__toc ) {
 		list-style-type: none;
 	}
 
-	&__top-link,
-	&__top-link:where( :not( [ role="button" ] ):not( .cdx-menu-item__content ) ):visited {
-		// Override Minerva anchor link styles
-		color: @color-base;
+	&__top-link {
 		// Vertically align the top link to Minerva <ul> element
-		padding-left: 1em;
-		padding-inline: 1em 0;
+		margin-left: 1em;
 	}
 
 	// Instead of relying on the existing `.content li` margin-bottom,
@@ -202,13 +198,23 @@ body:has( .readerExperiments-minerva-toc__toc ) {
 	li {
 		margin-bottom: 0;
 	}
-	a&__top-link,
-	&__contents li > a {
+
+	a&__top-link {
 		display: inline-block;
-		margin-bottom: 10px;
+		margin-bottom: @spacing-65;
+	}
+
+	&__contents li > a {
+		display: -webkit-box;
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+		-webkit-line-clamp: 2; // Truncate toc links at 2 lines
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		margin-bottom: @spacing-65;
 	}
 
 	&__active {
+		color: @color-base;
 		font-weight: @font-weight-bold;
 	}
 }

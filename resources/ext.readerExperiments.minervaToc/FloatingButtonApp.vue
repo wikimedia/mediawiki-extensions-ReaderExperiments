@@ -105,6 +105,10 @@ module.exports = exports = defineComponent( {
 		box-shadow: @box-shadow-large;
 		min-height: var( --min-height-button );
 
+		&:focus {
+			outline: 2px solid @outline-color-progressive--focus;
+		}
+
 		// When the TOC is open (toggled-on state)
 		&--toggled-on:enabled {
 			// Override Codex styles
@@ -114,7 +118,8 @@ module.exports = exports = defineComponent( {
 
 	&__toc {
 		.minerva-toc__toc();
-		top: 10px;
+		.minerva-toc__fade-in();
+		top: 25%;
 		// Calculate the space from the viewport bottom and
 		// create a 24px gap between the button and TOC
 		bottom: calc( @position-bottom-button + @spacing-150 + var( --min-height-button ) );

@@ -146,7 +146,6 @@ module.exports = exports = defineComponent( {
 		&.cdx-toggle-button--toggled-on.cdx-toggle-button--framed {
 			// Override Codex styles
 			.minerva-toc-button();
-
 		}
 	}
 
