@@ -80,7 +80,7 @@ module.exports = exports = defineComponent( {
 		clone.innerHTML = original.outerHTML;
 		// using [id="..."] instead of #... selector, as the latter may be invalid
 		// when ids start with numbers
-		const activeHeading = clone.querySelector( `a[href="#${ props.activeHeadingId }"]` );
+		const activeHeading = clone.querySelector( `a[href="#${ CSS.escape( props.activeHeadingId ) }"]` );
 		if ( activeHeading ) {
 			activeHeading.classList.add( 'readerExperiments-minerva-toc__toc__active' );
 		}
