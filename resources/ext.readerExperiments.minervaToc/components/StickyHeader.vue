@@ -10,7 +10,7 @@
 				:model-value="isOpen"
 				class="ext-readerExperiments-minerva-toc__sticky-header__toc-button"
 				quiet
-				:aria-label="$i18n( 'readerexperiments-minerva-toc-button-label' ).text()"
+				:aria-label="$i18n( 'readerexperiments-minerva-toc-contents-button-label' ).text()"
 				@update:model-value="$emit( 'toggle' )"
 			>
 				<cdx-icon :icon="cdxIconListBullet"></cdx-icon>
@@ -25,7 +25,7 @@
 			<cdx-button
 				v-if="linkUrl"
 				class="ext-readerExperiments-minerva-toc__sticky-header__edit-button"
-				:aria-label="$i18n( 'edit' ).text()"
+				:aria-label="$i18n( 'readerexperiments-minerva-toc-edit-button-label' ).text()"
 				weight="quiet"
 				@click="onClickLink"
 			>

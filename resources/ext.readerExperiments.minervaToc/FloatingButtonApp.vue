@@ -9,7 +9,7 @@
 			class="ext-readerExperiments-minerva-toc__button__action"
 		>
 			<cdx-icon :icon="cdxIconListBullet"></cdx-icon>
-			{{ $i18n( 'readerexperiments-minerva-toc-button-label' ).text() }}
+			{{ $i18n( 'readerexperiments-minerva-toc-contents-button-label' ).text() }}
 		</cdx-toggle-button>
 
 		<teleport

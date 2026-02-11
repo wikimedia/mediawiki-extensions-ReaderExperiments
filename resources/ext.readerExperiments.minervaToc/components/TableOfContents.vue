@@ -5,6 +5,8 @@
 	></div>
 	<div
 		ref="tocRef"
+		role="region"
+		:aria-label="$i18n( 'readerexperiments-minerva-toc-region-label' ).text()"
 		class="readerExperiments-minerva-toc__toc"
 		@keydown.esc="onClose"
 	>

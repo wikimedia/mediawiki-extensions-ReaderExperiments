@@ -238,7 +238,9 @@
 			],
 			"messages": [
 				"edit",
-				"readerexperiments-minerva-toc-button-label",
+				"readerexperiments-minerva-toc-contents-button-label",
+				"readerexperiments-minerva-toc-edit-button-label",
+				"readerexperiments-minerva-toc-region-label",
 				"readerexperiments-minerva-toc-top-link"
 			],
 			"dependencies": [
