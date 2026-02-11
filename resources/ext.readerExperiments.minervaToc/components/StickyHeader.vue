@@ -244,6 +244,7 @@ module.exports = exports = defineComponent( {
 		// setting it to display: none so that we can still get the dimensions
 		// it is/will be rendered at
 		opacity: 0;
+		z-index: -1;
 	}
 }
 </style>
