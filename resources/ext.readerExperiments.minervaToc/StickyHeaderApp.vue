@@ -73,7 +73,8 @@ module.exports = exports = defineComponent( {
 
 			const stickyHeadingRect = stickyHeadingRef.value.$el.getBoundingClientRect();
 			watch(
-				useActiveHeading( stickyHeadingRect.height || 0 ),
+				// Consider heading active once it passes half the sticky
+				useActiveHeading( stickyHeadingRect.height / 2 ),
 				( heading ) => ( activeHeading.value = heading )
 			);
 		} );

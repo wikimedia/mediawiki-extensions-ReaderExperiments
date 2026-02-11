@@ -9,7 +9,6 @@ const { ref } = require( 'vue' );
  * @type {Function<import('vue').Ref<Element | null>>}
  */
 module.exports = exports = ( topMargin = 0 ) => {
-	const intersectionThreshold = 0.5;
 	const activeHeading = ref( null );
 	const headings = Array.from( document.querySelectorAll( '.page-heading, .mw-heading' ) );
 	const intersectingHeadings = new Set();
@@ -49,7 +48,7 @@ module.exports = exports = ( topMargin = 0 ) => {
 		let firstUpcomingHeadingIndex = headings.length - 1;
 		for ( let i = firstKnownHeadingCloseToViewportIndex; i < headings.length; i++ ) {
 			const headingRect = headings[ i ].getBoundingClientRect();
-			if ( headingRect.top + headingRect.height * intersectionThreshold > topMargin ) {
+			if ( headingRect.top > topMargin ) {
 				firstUpcomingHeadingIndex = i;
 				break;
 			}
@@ -77,12 +76,12 @@ module.exports = exports = ( topMargin = 0 ) => {
 		updateActiveHeading,
 		{
 			rootMargin: `-${ topMargin }px 0px 0px 0px`,
-			// 0.5 in order to have a single consistent position at which the element falls
-			// in/out of view: at half the height the element; otherwise, we may be
-			// triggered from either the top of the bottom of the element entering/leaving
-			// the viewport (depending on scroll direction) and can not implement consistent
-			// handling logic
-			threshold: intersectionThreshold
+			// Trigger at both 0% and 100% in order to capture both scroll directions:
+			// - scrolling up, we need to know as soon as it starts disappearing, i.e. going
+			//   from 100% visibility to less
+			// - scrolling up, we need to know as soon as it starts appearing, i.e. going
+			//   from 0% to anything at all
+			threshold: [ 0, 1 ]
 		}
 	);
 	headings.forEach( ( heading ) => {
