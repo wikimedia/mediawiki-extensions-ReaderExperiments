@@ -267,6 +267,10 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
 	}
 
 	private function maybeInitShareHighlight( OutputPage $out ): void {
+		if ( !$out->getConfig()->get( 'ReaderExperimentsShareHighlightEnabled' ) ) {
+			return;
+		}
+
 		$context = $out->getContext();
 		$request = $context->getRequest();
 		$title = $context->getTitle();

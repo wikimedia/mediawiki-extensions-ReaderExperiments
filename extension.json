@@ -31,6 +31,10 @@
 				"wikipedia.org": "/* i18n-unused */",
 				"wikidata.org": "wikibase-otherprojects-wikidata"
 			}
+		},
+		"ReaderExperimentsShareHighlightEnabled": {
+			"description": "Feature flag for ShareHighlight. Must be set to true to enable the feature. Disabled by default pending security review of the html-to-image dependency.",
+			"value": false
 		}
 	},
 	"HookHandlers": {
