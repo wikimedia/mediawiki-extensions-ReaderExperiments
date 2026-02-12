@@ -3,14 +3,15 @@
 	<div
 		class="ext-readerExperiments-minerva-toc__sticky-header"
 		:class="{ 'ext-readerExperiments-minerva-toc__sticky-header__active': isActive || isOpen }"
+		@click="$emit( 'toggle' )"
 	>
 		<div class="ext-readerExperiments-minerva-toc__sticky-header__content">
 			<cdx-toggle-button
 				ref="contentsButton"
 				:model-value="isOpen"
 				class="ext-readerExperiments-minerva-toc__sticky-header__toc-button"
-				quiet
 				:aria-label="$i18n( 'readerexperiments-minerva-toc-contents-button-label' ).text()"
+				@click.stop="() => { /* no-op, simply prevent click from bubbling up */ }"
 				@update:model-value="$emit( 'toggle' )"
 			>
 				<cdx-icon :icon="cdxIconListBullet"></cdx-icon>
@@ -26,7 +27,7 @@
 				class="ext-readerExperiments-minerva-toc__sticky-header__edit-button"
 				:aria-label="$i18n( 'readerexperiments-minerva-toc-edit-button-label' ).text()"
 				weight="quiet"
-				@click="onClickLink"
+				@click.stop="onClickLink"
 			>
 				<cdx-icon :icon="cdxIconEdit"></cdx-icon>
 			</cdx-button>
@@ -145,6 +146,9 @@ module.exports = exports = defineComponent( {
 .ext-readerExperiments-minerva-toc__sticky-header {
 	z-index: @z-index-above-content;
 	background: @background-color-base;
+	border-bottom: 1px solid @border-color-muted;
+	box-shadow: @box-shadow-large;
+	cursor: pointer;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -152,7 +156,6 @@ module.exports = exports = defineComponent( {
 	transition: opacity 0.3s;
 
 	&__content {
-		border-bottom: 1px solid @border-color-subtle;
 		height: var( --height-header );
 		// Align with Minerva
 		width: var( --width-header );
@@ -175,7 +178,7 @@ module.exports = exports = defineComponent( {
 		grid-column: 1;
 		justify-self: start;
 
-		&.cdx-toggle-button--toggled-on.cdx-toggle-button--quiet {
+		&.cdx-toggle-button--toggled-on.cdx-toggle-button--framed {
 			// Override Codex styles
 			.minerva-toc-button();
 
