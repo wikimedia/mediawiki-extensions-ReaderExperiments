@@ -17,10 +17,7 @@
 				<cdx-icon :icon="cdxIconListBullet"></cdx-icon>
 			</cdx-toggle-button>
 			<div class="ext-readerExperiments-minerva-toc__sticky-header__title">
-				<h2
-					ref="titleRef"
-					v-html="headingHtml"
-				></h2>
+				<h2 v-html="headingHtml"></h2>
 			</div>
 			<cdx-button
 				v-if="linkUrl"
@@ -36,7 +33,7 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, ref, onMounted, onUnmounted, watch, nextTick, toRef } = require( 'vue' );
+const { defineComponent, useTemplateRef } = require( 'vue' );
 const { CdxToggleButton, CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconListBullet, cdxIconEdit } = require( '../icons.json' );
 
@@ -81,43 +78,11 @@ module.exports = exports = defineComponent( {
 
 		const onClickLink = () => window.open( props.linkUrl, '_blank' );
 
-		const titleRef = ref( null );
-
-		const setHeadingFontSize = () => {
-			if ( !titleRef.value ) {
-				return;
-			}
-
-			const fontSizes = [ 'xx-large', 'x-large', 'large', 'medium' ];
-			for ( const size of fontSizes ) {
-				titleRef.value.dataset.size = size;
-				if ( titleRef.value.scrollHeight <= titleRef.value.clientHeight ) {
-					return;
-				}
-			}
-		};
-
-		onMounted( () => {
-			setHeadingFontSize();
-			window.addEventListener( 'resize', setHeadingFontSize );
-		} );
-
-		// Recheck when heading changes (e.g. scrolling to new section)
-		watch( toRef( props, 'headingHtml' ), () => {
-			nextTick( setHeadingFontSize );
-		} );
-
-		onUnmounted( () => {
-			window.removeEventListener( 'resize', setHeadingFontSize );
-		} );
-
 		return {
-
+			contentsButton,
 			cdxIconListBullet,
 			cdxIconEdit,
 			onClickLink,
-			titleRef,
-			contentsButton,
 			// eslint-disable-next-line vue/no-unused-properties
 			focusOnContentsButton // The parent (StickyHeaderApp) calls this function
 		};
@@ -131,7 +96,6 @@ module.exports = exports = defineComponent( {
 
 :root {
 	// Calculate sticky header's width considering the parent container's margin
-	--height-header: 57px;
 	--width-header: calc( 100% - 32px );
 
 	@media ( min-width: @min-width-breakpoint-tablet ) {
@@ -156,7 +120,6 @@ module.exports = exports = defineComponent( {
 	transition: opacity 0.3s;
 
 	&__content {
-		height: var( --height-header );
 		// Align with Minerva
 		width: var( --width-header );
 		margin: 0 auto;
@@ -165,7 +128,9 @@ module.exports = exports = defineComponent( {
 		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		grid-template-columns: auto auto 1fr;
 		gap: @spacing-35;
-		align-items: center;
+		padding-top: @spacing-75;
+		padding-bottom: @spacing-65;
+		align-items: baseline;
 
 		@media ( min-width: 993.3px ) {
 			// Align with Minerva
@@ -193,41 +158,13 @@ module.exports = exports = defineComponent( {
 		h2 {
 			font-family: @font-family-serif;
 			font-size: @font-size-xx-large;
+			line-height: @line-height-large;
 			display: -webkit-box;
 			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 2; // Truncate after 2 lines
 			overflow: hidden;
 			word-break: break-word;
 			white-space: normal;
-			max-height: var( --height-header );
-
-			&[data-size="xx-large"] {
-				// single-line only; 2+ lines immediately overflow
-				font-size: @font-size-xx-large;
-				line-height: @line-height-xx-large;
-			}
-
-			&[data-size="x-large"] {
-				// single-line only; 2+ lines immediately overflow
-				font-size: @font-size-x-large;
-				line-height: @line-height-x-large;
-			}
-
-			&[data-size="large"] {
-				font-size: @font-size-large;
-				// The smaller line height will not have an effect on single-line headers,
-				// but will ensure that those that do wrap to multiple lines can fit within the
-				// header's height constraint
-				line-height: @line-height-x-small;
-			}
-
-			&[data-size="medium"] {
-				font-size: @font-size-medium;
-				// The smaller line height will not have an effect on single-line headers,
-				// but will ensure that those that do wrap to multiple lines can fit within the
-				// header's height constraint
-				line-height: @line-height-x-small;
-			}
 		}
 	}
 
@@ -239,8 +176,8 @@ module.exports = exports = defineComponent( {
 
 	&:not( &__active ):not( :focus-within ) {
 		// Ensure the sticky, insofar there is one, is not visible without
-		// setting it to display: none so that we can still get the dimensions
-		// it is/will be rendered at
+		// setting it to `display: none` so that it still provides keyboard
+		// tab access to the TOC button
 		opacity: 0;
 		z-index: -1;
 	}

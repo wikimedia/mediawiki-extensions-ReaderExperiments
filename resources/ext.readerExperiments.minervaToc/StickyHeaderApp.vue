@@ -27,7 +27,7 @@
 </template>
 
 <script>
-const { computed, defineComponent, inject, ref, useTemplateRef, nextTick, watch } = require( 'vue' );
+const { computed, defineComponent, inject, ref, useTemplateRef, watch } = require( 'vue' );
 const StickyHeader = require( './components/StickyHeader.vue' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useActiveHeading = require( './composables/useActiveHeading.js' );
@@ -62,19 +62,14 @@ module.exports = exports = defineComponent( {
 		};
 
 		const activeHeading = ref( null );
-		// Do not launch until heading is rendered and its height is known
-		nextTick( () => {
-			if ( !stickyHeadingRef.value ) {
-				return;
-			}
-
-			const stickyHeadingRect = stickyHeadingRef.value.$el.getBoundingClientRect();
-			watch(
-				// Consider heading active once it passes half the sticky
-				useActiveHeading( stickyHeadingRect.height / 2 ),
-				( heading ) => ( activeHeading.value = heading )
-			);
-		} );
+		watch(
+			// Consider heading active once it passes about half the sticky,
+			// which is usually going to be between ~57px (single line heading)
+			// to ~91px (multi-line heading) in height, assuming users did not
+			// further alter font sizes
+			useActiveHeading( 30 ),
+			( heading ) => ( activeHeading.value = heading )
+		);
 
 		const activeHeadingHx = computed( () => activeHeading.value && activeHeading.value.querySelector( 'h1, h2, h3, h4, h5, h6' ) || null );
 		const activeHeadingId = computed( () => activeHeadingHx.value && activeHeadingHx.value.attributes.id && activeHeadingHx.value.attributes.id.value || null );
