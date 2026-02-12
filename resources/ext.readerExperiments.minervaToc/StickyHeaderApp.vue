@@ -8,7 +8,6 @@
 			:is-open="isOpen"
 			:is-active="activeHeadingId !== null"
 			:heading-html="headingHtml"
-			:subheading-text="subheadingText"
 			:link-url="linkUrl"
 			@toggle="onToggle"
 		></sticky-header>
@@ -62,8 +61,6 @@ module.exports = exports = defineComponent( {
 			}
 		};
 
-		const shortDescription = document.querySelector( '.shortdescription' );
-
 		const activeHeading = ref( null );
 		// Do not launch until heading is rendered and its height is known
 		nextTick( () => {
@@ -95,7 +92,6 @@ module.exports = exports = defineComponent( {
 		const contextHeading = computed( () => activeHeading.value || document.querySelector( '.page-heading' ) );
 		const contextHeadingHx = computed( () => contextHeading.value && contextHeading.value.querySelector( 'h1, h2, h3, h4, h5, h6' ) || null );
 		const headingHtml = computed( () => contextHeadingHx.value ? contextHeadingHx.value.innerText : '' );
-		const subheadingText = computed( () => contextHeadingHx.value && contextHeadingHx.value.tagName === 'H1' && shortDescription ? shortDescription.textContent : '' );
 		const linkUrl = computed( () => {
 			const link = contextHeading.value && contextHeading.value.querySelector( '.mw-editsection a' );
 			return link ? link.href : '';
@@ -110,7 +106,6 @@ module.exports = exports = defineComponent( {
 			onTocClose,
 			activeHeadingId,
 			headingHtml,
-			subheadingText,
 			linkUrl
 		};
 	}

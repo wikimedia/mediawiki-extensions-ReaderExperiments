@@ -20,7 +20,6 @@
 					ref="titleRef"
 					v-html="headingHtml"
 				></h2>
-				<span v-if="subheadingText">{{ subheadingText }}</span>
 			</div>
 			<cdx-button
 				v-if="linkUrl"
@@ -60,10 +59,6 @@ module.exports = exports = defineComponent( {
 		headingHtml: {
 			type: String,
 			required: true
-		},
-		subheadingText: {
-			type: String,
-			default: ''
 		},
 		linkUrl: {
 			type: String,
