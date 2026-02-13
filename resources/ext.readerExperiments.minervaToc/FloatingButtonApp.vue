@@ -16,7 +16,14 @@
 			v-if="isOpen"
 			:to="teleportTarget"
 		>
-			<div class="ext-readerExperiments-minerva-toc__button__toc">
+			<div
+				ref="tocWrapperRef"
+				class="ext-readerExperiments-minerva-toc__button__toc"
+				:class="{
+					'ext-readerExperiments-minerva-toc__button__toc--can-scroll-up': canScrollUp,
+					'ext-readerExperiments-minerva-toc__button__toc--can-scroll-down': canScrollDown
+				}"
+			>
 				<table-of-contents
 					:active-heading-id="activeHeadingId"
 					@close="onTocClose">
@@ -34,6 +41,7 @@ const { cdxIconListBullet } = require( './icons.json' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useActiveHeading = require( './composables/useActiveHeading.js' );
 const useTableOfContentsCoordinator = require( './composables/useTableOfContentsCoordinator.js' );
+const useTocScrollIndicators = require( './composables/useTocScrollIndicators.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -46,8 +54,9 @@ module.exports = exports = defineComponent( {
 	setup() {
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 		const toggleButtonRef = useTemplateRef( 'toggleButtonRef' );
-
+		const tocWrapperRef = useTemplateRef( 'tocWrapperRef' );
 		let isOpen, hasToc;
+
 		try {
 			isOpen = useTableOfContentsCoordinator( 'floating-button' );
 			hasToc = true;
@@ -55,6 +64,8 @@ module.exports = exports = defineComponent( {
 			isOpen = ref( false );
 			hasToc = false;
 		}
+
+		const { canScrollUp, canScrollDown } = useTocScrollIndicators( tocWrapperRef, isOpen );
 
 		const activeHeading = useActiveHeading( 0 );
 		const activeHeadingHx = computed( () => activeHeading.value && activeHeading.value.querySelector( 'h1, h2, h3, h4, h5, h6' ) || null );
@@ -74,7 +85,10 @@ module.exports = exports = defineComponent( {
 			hasToc,
 			isOpen,
 			activeHeadingId,
-			onTocClose
+			onTocClose,
+			tocWrapperRef,
+			canScrollUp,
+			canScrollDown
 		};
 	}
 } );
@@ -119,14 +133,14 @@ module.exports = exports = defineComponent( {
 	&__toc {
 		.minerva-toc__toc();
 		.minerva-toc__fade-in();
+		.minerva-toc__scroll-indicators();
 		top: 25%;
 		// Calculate the space from the viewport bottom and
 		// create a 24px gap between the button and TOC
 		bottom: calc( @position-bottom-button + @spacing-150 + var( --min-height-button ) );
 
-		@media ( min-width: 740px ) {
-			display: flex;
-			justify-self: center;
+		@media ( min-width: @min-width-breakpoint-tablet ) {
+			margin: auto;
 		}
 	}
 }

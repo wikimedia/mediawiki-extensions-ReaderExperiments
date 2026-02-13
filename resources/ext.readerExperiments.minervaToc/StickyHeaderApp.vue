@@ -16,7 +16,14 @@
 			v-if="isOpen"
 			:to="teleportTarget"
 		>
-			<div class="ext-readerExperiments-minerva-toc__sticky__toc">
+			<div
+				ref="tocWrapperRef"
+				class="ext-readerExperiments-minerva-toc__sticky__toc"
+				:class="{
+					'ext-readerExperiments-minerva-toc__sticky__toc--can-scroll-up': canScrollUp,
+					'ext-readerExperiments-minerva-toc__sticky__toc--can-scroll-down': canScrollDown
+				}"
+			>
 				<table-of-contents
 					:active-heading-id="activeHeadingId"
 					@close="onTocClose">
@@ -32,6 +39,7 @@ const StickyHeader = require( './components/StickyHeader.vue' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useActiveHeading = require( './composables/useActiveHeading.js' );
 const useTableOfContentsCoordinator = require( './composables/useTableOfContentsCoordinator.js' );
+const useTocScrollIndicators = require( './composables/useTocScrollIndicators.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -43,6 +51,7 @@ module.exports = exports = defineComponent( {
 	setup() {
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 		const stickyHeadingRef = useTemplateRef( 'stickyHeadingRef' );
+		const tocWrapperRef = useTemplateRef( 'tocWrapperRef' );
 
 		let isOpen, hasToc;
 		try {
@@ -52,6 +61,8 @@ module.exports = exports = defineComponent( {
 			isOpen = ref( false );
 			hasToc = false;
 		}
+
+		const { canScrollUp, canScrollDown } = useTocScrollIndicators( tocWrapperRef, isOpen );
 
 		const onToggle = () => ( isOpen.value = !isOpen.value );
 
@@ -95,13 +106,16 @@ module.exports = exports = defineComponent( {
 		return {
 			teleportTarget,
 			stickyHeadingRef,
+			tocWrapperRef,
 			hasToc,
 			isOpen,
 			onToggle,
 			onTocClose,
 			activeHeadingId,
 			headingHtml,
-			linkUrl
+			linkUrl,
+			canScrollUp,
+			canScrollDown
 		};
 	}
 } );
@@ -131,15 +145,17 @@ module.exports = exports = defineComponent( {
 	&__toc {
 		.minerva-toc__toc();
 		.minerva-toc__fade-in();
+		.minerva-toc__scroll-indicators();
 		top: 58px;
 		bottom: 25%;
 
-		@media ( min-width: 740px ) {
+		@media ( min-width: @min-width-breakpoint-tablet ) {
 			// Align TOC with the start of the sticky header toggle button
 			left: 3.35em;
 			right: auto;
 		}
 
+		// 993.3px breakpoint from Minerva (`.minerva-header`)
 		@media ( min-width: 993.3px ) {
 			// Calculate a dynamic left offset
 			// Header uses widths: 90% and 993.3px
