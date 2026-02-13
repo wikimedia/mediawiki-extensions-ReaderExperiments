@@ -16,7 +16,7 @@
 			v-if="isOpen"
 			:to="teleportTarget"
 		>
-			<div class="ext-readerExperiments-minerva-toc__sticky__toc">
+			<div ref="tocWrapperRef" class="ext-readerExperiments-minerva-toc__sticky__toc">
 				<table-of-contents
 					:active-heading-id="activeHeadingId"
 					@close="onTocClose">
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-const { computed, defineComponent, inject, ref, useTemplateRef, watch } = require( 'vue' );
+const { computed, defineComponent, inject, nextTick, onMounted, ref, useTemplateRef, watch } = require( 'vue' );
 const StickyHeader = require( './components/StickyHeader.vue' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useActiveHeading = require( './composables/useActiveHeading.js' );
@@ -43,6 +43,7 @@ module.exports = exports = defineComponent( {
 	setup() {
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 		const stickyHeadingRef = useTemplateRef( 'stickyHeadingRef' );
+		const tocWrapperRef = useTemplateRef( 'tocWrapperRef' );
 
 		let isOpen, hasToc;
 		try {
@@ -63,6 +64,18 @@ module.exports = exports = defineComponent( {
 				stickyHeadingRef.value.focusOnContentsButton();
 			}
 		};
+
+		// Since the stiky header is variable in height, we'll need to make sure the
+		// TOC is correctly positioned right below it if it changes
+		const updateTocPosition = () => {
+			if ( isOpen.value && tocWrapperRef.value && stickyHeadingRef.value && stickyHeadingRef.value.$el ) {
+				// Subtract 1px to overlap borders for a flush appearance
+				const bottom = stickyHeadingRef.value.$el.getBoundingClientRect().bottom;
+				tocWrapperRef.value.style.top = ( bottom - 1 ) + 'px';
+			}
+		};
+		onMounted( updateTocPosition );
+		watch( isOpen, () => nextTick( updateTocPosition ) );
 
 		const activeHeading = ref( null );
 		watch(
@@ -134,7 +147,9 @@ module.exports = exports = defineComponent( {
 	&__toc {
 		.minerva-toc__toc();
 		.minerva-toc__fade-in();
-		top: 58px;
+		// Single-line header height is 54px, minus 1px to overlap borders
+		// (Note that JS will end up overriding the top value to match the actual header height anyway)
+		top: 53px;
 		bottom: 25%;
 
 		@media ( min-width: @min-width-breakpoint-tablet ) {
