@@ -117,7 +117,7 @@ module.exports = exports = defineComponent( {
 	top: 0;
 	left: 0;
 	right: 0;
-	transition: opacity 0.3s;
+	transition: margin-top 0.3s;
 
 	&__content {
 		// Align with Minerva
@@ -177,7 +177,7 @@ module.exports = exports = defineComponent( {
 		// Ensure the sticky, insofar there is one, is not visible without
 		// setting it to `display: none` so that it still provides keyboard
 		// tab access to the TOC button
-		opacity: 0;
+		margin-top: -100%;
 		z-index: -1;
 	}
 }
