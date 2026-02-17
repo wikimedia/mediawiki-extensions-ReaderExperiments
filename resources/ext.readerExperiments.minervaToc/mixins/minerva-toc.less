@@ -16,7 +16,6 @@ and sticky headers.
 	max-width: 640px;
 	min-height: 250px;
 	overflow: auto;
-	padding: @spacing-65;
 }
 
 // Button that toggles the TOC
@@ -45,54 +44,6 @@ and sticky headers.
 	}
 
 	to {
-		opacity: 1;
-	}
-}
-
-// Scroll indicator gradients for TOC
-// Show a 56px gradient when there's content above/below to scroll to
-// Uses position: sticky so gradients stay at edges of scroll viewport
-.minerva-toc__scroll-indicators() {
-	@gradient-height: 56px;
-	// Use negative margin to extend into padding area
-	@gradient-offset: -@spacing-65;
-
-	&::before,
-	&::after {
-		content: '';
-		display: block;
-		position: sticky;
-		height: @gradient-height;
-		// Extend horizontally into padding
-		margin-left: @gradient-offset;
-		margin-right: @gradient-offset;
-		pointer-events: none;
-		z-index: 1;
-		opacity: 0;
-		transition: opacity @transition-duration-medium;
-	}
-
-	&::before {
-		// Position at top edge of scroll viewport, accounting for padding
-		top: @gradient-offset;
-		// Negative margin to pull content up behind the gradient
-		margin-bottom: calc( -@gradient-height - @gradient-offset );
-		background: linear-gradient( to bottom, @background-color-base, transparent );
-	}
-
-	&::after {
-		// Position at bottom edge of scroll viewport, accounting for padding
-		bottom: @gradient-offset;
-		// Negative margin to pull content up behind the gradient
-		margin-top: calc( -@gradient-height - @gradient-offset );
-		background: linear-gradient( to top, @background-color-base, transparent );
-	}
-
-	&--can-scroll-up::before {
-		opacity: 1;
-	}
-
-	&--can-scroll-down::after {
 		opacity: 1;
 	}
 }

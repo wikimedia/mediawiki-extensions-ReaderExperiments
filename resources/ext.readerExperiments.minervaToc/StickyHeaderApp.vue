@@ -16,14 +16,7 @@
 			v-if="isOpen"
 			:to="teleportTarget"
 		>
-			<div
-				ref="tocWrapperRef"
-				class="ext-readerExperiments-minerva-toc__sticky__toc"
-				:class="{
-					'ext-readerExperiments-minerva-toc__sticky__toc--can-scroll-up': canScrollUp,
-					'ext-readerExperiments-minerva-toc__sticky__toc--can-scroll-down': canScrollDown
-				}"
-			>
+			<div class="ext-readerExperiments-minerva-toc__sticky__toc">
 				<table-of-contents
 					:active-heading-id="activeHeadingId"
 					@close="onTocClose">
@@ -39,7 +32,6 @@ const StickyHeader = require( './components/StickyHeader.vue' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useActiveHeading = require( './composables/useActiveHeading.js' );
 const useTableOfContentsCoordinator = require( './composables/useTableOfContentsCoordinator.js' );
-const useTocScrollIndicators = require( './composables/useTocScrollIndicators.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -51,7 +43,6 @@ module.exports = exports = defineComponent( {
 	setup() {
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 		const stickyHeadingRef = useTemplateRef( 'stickyHeadingRef' );
-		const tocWrapperRef = useTemplateRef( 'tocWrapperRef' );
 
 		let isOpen, hasToc;
 		try {
@@ -61,8 +52,6 @@ module.exports = exports = defineComponent( {
 			isOpen = ref( false );
 			hasToc = false;
 		}
-
-		const { canScrollUp, canScrollDown } = useTocScrollIndicators( tocWrapperRef, isOpen );
 
 		const onToggle = () => {
 			mw.hook( 'readerExperiments.toc.iconClick' ).fire( 'sticky-header' );
@@ -109,16 +98,13 @@ module.exports = exports = defineComponent( {
 		return {
 			teleportTarget,
 			stickyHeadingRef,
-			tocWrapperRef,
 			hasToc,
 			isOpen,
 			onToggle,
 			onTocClose,
 			activeHeadingId,
 			headingHtml,
-			linkUrl,
-			canScrollUp,
-			canScrollDown
+			linkUrl
 		};
 	}
 } );
@@ -148,7 +134,6 @@ module.exports = exports = defineComponent( {
 	&__toc {
 		.minerva-toc__toc();
 		.minerva-toc__fade-in();
-		.minerva-toc__scroll-indicators();
 		top: 58px;
 		bottom: 25%;
 

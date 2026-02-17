@@ -232,11 +232,11 @@
 				},
 				"FloatingButtonApp.vue",
 				"StickyHeaderApp.vue",
+				"components/Scrollable.vue",
 				"components/StickyHeader.vue",
 				"components/TableOfContents.vue",
 				"composables/useActiveHeading.js",
-				"composables/useTableOfContentsCoordinator.js",
-				"composables/useTocScrollIndicators.js"
+				"composables/useTableOfContentsCoordinator.js"
 			],
 			"messages": [
 				"edit",

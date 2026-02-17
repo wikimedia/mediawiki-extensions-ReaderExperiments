@@ -3,24 +3,26 @@
 		tabindex="0"
 		@focus="onFocusTrapStart"
 	></div>
-	<div
-		ref="tocRef"
-		role="region"
-		:aria-label="$i18n( 'readerexperiments-minerva-toc-region-label' ).text()"
-		class="readerExperiments-minerva-toc__toc"
-		@keydown.esc="onClose"
-	>
-		<a
-			class="readerExperiments-minerva-toc__toc__top-link"
-			:class="{ 'readerExperiments-minerva-toc__toc__active': [ null, 'firstHeading' ].includes( activeHeadingId ) }"
-			href="#"
-			@click="onTopLinkClick"
+	<scrollable>
+		<div
+			ref="tocRef"
+			role="region"
+			:aria-label="$i18n( 'readerexperiments-minerva-toc-region-label' ).text()"
+			class="ext-readerExperiments-minerva-toc__toc"
+			@keydown.esc="onClose"
 		>
-			{{ $i18n( 'readerexperiments-minerva-toc-top-link' ).text() }}
-		</a>
-		<!-- eslint-disable-next-line vue/no-v-html -->
-		<div class="readerExperiments-minerva-toc__toc__contents" v-html="toc"></div>
-	</div>
+			<a
+				class="ext-readerExperiments-minerva-toc__toc__top-link"
+				:class="{ 'ext-readerExperiments-minerva-toc__toc__active': [ null, 'firstHeading' ].includes( activeHeadingId ) }"
+				href="#"
+				@click="onTopLinkClick"
+			>
+				{{ $i18n( 'readerexperiments-minerva-toc-top-link' ).text() }}
+			</a>
+			<!-- eslint-disable-next-line vue/no-v-html -->
+			<div class="ext-readerExperiments-minerva-toc__toc__contents" v-html="toc"></div>
+		</div>
+	</scrollable>
 
 	<div
 		tabindex="0"
@@ -30,6 +32,7 @@
 
 <script>
 const { defineComponent, useTemplateRef, onMounted } = require( 'vue' );
+const Scrollable = require( './Scrollable.vue' );
 
 /**
  * Focus the first or last focusable element in a container.
@@ -60,6 +63,9 @@ function focusFirstFocusableElement( container, backwards = false ) {
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'TableOfContents',
+	components: {
+		Scrollable
+	},
 	props: {
 		activeHeadingId: {
 			type: String,
@@ -82,7 +88,7 @@ module.exports = exports = defineComponent( {
 		// when ids start with numbers
 		const activeHeading = clone.querySelector( `a[href="#${ CSS.escape( props.activeHeadingId ) }"]` );
 		if ( activeHeading ) {
-			activeHeading.classList.add( 'readerExperiments-minerva-toc__toc__active' );
+			activeHeading.classList.add( 'ext-readerExperiments-minerva-toc__toc__active' );
 		}
 		const toc = clone.innerHTML;
 
@@ -158,6 +164,7 @@ module.exports = exports = defineComponent( {
 
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
+@import '../mixins/minerva-toc.less';
 
 // rather than overflowing up to the root element (which messes
 // up sticky/fixed positioned elements elsewhere in the DOM),
@@ -170,11 +177,11 @@ body:has( #ext-readerExperiments-minerva-toc ) {
 
 /* stylelint-disable selector-class-pattern */
 // Prevent body scroll when TOC is open
-body:has( .readerExperiments-minerva-toc__toc ) {
+body:has( .ext-readerExperiments-minerva-toc__toc ) {
 	overflow: hidden;
 }
 
-.readerExperiments-minerva-toc__toc {
+.ext-readerExperiments-minerva-toc__toc {
 	&__contents ul,
 	&__contents ul > li > ul,
 	&__contents ul > li > ul > li > ul,
