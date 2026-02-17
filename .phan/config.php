@@ -2,12 +2,28 @@
 
 $cfg = require __DIR__ . '/../vendor/mediawiki/mediawiki-phan-config/src/config.php';
 
-$cfg['stub_files'] = array_values( array_unique( array_merge(
-	$cfg['stub_files'] ?? [],
+$cfg['directory_list'] = array_merge(
+	$cfg['directory_list'],
 	[
-		__DIR__ . '/stubs/Experiment.php',
-		__DIR__ . '/stubs/ExperimentManager.php',
+		'../../extensions/EventBus',
+		'../../extensions/EventLogging',
+		'../../extensions/EventStreamConfig',
+		'../../extensions/MobileFrontend',
+		'../../extensions/ParserMigration',
+		'../../extensions/TestKitchen',
 	]
-) ) );
+);
+
+$cfg['exclude_analysis_directory_list'] = array_merge(
+	$cfg['exclude_analysis_directory_list'],
+	[
+		'../../extensions/EventBus',
+		'../../extensions/EventLogging',
+		'../../extensions/EventStreamConfig',
+		'../../extensions/MobileFrontend',
+		'../../extensions/ParserMigration',
+		'../../extensions/TestKitchen',
+	]
+);
 
 return $cfg;

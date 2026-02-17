@@ -47,7 +47,8 @@
 	},
 	"Hooks": {
 		"BeforePageDisplay": "ReaderExperimentsHooks",
-		"BeforeInitialize": "ReaderExperimentsHooks"
+		"BeforeInitialize": "ReaderExperimentsHooks",
+		"ShouldUseParsoid": "ReaderExperimentsHooks"
 	},
 	"MessagesDirs": {
 		"ReaderExperiments": [

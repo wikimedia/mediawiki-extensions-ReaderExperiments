@@ -20,6 +20,8 @@
 namespace MediaWiki\Extension\ReaderExperiments;
 
 use MediaWiki\Config\Config;
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\ParserMigration\Hook\ShouldUseParsoidHook;
 use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Hook\BeforeInitializeHook;
 use MediaWiki\MediaWikiServices;
@@ -28,8 +30,10 @@ use MediaWiki\Output\OutputPage;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader\Context;
+use MediaWiki\Title\Title;
+use MediaWiki\User\User;
 
-class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
+class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUseParsoidHook {
 
 	// Keys are experiment machine-readable names and
 	// values are treatment group names,
@@ -57,6 +61,18 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
 	private const MINERVA_TOC_BUTTON_EXPERIMENTS = [
 		// @todo below is just a placeholder name; experiment hasn't actually been created yet
 		'minerva-toc-button' => 'treatment',
+	];
+
+	private const MINERVA_FORCE_PARSOID_TREATMENT = [
+		// @todo below is just a placeholder name; experiment hasn't actually been created yet
+		'minerva-toc-sticky' => 'treatment',
+		'minerva-toc-button' => 'treatment',
+	];
+
+	private const MINERVA_FORCE_PARSOID_CONTROL = [
+		// @todo below is just a placeholder name; experiment hasn't actually been created yet
+		'minerva-toc-sticky' => 'control',
+		'minerva-toc-button' => 'control',
 	];
 
 	private const SHARE_HIGHLIGHT_EXPERIMENTS = [
@@ -289,6 +305,28 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook {
 
 			$out->addModuleStyles( 'ext.readerExperiments.shareHighlight.styles' );
 			$out->addModules( 'ext.readerExperiments.shareHighlight' );
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onShouldUseParsoid( User $user, WebRequest $request, Title $title, bool &$enable ): void {
+		if (
+			$title->getNamespace() === NS_MAIN &&
+			RequestContext::getMain()->getSkin()->getSkinName() === 'minerva'
+		) {
+			if (
+				$this->isInAnyTreatmentGroup( $request, self::MINERVA_FORCE_PARSOID_TREATMENT ) ||
+				$this->isInAnyTreatmentGroup( $request, self::MINERVA_FORCE_PARSOID_CONTROL )
+			) {
+				// Force both control and treatment groups to use parsoid if they
+				// haven't set a preference or query string, as the legacy browser has
+				// big differences in lead section transform behavior and it doesn't
+				// look worth fixing the legacy browser when we're about to sunset it
+				// for primary page views.
+				$enable = true;
+			}
 		}
 	}
 }
