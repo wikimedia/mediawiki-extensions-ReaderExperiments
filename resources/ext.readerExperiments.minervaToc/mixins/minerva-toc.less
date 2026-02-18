@@ -31,19 +31,13 @@ and sticky headers.
 	}
 }
 
-// Fade animation for TOC (300ms)
-// @keyframes for v-if enter animation
-// TODO: Use Vue <Transition> for fade in/out
-.minerva-toc__fade-in() {
-	animation: minerva-toc-fade-in 300ms;
+// Vue Transition classes for TOC fade in/out (300ms)
+.ext-readerExperiments-minerva-toc-fade-enter-active,
+.ext-readerExperiments-minerva-toc-fade-leave-active {
+	transition: opacity 300ms;
 }
 
-@keyframes minerva-toc-fade-in {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
-	}
+.ext-readerExperiments-minerva-toc-fade-enter-from,
+.ext-readerExperiments-minerva-toc-fade-leave-to {
+	opacity: 0;
 }

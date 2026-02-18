@@ -12,16 +12,19 @@
 			@toggle="onToggle"
 		></sticky-header>
 
-		<teleport
-			v-if="isOpen"
-			:to="teleportTarget"
-		>
-			<div ref="tocWrapperRef" class="ext-readerExperiments-minerva-toc__sticky__toc">
-				<table-of-contents
-					:active-heading-id="activeHeadingId"
-					@close="onTocClose">
-				</table-of-contents>
-			</div>
+		<teleport :to="teleportTarget">
+			<Transition name="ext-readerExperiments-minerva-toc-fade">
+				<div
+					v-if="isOpen"
+					ref="tocWrapperRef"
+					class="ext-readerExperiments-minerva-toc__sticky__toc"
+				>
+					<table-of-contents
+						:active-heading-id="activeHeadingId"
+						@close="onTocClose">
+					</table-of-contents>
+				</div>
+			</Transition>
 		</teleport>
 	</div>
 </template>
@@ -146,7 +149,6 @@ module.exports = exports = defineComponent( {
 
 	&__toc {
 		.minerva-toc__toc();
-		.minerva-toc__fade-in();
 		// Single-line header height is 54px, minus 1px to overlap borders
 		// (Note that JS will end up overriding the top value to match the actual header height anyway)
 		top: 53px;

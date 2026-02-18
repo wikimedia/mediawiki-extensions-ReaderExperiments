@@ -13,16 +13,18 @@
 			{{ $i18n( 'readerexperiments-minerva-toc-contents-button-label' ).text() }}
 		</cdx-toggle-button>
 
-		<teleport
-			v-if="isOpen"
-			:to="teleportTarget"
-		>
-			<div class="ext-readerExperiments-minerva-toc__button__toc">
-				<table-of-contents
-					:active-heading-id="activeHeadingId"
-					@close="onTocClose">
-				</table-of-contents>
-			</div>
+		<teleport :to="teleportTarget">
+			<Transition name="ext-readerExperiments-minerva-toc-fade">
+				<div
+					v-if="isOpen"
+					class="ext-readerExperiments-minerva-toc__button__toc"
+				>
+					<table-of-contents
+						:active-heading-id="activeHeadingId"
+						@close="onTocClose">
+					</table-of-contents>
+				</div>
+			</Transition>
 		</teleport>
 	</div>
 </template>
@@ -124,7 +126,6 @@ module.exports = exports = defineComponent( {
 
 	&__toc {
 		.minerva-toc__toc();
-		.minerva-toc__fade-in();
 		top: 25%;
 		// Calculate the space from the viewport bottom and
 		// create a 24px gap between the button and TOC
