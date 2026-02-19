@@ -9,8 +9,8 @@ function init() {
 
 	const TOC_OPEN_HOOK = 'readerExperiments.toc.open';
 	const TOC_ICON_CLICK_HOOK = 'readerExperiments.toc.iconClick';
-	const TOC_CONTENTS_SELECTOR = '.readerExperiments-minerva-toc__toc__contents';
-	const TOC_CONTAINER_SELECTOR = '.readerExperiments-minerva-toc__toc';
+	const TOC_CONTENTS_SELECTOR = '.ext-readerExperiments-minerva-toc__toc__contents';
+	const TOC_CONTAINER_SELECTOR = '.ext-readerExperiments-minerva-toc__toc';
 	const DEBUG_PARAM = 'tocInstrumentationDebug';
 
 	let experiment = null;
