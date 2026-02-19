@@ -34,28 +34,23 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
 class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUseParsoidHook {
+	// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
+	// https://test-kitchen.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
+	private const IMAGE_BROWSING_EXPERIMENT_1_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
+	private const IMAGE_BROWSING_GROUP_1_NAME = 'image-browsing-test';
+	// Tier 2: 0.1% English Wikipedia.
+	// https://test-kitchen.wikimedia.org/experiment/image-browsing-enwiki
+	private const IMAGE_BROWSING_EXPERIMENT_2_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
+	private const IMAGE_BROWSING_GROUP_2_NAME = 'treatment';
 
-	// Keys are experiment machine-readable names and
-	// values are treatment group names,
-	// as configured in https://test-kitchen.wikimedia.org/
-	private const IMAGE_BROWSING_EXPERIMENTS = [
-		// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
-		// https://test-kitchen.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
-		'fy2025-26-we3.1-image-browsing-ab-test' => 'image-browsing-test',
-		// Tier 2: 0.1% English Wikipedia.
-		// https://test-kitchen.wikimedia.org/experiment/image-browsing-enwiki
-		'image-browsing-enwiki' => 'treatment',
-	];
+	// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
+	// https://test-kitchen.wikimedia.org/experiment/sticky-headers
+	private const STICKY_HEADERS_EXPERIMENT_NAME = 'sticky-headers';
+	private const STICKY_HEADERS_GROUP_NAME = 'treatment';
 
-	private const STICKY_HEADERS_EXPERIMENTS = [
-		// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
-		// https://test-kitchen.wikimedia.org/experiment/sticky-headers
-		'sticky-headers' => 'treatment',
-	];
-
-	private const SHARE_HIGHLIGHT_EXPERIMENTS = [
-		// TODO: Populate with TestKitchen experiment name => treatment group once defined.
-	];
+	// TODO: Replace with actual TestKitchen experiment name & treatment group once defined
+	private const SHARE_HIGHLIGHT_EXPERIMENT_NAME = 'share-highlight';
+	private const SHARE_HIGHLIGHT_GROUP_NAME = 'treatment';
 
 	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
 	// https://test-kitchen.wikimedia.org/experiment/mobile-toc-abc
@@ -65,45 +60,6 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	// END MINERVA_TOC_EXPERIMENTS (T415611)
 
 	private ?ExperimentManager $experimentManager;
-
-	private function isInAnyTreatmentGroup( WebRequest $request, array $experiments ): bool {
-		$assignedGroups = [];
-		if ( $this->experimentManager ) {
-			foreach ( $experiments as $experimentName => $treatmentGroup ) {
-				$experiment = $this->experimentManager->getExperiment( $experimentName );
-				$assignedGroup = $experiment->getAssignedGroup();
-				if ( $assignedGroup !== null ) {
-					$assignedGroups[ $experimentName ] = $assignedGroup;
-				}
-			}
-		}
-
-		if ( $assignedGroups ) {
-			// If any of the experiments exist and is assigned, we will only ever
-			// use actual experiment enrollment status
-			foreach ( $assignedGroups as $experimentName => $group ) {
-				if ( $group === $experiments[ $experimentName ] ) {
-					return true;
-				}
-			}
-		} else {
-			// For dev convenience, when no experiments are active, we'll mimic
-			// test kitchen's enrollment override URL param so that we can start
-			// development before having set up experiments (or test in
-			// environments where setting it up is inconvenient)
-			// This looks something like: ?mpo=minerva-toc-sticky:treatment
-			$mpo = $request->getRawVal( 'mpo' );
-			if ( $mpo !== null ) {
-				foreach ( $experiments as $experimentName => $treatmentGroup ) {
-					if ( $mpo === $experimentName . ':' . $treatmentGroup ) {
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
-	}
 
 	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
 	private function getAssignedGroup( WebRequest $request, string $experimentName ): ?string {
@@ -266,7 +222,10 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			$title && $title->getNamespace() === NS_MAIN &&
 			$out->getSkin()->getSkinName() === 'minerva' &&
 			(
-				$this->isInAnyTreatmentGroup( $request, self::IMAGE_BROWSING_EXPERIMENTS ) ||
+				// phpcs:disable Generic.Files.LineLength.TooLong
+				$this->getAssignedGroup( $request, self::IMAGE_BROWSING_EXPERIMENT_1_NAME ) === self::IMAGE_BROWSING_GROUP_1_NAME ||
+				$this->getAssignedGroup( $request, self::IMAGE_BROWSING_EXPERIMENT_2_NAME ) === self::IMAGE_BROWSING_GROUP_2_NAME ||
+				// phpcs:enable Generic.Files.LineLength.TooLong
 				$request->getFuzzyBool( 'imageBrowsing' )
 			)
 		) {
@@ -291,7 +250,8 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			$title && $title->getNamespace() === NS_MAIN &&
 			$out->getSkin()->getSkinName() === 'minerva' &&
 			(
-				$this->isInAnyTreatmentGroup( $request, self::STICKY_HEADERS_EXPERIMENTS ) ||
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				$this->getAssignedGroup( $request, self::STICKY_HEADERS_EXPERIMENT_NAME ) === self::STICKY_HEADERS_GROUP_NAME ||
 				$request->getFuzzyBool( 'stickyHeaders' )
 			)
 		) {
@@ -329,7 +289,8 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			$title &&
 			$title->getNamespace() === NS_SPECIAL &&
 			$title->getBaseText() === 'MobileOptions' &&
-			$this->isInAnyTreatmentGroup( $request, self::STICKY_HEADERS_EXPERIMENTS )
+			// phpcs:ignore Generic.Files.LineLength.TooLong
+			$this->getAssignedGroup( $request, self::STICKY_HEADERS_EXPERIMENT_NAME ) === self::STICKY_HEADERS_GROUP_NAME
 		) {
 			$out->addJsConfigVars( 'wgReaderExperimentsStickyHeaders', 'enrolled' );
 		}
@@ -373,7 +334,8 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			$title && $title->getNamespace() === NS_MAIN &&
 			$out->getSkin()->getSkinName() === 'minerva' &&
 			(
-				$this->isInAnyTreatmentGroup( $request, self::SHARE_HIGHLIGHT_EXPERIMENTS ) ||
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				$this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_EXPERIMENT_NAME ) === self::SHARE_HIGHLIGHT_GROUP_NAME ||
 				$request->getFuzzyBool( 'shareHighlight' )
 			)
 		) {
