@@ -45,7 +45,7 @@ module.exports = exports = ( topMargin = 0 ) => {
 		);
 
 		// Find the first heading that is below the top of the viewport
-		let firstUpcomingHeadingIndex = headings.length - 1;
+		let firstUpcomingHeadingIndex = headings.length;
 		for ( let i = firstKnownHeadingCloseToViewportIndex; i < headings.length; i++ ) {
 			const headingRect = headings[ i ].getBoundingClientRect();
 			if ( headingRect.top > topMargin ) {

@@ -2,9 +2,10 @@
 and sticky headers.
 */
 
-// Table of contents
+@horizontal-margin: @spacing-100;
+
+// Table of contents (TOC)
 .minerva-toc__toc() {
-	@horizontal-margin: @spacing-100;
 	background: @background-color-base;
 	border: @border-subtle;
 	position: fixed;
@@ -13,16 +14,11 @@ and sticky headers.
 	box-sizing: border-box;
 	width: calc( 100% - 2 * @horizontal-margin );
 	max-width: 640px;
+	min-height: 250px;
 	overflow: auto;
-	padding: @spacing-65;
-
-	@media ( min-width: @min-width-breakpoint-tablet ) {
-		left: 3.35em;
-		right: 3.35em;
-	}
 }
 
-// Button
+// Button that toggles the TOC
 .minerva-toc-button() {
 	background-color: @background-color-interactive-subtle--active;
 	border-color: @border-color-interactive--active;
@@ -33,4 +29,15 @@ and sticky headers.
 		border-color: @border-color-interactive--hover;
 		color: @color-base;
 	}
+}
+
+// Vue Transition classes for TOC fade in/out (300ms)
+.ext-readerExperiments-minerva-toc-fade-enter-active,
+.ext-readerExperiments-minerva-toc-fade-leave-active {
+	transition: opacity 300ms;
+}
+
+.ext-readerExperiments-minerva-toc-fade-enter-from,
+.ext-readerExperiments-minerva-toc-fade-leave-to {
+	opacity: 0;
 }

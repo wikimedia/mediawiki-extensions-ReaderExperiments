@@ -7,21 +7,24 @@
 			ref="toggleButtonRef"
 			v-model="isOpen"
 			class="ext-readerExperiments-minerva-toc__button__action"
+			@click="onIconClick"
 		>
 			<cdx-icon :icon="cdxIconListBullet"></cdx-icon>
 			{{ $i18n( 'readerexperiments-minerva-toc-contents-button-label' ).text() }}
 		</cdx-toggle-button>
 
-		<teleport
-			v-if="isOpen"
-			:to="teleportTarget"
-		>
-			<div class="ext-readerExperiments-minerva-toc__button__toc">
-				<table-of-contents
-					:active-heading-id="activeHeadingId"
-					@close="onTocClose">
-				</table-of-contents>
-			</div>
+		<teleport :to="teleportTarget">
+			<Transition name="ext-readerExperiments-minerva-toc-fade">
+				<div
+					v-if="isOpen"
+					class="ext-readerExperiments-minerva-toc__button__toc"
+				>
+					<table-of-contents
+						:active-heading-id="activeHeadingId"
+						@close="onTocClose">
+					</table-of-contents>
+				</div>
+			</Transition>
 		</teleport>
 	</div>
 </template>
@@ -46,8 +49,8 @@ module.exports = exports = defineComponent( {
 	setup() {
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 		const toggleButtonRef = useTemplateRef( 'toggleButtonRef' );
-
 		let isOpen, hasToc;
+
 		try {
 			isOpen = useTableOfContentsCoordinator( 'floating-button' );
 			hasToc = true;
@@ -67,6 +70,10 @@ module.exports = exports = defineComponent( {
 			}
 		};
 
+		const onIconClick = () => {
+			mw.hook( 'readerExperiments.toc.iconClick' ).fire( 'floating-button' );
+		};
+
 		return {
 			teleportTarget,
 			toggleButtonRef,
@@ -74,7 +81,8 @@ module.exports = exports = defineComponent( {
 			hasToc,
 			isOpen,
 			activeHeadingId,
-			onTocClose
+			onTocClose,
+			onIconClick
 		};
 	}
 } );
@@ -105,6 +113,10 @@ module.exports = exports = defineComponent( {
 		box-shadow: @box-shadow-large;
 		min-height: var( --min-height-button );
 
+		&:focus {
+			outline: 2px solid @outline-color-progressive--focus;
+		}
+
 		// When the TOC is open (toggled-on state)
 		&--toggled-on:enabled {
 			// Override Codex styles
@@ -114,14 +126,13 @@ module.exports = exports = defineComponent( {
 
 	&__toc {
 		.minerva-toc__toc();
-		top: 10px;
+		top: 25%;
 		// Calculate the space from the viewport bottom and
 		// create a 24px gap between the button and TOC
 		bottom: calc( @position-bottom-button + @spacing-150 + var( --min-height-button ) );
 
-		@media ( min-width: 740px ) {
-			display: flex;
-			justify-self: center;
+		@media ( min-width: @min-width-breakpoint-tablet ) {
+			margin: auto;
 		}
 	}
 }
