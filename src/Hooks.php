@@ -63,31 +63,6 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 
 	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
 	private function getAssignedGroup( WebRequest $request, string $experimentName ): ?string {
-		// Prefer explicit overrides, since they must work even if TestKitchen hasn't
-		// run enrollment sampling yet (e.g. hook order on BeforeInitialize).
-		$override = $this->getAssignedGroupFromMpo( $request->getRawVal( 'mpo' ), $experimentName );
-		if ( $override !== null ) {
-			return $override;
-		}
-
-		$override = $this->getAssignedGroupFromMpo(
-			$request->getCookie( 'mpo', null, '' ),
-			$experimentName
-		);
-		if ( $override !== null ) {
-			return $override;
-		}
-
-		// Support everyone-experiment enrollment simulation via request headers (e.g. Inssman).
-		// Format: "experiment-name=group;" (multiple separated by ';').
-		$header = $request->getHeader( 'X-Experiment-Enrollments' );
-		if ( $header ) {
-			$assignedGroup = $this->getAssignedGroupFromEnrollmentHeader( $header, $experimentName );
-			if ( $assignedGroup !== null ) {
-				return $assignedGroup;
-			}
-		}
-
 		if ( $this->experimentManager ) {
 			$experiment = $this->experimentManager->getExperiment( $experimentName );
 			$assignedGroup = $experiment->getAssignedGroup();
@@ -96,42 +71,27 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			}
 		}
 
-		return null;
-	}
+		// For dev convenience, when the experiment is not active, we'll mimic
+		// test kitchen's enrollment override URL param so that we can start
+		// development before having set up experiments (or test in
+		// environments where setting it up is inconvenient)
+		// This looks something like: ?mpo=minerva-toc-abc:treatment1
+		$mpo = $request->getRawVal( 'mpo' );
+		if ( $mpo !== null ) {
+			$overrides = explode( ';', $mpo );
+			// Iterate in reverse to mimic test kitchen's behavior of iterating
+			// entirely, where only the last occurence would remain
+			foreach ( array_reverse( $overrides ) as $override ) {
+				$overrideParts = explode( ':', $override, 2 );
+				if ( count( $overrideParts ) !== 2 ) {
+					// Improperly formatted mpo param, ignore altogether,
+					// like test kitchen does
+					return null;
+				}
 
-	private function getAssignedGroupFromMpo( ?string $rawOverrides, string $experimentName ): ?string {
-		// Format: "experiment-name:group" (multiple separated by ';').
-		if ( $rawOverrides === null || $rawOverrides === '' ) {
-			return null;
-		}
-
-		foreach ( explode( ';', $rawOverrides ) as $override ) {
-			$override = trim( $override );
-			if ( $override === '' ) {
-				continue;
-			}
-
-			$prefix = $experimentName . ':';
-			if ( str_starts_with( $override, $prefix ) ) {
-				return substr( $override, strlen( $prefix ) );
-			}
-		}
-
-		return null;
-	}
-
-	private function getAssignedGroupFromEnrollmentHeader( string $header, string $experimentName ): ?string {
-		// Mirror parsing behavior of TestKitchen's EveryoneExperimentsEnrollmentAuthority.
-		// The header may include a trailing ';' so rtrim it.
-		foreach ( explode( ';', rtrim( $header, ';' ) ) as $rawAssignment ) {
-			$assignment = explode( '=', $rawAssignment, 2 );
-			if ( count( $assignment ) !== 2 ) {
-				continue;
-			}
-
-			if ( trim( $assignment[0] ) === $experimentName ) {
-				$group = trim( $assignment[1] );
-				return $group !== '' ? $group : null;
+				if ( $overrideParts[0] === $experimentName ) {
+					return $overrideParts[1];
+				}
 			}
 		}
 
