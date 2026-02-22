@@ -76,7 +76,23 @@ module.exports = exports = defineComponent( {
 	setup( props, { emit } ) {
 		const tocRef = useTemplateRef( 'tocRef' );
 
-		const original = document.querySelector( '#toc > ul' );
+		const tocRoot = document.querySelector( '#toc' );
+		if ( !tocRoot ) {
+			throw new Error( 'TOC not found' );
+		}
+
+		// Some pages (e.g. list/alpha index TOCs) wrap the <ul> in extra containers
+		// like .hlist, so prefer a direct child <ul> but fall back to any descendant.
+		let original = null;
+		for ( const child of tocRoot.children ) {
+			if ( child.tagName === 'UL' ) {
+				original = child;
+				break;
+			}
+		}
+		if ( !original ) {
+			original = tocRoot.querySelector( 'ul' );
+		}
 		if ( !original ) {
 			throw new Error( 'TOC not found' );
 		}

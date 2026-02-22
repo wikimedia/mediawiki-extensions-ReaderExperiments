@@ -7,6 +7,7 @@ function init() {
 	const STREAM_NAME = 'mediawiki.product_metrics.reader_experiments';
 	const INSTRUMENT_NAME = 'MinervaTocInstrument';
 
+	const TOC_INIT_HOOK = 'readerExperiments.toc.init';
 	const TOC_OPEN_HOOK = 'readerExperiments.toc.open';
 	const TOC_ICON_CLICK_HOOK = 'readerExperiments.toc.iconClick';
 	const TOC_CONTENTS_SELECTOR = '.ext-readerExperiments-minerva-toc__toc__contents';
@@ -83,6 +84,10 @@ function init() {
 		sessionLengthStarted = true;
 		logDebug( 'Session length started.' );
 	}
+
+	mw.hook( TOC_INIT_HOOK ).add( () => {
+		submitInteraction( 'treatment-ui-loaded' );
+	} );
 
 	mw.hook( TOC_OPEN_HOOK ).add( () => {
 		if ( isTocOpen() ) {
