@@ -2,13 +2,14 @@
 <template>
 	<div
 		class="ext-readerExperiments-minerva-toc__sticky-header"
-		:class="{ 'ext-readerExperiments-minerva-toc__sticky-header__active': isActive || isOpen }"
+		:class="{ 'ext-readerExperiments-minerva-toc__sticky-header__active': isActive }"
 		@click="$emit( 'toggle' )"
 	>
 		<div class="ext-readerExperiments-minerva-toc__sticky-header__content">
 			<cdx-toggle-button
 				ref="contentsButton"
 				:model-value="isOpen"
+				tabindex="-1"
 				class="ext-readerExperiments-minerva-toc__sticky-header__toc-button"
 				:aria-label="$i18n( 'readerexperiments-minerva-toc-contents-button-label' ).text()"
 				@click.stop="() => { /* no-op, simply prevent click from bubbling up */ }"

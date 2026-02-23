@@ -7,11 +7,13 @@ and sticky headers.
 // Table of contents (TOC)
 .minerva-toc__toc() {
 	background: @background-color-base;
-	border: @border-subtle;
+	border: @border-width-base @border-style-base @border-color-muted;
+	border-radius: @border-radius-base;
 	position: fixed;
 	left: @horizontal-margin;
 	right: @horizontal-margin;
 	box-sizing: border-box;
+	box-shadow: @box-shadow-medium;
 	width: calc( 100% - 2 * @horizontal-margin );
 	max-width: 640px;
 	min-height: 250px;
