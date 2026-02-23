@@ -49,6 +49,7 @@ const { cdxIconListBullet } = require( './icons.json' );
 const StickyHeader = require( './components/StickyHeader.vue' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useActiveHeading = require( './composables/useActiveHeading.js' );
+const useClickOutsideToClose = require( './composables/useClickOutsideToClose.js' );
 const useTableOfContentsCoordinator = require( './composables/useTableOfContentsCoordinator.js' );
 
 // @vue/component
@@ -141,6 +142,13 @@ module.exports = exports = defineComponent( {
 				stickyHeadingRef.value.focusOnContentsButton();
 			}
 		};
+
+		// Close TOC when clicking outside
+		useClickOutsideToClose( isOpen, () => [
+			tocWrapperRef.value,
+			stickyHeadingRef.value && stickyHeadingRef.value.$el,
+			buttonRef.value && buttonRef.value.$el
+		] );
 
 		// Since the sticky header is variable in height, we'll need to make sure the
 		// TOC is correctly positioned right below it if it changes
