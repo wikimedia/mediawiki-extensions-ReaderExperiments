@@ -31,7 +31,6 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "從$1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "從 $1 和 $2 個其他語言{{PLURAL:$2|版本}}的維基百科",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "從$1",
-	"readerexperiments-minerva-toc-toggle-text-open": "目次",
-	"readerexperiments-minerva-toc-toggle-text-close": "目次",
+	"readerexperiments-minerva-toc-contents-button-label": "目次",
 	"readerexperiments-minerva-toc-top-link": "（首段）"
 }

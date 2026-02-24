@@ -26,5 +26,6 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Am Artikel weisen",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Vu(n) $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Vu(n) $1 {{PLURAL:$2|an $2 anerer Sproochversioun|a(n) $2 anere Sproochversioune}} vu Wikipedia",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Vu $1"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Vu $1",
+	"readerexperiments-sharehighlight-share": "Deelen"
 }

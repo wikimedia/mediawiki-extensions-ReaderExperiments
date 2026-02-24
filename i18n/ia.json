@@ -30,7 +30,6 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "De $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "De $1 e $2 altere edition{{PLURAL:$2||es}} de Wikipedia in altere linguas",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "De $1",
-	"readerexperiments-minerva-toc-toggle-text-open": "Contento",
-	"readerexperiments-minerva-toc-toggle-text-close": "Contento",
+	"readerexperiments-minerva-toc-contents-button-label": "Contento",
 	"readerexperiments-minerva-toc-top-link": "(Initio)"
 }

@@ -26,5 +26,20 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Од $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Са $1 и $2 других језичких {{PLURAL:$2|издања}} Википедије",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Са $1",
-	"readerexperiments-minerva-toc-top-link": "(Врх)"
+	"readerexperiments-minerva-toc-edit-button-label": "Уреди",
+	"readerexperiments-minerva-toc-region-label": "Садржај",
+	"readerexperiments-minerva-toc-top-link": "(Врх)",
+	"readerexperiments-sharehighlight-aspect-ratio-legend": "Размера приказа",
+	"readerexperiments-sharehighlight-aspect-ratio-square": "Квадрат",
+	"readerexperiments-sharehighlight-aspect-ratio-portrait": "Портрет",
+	"readerexperiments-sharehighlight-aspect-ratio-wide": "Широко",
+	"readerexperiments-sharehighlight-background-legend": "Позадина",
+	"readerexperiments-sharehighlight-background-light": "Светло",
+	"readerexperiments-sharehighlight-background-dark": "Тамно",
+	"readerexperiments-sharehighlight-link-copied": "Копирано!",
+	"readerexperiments-sharehighlight-cancel": "Откажи",
+	"readerexperiments-sharehighlight-share": "Дели",
+	"readerexperiments-sharehighlight-download": "Преузми",
+	"readerexperiments-sharehighlight-generating-image": "Генерисање слике…",
+	"readerexperiments-sharehighlight-share-text": "„$1”\n\nСазнајте више: $2"
 }

@@ -30,7 +30,6 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "מתוך $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "מתוך $1 ומתוך {{PLURAL:$2|מהדורה של ויקיפדיה בעוד שפה|מהדורות של ויקיפדיה בעוד $2 שפות}}",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "מתוך $1",
-	"readerexperiments-minerva-toc-toggle-text-open": "תוכן",
-	"readerexperiments-minerva-toc-toggle-text-close": "תוכן",
+	"readerexperiments-minerva-toc-contents-button-label": "תוכן",
 	"readerexperiments-minerva-toc-top-link": "(ראש הדף)"
 }

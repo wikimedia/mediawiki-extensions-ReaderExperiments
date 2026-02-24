@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ykhwong"
+		]
+	},
+	"readerexperiments-minerva-toc-edit-button-label": "편집",
+	"readerexperiments-minerva-toc-region-label": "목차",
+	"readerexperiments-sharehighlight-background-legend": "배경",
+	"readerexperiments-sharehighlight-background-light": "라이트",
+	"readerexperiments-sharehighlight-background-dark": "다크",
+	"readerexperiments-sharehighlight-copy-link": "링크 복사",
+	"readerexperiments-sharehighlight-link-copied": "복사했습니다!",
+	"readerexperiments-sharehighlight-cancel": "취소",
+	"readerexperiments-sharehighlight-share": "공유",
+	"readerexperiments-sharehighlight-download": "다운로드",
+	"readerexperiments-sharehighlight-generating-image": "이미지 생성 중…"
+}
