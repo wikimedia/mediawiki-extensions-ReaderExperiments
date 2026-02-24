@@ -4,6 +4,7 @@
 		class="ext-readerExperiments-minerva-toc__sticky-header"
 		:class="{ 'ext-readerExperiments-minerva-toc__sticky-header__active': isActive }"
 		@click="$emit( 'toggle' )"
+		aria-hidden="true"
 	>
 		<div class="ext-readerExperiments-minerva-toc__sticky-header__content">
 			<cdx-toggle-button
@@ -175,9 +176,9 @@ module.exports = exports = defineComponent( {
 	}
 
 	&:not( &__active ):not( :focus-within ) {
-		// Ensure the sticky, insofar there is one, is not visible without
-		// setting it to `display: none` so that it still provides keyboard
-		// tab access to the TOC button
+		// Hide the sticky header off-screen without `display: none` so that
+		// getBoundingClientRect() still returns its rendered height (used
+		// for TOC positioning in StickyHeaderApp)
 		margin-top: -100%;
 		z-index: -1;
 	}
