@@ -12,6 +12,19 @@
 			@toggle="onToggle"
 		></sticky-header>
 
+		<teleport v-if="buttonContainer" :to="buttonContainer">
+			<cdx-toggle-button
+				ref="buttonRef"
+				:model-value="isOpen"
+				class="ext-readerExperiments-minerva-toc__sticky__heading-button"
+				quiet
+				:aria-label="$i18n( 'readerexperiments-minerva-toc-contents-button-label' ).text()"
+				@update:model-value="onToggle"
+			>
+				<cdx-icon :icon="cdxIconListBullet"></cdx-icon>
+			</cdx-toggle-button>
+		</teleport>
+
 		<teleport :to="teleportTarget">
 			<Transition name="ext-readerExperiments-minerva-toc-fade">
 				<div
@@ -31,9 +44,12 @@
 
 <script>
 const { computed, defineComponent, inject, nextTick, onMounted, ref, useTemplateRef, watch } = require( 'vue' );
+const { CdxToggleButton, CdxIcon } = require( '@wikimedia/codex' );
+const { cdxIconListBullet } = require( './icons.json' );
 const StickyHeader = require( './components/StickyHeader.vue' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useActiveHeading = require( './composables/useActiveHeading.js' );
+const useClickOutsideToClose = require( './composables/useClickOutsideToClose.js' );
 const useTableOfContentsCoordinator = require( './composables/useTableOfContentsCoordinator.js' );
 
 // @vue/component
@@ -41,11 +57,20 @@ module.exports = exports = defineComponent( {
 	name: 'StickyHeaderApp',
 	components: {
 		StickyHeader,
-		TableOfContents
+		TableOfContents,
+		CdxToggleButton,
+		CdxIcon
+	},
+	props: {
+		buttonContainer: {
+			type: HTMLElement,
+			default: null
+		}
 	},
 	setup() {
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 		const stickyHeadingRef = useTemplateRef( 'stickyHeadingRef' );
+		const buttonRef = useTemplateRef( 'buttonRef' );
 		const tocWrapperRef = useTemplateRef( 'tocWrapperRef' );
 
 		let isOpen, hasToc;
@@ -61,24 +86,6 @@ module.exports = exports = defineComponent( {
 			mw.hook( 'readerExperiments.toc.iconClick' ).fire( 'sticky-header' );
 			isOpen.value = !isOpen.value;
 		};
-
-		const onTocClose = ( { restoreFocus = true } = {} ) => {
-			if ( restoreFocus && stickyHeadingRef.value ) {
-				stickyHeadingRef.value.focusOnContentsButton();
-			}
-		};
-
-		// Since the stiky header is variable in height, we'll need to make sure the
-		// TOC is correctly positioned right below it if it changes
-		const updateTocPosition = () => {
-			if ( isOpen.value && tocWrapperRef.value && stickyHeadingRef.value && stickyHeadingRef.value.$el ) {
-				// Subtract 1px to overlap borders for a flush appearance
-				const bottom = stickyHeadingRef.value.$el.getBoundingClientRect().bottom;
-				tocWrapperRef.value.style.top = ( bottom - 1 ) + 'px';
-			}
-		};
-		onMounted( updateTocPosition );
-		watch( isOpen, () => nextTick( updateTocPosition ) );
 
 		const activeHeading = ref( null );
 		watch(
@@ -111,16 +118,83 @@ module.exports = exports = defineComponent( {
 			return link ? link.href : '';
 		} );
 
+		// We have 2 different buttons to trigger the TOC, both of which have slightly
+		// diverging behaviour - this is a convenience method to determine which path
+		// to take in those cases by indicating the button relevant for how the TOC is
+		// showing
+		const getTogglerRef = () => {
+			if ( activeHeading.value === null && buttonRef && buttonRef.value ) {
+				return buttonRef;
+			}
+
+			return stickyHeadingRef;
+		};
+
+		const onTocClose = ( { restoreFocus = true } = {} ) => {
+			if ( !restoreFocus ) {
+				return;
+			}
+
+			const toggler = getTogglerRef();
+			if ( toggler === buttonRef ) {
+				buttonRef.value.$el.focus();
+			} else {
+				stickyHeadingRef.value.focusOnContentsButton();
+			}
+		};
+
+		// Close TOC when clicking outside
+		useClickOutsideToClose( isOpen, () => [
+			tocWrapperRef.value,
+			stickyHeadingRef.value && stickyHeadingRef.value.$el,
+			buttonRef.value && buttonRef.value.$el
+		] );
+
+		// Since the sticky header is variable in height, we'll need to make sure the
+		// TOC is correctly positioned right below it if it changes
+		const updateTocPosition = () => {
+			if ( isOpen.value && tocWrapperRef.value ) {
+				let position;
+				const toggler = getTogglerRef();
+				if ( toggler === buttonRef ) {
+					const buttonBottom = buttonRef.value.$el.getBoundingClientRect().bottom;
+					if ( buttonBottom < 0 ) {
+						// Heading button is off-screen (e.g. page loaded with #toc
+						// while scrolled) — fall back to sticky header height
+						position = stickyHeadingRef.value.$el.getBoundingClientRect().height - 1;
+					} else {
+						position = buttonBottom + 4;
+					}
+				} else {
+					// Using `bottom` instead of `height` would be the more ideal way of calculating
+					// this position, but those 2 values should always be the same (it's always
+					// positioned at the very top, so top + height = bottom) and circumvents
+					// potential interference from CSS transitions that slide the header inward
+					// from the top of the page if the header was not already visible (e.g. when
+					// initiated from outside the sticky header, when it's not yet visible)
+					// Subtract 1px to overlap borders for a flush appearance
+					position = stickyHeadingRef.value.$el.getBoundingClientRect().height - 1;
+				}
+
+				tocWrapperRef.value.style.top = position + 'px';
+			}
+		};
+		onMounted( updateTocPosition );
+		watch( isOpen, () => nextTick( updateTocPosition ) );
+
 		return {
 			teleportTarget,
+			cdxIconListBullet,
 			stickyHeadingRef,
+			buttonRef,
 			hasToc,
 			isOpen,
 			onToggle,
 			onTocClose,
 			activeHeadingId,
 			headingHtml,
-			linkUrl
+			linkUrl,
+			tocWrapperRef
 		};
 	}
 } );
@@ -129,6 +203,12 @@ module.exports = exports = defineComponent( {
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
 @import './mixins/minerva-toc.less';
+
+// Position the page title button & page title right next to one another
+.page-heading:has( .ext-readerExperiments-minerva-toc__page-heading-button-container ) {
+	display: flex;
+	align-items: baseline;
+}
 
 .ext-readerExperiments-minerva-toc__sticky {
 	// Align with Minerva's margins
@@ -145,6 +225,16 @@ module.exports = exports = defineComponent( {
 		margin-right: auto;
 		display: flex;
 		justify-content: center;
+	}
+
+	&__heading-button {
+		margin-right: @spacing-35;
+
+		// When the TOC is open (toggled-on state)
+		// Specificity needed to override Codex styles
+		&.cdx-toggle-button--toggled-on.cdx-toggle-button--quiet {
+			.minerva-toc-button();
+		}
 	}
 
 	&__toc {

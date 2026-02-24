@@ -17,6 +17,7 @@
 			<Transition name="ext-readerExperiments-minerva-toc-fade">
 				<div
 					v-if="isOpen"
+					ref="tocWrapperRef"
 					class="ext-readerExperiments-minerva-toc__button__toc"
 				>
 					<table-of-contents
@@ -36,6 +37,7 @@ const { CdxIcon, CdxToggleButton } = require( '@wikimedia/codex' );
 const { cdxIconListBullet } = require( './icons.json' );
 const TableOfContents = require( './components/TableOfContents.vue' );
 const useActiveHeading = require( './composables/useActiveHeading.js' );
+const useClickOutsideToClose = require( './composables/useClickOutsideToClose.js' );
 const useTableOfContentsCoordinator = require( './composables/useTableOfContentsCoordinator.js' );
 
 // @vue/component
@@ -49,6 +51,7 @@ module.exports = exports = defineComponent( {
 	setup() {
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 		const toggleButtonRef = useTemplateRef( 'toggleButtonRef' );
+		const tocWrapperRef = useTemplateRef( 'tocWrapperRef' );
 		let isOpen, hasToc;
 
 		try {
@@ -73,6 +76,12 @@ module.exports = exports = defineComponent( {
 		const onIconClick = () => {
 			mw.hook( 'readerExperiments.toc.iconClick' ).fire( 'floating-button' );
 		};
+
+		// Close TOC when clicking outside
+		useClickOutsideToClose( isOpen, () => [
+			tocWrapperRef.value,
+			toggleButtonRef.value && toggleButtonRef.value.$el
+		] );
 
 		return {
 			teleportTarget,
