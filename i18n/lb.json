@@ -27,5 +27,10 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Vu(n) $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Vu(n) $1 {{PLURAL:$2|an $2 anerer Sproochversioun|a(n) $2 anere Sproochversioune}} vu Wikipedia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Vu $1",
+	"readerexperiments-minerva-toc-edit-button-label": "Änneren",
+	"readerexperiments-sharehighlight-dialog-title": "Zitat deelen",
+	"readerexperiments-sharehighlight-background-light": "Hell",
+	"readerexperiments-sharehighlight-background-dark": "Däischter",
+	"readerexperiments-sharehighlight-copy-link": "Link kopéieren",
 	"readerexperiments-sharehighlight-share": "Deelen"
 }
