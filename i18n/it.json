@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Asteralee",
 			"Beta16"
 		]
 	},
@@ -22,5 +23,10 @@
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Caricamento immagini da altri progetti",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Da $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Da $1",
-	"readerexperiments-minerva-toc-contents-button-label": "Contenuti"
+	"readerexperiments-minerva-toc-contents-button-label": "Contenuti",
+	"readerexperiments-minerva-toc-edit-button-label": "Modifica",
+	"readerexperiments-minerva-toc-region-label": "Indice",
+	"readerexperiments-sharehighlight-link-copied": "Copiato!",
+	"readerexperiments-sharehighlight-cancel": "Annulla",
+	"readerexperiments-sharehighlight-share-text": "\"$1\"\n\nLeggi di piu: $2"
 }

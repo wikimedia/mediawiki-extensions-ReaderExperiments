@@ -5,6 +5,14 @@
 		]
 	},
 	"readerexperiments-minerva-toc-edit-button-label": "o ante",
+	"readerexperiments-minerva-toc-region-label": "lipu jo",
+	"readerexperiments-sharehighlight-share-quote": "o pana e toki ni",
+	"readerexperiments-sharehighlight-dialog-title": "o pana e toki ni",
+	"readerexperiments-sharehighlight-background-legend": "sitelen monsi",
+	"readerexperiments-sharehighlight-background-light": "walo",
 	"readerexperiments-sharehighlight-background-dark": "pimeja",
-	"readerexperiments-sharehighlight-share": "o pana"
+	"readerexperiments-sharehighlight-cancel": "o pali ala",
+	"readerexperiments-sharehighlight-share": "o pana",
+	"readerexperiments-sharehighlight-generating-image": "mi pali e sitelen...",
+	"readerexperiments-sharehighlight-share-text": "\"$1\"\n\nale li lon $2"
 }
