@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nemoralis"
+		]
+	},
+	"readerexperiments-desc": "Vikipediya oxucularının sayını artırmağı hədəfləyən bir sıra prototiplər",
+	"readerexperiments-imagebrowsing-carousel-label": "Şəkil axtarışı",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "\"$1\" şəklini seç",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Daha çox",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Daha az",
+	"readerexperiments-imagebrowsing-detail-crop": "Tam ekran",
+	"readerexperiments-imagebrowsing-detail-share": "Paylaş",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Kopiyala",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Vikianbarda bax",
+	"readerexperiments-imagebrowsing-detail-download": "Yüklə",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Orijinal fayl ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Kiçik ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Orta ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Böyük ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Çox böyük ($1×$2 px)",
+	"readerexperiments-imagebrowsing-loading": "Yüklənir",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Məqaləyə qayıt",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Bağla",
+	"readerexperiments-imagebrowsing-overlay-label": "Şəkil detalları",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Bu məqalədən daha çox",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Digər layihələrdən media",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Digər layihələrdən şəkillər yüklənir",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Məqalədə bax",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "$1 ünvanından",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "$1 ünvanından və digər $2 Vikipediya {{PLURAL:$2|saytından}}",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "$1 saytından"
+}
