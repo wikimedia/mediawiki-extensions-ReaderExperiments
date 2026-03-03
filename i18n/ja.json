@@ -1,8 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"RhAnish",
 			"W.CC"
 		]
 	},
-	"readerexperiments-imagebrowsing-overlay-back-button-label": "記事に戻る"
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "記事に戻る",
+	"readerexperiments-minerva-toc-edit-button-label": "編集",
+	"readerexperiments-sharehighlight-background-dark": "ダーク",
+	"readerexperiments-sharehighlight-link-copied": "コピーしました!",
+	"readerexperiments-sharehighlight-cancel": "キャンセル",
+	"readerexperiments-sharehighlight-download": "ダウンロード"
 }
