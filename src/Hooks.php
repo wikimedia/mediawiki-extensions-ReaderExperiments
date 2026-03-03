@@ -40,7 +40,7 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	private const IMAGE_BROWSING_GROUP_1_NAME = 'image-browsing-test';
 	// Tier 2: 0.1% English Wikipedia.
 	// https://test-kitchen.wikimedia.org/experiment/image-browsing-enwiki
-	private const IMAGE_BROWSING_EXPERIMENT_2_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
+	private const IMAGE_BROWSING_EXPERIMENT_2_NAME = 'image-browsing-enwiki';
 	private const IMAGE_BROWSING_GROUP_2_NAME = 'treatment';
 
 	// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
