@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Beta16"
+			"Beta16",
+			"Asteralee",
+			"Neonsn0w"
 		]
 	},
 	"readerexperiments-imagebrowsing-carousel-item-button-label": "Seleziona l'immagine \"$1\"",
