@@ -254,6 +254,9 @@
 		"ext.readerExperiments.minervaToc.instrumentation": {
 			"localBasePath": "resources/ext.readerExperiments.minervaToc",
 			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.minervaToc",
+			"dependencies": [
+				"ext.testKitchen"
+			],
 			"packageFiles": [
 				"instrumentation.js"
 			]

@@ -53,8 +53,8 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	private const SHARE_HIGHLIGHT_GROUP_NAME = 'treatment';
 
 	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
-	// https://test-kitchen.wikimedia.org/experiment/mobile-toc-abc
-	private const MINERVA_TOC_EXPERIMENT_NAME = 'mobile-toc-abc';
+	// https://test-kitchen.wikimedia.org/experiment/mobile-toc-abc2
+	private const MINERVA_TOC_EXPERIMENT_NAME = 'mobile-toc-abc2';
 	private const MINERVA_TOC_GROUP_STICKY = 'treatment1';
 	private const MINERVA_TOC_GROUP_BUTTON = 'treatment2';
 	// END MINERVA_TOC_EXPERIMENTS (T415611)
