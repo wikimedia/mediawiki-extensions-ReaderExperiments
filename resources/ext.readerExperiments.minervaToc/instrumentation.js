@@ -2,7 +2,7 @@
 
 function init() {
 
-	const EXPERIMENT_NAME = 'mobile-toc-abc';
+	const EXPERIMENT_NAME = 'mobile-toc-abc2';
 	const SCHEMA_NAME = '/analytics/product_metrics/web/base/2.0.0';
 	const STREAM_NAME = 'mediawiki.product_metrics.reader_experiments';
 	const INSTRUMENT_NAME = 'MinervaTocInstrument';
@@ -14,8 +14,7 @@ function init() {
 	const TOC_CONTAINER_SELECTOR = '.ext-readerExperiments-minerva-toc__toc';
 	const DEBUG_PARAM = 'tocInstrumentationDebug';
 
-	let experiment = null;
-	const pendingEvents = [];
+	const experiment = mw.testKitchen.getExperiment( EXPERIMENT_NAME );
 	let sessionLengthStarted = false;
 	const debugEnabled = new URLSearchParams( window.location.search ).has( DEBUG_PARAM );
 
@@ -42,26 +41,8 @@ function init() {
 			instrument_name: INSTRUMENT_NAME
 		}, interactionData );
 
-		if ( experiment ) {
-			experiment.send( action, payload );
-			logDebug( 'sent', { action, payload } );
-			return;
-		}
-
-		pendingEvents.push( { action, payload } );
-		logDebug( 'queued', { action, payload } );
-	}
-
-	function flushPendingEvents() {
-		if ( !experiment || pendingEvents.length === 0 ) {
-			return;
-		}
-
-		pendingEvents.forEach( ( event ) => {
-			experiment.send( event.action, event.payload );
-			logDebug( 'flushed', { action: event.action, payload: event.payload } );
-		} );
-		pendingEvents.length = 0;
+		experiment.send( action, payload );
+		logDebug( 'sent', { action, payload } );
 	}
 
 	function startSessionLength() {
@@ -132,25 +113,16 @@ function init() {
 		}
 	}, true );
 
-	mw.loader.using( 'ext.testKitchen' )
+	experiment.setSchema( SCHEMA_NAME );
+	experiment.setStream( STREAM_NAME );
+
+	submitInteraction( 'page-visited' );
+
+	mw.loader.using( 'ext.wikimediaEvents' )
 		.then( () => {
-			experiment = mw.testKitchen.getExperiment( EXPERIMENT_NAME );
-			experiment.setSchema( SCHEMA_NAME );
-			experiment.setStream( STREAM_NAME );
-
-			submitInteraction( 'page-visited' );
-			flushPendingEvents();
-
-			mw.loader.using( 'ext.wikimediaEvents' )
-				.then( () => {
-					startSessionLength();
-				}, ( error ) => {
-					logDebug( `Failed to load session length mixin. ${ error }` );
-				} );
+			startSessionLength();
 		}, ( error ) => {
-			// ext.testKitchen isn't available, instrumentation can't work.
-			// eslint-disable-next-line no-console
-			console.error( `[MinervaToc] Failed to setup instrumentation. ${ error }` );
+			logDebug( `Failed to load session length mixin. ${ error }` );
 		} );
 }
 
