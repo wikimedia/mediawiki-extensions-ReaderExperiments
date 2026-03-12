@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"HanV",
 			"McDutchie",
 			"Siebrand"
 		]
@@ -32,5 +33,17 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Van $1 en nog {{PLURAL:$2|een|$2}} taaleditie{{PLURAL:$2||s}} van Wikipedia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Van $1",
 	"readerexperiments-minerva-toc-contents-button-label": "Inhoud",
-	"readerexperiments-minerva-toc-top-link": "(Naar begin)"
+	"readerexperiments-minerva-toc-edit-button-label": "Bewerken",
+	"readerexperiments-minerva-toc-region-label": "Inhoudsopgave",
+	"readerexperiments-minerva-toc-top-link": "(Naar begin)",
+	"readerexperiments-sharehighlight-share-quote": "Citaat delen",
+	"readerexperiments-sharehighlight-dialog-title": "Citaat delen",
+	"readerexperiments-sharehighlight-background-legend": "Achtergrond",
+	"readerexperiments-sharehighlight-background-light": "Licht",
+	"readerexperiments-sharehighlight-background-dark": "Donker",
+	"readerexperiments-sharehighlight-copy-link": "Link kopiëren",
+	"readerexperiments-sharehighlight-link-copied": "Gekopieerd!",
+	"readerexperiments-sharehighlight-cancel": "Annuleren",
+	"readerexperiments-sharehighlight-share": "Delen",
+	"readerexperiments-sharehighlight-download": "Downloaden"
 }
