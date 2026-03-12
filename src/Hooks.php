@@ -52,6 +52,9 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	private const SHARE_HIGHLIGHT_EXPERIMENT_NAME = 'share-highlight';
 	private const SHARE_HIGHLIGHT_GROUP_NAME = 'treatment';
 
+	// For baseline A/A test:
+	private const SHARE_HIGHLIGHT_BASELINE_EXPERIMENT_NAME = 'share-highlight-baseline';
+
 	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
 	// https://test-kitchen.wikimedia.org/experiment/mobile-toc-abc2
 	private const MINERVA_TOC_EXPERIMENT_NAME = 'mobile-toc-abc2';
@@ -289,15 +292,17 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 		$context = $out->getContext();
 		$request = $context->getRequest();
 		$title = $context->getTitle();
-
 		if (
-			$title && $title->getNamespace() === NS_MAIN &&
-			$out->getSkin()->getSkinName() === 'minerva' &&
-			(
-				// phpcs:ignore Generic.Files.LineLength.TooLong
-				$this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_EXPERIMENT_NAME ) === self::SHARE_HIGHLIGHT_GROUP_NAME ||
-				$request->getFuzzyBool( 'shareHighlight' )
-			)
+			( $title && $title->getNamespace() !== NS_MAIN ) ||
+			$out->getSkin()->getSkinName() !== 'minerva'
+		) {
+			return;
+		}
+
+		$group = $this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_EXPERIMENT_NAME );
+		if (
+			$group === self::SHARE_HIGHLIGHT_GROUP_NAME ||
+			$request->getFuzzyBool( 'shareHighlight' )
 		) {
 			$out->prependHTML(
 				'<div id="ext-readerExperiments-shareHighlight"></div>'
@@ -306,6 +311,38 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			$out->addModuleStyles( 'ext.readerExperiments.shareHighlight.styles' );
 			$out->addModules( 'ext.readerExperiments.shareHighlight' );
 		}
+
+		$baseline = $this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_BASELINE_EXPERIMENT_NAME );
+		if ( $group || $baseline ) {
+			// We still need our baseline metrics on the control group,
+			// for either the baseline or final experiment.
+			$out->addModules( 'ext.readerExperiments.shareHighlight.instrumentation' );
+		} else {
+			return;
+		}
+
+		$pageSize = 0;
+		if ( $context->canUseWikiPage() ) {
+			$page = $context->getWikiPage();
+			if ( $page ) {
+				$rev = $page->getRevisionRecord();
+				if ( $rev ) {
+					// Note this will fail for remote pages via MobileFrontendContentProvider.
+					$pageSize = $this->bucketPageSize( $rev->getSize() );
+				}
+			}
+		}
+		$out->addJsConfigVars( 'wgReaderExperimentsPageSize', strval( $pageSize ) );
+	}
+
+	/**
+	 * Bucket page sizes by rounding to first decimal digit
+	 */
+	private function bucketPageSize( int $pageSize ): int {
+		$str = strval( $pageSize );
+		$first = substr( $str, 0, 1 );
+		$rest = str_repeat( '0', strlen( $str ) - 1 );
+		return intval( $first . $rest );
 	}
 
 	/**
