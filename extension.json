@@ -296,7 +296,8 @@
 				"vue",
 				"@wikimedia/codex",
 				"mediawiki.util",
-				"html-to-image"
+				"html-to-image",
+				"ext.readerExperiments.shareHighlight.instrumentation"
 			],
 			"packageFiles": [
 				"init.js",
@@ -349,6 +350,18 @@
 			"styles": [
 				"styles/app.less"
 			]
+		},
+		"ext.readerExperiments.shareHighlight.instrumentation": {
+			"localBasePath": "resources/ext.readerExperiments.shareHighlight.instrumentation",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.shareMightlight.instrumentation",
+			"dependencies": [
+				"ext.testKitchen"
+			],
+			"packageFiles": [
+				"init.js"
+			],
+			"styles": [],
+			"messages": []
 		}
 	},
 	"manifest_version": 2
