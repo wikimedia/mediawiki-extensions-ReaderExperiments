@@ -62,6 +62,10 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	private const MINERVA_TOC_GROUP_BUTTON = 'treatment2';
 	// END MINERVA_TOC_EXPERIMENTS (T415611)
 
+	// @todo set up experiment
+	private const MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME = 'mobile-page-previews';
+	private const MOBILE_PAGE_PREVIEWS_GROUP_NAME = 'treatment';
+
 	private ?ExperimentManager $experimentManager;
 
 	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
@@ -133,6 +137,22 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	}
 
 	/**
+	 * ResourceLoader callback to generate virtual config.json for PagePreviews module,
+	 * to provides configuration data as a packageFiles virtual module
+	 *
+	 * @see https://www.mediawiki.org/wiki/ResourceLoader/Package_files#Generated_content
+	 *
+	 * @param Context $context
+	 * @param Config $config
+	 * @return array
+	 */
+	public static function getMobilePagePreviewsConfig( Context $context, Config $config ): array {
+		return [
+			'apiBaseUri' => $config->get( 'ReaderExperimentsApiBaseUri' )
+		];
+	}
+
+	/**
 	 * StickyHeaders hook handler.
 	 * @inheritDoc
 	 */
@@ -141,6 +161,7 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 		$this->maybeInitStickyHeaders( $out );
 		$this->maybeInitToc( $out );
 		$this->maybeInitShareHighlight( $out );
+		$this->maybeInitMobilePagePreviews( $out );
 	}
 
 	/**
@@ -343,6 +364,21 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 		$first = substr( $str, 0, 1 );
 		$rest = str_repeat( '0', strlen( $str ) - 1 );
 		return intval( $first . $rest );
+	}
+
+	private function maybeInitMobilePagePreviews( OutputPage $out ): void {
+		$context = $out->getContext();
+		$request = $context->getRequest();
+		$title = $context->getTitle();
+
+		if (
+			$title && $title->getNamespace() === NS_MAIN &&
+			$out->getSkin()->getSkinName() === 'minerva' &&
+			// phpcs:ignore Generic.Files.LineLength.TooLong
+			$this->getAssignedGroup( $request, self::MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME ) === self::MOBILE_PAGE_PREVIEWS_GROUP_NAME
+		) {
+			$out->addModules( 'ext.readerExperiments.mobilePagePreviews' );
+		}
 	}
 
 	/**

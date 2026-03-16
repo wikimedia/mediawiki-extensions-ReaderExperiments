@@ -362,6 +362,25 @@
 			],
 			"styles": [],
 			"messages": []
+		},
+		"ext.readerExperiments.mobilePagePreviews": {
+			"localBasePath": "resources/ext.readerExperiments.mobilePagePreviews",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.mobilePagePreviews",
+			"dependencies": [
+				"vue",
+				"mediawiki.Title"
+			],
+			"packageFiles": [
+				"init.js",
+				{
+					"name": "config.json",
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getMobilePagePreviewsConfig"
+				},
+				"copiedFromPopups.js",
+				"App.vue"
+			],
+			"styles": [],
+			"messages": []
 		}
 	},
 	"manifest_version": 2
