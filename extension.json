@@ -368,7 +368,8 @@
 			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.mobilePagePreviews",
 			"dependencies": [
 				"vue",
-				"mediawiki.Title"
+				"mediawiki.Title",
+				"@wikimedia/codex"
 			],
 			"packageFiles": [
 				"init.js",
@@ -376,11 +377,21 @@
 					"name": "config.json",
 					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getMobilePagePreviewsConfig"
 				},
+				{
+					"name": "icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconLinkExternal"
+					]
+				},
 				"copiedFromPopups.js",
-				"App.vue"
+				"App.vue",
+				"components/PagePreviewCard.vue"
 			],
 			"styles": [],
-			"messages": []
+			"messages": [
+				"readerexperiments-mobilepagepreviews-loading"
+			]
 		}
 	},
 	"manifest_version": 2
