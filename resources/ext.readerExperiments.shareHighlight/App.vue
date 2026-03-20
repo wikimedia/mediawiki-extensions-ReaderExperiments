@@ -2,7 +2,7 @@
 	<div>
 		<!-- Share Quote Feature -->
 		<share-quote-button
-			:visible="hasSelection"
+			:visible="hasSelection && !isShareDialogOpen"
 			@share-request="openShareDialog"
 		></share-quote-button>
 

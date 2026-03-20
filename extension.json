@@ -313,6 +313,7 @@
 				"App.vue",
 				"components/ShareQuoteButton.vue",
 				"components/ShareQuoteDialog.vue",
+				"components/PopoverDialog.vue",
 				"components/QuoteCard.vue",
 				"composables/useTextSelection.js",
 				"composables/useShareQuote.js",
@@ -353,7 +354,7 @@
 		},
 		"ext.readerExperiments.shareHighlight.instrumentation": {
 			"localBasePath": "resources/ext.readerExperiments.shareHighlight.instrumentation",
-			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.shareMightlight.instrumentation",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.shareHighlight.instrumentation",
 			"dependencies": [
 				"ext.testKitchen"
 			],

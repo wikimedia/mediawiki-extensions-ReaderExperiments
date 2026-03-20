@@ -1,5 +1,5 @@
 <template>
-	<cdx-dialog
+	<popover-dialog
 		v-model:open="wrappedOpen"
 		:title="$i18n( 'readerexperiments-sharehighlight-dialog-title' ).text()"
 		class="ext-readerExperiments-shareQuoteDialog"
@@ -103,13 +103,14 @@
 				</div>
 			</div>
 		</template>
-	</cdx-dialog>
+	</popover-dialog>
 </template>
 
 <script>
 const { ref, toRef, computed, watch } = require( 'vue' );
-const { CdxButton, CdxDialog, CdxIcon, CdxRadio, CdxMessage, CdxProgressBar, useModelWrapper } = require( '@wikimedia/codex' );
+const { CdxButton, CdxIcon, CdxRadio, CdxMessage, CdxProgressBar, useModelWrapper } = require( '@wikimedia/codex' );
 const icons = require( '../icons.json' );
+const PopoverDialog = require( './PopoverDialog.vue' );
 const QuoteCard = require( './QuoteCard.vue' );
 const useShareQuote = require( '../composables/useShareQuote.js' );
 const textFragment = require( '../utils/textFragment.js' );
@@ -119,7 +120,7 @@ module.exports = exports = {
 	name: 'ShareQuoteDialog',
 	components: {
 		CdxButton,
-		CdxDialog,
+		PopoverDialog,
 		CdxIcon,
 		CdxRadio,
 		CdxMessage,
