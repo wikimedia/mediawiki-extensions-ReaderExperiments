@@ -68,12 +68,12 @@ function getTitle( href, config ) {
 	}
 
 	// External links
-	if (
-		linkHref.hostname !== location.hostname &&
-		// Note: line below diverges from Popups/src/title.js to also support content
-		// served through MobileFrontendContentProvider
-		( apiBaseUri && linkHref.hostname !== new URL( apiBaseUri ).hostname )
-	) {
+	// Note: section below diverges from Popups/src/title.js to also support content
+	// served through MobileFrontendContentProvider
+	const remote = linkHref.hostname !== location.hostname;
+	const remoteProvider = remote &&
+		( apiBaseUri && linkHref.hostname === new URL( apiBaseUri ).hostname );
+	if ( remote && !remoteProvider ) {
 		return undefined;
 	}
 
@@ -86,7 +86,10 @@ function getTitle( href, config ) {
 
 	// No query params (pretty URL)
 	if ( !queryLength ) {
-		const pattern = mw.util.escapeRegExp( config.get( 'wgArticlePath' ) ).replace( '\\$1', '([^?#]+)' ),
+		// If it's a MobileFrontendContentProvider-sourced remote page,
+		// hardcode the article path to the Wikimedia one.
+		const articlePath = remoteProvider ? '/wiki/$1' : config.get( 'wgArticlePath' );
+		const pattern = mw.util.escapeRegExp( articlePath ).replace( '\\$1', '([^?#]+)' ),
 			// eslint-disable-next-line security/detect-non-literal-regexp
 			matches = new RegExp( pattern ).exec( linkHref.pathname );
 
