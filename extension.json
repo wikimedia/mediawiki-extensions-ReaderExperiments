@@ -382,16 +382,20 @@
 					"name": "icons.json",
 					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
 					"callbackParam": [
+						"cdxIconClose",
 						"cdxIconLinkExternal"
 					]
 				},
 				"copiedFromPopups.js",
 				"App.vue",
+				"components/BottomSheet.vue",
+				"components/FocusTrap.vue",
 				"components/PagePreviewCard.vue"
 			],
 			"styles": [],
 			"messages": [
-				"readerexperiments-mobilepagepreviews-loading"
+				"readerexperiments-mobilepagepreviews-loading",
+				"readerexperiments-mobilepagepreviews-close-button-label"
 			]
 		}
 	},
