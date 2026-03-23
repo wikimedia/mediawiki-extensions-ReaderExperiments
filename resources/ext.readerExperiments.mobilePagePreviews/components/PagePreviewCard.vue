@@ -25,7 +25,7 @@
 				target="_blank"
 				:style="{ 'font-size': fontSize }"
 			>
-				Read more
+				{{ $i18n( 'readerexperiments-mobilepagepreviews-read-more' ).text() }}
 				<cdx-icon :icon="cdxIconLinkExternal"></cdx-icon>
 			</a>
 		</div>
