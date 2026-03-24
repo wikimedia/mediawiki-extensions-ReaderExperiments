@@ -6,7 +6,7 @@
 
 /**
  * Encode text for use in a text fragment URL.
- * Special characters must be percent-encoded.
+ * Special characters must be percent-encoded, including the "-" minus character.
  *
  * @param {string} text - Raw text to encode
  * @return {string} Encoded text safe for URL fragment
@@ -14,7 +14,7 @@
 function encodeTextFragment( text ) {
 	// Normalize whitespace
 	const normalized = text.trim().replace( /\s+/g, ' ' );
-	return encodeURIComponent( normalized );
+	return encodeURIComponent( normalized ).replace( /-/g, '%2d' );
 }
 
 /**
@@ -28,14 +28,32 @@ function encodeTextFragment( text ) {
  */
 function createTextFragmentDirective( text ) {
 	const normalized = text.trim().replace( /\s+/g, ' ' );
+	const maxLen = 100;
 
 	// For long quotes, use start and end range format
-	if ( normalized.length > 100 ) {
-		const words = normalized.split( ' ' );
-		const startWords = words.slice( 0, 5 ).join( ' ' );
-		const endWords = words.slice( -5 ).join( ' ' );
+	if ( normalized.length > maxLen ) {
+		// Use a primitive ASCII word break if no Intl.Segmenter:
+		let words = normalized.split( /\b/ );
+		// Whitespace will appear as separate segments
+		const maxWords = 20;
 
-		return ':~:text=' + encodeTextFragment( startWords ) + ',' + encodeTextFragment( endWords );
+		if ( typeof Intl === 'object' && typeof Intl.Segmenter === 'function' ) {
+			try {
+				const segmenter = new Intl.Segmenter( undefined, {
+					granularity: 'word'
+				} );
+				words = [ ...segmenter.segment( normalized ) ].map( ( s ) => s.segment );
+			} catch ( e ) {
+				// Silently fall back
+			}
+		}
+
+		if ( words.length > maxWords ) {
+			const startWords = words.slice( 0, maxWords / 2 ).join( '' );
+			const endWords = words.slice( -maxWords / 2 ).join( '' );
+
+			return ':~:text=' + encodeTextFragment( startWords ) + ',' + encodeTextFragment( endWords );
+		}
 	}
 
 	return ':~:text=' + encodeTextFragment( normalized );
@@ -59,5 +77,7 @@ function buildShareUrl( articleTitle, selectedText ) {
 }
 
 module.exports = {
-	buildShareUrl: buildShareUrl
+	buildShareUrl,
+	createTextFragmentDirective,
+	encodeTextFragment
 };

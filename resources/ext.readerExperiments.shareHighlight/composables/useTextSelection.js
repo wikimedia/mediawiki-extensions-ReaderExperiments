@@ -50,6 +50,17 @@ module.exports = function useTextSelection( containerRef ) {
 				return;
 			}
 
+			// @todo T421160 if the selection ends or begins in the middle of a word,
+			// the resulting text fragment links will not match in the browser.
+			// Consider extending the range to include adjacent text if the
+			// beginning or end appear partway through a word.
+			//
+			// Use Intl.Segmenter for word boundaries where available, or fall back
+			// to a regex on \b.
+			//
+			// Additionally note that the selected text must all be within a single
+			// block-level element, so selections that span paragraphs must be split.
+			//
 			const range = selection.getRangeAt( 0 );
 			const text = selection.toString().trim();
 
