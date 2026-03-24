@@ -49,7 +49,7 @@ const mockImage3 = {
 const mockImages = [ mockImage1, mockImage2, mockImage3 ];
 
 // Mock the composables
-jest.mock( '../../resources/ext.readerExperiments.imageBrowsing/composables/useContentImages.js', () => jest.fn( () => mockImages ) );
+jest.mock( '../../resources/ext.readerExperiments.common/composables/useContentImages.js', () => jest.fn( () => mockImages ) );
 jest.mock( '../../resources/ext.readerExperiments.imageBrowsing/composables/useExternalImages.js', () => jest.fn() );
 jest.mock( '../../resources/ext.readerExperiments.imageBrowsing/composables/useEntityId.js', () => jest.fn() );
 

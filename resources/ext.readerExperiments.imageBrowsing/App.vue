@@ -27,7 +27,7 @@
 <script>
 const { defineComponent, ref, inject, useTemplateRef } = require( 'vue' );
 const router = require( 'mediawiki.router' );
-const useContentImages = require( './composables/useContentImages.js' );
+const { useContentImages } = require( 'ext.readerExperiments.common' );
 const useExternalImages = require( './composables/useExternalImages.js' );
 const useEntityId = require( './composables/useEntityId.js' );
 const Carousel = require( './components/Carousel.vue' );

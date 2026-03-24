@@ -8,6 +8,7 @@
 
 		<share-quote-dialog
 			v-model:open="isShareDialogOpen"
+			:quote-image="leadImageForDialog"
 			:quote-text="quoteTextForDialog"
 			:article-title="pageTitle"
 		></share-quote-dialog>
@@ -15,10 +16,11 @@
 </template>
 
 <script>
-const { ref, watch } = require( 'vue' );
+const { ref, toRef, watch } = require( 'vue' );
 const ShareQuoteButton = require( './components/ShareQuoteButton.vue' );
 const ShareQuoteDialog = require( './components/ShareQuoteDialog.vue' );
 const useTextSelection = require( './composables/useTextSelection.js' );
+const { useContentImages } = require( 'ext.readerExperiments.common' );
 
 // @vue/component
 module.exports = exports = {
@@ -37,18 +39,27 @@ module.exports = exports = {
 		}
 	},
 	setup: function ( props ) {
-		// Create a ref that wraps the provided content element
-		const contentRef = ref( props.contentElement );
+		// Create a reactive ref that tracks the provided content element
+		const contentRef = toRef( props, 'contentElement' );
 
 		// Text selection handling
 		const { selectedText, hasSelection, clearSelection } = useTextSelection( contentRef );
 
 		// Share dialog state
 		const isShareDialogOpen = ref( false );
+		const leadImageForDialog = ref( {} );
 		const quoteTextForDialog = ref( '' );
 
 		// Page title from MediaWiki config
 		const pageTitle = mw.config.get( 'wgTitle' );
+
+		// Extract the first thumbnail image from the current article's content
+		if ( contentRef.value ) {
+			const articleImages = useContentImages( props.contentElement );
+			if ( articleImages.length > 0 ) {
+				leadImageForDialog.value = articleImages[ 0 ];
+			}
+		}
 
 		/**
 		 * Open the share dialog with current selection.
@@ -70,11 +81,12 @@ module.exports = exports = {
 		} );
 
 		return {
-			hasSelection: hasSelection,
-			isShareDialogOpen: isShareDialogOpen,
-			quoteTextForDialog: quoteTextForDialog,
-			pageTitle: pageTitle,
-			openShareDialog: openShareDialog
+			hasSelection,
+			isShareDialogOpen,
+			leadImageForDialog,
+			quoteTextForDialog,
+			pageTitle,
+			openShareDialog
 		};
 	}
 };

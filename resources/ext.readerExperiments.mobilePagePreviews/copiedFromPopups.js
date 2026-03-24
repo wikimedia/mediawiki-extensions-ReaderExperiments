@@ -90,7 +90,7 @@ function getTitle( href, config ) {
 		// hardcode the article path to the Wikimedia one.
 		const articlePath = remoteProvider ? '/wiki/$1' : config.get( 'wgArticlePath' );
 		const pattern = mw.util.escapeRegExp( articlePath ).replace( '\\$1', '([^?#]+)' ),
-			// eslint-disable-next-line security/detect-non-literal-regexp
+
 			matches = new RegExp( pattern ).exec( linkHref.pathname );
 
 		// We can't be sure decodeURIComponent() is able to parse every possible match

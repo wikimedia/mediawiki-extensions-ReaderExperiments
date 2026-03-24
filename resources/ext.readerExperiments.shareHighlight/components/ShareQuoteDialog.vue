@@ -8,34 +8,14 @@
 		<div class="ext-readerExperiments-shareQuoteDialog__preview">
 			<quote-card
 				ref="quoteCardRef"
+				:image="quoteImage"
 				:text="quoteText"
-				:source="articleTitle"
-				:aspect-ratio="selectedAspectRatio"
 				:style-variant="selectedStyle"
 			></quote-card>
 		</div>
 
 		<!-- Customization Options -->
 		<div class="ext-readerExperiments-shareQuoteDialog__options">
-			<!-- Aspect Ratio -->
-			<fieldset class="ext-readerExperiments-shareQuoteDialog__fieldset">
-				<legend>
-					{{ $i18n( 'readerexperiments-sharehighlight-aspect-ratio-legend' ).text() }}
-				</legend>
-				<div class="ext-readerExperiments-shareQuoteDialog__radio-group">
-					<cdx-radio
-						v-for="ratio in aspectRatios"
-						:key="ratio.value"
-						v-model="selectedAspectRatio"
-						:input-value="ratio.value"
-						name="aspect-ratio"
-						inline
-					>
-						{{ ratio.label }}
-					</cdx-radio>
-				</div>
-			</fieldset>
-
 			<!-- Background Style -->
 			<fieldset class="ext-readerExperiments-shareQuoteDialog__fieldset">
 				<legend>
@@ -115,6 +95,10 @@ const QuoteCard = require( './QuoteCard.vue' );
 const useShareQuote = require( '../composables/useShareQuote.js' );
 const textFragment = require( '../utils/textFragment.js' );
 
+/**
+ * @typedef {import('../../ext.readerExperiments.common/types').ImageData} ImageData
+ */
+
 // @vue/component
 module.exports = exports = {
 	name: 'ShareQuoteDialog',
@@ -131,9 +115,17 @@ module.exports = exports = {
 		/**
 		 * Whether the dialog is open.
 		 */
+		// eslint-disable-next-line vue/no-unused-properties -- used in useModelWrapper
 		open: {
 			type: Boolean,
 			default: false
+		},
+		/**
+		 * The article lead image to share.
+		 */
+		quoteImage: {
+			type: /** @type {import('vue').PropType<ImageData>} */ ( Object ),
+			default: () => ( {} ) // Empty object
 		},
 		/**
 		 * The quote text to share.
@@ -155,28 +147,10 @@ module.exports = exports = {
 		const quoteCardRef = ref( null );
 
 		// Customization options
-		const selectedAspectRatio = ref( '1x1' );
 		const selectedStyle = ref( 'light' );
 
 		// Copy link state
 		const linkCopied = ref( false );
-
-		const aspectRatios = computed( () => {
-			return [
-				{
-					value: '1x1',
-					label: mw.msg( 'readerexperiments-sharehighlight-aspect-ratio-square' )
-				},
-				{
-					value: '4x5',
-					label: mw.msg( 'readerexperiments-sharehighlight-aspect-ratio-portrait' )
-				},
-				{
-					value: '16x9',
-					label: mw.msg( 'readerexperiments-sharehighlight-aspect-ratio-wide' )
-				}
-			];
-		} );
 
 		const styleOptions = computed( () => {
 			return [
@@ -224,13 +198,11 @@ module.exports = exports = {
 		} );
 
 		// Reset options when dialog opens
-		watch( () => {
-			return props.open;
-		}, ( isOpen ) => {
-			if ( isOpen ) {
-				selectedAspectRatio.value = '1x1';
+		watch( wrappedOpen, ( newVal ) => {
+			if ( newVal ) {
 				selectedStyle.value = 'light';
 				linkCopied.value = false;
+				error.value = null;
 			}
 		} );
 
@@ -244,6 +216,7 @@ module.exports = exports = {
 			}
 
 			if ( canShareFiles.value ) {
+				// The lead image isn't passed to the Web Share API
 				shareQuote( {
 					cardElement: cardElement,
 					articleTitle: props.articleTitle,
@@ -289,19 +262,17 @@ module.exports = exports = {
 		}
 
 		return {
-			quoteCardRef: quoteCardRef,
-			wrappedOpen: wrappedOpen,
-			selectedAspectRatio: selectedAspectRatio,
-			selectedStyle: selectedStyle,
-			aspectRatios: aspectRatios,
-			styleOptions: styleOptions,
-			isProcessing: isProcessing,
-			error: error,
-			copyLinkLabel: copyLinkLabel,
-			primaryActionLabel: primaryActionLabel,
-			handlePrimaryAction: handlePrimaryAction,
-			handleClose: handleClose,
-			handleCopyLink: handleCopyLink,
+			quoteCardRef,
+			wrappedOpen,
+			selectedStyle,
+			styleOptions,
+			isProcessing,
+			error,
+			copyLinkLabel,
+			primaryActionLabel,
+			handlePrimaryAction,
+			handleClose,
+			handleCopyLink,
 			cdxIconLink: icons.cdxIconLink
 		};
 	}

@@ -1,4 +1,4 @@
-const { fullUrls } = require( '../../resources/ext.readerExperiments.imageBrowsing/thumbExtractor.js' );
+const { fullUrls } = require( 'ext.readerExperiments.common' );
 describe( 'fullUrls', () => {
 
 	it( 'passes through null', () => {

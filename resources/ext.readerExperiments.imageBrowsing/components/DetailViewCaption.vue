@@ -53,7 +53,7 @@
 const { defineComponent, computed, ref, useTemplateRef, inject, onMounted, onUnmounted, watch, nextTick } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
-const { getCaptionIfAvailable } = require( '../thumbExtractor.js' );
+const { getCaptionIfAvailable } = require( 'ext.readerExperiments.common' );
 
 /**
  * @typedef {import('../types').ImageData} ImageData

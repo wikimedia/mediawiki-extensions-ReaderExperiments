@@ -2,7 +2,7 @@ const { mount } = require( '@vue/test-utils' );
 const VisualTableOfContentsItem = require( '../../resources/ext.readerExperiments.imageBrowsing/components/VisualTableOfContentsItem' );
 
 // Mock the thumbExtractor module
-jest.mock( '../../resources/ext.readerExperiments.imageBrowsing/thumbExtractor.js', () => ( {
+jest.mock( '../../resources/ext.readerExperiments.common/thumbExtractor.js', () => ( {
 	getCaptionIfAvailable: jest.fn( () => null )
 } ) );
 

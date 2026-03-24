@@ -57,6 +57,16 @@
 	},
 	"ForeignResourcesDir": "resources/lib",
 	"ResourceModules": {
+		"ext.readerExperiments.common": {
+			"localBasePath": "resources/ext.readerExperiments.common",
+			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.common",
+			"packageFiles": [
+				"index.js",
+				"thumbExtractor.js",
+				"excludedImageSelectors.js",
+				"composables/useContentImages.js"
+			]
+		},
 		"ext.readerExperiments.imageBrowsing": {
 			"localBasePath": "resources/ext.readerExperiments.imageBrowsing",
 			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.imageBrowsing",
@@ -69,7 +79,8 @@
 				"mediawiki.util",
 				"smartcrop",
 				"@wikimedia/codex",
-				"fast-average-color"
+				"fast-average-color",
+				"ext.readerExperiments.common"
 			],
 			"packageFiles": [
 				"init.js",
@@ -92,8 +103,6 @@
 						"cdxIconArrowPrevious"
 					]
 				},
-				"excludedImageSelectors.js",
-				"thumbExtractor.js",
 				"App.vue",
 				"components/Carousel.vue",
 				"components/CarouselItem.vue",
@@ -108,7 +117,6 @@
 				"components/VisualTableOfContentsOtherWikisItem.vue",
 				"composables/useAltText.js",
 				"composables/useBackgroundColor.js",
-				"composables/useContentImages.js",
 				"composables/useEntityId.js",
 				"composables/useExternalImages.js",
 				"composables/useImageLabel.js",
@@ -297,7 +305,8 @@
 				"@wikimedia/codex",
 				"mediawiki.util",
 				"html-to-image",
-				"ext.readerExperiments.shareHighlight.instrumentation"
+				"ext.readerExperiments.shareHighlight.instrumentation",
+				"ext.readerExperiments.common"
 			],
 			"packageFiles": [
 				"init.js",
@@ -307,7 +316,7 @@
 					"callbackParam": [
 						"cdxIconShare",
 						"cdxIconLink",
-						"cdxIconLogoWikipedia"
+						"cdxIconQuotes"
 					]
 				},
 				"App.vue",
@@ -325,10 +334,6 @@
 			"messages": [
 				"readerexperiments-sharehighlight-share-quote",
 				"readerexperiments-sharehighlight-dialog-title",
-				"readerexperiments-sharehighlight-aspect-ratio-legend",
-				"readerexperiments-sharehighlight-aspect-ratio-square",
-				"readerexperiments-sharehighlight-aspect-ratio-portrait",
-				"readerexperiments-sharehighlight-aspect-ratio-wide",
 				"readerexperiments-sharehighlight-background-legend",
 				"readerexperiments-sharehighlight-background-light",
 				"readerexperiments-sharehighlight-background-dark",
@@ -341,7 +346,6 @@
 				"readerexperiments-sharehighlight-generating-image",
 				"readerexperiments-sharehighlight-share-title",
 				"readerexperiments-sharehighlight-share-text",
-				"readerexperiments-sharehighlight-quote-format",
 				"readerexperiments-sharehighlight-branding"
 			]
 		},

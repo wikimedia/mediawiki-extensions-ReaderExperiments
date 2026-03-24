@@ -47,10 +47,6 @@
 	"readerexperiments-mobilepagepreviews-close-button-label": "Close",
 	"readerexperiments-sharehighlight-share-quote": "Share quote",
 	"readerexperiments-sharehighlight-dialog-title": "Share quote",
-	"readerexperiments-sharehighlight-aspect-ratio-legend": "Aspect ratio",
-	"readerexperiments-sharehighlight-aspect-ratio-square": "Square",
-	"readerexperiments-sharehighlight-aspect-ratio-portrait": "Portrait",
-	"readerexperiments-sharehighlight-aspect-ratio-wide": "Wide",
 	"readerexperiments-sharehighlight-background-legend": "Background",
 	"readerexperiments-sharehighlight-background-light": "Light",
 	"readerexperiments-sharehighlight-background-dark": "Dark",
@@ -63,6 +59,5 @@
 	"readerexperiments-sharehighlight-generating-image": "Generating image\u2026",
 	"readerexperiments-sharehighlight-share-title": "Quote from \"$1\" \u2014 Wikipedia",
 	"readerexperiments-sharehighlight-share-text": "\"$1\"\n\nRead more: $2",
-	"readerexperiments-sharehighlight-quote-format": "\u201C$1\u201D",
 	"readerexperiments-sharehighlight-branding": "Wikipedia"
 }

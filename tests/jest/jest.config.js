@@ -88,7 +88,9 @@ module.exports = {
 		// Mock the dynamically generated icons.json file
 		'../icons.json$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/icons.json',
 		// Mock the mediawiki.router module (provided by MediaWiki ResourceLoader at runtime)
-		'^mediawiki\\.router$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/mediawiki.router.js'
+		'^mediawiki\\.router$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/mediawiki.router.js',
+		// Common ReaderExperiments module
+		'ext.readerExperiments.common': '<rootDir>/resources/ext.readerExperiments.common/index.js'
 	},
 
 	// An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
