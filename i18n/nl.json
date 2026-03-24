@@ -38,6 +38,10 @@
 	"readerexperiments-minerva-toc-top-link": "(Naar begin)",
 	"readerexperiments-sharehighlight-share-quote": "Citaat delen",
 	"readerexperiments-sharehighlight-dialog-title": "Citaat delen",
+	"readerexperiments-sharehighlight-aspect-ratio-legend": "Beeldverhouding",
+	"readerexperiments-sharehighlight-aspect-ratio-square": "Vierkant",
+	"readerexperiments-sharehighlight-aspect-ratio-portrait": "Portret",
+	"readerexperiments-sharehighlight-aspect-ratio-wide": "Breed",
 	"readerexperiments-sharehighlight-background-legend": "Achtergrond",
 	"readerexperiments-sharehighlight-background-light": "Licht",
 	"readerexperiments-sharehighlight-background-dark": "Donker",
@@ -45,5 +49,8 @@
 	"readerexperiments-sharehighlight-link-copied": "Gekopieerd!",
 	"readerexperiments-sharehighlight-cancel": "Annuleren",
 	"readerexperiments-sharehighlight-share": "Delen",
-	"readerexperiments-sharehighlight-download": "Downloaden"
+	"readerexperiments-sharehighlight-download": "Downloaden",
+	"readerexperiments-sharehighlight-generating-image": "Afbeelding maken…",
+	"readerexperiments-sharehighlight-share-title": "Citaat uit \"$1\" — Wikipedia",
+	"readerexperiments-sharehighlight-share-text": "\"$1\"\n\nMeer informatie: $2"
 }
