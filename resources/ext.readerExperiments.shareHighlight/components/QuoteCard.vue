@@ -17,7 +17,12 @@
 			</cite>
 		</div>
 		<div class="ext-readerExperiments-quoteCard__branding">
-			{{ $i18n( 'readerexperiments-sharehighlight-branding' ).text() }}
+			<img v-if="wordmark"
+				:src="wordmark.src"
+				:alt="wordmark.alt"
+				:width="wordmark.width"
+				:height="wordmark.height">
+			<template v-else>{{ $i18n( 'readerexperiments-sharehighlight-branding' ).text() }}</template>
 		</div>
 	</div>
 </template>
@@ -107,10 +112,23 @@ module.exports = exports = {
 		// Expose cardRef for parent to access DOM element for image generation
 		expose( { cardRef: cardRef } );
 
+		const wordmark = ref( null );
+		const wordmarkImg = document.querySelector( '#mw-mf-page-center .branding-box img' );
+		if ( wordmarkImg instanceof HTMLImageElement ) {
+			// Reuse the mobile site branding wordmark for the share dialog's branding.
+			wordmark.value = {
+				src: wordmarkImg.src,
+				alt: wordmarkImg.alt,
+				width: wordmarkImg.width,
+				height: wordmarkImg.height
+			};
+		}
+
 		return {
-			cardRef: cardRef,
-			displayText: displayText,
-			fontSizeClass: fontSizeClass,
+			cardRef,
+			displayText,
+			fontSizeClass,
+			wordmark,
 			cdxIconLogoWikipedia: icons.cdxIconLogoWikipedia
 		};
 	}
@@ -141,7 +159,7 @@ module.exports = exports = {
 	&__branding {
 		position: absolute;
 		bottom: @spacing-50;
-		right: @spacing-50;
+		left: @spacing-50;
 		font-size: @font-size-x-small;
 		font-family: @font-family-system-sans;
 		letter-spacing: 0.02em;
@@ -175,6 +193,11 @@ module.exports = exports = {
 
 		.ext-readerExperiments-quoteCard__branding {
 			color: @color-disabled;
+
+			img {
+				filter: saturate( 0 );
+				opacity: 0.5;
+			}
 		}
 	}
 
@@ -188,6 +211,11 @@ module.exports = exports = {
 
 		.ext-readerExperiments-quoteCard__branding {
 			color: rgba( 255, 255, 255, 0.4 );
+
+			img {
+				filter: invert( 1 ) saturate( 0 );
+				opacity: 0.4;
+			}
 		}
 	}
 
@@ -201,6 +229,11 @@ module.exports = exports = {
 
 		.ext-readerExperiments-quoteCard__branding {
 			color: rgba( 255, 255, 255, 0.5 );
+
+			img {
+				filter: invert( 1 ) saturate( 0 );
+				opacity: 0.5;
+			}
 		}
 	}
 
@@ -235,4 +268,5 @@ module.exports = exports = {
 		}
 	}
 }
+
 </style>
