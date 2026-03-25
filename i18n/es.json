@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Kookoriko",
 			"Yupik"
 		]
 	},
-	"readerexperiments-imagebrowsing-detail-share": "Compartir"
+	"readerexperiments-imagebrowsing-detail-share": "Compartir",
+	"readerexperiments-mobilepagepreviews-loading": "Cargando vista previa..."
 }
