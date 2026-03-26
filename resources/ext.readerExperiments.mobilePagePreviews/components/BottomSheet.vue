@@ -184,6 +184,9 @@ body:has( .ext-readerExperiments-mobile-page-preview-sheet__container ) {
 		left: 0;
 		right: 0;
 		z-index: @z-index-overlay-backdrop;
+		max-width: @size-3200;
+		max-height: calc( @size-viewport-height-full - @size-400 );
+		justify-self: center;
 		background: @background-color-base;
 		border-radius: 8px 8px 0 0;
 		box-shadow: 0 -2px 8px rgba( 0, 0, 0, 0.15 );
@@ -196,6 +199,10 @@ body:has( .ext-readerExperiments-mobile-page-preview-sheet__container ) {
 		// when the content changes (transitions for `height: auto` don't work,
 		// hence this workaround)
 		box-sizing: content-box;
+		// full-screen width, but with `box-sizing: content-box` (which is the
+		// more practical one for automatically resizing based on child content),
+		// we need to also subtract padding
+		width: calc( @size-viewport-width-full - 2 * @spacing-100 );
 		transition: height 300ms;
 
 		&__transition-enter-active,
