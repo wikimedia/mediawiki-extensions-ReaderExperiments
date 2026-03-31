@@ -6,7 +6,7 @@
 			<cdx-thumbnail
 				v-if="thumbnail"
 				class="ext-readerExperiments-mobile-page-preview-card__thumbnail"
-				:thumbnail="thumbnailData"
+				:thumbnail="{ url: thumbnail.source }"
 			></cdx-thumbnail>
 			<!-- eslint-disable vue/no-v-html -->
 			<!-- Only use v-html if we have real, sanitized HTML content from
@@ -20,10 +20,10 @@
 			</div>
 			<!-- eslint-enable vue/no-v-html -->
 			<a
-				ref="linkRef"
 				class="ext-readerExperiments-mobile-page-preview-card__link"
 				:href="href"
 				target="_blank"
+				:style="{ 'font-size': fontSize }"
 			>
 				Read more
 				<cdx-icon :icon="cdxIconLinkExternal"></cdx-icon>
@@ -33,51 +33,72 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, onMounted } = require( 'vue' );
+const { computed, defineComponent, ref, useTemplateRef, watch } = require( 'vue' );
 const { CdxThumbnail, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconLinkExternal } = require( '../icons.json' );
+const { apiBaseUri } = require( '../config.json' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'PagePreviewCard',
 	components: { CdxThumbnail, CdxIcon },
 	props: {
-		thumbnail: {
-			type: Object,
-			default: null
-		},
-		extractHtml: {
+		title: {
 			type: String,
-			default: null
+			required: true
 		},
 		href: {
 			type: String,
 			required: true
 		}
 	},
-	setup( props ) {
-		const thumbnailData = {
-			url: props.thumbnail && props.thumbnail.source
-		};
-
+	async setup( props ) {
 		const summaryRef = useTemplateRef( 'summaryRef' );
-		const linkRef = useTemplateRef( 'linkRef' );
 
-		onMounted( () => {
-			if ( !summaryRef.value || !linkRef.value ) {
-				return;
+		async function fetchPreview( title ) {
+			const encodedTitle = encodeURIComponent( title );
+			const origin = apiBaseUri ? new URL( apiBaseUri ).origin : '';
+			const url = `${ origin }/api/rest_v1/page/summary/${ encodedTitle }`;
+			const response = await fetch( url );
+			if ( !response.ok ) {
+				throw new Error( response.status );
 			}
-			const p = summaryRef.value.querySelector( 'p' );
-			if ( p ) {
-				linkRef.value.style.fontSize = getComputedStyle( p ).fontSize;
-			}
-		} );
+			return await response.json();
+		}
+
+		const data = ref( await fetchPreview( props.title ) );
+		watch(
+			() => props.title,
+			async ( title ) => ( data.value = await fetchPreview( title ) )
+		);
+
+		const thumbnail = computed( () => ( data.value && data.value.thumbnail ) );
+		const extractHtml = computed( () => ( data.value && data.value.extract_html ) );
+
+		const fontSize = ref( null );
+		watch(
+			summaryRef,
+			( element ) => {
+				if ( element ) {
+					// Ensure the "Read more" link font size matches the summary text.
+					// Paragraph elements' font size adapts to font mode preferences.
+					const p = element.querySelector( 'p' );
+					if ( p ) {
+						fontSize.value = getComputedStyle( p ).fontSize;
+						return;
+					}
+				}
+				fontSize.value = null;
+			},
+			{ immediate: true }
+		);
 
 		return {
 			cdxIconLinkExternal,
-			thumbnailData,
 			summaryRef,
-			linkRef
+			thumbnail,
+			extractHtml,
+			fontSize
 		};
 	}
 } );

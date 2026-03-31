@@ -4,39 +4,39 @@
 		:use-close-button="true"
 		@close="onClose"
 	>
-		<div v-if="isLoading" class="ext-readerExperiments-mobile-page-preview__loading">
-			<cdx-progress-indicator>
-				{{ $i18n( 'readerexperiments-mobilepagepreviews-loading' ).text() }}
-			</cdx-progress-indicator>
-		</div>
-		<page-preview-card
-			v-else
-			:thumbnail="previewData && previewData.thumbnail"
-			:extract-html="previewData && previewData.extract_html"
-			:href="activeHref"
-		></page-preview-card>
+		<suspense
+			:key="
+				// we don't really need this (page-preview-card is reactive), but
+				// it forces an entirely new suspend cycle to load the new card when
+				// the title changes, prompting the progress indicator again
+				previewTitle
+			"
+			@resolve="clearRedirectTimeout"
+		>
+			<template #default>
+				<page-preview-card
+					:title="previewTitle"
+					:href="previewHref"
+				></page-preview-card>
+			</template>
+
+			<template #fallback>
+				<div class="ext-readerExperiments-mobile-page-preview__loading">
+					<cdx-progress-indicator>
+						{{ $i18n( 'readerexperiments-mobilepagepreviews-loading' ).text() }}
+					</cdx-progress-indicator>
+				</div>
+			</template>
+		</suspense>
 	</bottom-sheet>
 </template>
 
 <script>
-const { defineComponent, ref } = require( 'vue' );
+const { defineComponent, onErrorCaptured, ref } = require( 'vue' );
 const { CdxProgressIndicator } = require( '@wikimedia/codex' );
 const { excludedLinksSelector, fromElement } = require( './copiedFromPopups.js' );
-const { apiBaseUri } = require( './config.json' );
 const BottomSheet = require( './components/BottomSheet.vue' );
 const PagePreviewCard = require( './components/PagePreviewCard.vue' );
-
-function fetchPreview( title ) {
-	const encodedTitle = encodeURIComponent( title.getPrefixedDb() );
-	const origin = apiBaseUri ? new URL( apiBaseUri ).origin : '';
-	const url = `${ origin }/api/rest_v1/page/summary/${ encodedTitle }`;
-	return fetch( url ).then( ( response ) => {
-		if ( !response.ok ) {
-			throw new Error( response.status );
-		}
-		return response.json();
-	} );
-}
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -47,12 +47,12 @@ module.exports = exports = defineComponent( {
 		PagePreviewCard
 	},
 	setup() {
-		const previewTitle = ref( null );
-		const selector = `#mw-content-text a[href][title]:not(${ excludedLinksSelector })`;
-		const previewData = ref( null );
-		const activeHref = ref( null );
-		const isLoading = ref( false );
 		const isOpen = ref( false );
+		const previewTitle = ref( null );
+		const previewHref = ref( null );
+		const redirectTimeout = ref( null );
+		const clearRedirectTimeout = () => clearTimeout( redirectTimeout.value );
+		const selector = `#mw-content-text a[href][title]:not(${ excludedLinksSelector })`;
 
 		document.addEventListener( 'click', ( event ) => {
 			if ( !event.target.closest ) {
@@ -71,27 +71,29 @@ module.exports = exports = defineComponent( {
 
 			// Do not let the browser follow the link, but start a timer
 			// to fall back to navigating to the intended link after all,
-			// should we fail to load/display the preview in time
-			isOpen.value = true;
-			isLoading.value = true;
+			// should we fail to load/display the preview in time.
+			// Clear existing timeout before kicking off a new one.
 			event.preventDefault();
 			const redirect = () => ( window.location = link.href );
-			const redirectTimeout = setTimeout( redirect, 3000 );
+			clearRedirectTimeout();
+			redirectTimeout.value = setTimeout( redirect, 3000 );
 
-			fetchPreview( title )
-				.then( ( data ) => {
-					clearTimeout( redirectTimeout );
-					isLoading.value = false;
-					previewTitle.value = title;
-					previewData.value = data;
-					activeHref.value = event.target.href;
-				} )
-				.catch( () => {
-					clearTimeout( redirectTimeout );
-					isOpen.value = false;
-					isLoading.value = false;
-					redirect();
-				} );
+			isOpen.value = true;
+			previewTitle.value = title.getPrefixedDb();
+			previewHref.value = link.href;
+		} );
+
+		onErrorCaptured( () => {
+			// Any error that is encountered (which would most likely be
+			// a failure to fetch the required data from the API) should
+			// fall back to pointing the user to the link they intended
+			// to navigate to.
+			if ( previewHref.value ) {
+				clearRedirectTimeout();
+				isOpen.value = false;
+				window.location = previewHref.value;
+			}
+			return false;
 		} );
 
 		// this is just a temporary thing to visually help identify the relevant
@@ -110,21 +112,17 @@ module.exports = exports = defineComponent( {
 		} );
 
 		function onClose() {
-			// Don't update (and effectively remove) the card until the close
-			// animation has completed
 			isOpen.value = false;
-			isLoading.value = false;
 			previewTitle.value = null;
-			previewData.value = null;
-			activeHref.value = null;
+			previewHref.value = null;
 		}
 
 		return {
 			onClose,
-			previewData,
-			activeHref,
-			isLoading,
-			isOpen
+			clearRedirectTimeout,
+			isOpen,
+			previewTitle,
+			previewHref
 		};
 	}
 } );
