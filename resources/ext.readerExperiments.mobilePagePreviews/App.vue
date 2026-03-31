@@ -2,6 +2,8 @@
 	<bottom-sheet
 		v-model:open="isOpen"
 		:use-close-button="true"
+		:title="$i18n( 'readerexperiments-mobilepagepreviews-title' ).text()"
+		:hide-title="true"
 		@close="onClose"
 	>
 		<suspense

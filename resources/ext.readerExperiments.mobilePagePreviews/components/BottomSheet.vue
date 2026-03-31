@@ -25,25 +25,35 @@
 				class="ext-readerExperiments-mobile-page-preview-sheet__container"
 				role="dialog"
 				aria-modal="true"
+				:aria-label="$slots.header || hideTitle ? title : undefined"
+				:aria-labelledby="!$slots.header && !hideTitle ? labelId : undefined"
 				@keydown.esc="onClose"
 			>
 				<focus-trap ref="focusTrapRef">
-					<div
-						ref="contentRef"
-						class="ext-readerExperiments-mobile-page-preview-sheet__content"
-					>
-						<cdx-button
-							v-if="useCloseButton"
-							class="ext-readerExperiments-mobile-page-preview-sheet__close"
-							weight="quiet"
-							:disabled="isTransitioning"
-							:aria-label="$i18n( 'readerexperiments-mobilepagepreviews-close-button-label' )"
-							@click.stop="onClose"
-						>
-							<cdx-icon :icon="cdxIconClose"></cdx-icon>
-						</cdx-button>
+					<div ref="contentRef">
+						<slot name="header">
+							<div class="ext-readerExperiments-mobile-page-preview-sheet__header">
+								<h2
+									v-if="!hideTitle"
+									:id="labelId"
+									class="ext-readerExperiments-mobile-page-preview-sheet__title"
+								>
+									{{ title }}
+								</h2>
+								<cdx-button
+									v-if="useCloseButton"
+									class="ext-readerExperiments-mobile-page-preview-sheet__close"
+									weight="quiet"
+									:disabled="isTransitioning"
+									:aria-label="$i18n( 'readerexperiments-mobilepagepreviews-close-button-label' )"
+									@click.stop="onClose"
+								>
+									<cdx-icon :icon="cdxIconClose"></cdx-icon>
+								</cdx-button>
+							</div>
+						</slot>
 
-						<div>
+						<div class="ext-readerExperiments-mobile-page-preview-sheet__body">
 							<slot></slot>
 						</div>
 					</div>
@@ -54,7 +64,7 @@
 </template>
 
 <script>
-const { defineComponent, inject, nextTick, ref, useTemplateRef, watch } = require( 'vue' );
+const { defineComponent, inject, nextTick, ref, useId, useTemplateRef, watch } = require( 'vue' );
 const { CdxButton, CdxIcon, useResizeObserver } = require( '@wikimedia/codex' );
 const { cdxIconClose } = require( '../icons.json' );
 const FocusTrap = require( './FocusTrap.vue' );
@@ -68,11 +78,19 @@ module.exports = exports = defineComponent( {
 		CdxIcon
 	},
 	props: {
-		useCloseButton: {
+		open: {
 			type: Boolean,
 			default: false
 		},
-		open: {
+		title: {
+			type: String,
+			required: true
+		},
+		hideTitle: {
+			type: Boolean,
+			default: false
+		},
+		useCloseButton: {
 			type: Boolean,
 			default: false
 		}
@@ -86,6 +104,7 @@ module.exports = exports = defineComponent( {
 		const focusTrapRef = useTemplateRef( 'focusTrapRef' );
 		const containerRef = useTemplateRef( 'containerRef' );
 		const contentRef = useTemplateRef( 'contentRef' );
+		const labelId = useId();
 		const isTransitioning = ref( false );
 
 		function onClose() {
@@ -138,6 +157,7 @@ module.exports = exports = defineComponent( {
 			focusTrapRef,
 			containerRef,
 			contentRef,
+			labelId,
 			isTransitioning,
 			onClose,
 			onEnter,
@@ -190,7 +210,6 @@ body:has( .ext-readerExperiments-mobile-page-preview-sheet__container ) {
 		background: @background-color-base;
 		border-radius: 8px 8px 0 0;
 		box-shadow: 0 -2px 8px rgba( 0, 0, 0, 0.15 );
-		padding: @spacing-50 @spacing-100 @spacing-150;
 		// regardless of any height set on this node, we need to allow children
 		// to render unconstrained, at whatever height fits their content
 		overflow-y: hidden;
@@ -216,13 +235,29 @@ body:has( .ext-readerExperiments-mobile-page-preview-sheet__container ) {
 		}
 	}
 
-	&__content {
+	&__header {
 		display: flex;
-		flex-direction: column;
+		align-items: baseline;
+		justify-content: flex-end;
+		padding: @spacing-50 @spacing-100 0;
 	}
 
-	&__close {
-		align-self: flex-end;
+	// increase specificity to override Minerva styles
+	// stylelint-disable-next-line selector-class-pattern
+	.content &__title {
+		flex: 1;
+		margin: 0;
+		border: 0;
+		padding: 0 0 @spacing-50;
+		font-family: inherit;
+		font-size: @font-size-x-large;
+		font-weight: @font-weight-bold;
+		line-height: @line-height-x-large;
+	}
+
+	&__body {
+		overflow: auto;
+		padding: @spacing-50 @spacing-100 @spacing-150;
 	}
 }
 </style>
