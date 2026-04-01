@@ -18,6 +18,13 @@
 				v-html="extractHtml"
 			>
 			</div>
+			<div
+				v-else-if="displayTitle"
+				ref="summaryRef"
+				class="ext-readerExperiments-mobile-page-preview-card__summary"
+			>
+				<p><span v-html="displayTitle"></span></p>
+			</div>
 			<!-- eslint-enable vue/no-v-html -->
 			<a
 				class="ext-readerExperiments-mobile-page-preview-card__link"
@@ -74,6 +81,7 @@ module.exports = exports = defineComponent( {
 
 		const thumbnail = computed( () => ( data.value && data.value.thumbnail ) );
 		const extractHtml = computed( () => ( data.value && data.value.extract_html ) );
+		const displayTitle = computed( () => ( data.value && data.value.displaytitle ) );
 
 		const fontSize = ref( null );
 		watch(
@@ -98,6 +106,7 @@ module.exports = exports = defineComponent( {
 			summaryRef,
 			thumbnail,
 			extractHtml,
+			displayTitle,
 			fontSize
 		};
 	}
