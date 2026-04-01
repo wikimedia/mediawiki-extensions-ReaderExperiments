@@ -69,6 +69,8 @@ module.exports = exports = defineComponent( {
 				return;
 			}
 
+			link.classList.add( 'ext-readerExperiments-mobile-page-preview-link' );
+
 			// Do not let the browser follow the link, but start a timer
 			// to fall back to navigating to the intended link after all,
 			// should we fail to load/display the preview in time.
@@ -96,25 +98,13 @@ module.exports = exports = defineComponent( {
 			return false;
 		} );
 
-		// this is just a temporary thing to visually help identify the relevant
-		// links we will be targeting, which might help us spot weird/unexpected
-		// cases during development
-		// @todo remove before launch
-		Array.from( document.querySelectorAll( selector ) ).forEach( ( link ) => {
-			const title = fromElement( link, mw.config );
-			if ( !title ) {
-				return;
-			}
-
-			link.style.color = 'green';
-			link.style.background = 'orange';
-			link.style.border = '1px solid green';
-		} );
-
 		function onClose() {
 			isOpen.value = false;
 			previewTitle.value = null;
 			previewHref.value = null;
+
+			Array.from( document.querySelectorAll( '.ext-readerExperiments-mobile-page-preview-link' ) )
+				.forEach( ( link ) => ( link.classList.remove( 'ext-readerExperiments-mobile-page-preview-link' ) ) );
 		}
 
 		return {
@@ -138,5 +128,19 @@ module.exports = exports = defineComponent( {
 	// This doesn't prevent layout shifts. When the preview data loads, the
 	// sheet grows taller.
 	min-height: @size-400;
+}
+
+// Mock regular `:active` state despite not _actually_ being :active
+// (as focus has moved to within the sheet)
+// High specificity needed to override other styles.
+// Based on limited testing of Firefox, Chrome, and Safari.
+// Note that iOS Safari requires :where :visited :hover selector
+.ext-readerExperiments-mobile-page-preview-link {
+	&:where( :not( [ role='button' ] ):not( .cdx-menu-item__content ) ),
+	&:where( :not( [ role='button' ] ):not( .cdx-menu-item__content ) ):visited,
+	&:where( :not( [ role='button' ] ):not( .cdx-menu-item__content ) ):visited:hover {
+		color: @color-link--active;
+		text-decoration: @text-decoration-underline;
+	}
 }
 </style>
