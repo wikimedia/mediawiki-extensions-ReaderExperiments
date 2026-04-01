@@ -172,6 +172,7 @@ module.exports = exports = defineComponent( {
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
 
+// stylelint-disable-next-line plugin/no-unsupported-browser-features
 body:has( .ext-readerExperiments-mobile-page-preview-sheet__container ) {
 	// disable page scroll while preview is open
 	overflow: hidden;

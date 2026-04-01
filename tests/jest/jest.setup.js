@@ -99,7 +99,7 @@ const mw = {
 global.mw = mw;
 
 // Mock FastAverageColor to avoid console warnings about missing canvas support
-jest.mock( 'fast-average-color', () => ( {
+jest.mock( 'ext.readerExperiments/lib/fast-average-color', () => ( {
 	FastAverageColor: jest.fn().mockImplementation( () => ( {
 		getColor: jest.fn().mockReturnValue( {
 			hex: '#3366cc',

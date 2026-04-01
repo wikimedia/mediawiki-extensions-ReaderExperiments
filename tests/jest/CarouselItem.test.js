@@ -1,5 +1,5 @@
 const { shallowMount } = require( '@vue/test-utils' );
-const CarouselItem = require( '../../resources/ext.readerExperiments.imageBrowsing/components/CarouselItem' );
+const CarouselItem = require( '../../resources/experiments/imageBrowsing/components/CarouselItem' );
 
 let image, wrapper;
 

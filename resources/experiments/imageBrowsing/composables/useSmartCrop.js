@@ -4,7 +4,7 @@
 
 let SmartCrop;
 try {
-	SmartCrop = require( 'smartcrop' );
+	SmartCrop = require( 'ext.readerExperiments/lib/smartcrop' );
 } catch ( e ) {
 	SmartCrop = {
 		crop: async () => ( {

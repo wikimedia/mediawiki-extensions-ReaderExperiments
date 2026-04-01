@@ -1,10 +1,10 @@
-const { FastAverageColor } = require( 'fast-average-color' );
+const { FastAverageColor } = require( 'ext.readerExperiments/lib/fast-average-color' );
 const { ref, watchEffect, readonly } = require( 'vue' );
 
 /**
  * @typedef {import('types-mediawiki')} MediaWikiTypes
  * @typedef {import('../types').ImageData} ImageData
- * @typedef {import('fast-average-color').FastAverageColorResult} ColorResult
+ * @typedef {import('../../lib/fast-average-color').FastAverageColorResult} ColorResult
  * @typedef {import('vue').Ref<ColorResult | null>} ColorRef
  * @typedef {import('vue').DeepReadonly<ColorRef>} ReadonlyColorRef
  */

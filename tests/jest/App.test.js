@@ -1,6 +1,6 @@
 const { mount } = require( '@vue/test-utils' );
 
-const App = require( '../../resources/ext.readerExperiments.imageBrowsing/App.vue' );
+const App = require( '../../resources/experiments/imageBrowsing/App.vue' );
 const router = require( 'mediawiki.router' );
 
 // Create mock images
@@ -49,9 +49,9 @@ const mockImage3 = {
 const mockImages = [ mockImage1, mockImage2, mockImage3 ];
 
 // Mock the composables
-jest.mock( '../../resources/ext.readerExperiments.common/composables/useContentImages.js', () => jest.fn( () => mockImages ) );
-jest.mock( '../../resources/ext.readerExperiments.imageBrowsing/composables/useExternalImages.js', () => jest.fn() );
-jest.mock( '../../resources/ext.readerExperiments.imageBrowsing/composables/useEntityId.js', () => jest.fn() );
+jest.mock( '../../resources/common/composables/useContentImages.js', () => jest.fn( () => mockImages ) );
+jest.mock( '../../resources/experiments/imageBrowsing/composables/useExternalImages.js', () => jest.fn() );
+jest.mock( '../../resources/experiments/imageBrowsing/composables/useEntityId.js', () => jest.fn() );
 
 describe( 'App', () => {
 	let wrapper;

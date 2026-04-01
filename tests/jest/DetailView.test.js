@@ -1,5 +1,5 @@
 const { shallowMount, config } = require( '@vue/test-utils' );
-const DetailView = require( '../../resources/ext.readerExperiments.imageBrowsing/components/DetailView' );
+const DetailView = require( '../../resources/experiments/imageBrowsing/components/DetailView' );
 
 // Suppress warnings
 config.global.config.warnHandler = () => {};

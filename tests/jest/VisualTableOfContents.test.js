@@ -1,5 +1,5 @@
 const { shallowMount } = require( '@vue/test-utils' );
-const VisualTableOfContents = require( '../../resources/ext.readerExperiments.imageBrowsing/components/VisualTableOfContents' );
+const VisualTableOfContents = require( '../../resources/experiments/imageBrowsing/components/VisualTableOfContents' );
 
 let mockImages, wrapper;
 

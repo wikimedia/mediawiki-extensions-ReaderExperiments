@@ -1,7 +1,7 @@
 'use strict';
 
 const Vue = require( 'vue' );
-const { FloatingButtonApp } = require( 'ext.readerExperiments.minervaToc' );
+const { FloatingButtonApp } = require( 'ext.readerExperiments/minervaToc' );
 
 const container = document.createElement( 'div' );
 container.setAttribute( 'id', 'ext-readerExperiments-minerva-toc' );

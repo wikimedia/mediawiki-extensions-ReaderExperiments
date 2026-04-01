@@ -1,5 +1,5 @@
 const { mount } = require( '@vue/test-utils' );
-const DetailViewCaption = require( '../../resources/ext.readerExperiments.imageBrowsing/components/DetailViewCaption' );
+const DetailViewCaption = require( '../../resources/experiments/imageBrowsing/components/DetailViewCaption' );
 
 // The caption's element `clientHeight` and `scrollHeight` properties
 // are used to tell if the caption overflows,

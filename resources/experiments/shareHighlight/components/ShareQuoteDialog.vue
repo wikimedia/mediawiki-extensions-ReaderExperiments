@@ -96,7 +96,7 @@ const useShareQuote = require( '../composables/useShareQuote.js' );
 const textFragment = require( '../utils/textFragment.js' );
 
 /**
- * @typedef {import('../../ext.readerExperiments.common/types').ImageData} ImageData
+ * @typedef {import('../../../common/types').ImageData} ImageData
  */
 
 // @vue/component

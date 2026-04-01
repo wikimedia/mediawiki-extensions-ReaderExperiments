@@ -1,4 +1,4 @@
-const useMediaSearchResults = require( '../../resources/ext.readerExperiments.imageBrowsing/composables/useMediaSearchResults.js' );
+const useMediaSearchResults = require( '../../resources/experiments/imageBrowsing/composables/useMediaSearchResults.js' );
 
 const apiMap = new Map();
 for ( const apiHit of require( './files/mediaSearchApi.json' ) ) {

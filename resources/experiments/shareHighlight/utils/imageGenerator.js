@@ -3,7 +3,7 @@
  * Uses html-to-image library for reliable DOM-to-canvas conversion.
  */
 
-const htmlToImage = require( 'html-to-image' );
+const htmlToImage = require( 'ext.readerExperiments/lib/html-to-image' );
 
 /**
  * Generate a PNG image blob from a DOM element.

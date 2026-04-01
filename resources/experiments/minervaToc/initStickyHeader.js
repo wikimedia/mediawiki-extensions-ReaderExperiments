@@ -1,7 +1,7 @@
 'use strict';
 
 const Vue = require( 'vue' );
-const { StickyHeaderApp } = require( 'ext.readerExperiments.minervaToc' );
+const { StickyHeaderApp } = require( 'ext.readerExperiments/minervaToc' );
 
 // Insert the page heading toggle button next to the article title h1
 const pageHeading = document.querySelector( '.page-heading' );

@@ -1,5 +1,5 @@
 const { mount } = require( '@vue/test-utils' );
-const Carousel = require( '../../resources/ext.readerExperiments.imageBrowsing/components/Carousel' );
+const Carousel = require( '../../resources/experiments/imageBrowsing/components/Carousel' );
 
 let images, wrapper;
 

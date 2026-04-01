@@ -50,10 +50,10 @@ const { computed, ref, toRef } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
 const icons = require( '../icons.json' );
 const truncateText = require( '../utils/truncateText.js' );
-const { useBackgroundColor } = require( 'ext.readerExperiments.common' );
+const { useBackgroundColor } = require( 'ext.readerExperiments' );
 
 // Use static URLs to load local SVG files
-const staticBaseUrl = mw.config.get( 'wgExtensionAssetsPath' ) + '/ReaderExperiments/resources/ext.readerExperiments.shareHighlight/images/';
+const staticBaseUrl = mw.config.get( 'wgExtensionAssetsPath' ) + '/ReaderExperiments/resources/experiments/shareHighlight/images/';
 const creativeCommonsCC = staticBaseUrl + 'creative-commons-cc.svg';
 const creativeCommonsBY = staticBaseUrl + 'creative-commons-by.svg';
 const creativeCommonsSA = staticBaseUrl + 'creative-commons-sa.svg';
@@ -65,7 +65,7 @@ const creativeCommonsSA = staticBaseUrl + 'creative-commons-sa.svg';
 const MAX_QUOTE_LENGTH = 280;
 
 /**
- * @typedef {import('../../ext.readerExperiments.common/types').ImageData} ImageData
+ * @typedef {import('../../../common/types').ImageData} ImageData
  */
 
 // @vue/component

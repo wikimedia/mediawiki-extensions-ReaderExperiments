@@ -21,7 +21,7 @@ const ShareQuoteButton = require( './components/ShareQuoteButton.vue' );
 const ShareQuoteDialog = require( './components/ShareQuoteDialog.vue' );
 const useTextSelection = require( './composables/useTextSelection.js' );
 const useLeadImage = require( './composables/useLeadImage.js' );
-const { imageSelectors } = require( 'ext.readerExperiments.common' );
+const { imageSelectors } = require( 'ext.readerExperiments' );
 
 // @vue/component
 module.exports = exports = {

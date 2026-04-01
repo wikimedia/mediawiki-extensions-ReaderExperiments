@@ -54,7 +54,7 @@
 const { computed, defineComponent, inject, onMounted, onUnmounted, useTemplateRef } = require( 'vue' );
 const { CdxButton, useResizeObserver } = require( '@wikimedia/codex' );
 const CroppedImage = require( './CroppedImage.vue' );
-const { getCaptionIfAvailable } = require( 'ext.readerExperiments.common' );
+const { getCaptionIfAvailable } = require( 'ext.readerExperiments' );
 const useImageLabel = require( '../composables/useImageLabel.js' );
 
 // @vue/component

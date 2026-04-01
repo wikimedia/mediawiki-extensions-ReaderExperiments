@@ -1,6 +1,6 @@
 // Sticky Headers Prototype – Legacy Parser support
 
-const { setupStickyHeaders } = require( 'ext.readerExperiments.stickyHeaders.common' );
+const { setupStickyHeaders } = require( 'ext.readerExperiments/stickyHeaders.common' );
 
 /**
  * @type {HTMLElement[]}
