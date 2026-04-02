@@ -22,5 +22,7 @@
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "অন্যান্য প্রকল্প থেকে মিডিয়া",
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "অন্যান্য প্রকল্প থেকে ছবি লোড করা হচ্ছে",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "নিবন্ধে দেখুন",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "$1 থেকে"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "$1 থেকে",
+	"readerexperiments-mobilepagepreviews-read-more": "আরও পড়ুন",
+	"readerexperiments-mobilepagepreviews-close-button-label": "বন্ধ করুন"
 }
