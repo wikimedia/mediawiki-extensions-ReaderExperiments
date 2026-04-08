@@ -112,8 +112,8 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	}
 
 	/**
-	 * ResourceLoader callback to generate virtual config.json for ImageBrowsing module,
-	 * to provides configuration data as a packageFiles virtual module
+	 * ResourceLoader callback to generate virtual config.json for ImageBrowsing module.
+	 * Provides configuration data as a packageFiles virtual module.
 	 *
 	 * @see https://www.mediawiki.org/wiki/ResourceLoader/Package_files#Generated_content
 	 *
@@ -137,8 +137,8 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	}
 
 	/**
-	 * ResourceLoader callback to generate virtual config.json for PagePreviews module,
-	 * to provides configuration data as a packageFiles virtual module
+	 * ResourceLoader callback to generate virtual config.json for PagePreviews module.
+	 * Provides configuration data as a packageFiles virtual module.
 	 *
 	 * @see https://www.mediawiki.org/wiki/ResourceLoader/Package_files#Generated_content
 	 *
@@ -147,6 +147,22 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	 * @return array
 	 */
 	public static function getMobilePagePreviewsConfig( Context $context, Config $config ): array {
+		return [
+			'apiBaseUri' => $config->get( 'ReaderExperimentsApiBaseUri' )
+		];
+	}
+
+	/**
+	 * ResourceLoader callback to generate virtual config.json for ShareHighlight module.
+	 * Provides configuration data as a packageFiles virtual module.
+	 *
+	 * @see https://www.mediawiki.org/wiki/ResourceLoader/Package_files#Generated_content
+	 *
+	 * @param Context $context
+	 * @param Config $config
+	 * @return array
+	 */
+	public static function getShareHighlightConfig( Context $context, Config $config ): array {
 		return [
 			'apiBaseUri' => $config->get( 'ReaderExperimentsApiBaseUri' )
 		];

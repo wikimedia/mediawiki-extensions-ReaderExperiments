@@ -30,6 +30,21 @@ const extensions = {
 	xcf: 'default'
 };
 
+const imageSelectors = [
+	// Parsoid thumbs
+	'[typeof*="mw:File"] a.mw-file-description img',
+	'[typeof*="mw:File"] a.mw-file-description .lazy-image-placeholder',
+
+	// Legacy parser thumbs
+	'.gallery .image img',
+	'.gallery .image .lazy-image-placeholder',
+	'a.image img',
+	'a.image .lazy-image-placeholder',
+
+	'a.mw-file-description img',
+	'#file a img'
+];
+
 /**
  * @typedef {import('types-mediawiki')} MediaWikiTypes
  */
@@ -204,22 +219,7 @@ function thumbInfo( thumb ) {
  * @return {import('./types').ImageData[]}
  */
 function extractThumbInfo( content ) {
-	const selectors = [
-		// Parsoid thumbs
-		'[typeof*="mw:File"] a.mw-file-description img',
-		'[typeof*="mw:File"] a.mw-file-description .lazy-image-placeholder',
-
-		// Legacy parser thumbs
-		'.gallery .image img',
-		'.gallery .image .lazy-image-placeholder',
-		'a.image img',
-		'a.image .lazy-image-placeholder',
-
-		'a.mw-file-description img',
-		'#file a img'
-	];
-
-	return Array.from( content.querySelectorAll( selectors.join( ', ' ) ) )
+	return Array.from( content.querySelectorAll( imageSelectors.join( ', ' ) ) )
 		.map( ( thumb ) => thumbInfo( thumb ) )
 		.filter( isIncludedThumbInfo );
 }
@@ -377,5 +377,6 @@ function findNearbyParagraph( container ) {
 module.exports = {
 	extractThumbInfo,
 	fullUrls,
-	getCaptionIfAvailable
+	getCaptionIfAvailable,
+	imageSelectors
 };

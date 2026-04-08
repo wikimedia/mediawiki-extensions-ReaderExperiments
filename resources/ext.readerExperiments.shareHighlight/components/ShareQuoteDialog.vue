@@ -115,7 +115,6 @@ module.exports = exports = {
 		/**
 		 * Whether the dialog is open.
 		 */
-		// eslint-disable-next-line vue/no-unused-properties -- used in useModelWrapper
 		open: {
 			type: Boolean,
 			default: false

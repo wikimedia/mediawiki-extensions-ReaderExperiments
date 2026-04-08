@@ -20,7 +20,8 @@ const { ref, toRef, watch } = require( 'vue' );
 const ShareQuoteButton = require( './components/ShareQuoteButton.vue' );
 const ShareQuoteDialog = require( './components/ShareQuoteDialog.vue' );
 const useTextSelection = require( './composables/useTextSelection.js' );
-const { useContentImages } = require( 'ext.readerExperiments.common' );
+const useLeadImage = require( './composables/useLeadImage.js' );
+const { imageSelectors } = require( 'ext.readerExperiments.common' );
 
 // @vue/component
 module.exports = exports = {
@@ -32,6 +33,7 @@ module.exports = exports = {
 	props: {
 		/**
 		 * Reference to the article content container element.
+		 * Used for text selection detection and image detection.
 		 */
 		contentElement: {
 			type: HTMLElement,
@@ -47,19 +49,13 @@ module.exports = exports = {
 
 		// Share dialog state
 		const isShareDialogOpen = ref( false );
-		const leadImageForDialog = ref( null );
 		const quoteTextForDialog = ref( '' );
+		// Verify that the page has images before calling the PageImages API
+		const hasImages = props.contentElement.querySelectorAll( imageSelectors.join( ', ' ) ).length > 0;
+		const leadImageForDialog = hasImages ? useLeadImage().leadImage : null;
 
 		// Page title from MediaWiki config
 		const pageTitle = mw.config.get( 'wgTitle' );
-
-		// Extract the first thumbnail image from the current article's content
-		if ( contentRef.value ) {
-			const articleImages = useContentImages( props.contentElement );
-			if ( articleImages.length > 0 ) {
-				leadImageForDialog.value = articleImages[ 0 ];
-			}
-		}
 
 		/**
 		 * Open the share dialog with current selection.
