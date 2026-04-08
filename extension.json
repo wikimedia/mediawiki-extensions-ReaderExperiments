@@ -406,6 +406,22 @@
 				"readerexperiments-mobilepagepreviews-title",
 				"readerexperiments-mobilepagepreviews-close-button-label"
 			]
+		},
+		"ext.readerExperiments/mobilePagePreviews.instrumentation": {
+			"localBasePath": "resources/experiments/mobilePagePreviews",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/mobilePagePreviews",
+			"dependencies": [
+				"ext.testKitchen",
+				"ext.wikimediaEvents"
+			],
+			"packageFiles": [
+				"instrumentation.js",
+				{
+					"name": "config.json",
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getMobilePagePreviewsConfig"
+				},
+				"copiedFromPopups.js"
+			]
 		}
 	},
 	"manifest_version": 2

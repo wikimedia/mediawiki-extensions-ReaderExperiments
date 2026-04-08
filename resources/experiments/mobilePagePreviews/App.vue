@@ -17,8 +17,10 @@
 		>
 			<template #default>
 				<page-preview-card
+					ref="previewRef"
 					:title="previewTitle"
 					:href="previewHref"
+					@click-link="onReadMore"
 				></page-preview-card>
 			</template>
 
@@ -34,7 +36,7 @@
 </template>
 
 <script>
-const { defineComponent, onErrorCaptured, ref } = require( 'vue' );
+const { defineComponent, onErrorCaptured, ref, useTemplateRef, watch } = require( 'vue' );
 const { CdxProgressIndicator } = require( '@wikimedia/codex' );
 const { excludedLinksSelector, fromElement } = require( './copiedFromPopups.js' );
 const BottomSheet = require( './components/BottomSheet.vue' );
@@ -49,7 +51,9 @@ module.exports = exports = defineComponent( {
 		PagePreviewCard
 	},
 	setup() {
+		const previewRef = useTemplateRef( 'previewRef' );
 		const isOpen = ref( false );
+		const hasThumbnail = ref( false );
 		const previewTitle = ref( null );
 		const previewHref = ref( null );
 		const redirectTimeout = ref( null );
@@ -100,6 +104,23 @@ module.exports = exports = defineComponent( {
 			return false;
 		} );
 
+		watch(
+			previewRef,
+			() => {
+				if ( previewRef.value ) {
+					hasThumbnail.value = previewRef.value.$el.querySelector( '.ext-readerExperiments-mobile-page-preview-card__thumbnail' ) !== null;
+					mw.hook( 'readerExperiments.mobilePagePreviews.init' ).fire( hasThumbnail.value );
+				} else {
+					mw.hook( 'readerExperiments.mobilePagePreviews.close' ).fire( hasThumbnail.value );
+					hasThumbnail.value = false;
+				}
+			}
+		);
+
+		function onReadMore() {
+			mw.hook( 'readerExperiments.mobilePagePreviews.read-more' ).fire( hasThumbnail.value );
+		}
+
 		function onClose() {
 			isOpen.value = false;
 			previewTitle.value = null;
@@ -110,6 +131,8 @@ module.exports = exports = defineComponent( {
 		}
 
 		return {
+			previewRef,
+			onReadMore,
 			onClose,
 			clearRedirectTimeout,
 			isOpen,

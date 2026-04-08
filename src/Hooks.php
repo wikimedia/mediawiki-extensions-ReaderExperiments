@@ -62,7 +62,7 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	private const MINERVA_TOC_GROUP_BUTTON = 'treatment2';
 	// END MINERVA_TOC_EXPERIMENTS (T415611)
 
-	// @todo set up experiment
+	// https://test-kitchen.wikimedia.org/experiment/mobile-page-previews
 	private const MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME = 'mobile-page-previews';
 	private const MOBILE_PAGE_PREVIEWS_GROUP_NAME = 'treatment';
 
@@ -389,11 +389,20 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 		$title = $context->getTitle();
 
 		if (
-			$title && $title->getNamespace() === NS_MAIN &&
-			$out->getSkin()->getSkinName() === 'minerva' &&
-			// phpcs:ignore Generic.Files.LineLength.TooLong
-			$this->getAssignedGroup( $request, self::MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME ) === self::MOBILE_PAGE_PREVIEWS_GROUP_NAME
+			!$title ||
+			$title->getNamespace() !== NS_MAIN ||
+			$out->getSkin()->getSkinName() !== 'minerva'
 		) {
+			return;
+		}
+
+		$assignedGroup = $this->getAssignedGroup( $request, self::MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME );
+
+		if ( $assignedGroup !== null ) {
+			$out->addModules( 'ext.readerExperiments/mobilePagePreviews.instrumentation' );
+		}
+
+		if ( $assignedGroup === self::MOBILE_PAGE_PREVIEWS_GROUP_NAME ) {
 			$out->addModules( 'ext.readerExperiments/mobilePagePreviews' );
 		}
 	}

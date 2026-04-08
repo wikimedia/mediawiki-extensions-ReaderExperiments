@@ -31,6 +31,7 @@
 				:href="href"
 				target="_blank"
 				:style="{ 'font-size': fontSize }"
+				@click="$emit( 'click-link' )"
 			>
 				{{ $i18n( 'readerexperiments-mobilepagepreviews-read-more' ).text() }}
 				<cdx-icon :icon="cdxIconLinkExternal"></cdx-icon>
@@ -59,6 +60,7 @@ module.exports = exports = defineComponent( {
 			required: true
 		}
 	},
+	emits: [ 'click-link' ],
 	async setup( props ) {
 		const summaryRef = useTemplateRef( 'summaryRef' );
 
