@@ -47,7 +47,7 @@ module.exports = exports = {
 
 		// Share dialog state
 		const isShareDialogOpen = ref( false );
-		const leadImageForDialog = ref( {} );
+		const leadImageForDialog = ref( null );
 		const quoteTextForDialog = ref( '' );
 
 		// Page title from MediaWiki config

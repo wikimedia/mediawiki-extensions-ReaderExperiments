@@ -5,5 +5,6 @@ module.exports = {
 	getCaptionIfAvailable: thumbExtractor.getCaptionIfAvailable,
 	fullUrls: thumbExtractor.fullUrls,
 	excludedImageSelectors: require( './excludedImageSelectors.js' ),
-	useContentImages: require( './composables/useContentImages.js' )
+	useContentImages: require( './composables/useContentImages.js' ),
+	useBackgroundColor: require( './composables/useBackgroundColor.js' )
 };

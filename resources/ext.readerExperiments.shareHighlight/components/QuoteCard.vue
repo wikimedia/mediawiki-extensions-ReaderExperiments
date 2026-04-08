@@ -6,12 +6,19 @@
 			'ext-readerExperiments-quoteCard--' + aspectRatio,
 			'ext-readerExperiments-quoteCard--' + styleVariant
 		]"
+		:style="{
+			'--dominant-color-hex': dominantColorHex,
+			'--dominant-color-contrasting': dominantColorContrasting,
+			'--dominant-color-contrasting--legacy': dominantColorContrastingLegacy
+		}"
 	>
 		<div class="ext-readerExperiments-quoteCard__content">
 			<img
 				v-if="imageSrc"
+				ref="imageElementRef"
 				class="ext-readerExperiments-quoteCard__image"
 				:src="imageSrc"
+				crossorigin="anonymous"
 			>
 			<cdx-icon class="ext-readerExperiments-quoteCard__quotes" :icon="cdxIconQuotes"></cdx-icon>
 			<blockquote class="ext-readerExperiments-quoteCard__text" :class="fontSizeClass">
@@ -33,15 +40,17 @@
 				<img :src="creativeCommonsBY">
 				<img :src="creativeCommonsSA">
 			</div>
+			<!-- TODO add image author and license abbreviation, 25% opacity of text color -->
 		</div>
 	</div>
 </template>
 
 <script>
-const { ref, computed } = require( 'vue' );
+const { computed, ref, toRef } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
 const icons = require( '../icons.json' );
 const truncateText = require( '../utils/truncateText.js' );
+const { useBackgroundColor } = require( 'ext.readerExperiments.common' );
 
 // Use static URLs to load local SVG files
 const staticBaseUrl = mw.config.get( 'wgExtensionAssetsPath' ) + '/ReaderExperiments/resources/ext.readerExperiments.shareHighlight/images/';
@@ -68,9 +77,11 @@ module.exports = exports = {
 	props: {
 		/**
 		 * The article lead image to display.
+		 * It's wrapped in a ref, but not directly used.
 		 */
+		// eslint-disable-next-line vue/no-unused-properties
 		image: {
-			type: /** @type {import('vue').PropType<ImageData>} */ ( Object ),
+			type: /** @type {import('vue').PropType<ImageData>} */ ( [ Object, null ] ),
 			required: true
 		},
 		/**
@@ -82,46 +93,38 @@ module.exports = exports = {
 		},
 		/**
 		 * Visual style variant.
-		 * Values: 'light', 'dark', 'wikipedia'
+		 * Values: 'average', 'light', 'dark', 'transparent'
 		 */
 		styleVariant: {
 			type: String,
-			default: 'light',
+			required: true,
 			validator: function ( value ) {
-				return [ 'light', 'dark', 'wikipedia' ].includes( value );
+				return [ 'average', 'light', 'dark', 'transparent' ].includes( value );
 			}
 		}
 	},
 	setup: function ( props, { expose } ) {
 		const cardRef = ref( null );
+		const imageRef = toRef( props, 'image' );
+		const imageElementRef = ref( null );
 
 		const imageSrc = computed( () => {
-			return props.image && props.image.src ? props.image.src : null;
+			return imageRef.value && imageRef.value.src ? imageRef.value.src : null;
 		} );
 
-		/**
-		 * If there's no image, then the card is square,
-		 * otherwise it's 9:16.
-		 */
+		// If there's no image,
+		// then the card is square, otherwise it's 9:16.
 		const aspectRatio = computed( () => {
-			if ( imageSrc.value ) {
-				return '9x16';
-			} else {
-				return '1x1';
-			}
+			return imageRef.value && imageRef.value.src ? '9x16' : '1x1';
 		} );
 
-		/**
-		 * Truncate text with ellipsis if it exceeds max length.
-		 */
+		// Truncate text with ellipsis if it exceeds max length
 		const displayText = computed( () => {
 			return truncateText( props.text.trim(), MAX_QUOTE_LENGTH );
 		} );
 
-		/**
-		 * Determine font size class based on text length.
-		 * Shorter quotes get larger text, longer quotes get smaller text.
-		 */
+		// Determine font size class based on text length.
+		// Shorter quotes get larger text, longer quotes get smaller text.
 		const fontSizeClass = computed( () => {
 			const length = props.text.trim().length;
 			if ( length <= 80 ) {
@@ -132,6 +135,27 @@ module.exports = exports = {
 			}
 			return 'ext-readerExperiments-quoteCard__text--small';
 		} );
+
+		// Handle average image color background
+		let dominantColorHex, dominantColorContrasting, dominantColorContrastingLegacy;
+		if ( props.styleVariant === 'average' ) {
+			const color = useBackgroundColor( imageRef, imageElementRef );
+			dominantColorHex = computed( () => {
+				return color.value ?
+					color.value.hex :
+					'var( --background-color-neutral, transparent )';
+			} );
+			dominantColorContrasting = computed( () => {
+				return color.value ?
+					`oklch( from ${ color.value.hex } calc( l * ${ color.value.isDark ? 100 : 0 } ) c h )` :
+					null;
+			} );
+			dominantColorContrastingLegacy = computed( () => {
+				return color.value ?
+					( color.value.isDark ? 'white' : 'black' ) :
+					null;
+			} );
+		}
 
 		// Expose cardRef for parent to access DOM element for image generation
 		expose( { cardRef: cardRef } );
@@ -150,15 +174,19 @@ module.exports = exports = {
 
 		return {
 			cardRef,
-			aspectRatio,
+			imageElementRef,
 			imageSrc,
+			aspectRatio,
 			displayText,
 			fontSizeClass,
 			cdxIconQuotes: icons.cdxIconQuotes,
 			wordmark,
 			creativeCommonsCC,
 			creativeCommonsBY,
-			creativeCommonsSA
+			creativeCommonsSA,
+			dominantColorHex,
+			dominantColorContrasting,
+			dominantColorContrastingLegacy
 		};
 	}
 };
@@ -202,6 +230,7 @@ module.exports = exports = {
 		font-size: @font-size-x-small;
 		font-family: @font-family-system-sans;
 		letter-spacing: 0.02em;
+		opacity: 0.5;
 	}
 
 	// Aspect ratio dimensions (preview size, rendered at 2x for image)
@@ -214,8 +243,22 @@ module.exports = exports = {
 	}
 
 	// Style variants
+	&--average {
+		background-color: var( --dominant-color-hex );
+		color: var( --dominant-color-contrasting );
+
+		.ext-readerExperiments-quoteCard__quotes {
+			color: var( --dominant-color-contrasting );
+			opacity: 0.5;
+		}
+
+		.ext-readerExperiments-quoteCard__branding {
+			color: var( --dominant-color-contrasting );
+		}
+	}
+
 	&--light {
-		background: @background-color-base;
+		background-color: @background-color-base;
 		color: @color-base;
 
 		.ext-readerExperiments-quoteCard__quotes {
@@ -237,7 +280,7 @@ module.exports = exports = {
 	}
 
 	&--dark {
-		background: #1a1a1a;
+		background-color: #1a1a1a;
 		color: #fff;
 
 		.ext-readerExperiments-quoteCard__quotes {
@@ -258,17 +301,12 @@ module.exports = exports = {
 		}
 	}
 
-	&--wikipedia {
-		background: linear-gradient( 135deg, #36c 0%, #2a4a8a 100% );
-		color: #fff;
+	&--transparent {
+		background-color: @background-color-transparent;
+		color: @color-base;
 
-		.ext-readerExperiments-quoteCard__branding {
-			color: rgba( 255, 255, 255, 0.5 );
-
-			img {
-				filter: invert( 1 ) saturate( 0 );
-				opacity: 0.5;
-			}
+		.ext-readerExperiments-quoteCard__quotes {
+			color: @color-subtle;
 		}
 	}
 
@@ -317,10 +355,6 @@ module.exports = exports = {
 			font-size: @font-size-small;
 			line-height: @line-height-small;
 		}
-	}
-
-	&__attribution {
-		opacity: 0.5;
 	}
 }
 

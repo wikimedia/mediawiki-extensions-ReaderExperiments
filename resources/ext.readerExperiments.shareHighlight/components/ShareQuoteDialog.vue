@@ -10,7 +10,7 @@
 				ref="quoteCardRef"
 				:image="quoteImage"
 				:text="quoteText"
-				:style-variant="selectedStyle"
+				:style-variant="selectedStyleRef"
 			></quote-card>
 		</div>
 
@@ -25,7 +25,7 @@
 					<cdx-radio
 						v-for="style in styleOptions"
 						:key="style.value"
-						v-model="selectedStyle"
+						v-model="selectedStyleRef"
 						:input-value="style.value"
 						name="style"
 						inline
@@ -124,8 +124,8 @@ module.exports = exports = {
 		 * The article lead image to share.
 		 */
 		quoteImage: {
-			type: /** @type {import('vue').PropType<ImageData>} */ ( Object ),
-			default: () => ( {} ) // Empty object
+			type: /** @type {import('vue').PropType<ImageData>} */ ( [ Object, null ] ),
+			default: null
 		},
 		/**
 		 * The quote text to share.
@@ -145,28 +145,33 @@ module.exports = exports = {
 	emits: [ 'update:open' ],
 	setup: function ( props, { emit } ) {
 		const quoteCardRef = ref( null );
+		const quoteImageRef = toRef( props, 'quoteImage' );
+		const linkCopiedRef = ref( false ); // Copy link state
+		const selectedStyleRef = quoteImageRef.value ? ref( 'average' ) : ref( 'light' );
 
-		// Customization options
-		const selectedStyle = ref( 'light' );
-
-		// Copy link state
-		const linkCopied = ref( false );
-
+		const allStyles = [
+			{
+				// Average image color background
+				value: 'average',
+				label: mw.msg( 'readerexperiments-sharehighlight-background-average' )
+			},
+			{
+				value: 'light',
+				label: mw.msg( 'readerexperiments-sharehighlight-background-light' )
+			},
+			{
+				value: 'dark',
+				label: mw.msg( 'readerexperiments-sharehighlight-background-dark' )
+			},
+			{
+				value: 'transparent',
+				label: mw.msg( 'readerexperiments-sharehighlight-background-transparent' )
+			}
+		];
+		// If there's no image,
+		// there can't be an average image color background.
 		const styleOptions = computed( () => {
-			return [
-				{
-					value: 'light',
-					label: mw.msg( 'readerexperiments-sharehighlight-background-light' )
-				},
-				{
-					value: 'dark',
-					label: mw.msg( 'readerexperiments-sharehighlight-background-dark' )
-				},
-				{
-					value: 'wikipedia',
-					label: mw.msg( 'readerexperiments-sharehighlight-background-wikipedia' )
-				}
-			];
+			return quoteImageRef.value ? allStyles : allStyles.slice( 1 );
 		} );
 
 		// Share functionality
@@ -182,7 +187,7 @@ module.exports = exports = {
 		const wrappedOpen = useModelWrapper( toRef( props, 'open' ), emit, 'update:open' );
 
 		const copyLinkLabel = computed( () => {
-			const key = linkCopied.value ?
+			const key = linkCopiedRef.value ?
 				'readerexperiments-sharehighlight-link-copied' :
 				'readerexperiments-sharehighlight-copy-link';
 			// eslint-disable-next-line mediawiki/msg-doc
@@ -198,11 +203,12 @@ module.exports = exports = {
 		} );
 
 		// Reset options when dialog opens
-		watch( wrappedOpen, ( newVal ) => {
-			if ( newVal ) {
-				selectedStyle.value = 'light';
-				linkCopied.value = false;
-				error.value = null;
+		watch( () => {
+			return props.open;
+		}, ( isOpen ) => {
+			if ( isOpen ) {
+				selectedStyleRef.value = quoteImageRef.value ? 'average' : 'light';
+				linkCopiedRef.value = false;
 			}
 		} );
 
@@ -250,10 +256,10 @@ module.exports = exports = {
 			const url = textFragment.buildShareUrl( props.articleTitle, props.quoteText );
 			// eslint-disable-next-line compat/compat
 			navigator.clipboard.writeText( url ).then( () => {
-				linkCopied.value = true;
+				linkCopiedRef.value = true;
 				// Reset after 2 seconds
 				setTimeout( () => {
-					linkCopied.value = false;
+					linkCopiedRef.value = false;
 				}, 2000 );
 			} ).catch( ( e ) => {
 				// eslint-disable-next-line no-console
@@ -263,11 +269,11 @@ module.exports = exports = {
 
 		return {
 			quoteCardRef,
-			wrappedOpen,
-			selectedStyle,
+			selectedStyleRef,
 			styleOptions,
 			isProcessing,
 			error,
+			wrappedOpen,
 			copyLinkLabel,
 			primaryActionLabel,
 			handlePrimaryAction,

@@ -36,7 +36,7 @@ const { ref, computed, defineComponent, useTemplateRef, watch, toRef } = require
 const { CdxIcon } = require( '@wikimedia/codex' );
 const { thumbLimits } = require( '../config.json' );
 const { cdxIconImage } = require( '../icons.json' );
-const useBackgroundColor = require( '../composables/useBackgroundColor.js' );
+const { useBackgroundColor } = require( 'ext.readerExperiments.common' );
 const useSmartCrop = require( '../composables/useSmartCrop.js' );
 const useAltText = require( '../composables/useAltText.js' );
 

@@ -60,18 +60,22 @@
 		"ext.readerExperiments.common": {
 			"localBasePath": "resources/ext.readerExperiments.common",
 			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.common",
+			"dependencies": [
+				"vue",
+				"fast-average-color"
+			],
 			"packageFiles": [
 				"index.js",
 				"thumbExtractor.js",
 				"excludedImageSelectors.js",
-				"composables/useContentImages.js"
+				"composables/useContentImages.js",
+				"composables/useBackgroundColor.js"
 			]
 		},
 		"ext.readerExperiments.imageBrowsing": {
 			"localBasePath": "resources/ext.readerExperiments.imageBrowsing",
 			"remoteExtPath": "ReaderExperiments/resources/ext.readerExperiments.imageBrowsing",
 			"dependencies": [
-				"vue",
 				"mediawiki.ForeignApi",
 				"mediawiki.language",
 				"mediawiki.router",
@@ -79,7 +83,6 @@
 				"mediawiki.util",
 				"smartcrop",
 				"@wikimedia/codex",
-				"fast-average-color",
 				"ext.readerExperiments.common"
 			],
 			"packageFiles": [
@@ -116,7 +119,6 @@
 				"components/VisualTableOfContentsOtherWikis.vue",
 				"components/VisualTableOfContentsOtherWikisItem.vue",
 				"composables/useAltText.js",
-				"composables/useBackgroundColor.js",
 				"composables/useEntityId.js",
 				"composables/useExternalImages.js",
 				"composables/useImageLabel.js",
@@ -335,9 +337,10 @@
 				"readerexperiments-sharehighlight-share-quote",
 				"readerexperiments-sharehighlight-dialog-title",
 				"readerexperiments-sharehighlight-background-legend",
+				"readerexperiments-sharehighlight-background-average",
 				"readerexperiments-sharehighlight-background-light",
 				"readerexperiments-sharehighlight-background-dark",
-				"readerexperiments-sharehighlight-background-wikipedia",
+				"readerexperiments-sharehighlight-background-transparent",
 				"readerexperiments-sharehighlight-copy-link",
 				"readerexperiments-sharehighlight-link-copied",
 				"readerexperiments-sharehighlight-cancel",
