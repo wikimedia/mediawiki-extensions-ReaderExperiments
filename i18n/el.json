@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Geraki"
+			"Geraki",
+			"Jimkats"
 		]
 	},
+	"readerexperiments-mobilepagepreviews-loading": "Γίνεται φόρτωση προεπισκόπησης",
 	"readerexperiments-sharehighlight-aspect-ratio-portrait": "Πορτραίτο",
 	"readerexperiments-sharehighlight-aspect-ratio-wide": "Ευρύ",
 	"readerexperiments-sharehighlight-background-dark": "Σκοτεινό",
