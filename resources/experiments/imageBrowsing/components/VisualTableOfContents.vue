@@ -53,8 +53,7 @@ module.exports = exports = defineComponent( {
 	],
 	setup( props, { emit } ) {
 		const isLegacy = !( 'ResizeObserver' in window );
-		// eslint-disable-next-line no-console
-		console.log( `ResizeObserver is ${ isLegacy ? 'NOT ' : '' }supported in this browser.` );
+		mw.log.warn( `ResizeObserver is ${ isLegacy ? 'NOT ' : '' }supported in this browser.` );
 
 		//
 		// Event handlers.
