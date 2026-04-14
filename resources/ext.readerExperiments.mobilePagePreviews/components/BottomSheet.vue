@@ -218,10 +218,7 @@ body:has( .ext-readerExperiments-mobile-page-preview-sheet__container ) {
 		// when the content changes (transitions for `height: auto` don't work,
 		// hence this workaround)
 		box-sizing: content-box;
-		// full-screen width, but with `box-sizing: content-box` (which is the
-		// more practical one for automatically resizing based on child content),
-		// we need to also subtract padding
-		width: calc( @size-viewport-width-full - 2 * @spacing-100 );
+		width: @size-viewport-width-full;
 		transition: height 300ms;
 
 		&__transition-enter-active,
