@@ -331,7 +331,8 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 		$title = $context->getTitle();
 		if (
 			( $title && $title->getNamespace() !== NS_MAIN ) ||
-			$out->getSkin()->getSkinName() !== 'minerva'
+			$out->getSkin()->getSkinName() !== 'minerva' ||
+			$out->getUser()->isRegistered()
 		) {
 			return;
 		}
