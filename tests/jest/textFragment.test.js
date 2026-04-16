@@ -1,7 +1,7 @@
 const {
 	createTextFragmentDirective,
 	encodeTextFragment
-} = require( '../../resources/ext.readerExperiments.shareHighlight/utils/textFragment.js' );
+} = require( '../../resources/experiments/shareHighlight/utils/textFragment.js' );
 
 describe( 'encodeTextFragment', () => {
 

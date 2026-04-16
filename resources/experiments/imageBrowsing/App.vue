@@ -1,0 +1,253 @@
+<template>
+	<div
+		class="ib-app"
+	>
+		<carousel
+			v-if="contentImages.length > 2"
+			ref="carouselRef"
+			:images="contentImages"
+			:active-image="activeImage"
+			@carousel-item-click="onCarouselItemClick"
+		>
+		</carousel>
+
+		<teleport :to="teleportTarget">
+			<overlay
+				v-if="activeImage"
+				:images="contentImages"
+				:active-image="activeImage"
+				@overlay-close="onOverlayClose"
+				@vtoc-item-click="onVTOCItemClick"
+				@vtoc-view-in-article="onVTOCViewInArticle"
+			></overlay>
+		</teleport>
+	</div>
+</template>
+
+<script>
+const { defineComponent, ref, inject, useTemplateRef } = require( 'vue' );
+const router = require( 'mediawiki.router' );
+const { useContentImages } = require( 'ext.readerExperiments' );
+const useExternalImages = require( './composables/useExternalImages.js' );
+const useEntityId = require( './composables/useEntityId.js' );
+const Carousel = require( './components/Carousel.vue' );
+const Overlay = require( './components/Overlay.vue' );
+
+// @vue/component
+module.exports = exports = defineComponent( {
+	name: 'ImageBrowsing',
+	components: {
+		Carousel,
+		Overlay
+	},
+	setup() {
+		const contentImages = ref( null );
+		const activeImage = ref( null );
+
+		const teleportTarget = inject( 'CdxTeleportTarget' );
+
+		// Reference to the Carousel component for focus management
+		const carouselRef = useTemplateRef( 'carouselRef' );
+
+		// Extract thumbnail image (as an array of ImageData objects)
+		// from the content of the underlying article page.
+		const contentElement = document.getElementById( 'content' );
+		if ( contentElement ) {
+			contentImages.value = useContentImages( contentElement );
+		}
+
+		// Client-side routing config
+		// Set up route for overlay images
+		const routePrefix = '/imagebrowsing/';
+		const routePrefixRegExp = /^\/imagebrowsing\/(.+)$/;
+		// Add a dynamic route that matches `/imagebrowsing/*` to support per-image navigation
+		router.addRoute(
+			routePrefixRegExp,
+			async ( prefixedDbFileTitle ) => {
+				const uriDecoded = decodeURIComponent( prefixedDbFileTitle );
+
+				// Attempt to locate the image in the content images first
+				let image = contentImages.value.find(
+					( imageData ) => imageData.title.getPrefixedDb() === uriDecoded
+				);
+
+				// If we could not find the image, it may have been an image
+				// from an external source
+				if ( !image ) {
+					// Unlike for local images, where we're using the same ref
+					// that is passed throughout the app to perform the lookup,
+					// we're explicitly calling useExternalImages() both here
+					// and in the component we'll be rendering them in.
+					// I wish there was a clean way to pass around the same data,
+					// but then it would have to be either immediately initialized
+					// (as opposed to the lazy init we have now, based on users
+					// either clicking to show these images, or requesting it via
+					// a shared/history URL), or we would have to proxy the data
+					// and always treat it as a Promise, which, while doable,
+					// is still different from how we handle local images.
+					// Anyway, useExternalImages() just caches its results, so
+					// repeat calls from different places are not really an issue.
+					const entityId = await useEntityId();
+					const externalImages = entityId ?
+						await useExternalImages( entityId, contentImages.value ) :
+						[];
+					image = externalImages.find(
+						( imageData ) => imageData.title.getPrefixedDb() === uriDecoded
+					);
+				}
+
+				if ( image ) {
+					activeImage.value = image;
+				} else {
+					// Invalid images should not be a hard fail, since it is possible that
+					// a completely valid url got shared, but the image has since been removed
+					// from the page
+					// eslint-disable-next-line no-console
+					console.error( '[ImageBrowsing] Invalid navigation image; could not find:', prefixedDbFileTitle );
+					activeImage.value = null;
+				}
+			},
+			() => {
+				// This teardown handler is called when transitioning from a matching route
+				// (i.e. one with /imagebrowsing/ + filename, where we want to show the image)
+				// to one that doesn't (anything else - like going back to no hash (closing the
+				// image, or through browser history)) where we don't want an image
+				activeImage.value = null;
+			}
+		);
+		// Check the current route & immediately navigate to the relevant imagine
+		// in case the user came from a shared/history URL
+		router.checkRoute();
+		// Helper function to simplify navigation to images, just so that those event
+		// handlers don't have to worry about constructing the appropriate route path
+		function navigateTo( image ) {
+			let path;
+
+			if ( !image ) {
+				// explicit navigation out of this app
+				path = '';
+			} else if ( image.title ) {
+				// navigate to image
+				path = routePrefix + image.title.getPrefixedDb();
+			} else {
+				// Invalid input to this function would be generated by code & should fail hard
+				// eslint-disable-next-line no-console
+				console.error( '[ImageBrowsing] Invalid navigation input; expected ImageData but received:', image );
+				throw new Error( '[ImageBrowsing] Invalid navigation input' );
+			}
+
+			router.navigate( path );
+		}
+
+		//
+		// Carousel's event handlers.
+		//
+
+		/**
+		 * @param {import('./types').ImageData} image
+		 */
+		function onCarouselItemClick( image ) {
+			// When a carousel image is clicked, set it as the active image
+			// and show the overlay part of the UI.
+			navigateTo( image );
+		}
+
+		//
+		// Detail view's event handlers.
+		//
+
+		function onOverlayClose() {
+			navigateTo( null );
+
+			// Return focus to the selected carousel item when the overlay closes
+			if ( carouselRef.value && carouselRef.value.focusActiveItem ) {
+				carouselRef.value.focusActiveItem();
+			}
+		}
+
+		//
+		// Visual table of contents' (VTOC) event handlers.
+		//
+
+		function onVTOCItemClick( image ) {
+			navigateTo( image );
+		}
+
+		/**
+		 * @param {import('./types').ImageData} image
+		 */
+		function onVTOCViewInArticle( image ) {
+			navigateTo( null );
+
+			// Scroll the main page view to the image in context.
+			// Do not use image.thumb, as that may be a lazy-load placeholder
+			// span which has already been replaced; use the container.
+			if ( image.container ) {
+				// In mobile mode, sections may be collapsed.
+				// Toggle the section if necessary.
+				const section = image.container.closest( '.collapsible-block-js' );
+				if ( section && section.classList && !section.classList.contains( 'open-block' ) ) {
+					const headingWrapper = section.previousSibling;
+					if ( headingWrapper ) {
+						headingWrapper.click();
+					}
+				}
+				image.container.scrollIntoView( {
+					behavior: 'smooth'
+				} );
+			}
+		}
+
+		return {
+			contentImages,
+			activeImage,
+			teleportTarget,
+			carouselRef,
+			onCarouselItemClick,
+			onOverlayClose,
+			onVTOCItemClick,
+			onVTOCViewInArticle
+		};
+	}
+} );
+</script>
+
+<style lang="less">
+// Hack to smoothly collapse the carousel when there are not enough images.
+// Context: we want to avoid the FOUC when the carousel first renders by
+// immediately preserving space for where it will be. The carousel may not
+// render, however, if there are insufficient images that meet the criteria
+// (i.e. not of a certain filetype, or within a class that we ignore)
+// Ideally, in such case, we would never preserve the space to begin with,
+// but that would require duplicating (or moving) that image extraction
+// logic on the back-end, which is somewhat overkill for now, as this
+// extension is still experimental.
+// Instead, based on an assumed strong correlation between view & edit
+// popularity, and a strong correlation between edit popularity and
+// presence of images, it's believed likely that the majority of pageviews
+// will have a carousel, and we should optimize for that case by
+// reserving the height upfront (in Hooks.php). If/once this file has
+// completed loading/executing, and we learn that there is no carousel,
+// we'll override that and animate (in order to make this feel slightly
+// less jumpy/jarring) back to zero height.
+// stylelint-disable selector-max-id
+#ext-readerExperiments-imageBrowsing {
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
+	&:not( :has( .ib-carousel ) ) {
+		// stylelint-disable-next-line declaration-no-important
+		height: 0 !important;
+		transition: height 0.1s ease-in;
+	}
+
+	// Make use of full height preserved in container
+	.ib-app {
+		height: 100%;
+	}
+}
+
+// @hack why is this necessary to get the overlay to show up properly? Fix and remove
+#mw-teleport-target {
+	top: 0;
+	left: 0;
+}
+</style>

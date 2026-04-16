@@ -84,13 +84,17 @@ module.exports = {
 		// See https://www.mediawiki.org/wiki/Codex#Loading_a_subset_of_Codex_components_(recommended_for_skins_and_extensions)
 		'codex.js$': '@wikimedia/codex',
 		// Mock the dynamically generated config.json file
-		'../config.json$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/config.json',
+		'../config.json$': '<rootDir>/resources/experiments/imageBrowsing/__mocks__/config.json',
 		// Mock the dynamically generated icons.json file
-		'../icons.json$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/icons.json',
+		'../icons.json$': '<rootDir>/resources/experiments/imageBrowsing/__mocks__/icons.json',
 		// Mock the mediawiki.router module (provided by MediaWiki ResourceLoader at runtime)
-		'^mediawiki\\.router$': '<rootDir>/resources/ext.readerExperiments.imageBrowsing/__mocks__/mediawiki.router.js',
+		'^mediawiki\\.router$': '<rootDir>/resources/experiments/imageBrowsing/__mocks__/mediawiki.router.js',
 		// Common ReaderExperiments module
-		'ext.readerExperiments.common': '<rootDir>/resources/ext.readerExperiments.common/index.js'
+		'^ext\\.readerExperiments$': '<rootDir>/resources/common/index.js',
+		// ReaderExperiments external libs
+		'^ext\\.readerExperiments/lib/fast-average-color$': '<rootDir>/resources/lib/fast-average-color/index.js',
+		'^ext\\.readerExperiments/lib/html-to-image$': '<rootDir>/resources/lib/html-to-image/html-to-image.js',
+		'^ext\\.readerExperiments/lib/smartcrop$': '<rootDir>/resources/lib/smartcrop/smartcrop.js'
 	},
 
 	// An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

@@ -62,7 +62,7 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	private const MINERVA_TOC_GROUP_BUTTON = 'treatment2';
 	// END MINERVA_TOC_EXPERIMENTS (T415611)
 
-	// @todo set up experiment
+	// https://test-kitchen.wikimedia.org/experiment/mobile-page-previews
 	private const MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME = 'mobile-page-previews';
 	private const MOBILE_PAGE_PREVIEWS_GROUP_NAME = 'treatment';
 
@@ -233,10 +233,10 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 				'<div id="ext-readerExperiments-imageBrowsing"></div>'
 			);
 
-			$out->addModuleStyles( 'ext.readerExperiments.imageBrowsing.styles' );
+			$out->addModuleStyles( 'ext.readerExperiments/imageBrowsing.styles' );
 
 			// Load heavy module since already gated server-side.
-			$out->addModules( 'ext.readerExperiments.imageBrowsing' );
+			$out->addModules( 'ext.readerExperiments/imageBrowsing' );
 		}
 	}
 
@@ -261,7 +261,7 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			$out->addBodyClasses( 'collapsible-headings-expanded' );
 
 			// Load the common styles module
-			$out->addModules( 'ext.readerExperiments.stickyHeaders.styles' );
+			$out->addModules( 'ext.readerExperiments/stickyHeaders.styles' );
 
 			// Mobile section headers use different markup and styles depending on whether
 			// Parsoid or legacy parser is used, so we need to determine how the page was
@@ -276,11 +276,11 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 				);
 			}
 			if ( $shouldUseParsoid ) {
-				// load the ext.readerExperiments.stickyHeaders module
-				$out->addModules( 'ext.readerExperiments.stickyHeaders' );
+				// load the ext.readerExperiments/stickyHeaders.parsoid module
+				$out->addModules( 'ext.readerExperiments/stickyHeaders.parsoid' );
 			} else {
-				// load the ext.readerExperiments.stickyHeaders.legacy module
-				$out->addModules( 'ext.readerExperiments.stickyHeaders.legacy' );
+				// load the ext.readerExperiments/stickyHeaders.legacy module
+				$out->addModules( 'ext.readerExperiments/stickyHeaders.legacy' );
 			}
 		}
 
@@ -309,14 +309,14 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 			$assignedGroup = $this->getAssignedGroup( $request, self::MINERVA_TOC_EXPERIMENT_NAME );
 
 			if ( $assignedGroup !== null ) {
-				$out->addModules( 'ext.readerExperiments.minervaToc.instrumentation' );
+				$out->addModules( 'ext.readerExperiments/minervaToc.instrumentation' );
 			}
 
 			if ( $assignedGroup === self::MINERVA_TOC_GROUP_STICKY ) {
-				$out->addModules( 'ext.readerExperiments.minervaToc/sticky' );
+				$out->addModules( 'ext.readerExperiments/minervaToc.sticky' );
 			}
 			if ( $assignedGroup === self::MINERVA_TOC_GROUP_BUTTON ) {
-				$out->addModules( 'ext.readerExperiments.minervaToc/button' );
+				$out->addModules( 'ext.readerExperiments/minervaToc.button' );
 			}
 		}
 	}
@@ -331,7 +331,8 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 		$title = $context->getTitle();
 		if (
 			( $title && $title->getNamespace() !== NS_MAIN ) ||
-			$out->getSkin()->getSkinName() !== 'minerva'
+			$out->getSkin()->getSkinName() !== 'minerva' ||
+			$out->getUser()->isRegistered()
 		) {
 			return;
 		}
@@ -345,8 +346,8 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 				'<div id="ext-readerExperiments-shareHighlight"></div>'
 			);
 
-			$out->addModuleStyles( 'ext.readerExperiments.shareHighlight.styles' );
-			$out->addModules( 'ext.readerExperiments.shareHighlight' );
+			$out->addModuleStyles( 'ext.readerExperiments/shareHighlight.styles' );
+			$out->addModules( 'ext.readerExperiments/shareHighlight' );
 		}
 
 		$baseline = $this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_BASELINE_EXPERIMENT_NAME );
@@ -388,12 +389,21 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 		$title = $context->getTitle();
 
 		if (
-			$title && $title->getNamespace() === NS_MAIN &&
-			$out->getSkin()->getSkinName() === 'minerva' &&
-			// phpcs:ignore Generic.Files.LineLength.TooLong
-			$this->getAssignedGroup( $request, self::MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME ) === self::MOBILE_PAGE_PREVIEWS_GROUP_NAME
+			!$title ||
+			$title->getNamespace() !== NS_MAIN ||
+			$out->getSkin()->getSkinName() !== 'minerva'
 		) {
-			$out->addModules( 'ext.readerExperiments.mobilePagePreviews' );
+			return;
+		}
+
+		$assignedGroup = $this->getAssignedGroup( $request, self::MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME );
+
+		if ( $assignedGroup !== null ) {
+			$out->addModules( 'ext.readerExperiments/mobilePagePreviews.instrumentation' );
+		}
+
+		if ( $assignedGroup === self::MOBILE_PAGE_PREVIEWS_GROUP_NAME ) {
+			$out->addModules( 'ext.readerExperiments/mobilePagePreviews' );
 		}
 	}
 

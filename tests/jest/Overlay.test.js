@@ -1,5 +1,5 @@
 const { shallowMount } = require( '@vue/test-utils' );
-const Overlay = require( '../../resources/ext.readerExperiments.imageBrowsing/components/Overlay' );
+const Overlay = require( '../../resources/experiments/imageBrowsing/components/Overlay' );
 
 let wrapper;
 

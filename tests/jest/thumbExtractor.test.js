@@ -1,4 +1,4 @@
-const { fullUrls } = require( 'ext.readerExperiments.common' );
+const { fullUrls } = require( 'ext.readerExperiments' );
 describe( 'fullUrls', () => {
 
 	it( 'passes through null', () => {
