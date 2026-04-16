@@ -4,6 +4,14 @@
  * Spec: https://wicg.github.io/scroll-to-text-fragment/
  */
 
+// We use the `wprov` URL query parameter to indicate that the text fragment comes from ShareHighlight.
+// Comply with the naming convention at
+// https://wikitech.wikimedia.org/wiki/Provenance#Description_of_wprov_parameter:
+// - 3-char feature = 'shh' for SHare Highlight
+// - platform one char = 'u' for unknown, since we don't know the platform a priori
+// - major version of feature = '0', experiment version
+const WPROV_VALUE = 'shhu0';
+
 /**
  * Encode text for use in a text fragment URL.
  * Special characters must be percent-encoded, including the "-" minus character.
@@ -73,7 +81,7 @@ function buildShareUrl( articleTitle, selectedText ) {
 	const baseUrl = new URL( articlePath, location.origin ).href;
 	const fragment = createTextFragmentDirective( selectedText );
 
-	return baseUrl + '#' + fragment;
+	return baseUrl + '?wprov=' + WPROV_VALUE + '#' + fragment;
 }
 
 module.exports = {
