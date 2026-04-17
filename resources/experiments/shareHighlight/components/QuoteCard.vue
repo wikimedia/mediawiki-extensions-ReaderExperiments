@@ -4,7 +4,8 @@
 		class="ext-readerExperiments-quoteCard"
 		:class="[
 			'ext-readerExperiments-quoteCard--' + aspectRatio,
-			'ext-readerExperiments-quoteCard--' + styleVariant
+			'ext-readerExperiments-quoteCard--' + styleVariant,
+			'ext-readerExperiments-quoteCard--image-' + dominantColorLightness
 		]"
 		:style="{
 			'--dominant-color-hex': dominantColorHex,
@@ -27,19 +28,23 @@
 		</div>
 		<div class="ext-readerExperiments-quoteCard__branding_and_attribution">
 			<div class="ext-readerExperiments-quoteCard__branding">
-				<img
-					v-if="wordmark"
-					:src="wordmark.src"
-					:alt="wordmark.alt"
-					:width="wordmark.width"
-					:height="wordmark.height">
-				<span v-else>
-					{{ $i18n( 'readerexperiments-sharehighlight-branding' ).text() }}
-				</span>
-				<div class="ext-readerExperiments-quoteCard__text_attribution">
-					<img :src="creativeCommonsCC">
-					<img :src="creativeCommonsBY">
-					<img :src="creativeCommonsSA">
+				<div class="ext-readerExperiments-quoteCard__wordmark">
+					<inline-svg
+						v-if="wordmark"
+						:src="wordmark.src"
+						:alt="wordmark.alt"
+						:style="{
+							'--wordmark-width': wordmark.width + 'px',
+							'--wordmark-height': wordmark.height + 'px'
+						}"></inline-svg>
+					<template v-else>
+						{{ $i18n( 'readerexperiments-sharehighlight-branding' ).text() }}
+					</template>
+				</div>
+				<div class="ext-readerExperiments-quoteCard__attribution">
+					<inline-svg :src="creativeCommonsCC"></inline-svg>
+					<inline-svg :src="creativeCommonsBY"></inline-svg>
+					<inline-svg :src="creativeCommonsSA"></inline-svg>
 				</div>
 			</div>
 			<div
@@ -57,6 +62,7 @@ const { CdxIcon } = require( '@wikimedia/codex' );
 const icons = require( '../icons.json' );
 const truncateText = require( '../utils/truncateText.js' );
 const { useBackgroundColor, useImageModel } = require( 'ext.readerExperiments' );
+const InlineSvg = require( './InlineSvg.vue' );
 
 // Use static URLs to load local SVG files
 const staticBaseUrl = mw.config.get( 'wgExtensionAssetsPath' ) + '/ReaderExperiments/resources/experiments/shareHighlight/images/';
@@ -78,7 +84,8 @@ const MAX_QUOTE_LENGTH = 280;
 module.exports = exports = {
 	name: 'QuoteCard',
 	components: {
-		CdxIcon
+		CdxIcon,
+		InlineSvg
 	},
 	props: {
 		/**
@@ -143,7 +150,8 @@ module.exports = exports = {
 		} );
 
 		// Handle average image color background
-		let dominantColorHex, dominantColorContrasting, dominantColorContrastingLegacy;
+		let dominantColorHex, dominantColorContrasting, dominantColorContrastingLegacy,
+			dominantColorLightness;
 		if ( props.styleVariant === 'average' ) {
 			const color = useBackgroundColor( imageRef, imageElementRef );
 			dominantColorHex = computed( () => {
@@ -159,6 +167,11 @@ module.exports = exports = {
 			dominantColorContrastingLegacy = computed( () => {
 				return color.value ?
 					( color.value.isDark ? 'white' : 'black' ) :
+					null;
+			} );
+			dominantColorLightness = computed( () => {
+				return color.value ?
+					( color.value.isDark ? 'dark' : 'light' ) :
 					null;
 			} );
 		}
@@ -212,6 +225,7 @@ module.exports = exports = {
 			dominantColorHex,
 			dominantColorContrasting,
 			dominantColorContrastingLegacy,
+			dominantColorLightness,
 			imageAttribution
 		};
 	}
@@ -256,6 +270,10 @@ module.exports = exports = {
 		opacity: 0.5;
 	}
 
+	&__filter {
+		display: none;
+	}
+
 	&__branding {
 		display: flex;
 		justify-content: space-between;
@@ -276,6 +294,19 @@ module.exports = exports = {
 		aspect-ratio: 9/16;
 	}
 
+	.ext-readerExperiments-quoteCard__branding {
+		svg path[ fill='none' ] {
+			fill: none;
+		}
+	}
+
+	.ext-readerExperiments-quoteCard__wordmark {
+		svg {
+			width: var( --wordmark-width );
+			height: var( --wordmark-height );
+		}
+	}
+
 	// Style variants
 	&--average {
 		background-color: var( --dominant-color-hex );
@@ -288,6 +319,10 @@ module.exports = exports = {
 
 		.ext-readerExperiments-quoteCard__branding {
 			color: var( --dominant-color-contrasting );
+
+			svg path {
+				fill: var( --dominant-color-contrasting );
+			}
 		}
 	}
 
@@ -304,11 +339,10 @@ module.exports = exports = {
 		}
 
 		.ext-readerExperiments-quoteCard__branding {
-			color: @color-disabled;
+			color: #000;
 
-			img {
-				filter: saturate( 0 );
-				opacity: 0.5;
+			svg path {
+				fill: #000;
 			}
 		}
 	}
@@ -326,11 +360,10 @@ module.exports = exports = {
 		}
 
 		.ext-readerExperiments-quoteCard__branding {
-			color: rgba( 255, 255, 255, 0.4 );
+			color: #fff;
 
-			img {
-				filter: invert( 1 ) saturate( 0 );
-				opacity: 0.4;
+			svg path {
+				fill: #fff;
 			}
 		}
 	}
