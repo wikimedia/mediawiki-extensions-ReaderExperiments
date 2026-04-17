@@ -8,19 +8,20 @@ const htmlToImage = require( 'ext.readerExperiments/lib/html-to-image' );
 /**
  * Generate a PNG image blob from a DOM element.
  *
+ * The background color is read from the element's computed style.
+ * Transparent backgrounds produce PNGs with an alpha channel.
+ *
  * @param {HTMLElement} element - The DOM element to capture
  * @param {Object} [options] - Generation options
  * @param {number} [options.scale] - Pixel density multiplier (default: 2 for retina)
- * @param {string} [options.backgroundColor] - Background color (default: white)
  * @return {Promise<Blob>} PNG image as Blob
  */
 function generateImageBlob( element, options ) {
 	const scale = ( options && options.scale ) || 2;
-	const backgroundColor = ( options && options.backgroundColor ) || '#ffffff';
-
-	return htmlToImage.toBlob( element, {
+	const computedBg = window.getComputedStyle( element ).backgroundColor;
+	const backgroundColor = computedBg === 'rgba(0, 0, 0, 0)' ? null : computedBg;
+	const toBlobOptions = {
 		pixelRatio: scale,
-		backgroundColor: backgroundColor,
 		// Skip elements that might cause issues
 		filter: function ( node ) {
 			// Skip script tags
@@ -29,7 +30,13 @@ function generateImageBlob( element, options ) {
 			}
 			return true;
 		}
-	} );
+	};
+
+	if ( backgroundColor ) {
+		toBlobOptions.backgroundColor = backgroundColor;
+	}
+
+	return htmlToImage.toBlob( element, toBlobOptions );
 }
 
 /**

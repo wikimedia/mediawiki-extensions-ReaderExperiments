@@ -258,8 +258,8 @@ module.exports = exports = {
 	}
 
 	&--light {
-		background-color: @background-color-base;
-		color: @color-base;
+		background-color: @background-color-base-fixed;
+		color: @color-base-fixed;
 
 		.ext-readerExperiments-quoteCard__quotes {
 			color: #797a7a;
@@ -281,7 +281,7 @@ module.exports = exports = {
 
 	&--dark {
 		background-color: #1a1a1a;
-		color: #fff;
+		color: @color-inverted-fixed;
 
 		.ext-readerExperiments-quoteCard__quotes {
 			color: #a2a9b1;
