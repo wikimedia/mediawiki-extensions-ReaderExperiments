@@ -11,8 +11,12 @@
 
 const { apiBaseUri } = require( './config.json' );
 
-// Copied over from Popups/src/index.js
-const excludedLinksSelector = [
+// Adapted from Popups/src/index.js. The upstream builds a single
+// `:not( a, b, c )` selector list, but that is CSS Selectors Level 4 and
+// throws SyntaxError on older browsers (e.g. Chrome < 88). Instead, we
+// split the exclusions into self-matches and ancestor-matches and apply
+// them imperatively via matches()/closest().
+const selfExcludedLinkSelectors = [
 	'.extiw',
 	// ignore links that point to the same article
 	'.mw-selflink',
@@ -20,11 +24,8 @@ const excludedLinksSelector = [
 	'.new',
 	'.internal',
 	'.external',
-	'.mw-cite-backlink a',
 	'.oo-ui-buttonElement-button',
-	'.ve-ce-surface a', // T259889
 	'.ext-discussiontools-init-timestamplink',
-	'.cancelLink a',
 	// T198652: lists to hash fragments are ignored.
 	// Note links that include the path will still trigger a hover,
 	// e.g. <a href="Foo#foo"> will trigger a preview but <a href="#foo"> will not.
@@ -33,7 +34,19 @@ const excludedLinksSelector = [
 	// the .mw-selflink-fragment class.
 	'.mw-selflink-fragment',
 	'[href^="#"]'
-].join( ', ' );
+];
+
+// Exclude any link nested inside one of these ancestors.
+const ancestorExcludedLinkSelectors = [
+	'.mw-cite-backlink',
+	'.ve-ce-surface', // T259889
+	'.cancelLink'
+];
+
+function isExcludedLink( el ) {
+	return selfExcludedLinkSelectors.some( ( sel ) => el.matches( sel ) ) ||
+		ancestorExcludedLinkSelectors.some( ( sel ) => el.closest( sel ) );
+}
 
 // Copied over from Popups/src/title.js
 // There is a minor divergence from the original to support content
@@ -143,6 +156,6 @@ function fromElement( el, config ) {
 }
 
 module.exports = {
-	excludedLinksSelector,
+	isExcludedLink,
 	fromElement
 };

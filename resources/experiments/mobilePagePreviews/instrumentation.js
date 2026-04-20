@@ -1,6 +1,6 @@
 'use strict';
 
-const { excludedLinksSelector, fromElement } = require( './copiedFromPopups.js' );
+const { isExcludedLink, fromElement } = require( './copiedFromPopups.js' );
 
 // the experiment will only launch on touch devices, to let's make sure
 // to also capture only interactions on those
@@ -25,14 +25,14 @@ experiment.send( 'page_visit' );
 // Track link clicks
 // This mimics the logic in App.vue for which links to actually handle;
 // other links (e.g. external) will not be tracked.
-const selector = `#mw-content-text a[href][title]:not(${ excludedLinksSelector })`;
+const selector = '#mw-content-text a[href][title]';
 document.addEventListener( 'click', ( event ) => {
 	if ( !event.target.closest ) {
 		return;
 	}
 
 	const link = event.target.closest( selector );
-	if ( !link ) {
+	if ( !link || isExcludedLink( link ) ) {
 		return;
 	}
 
@@ -69,7 +69,7 @@ document.addEventListener( 'pointerdown', ( event ) => {
 	}
 
 	const link = event.target.closest( selector );
-	if ( !link ) {
+	if ( !link || isExcludedLink( link ) ) {
 		return;
 	}
 

@@ -38,7 +38,7 @@
 <script>
 const { defineComponent, onErrorCaptured, ref, useTemplateRef, watch } = require( 'vue' );
 const { CdxProgressIndicator } = require( '@wikimedia/codex' );
-const { excludedLinksSelector, fromElement } = require( './copiedFromPopups.js' );
+const { isExcludedLink, fromElement } = require( './copiedFromPopups.js' );
 const BottomSheet = require( './components/BottomSheet.vue' );
 const PagePreviewCard = require( './components/PagePreviewCard.vue' );
 
@@ -58,7 +58,7 @@ module.exports = exports = defineComponent( {
 		const previewHref = ref( null );
 		const redirectTimeout = ref( null );
 		const clearRedirectTimeout = () => clearTimeout( redirectTimeout.value );
-		const selector = `#mw-content-text a[href][title]:not(${ excludedLinksSelector })`;
+		const selector = '#mw-content-text a[href][title]';
 
 		document.addEventListener( 'click', ( event ) => {
 			if ( !event.target.closest ) {
@@ -66,7 +66,7 @@ module.exports = exports = defineComponent( {
 			}
 
 			const link = event.target.closest( selector );
-			if ( !link ) {
+			if ( !link || isExcludedLink( link ) ) {
 				return;
 			}
 
