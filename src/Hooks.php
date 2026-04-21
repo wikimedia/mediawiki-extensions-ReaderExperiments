@@ -30,10 +30,17 @@ use MediaWiki\Output\OutputPage;
 use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\ResourceLoader\Context;
+use MediaWiki\Skin\Hook\SkinTemplateNavigation__UniversalHook;
+use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
-class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUseParsoidHook {
+class Hooks implements
+	BeforePageDisplayHook,
+	BeforeInitializeHook,
+	ShouldUseParsoidHook,
+	SkinTemplateNavigation__UniversalHook
+{
 	// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
 	// https://test-kitchen.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
 	private const IMAGE_BROWSING_EXPERIMENT_1_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
@@ -322,44 +329,27 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 	}
 
 	private function maybeInitShareHighlight( OutputPage $out ): void {
-		if ( !$out->getConfig()->get( 'ReaderExperimentsShareHighlightEnabled' ) ) {
+		$enrollment = $this->getShareHighlightEnrollment( $out->getSkin() );
+		if ( $enrollment === null ) {
 			return;
 		}
 
-		$context = $out->getContext();
-		$request = $context->getRequest();
-		$title = $context->getTitle();
-		if (
-			( $title && $title->getNamespace() !== NS_MAIN ) ||
-			$out->getSkin()->getSkinName() !== 'minerva' ||
-			$out->getUser()->isRegistered()
-		) {
-			return;
-		}
-
-		$group = $this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_EXPERIMENT_NAME );
-		if (
-			$group === self::SHARE_HIGHLIGHT_GROUP_NAME ||
-			$request->getFuzzyBool( 'shareHighlight' )
-		) {
+		if ( $enrollment === 'treatment' ) {
 			$out->prependHTML(
 				'<div id="ext-readerExperiments-shareHighlight"></div>'
 			);
-
 			$out->addModuleStyles( 'ext.readerExperiments/shareHighlight.styles' );
 			$out->addModules( 'ext.readerExperiments/shareHighlight' );
 		}
 
-		$baseline = $this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_BASELINE_EXPERIMENT_NAME );
-		if ( $group || $baseline ) {
-			// We still need our baseline metrics on the control group,
-			// for either the baseline or final experiment.
-			$out->addModules( 'ext.readerExperiments.shareHighlight.instrumentation' );
-		} else {
-			return;
-		}
+		// Instrumentation loads for both 'treatment' and 'baseline' so we capture
+		// baseline metrics across the main experiment's control group and the
+		// separate baseline A/A experiment.
+		$out->addModules( 'ext.readerExperiments.shareHighlight.instrumentation' );
 
 		$pageSize = 0;
+		$context = $out->getContext();
+
 		if ( $context->canUseWikiPage() ) {
 			$page = $context->getWikiPage();
 			if ( $page ) {
@@ -370,7 +360,75 @@ class Hooks implements BeforePageDisplayHook, BeforeInitializeHook, ShouldUsePar
 				}
 			}
 		}
+
 		$out->addJsConfigVars( 'wgReaderExperimentsPageSize', strval( $pageSize ) );
+	}
+
+	/**
+	 * Returns the ShareHighlight enrollment state for the current request.
+	 *
+	 * @return string|null One of:
+	 *   - 'treatment': user gets the feature UI and instrumentation.
+	 *   - 'baseline': user gets instrumentation only — main-experiment
+	 *     non-treatment group, or any group of the separate baseline A/A
+	 *     experiment.
+	 *   - null: unenrolled / ineligible
+	 */
+	private function getShareHighlightEnrollment( Skin $skin ): ?string {
+		if ( !$skin->getConfig()->get( 'ReaderExperimentsShareHighlightEnabled' ) ) {
+			return null;
+		}
+
+		// Bail early for ineligable requests, non-minerva skin, and logged-in users
+		$title = $skin->getTitle();
+		if (
+			!$title ||
+			$title->getNamespace() !== NS_MAIN ||
+			$skin->getSkinName() !== 'minerva' ||
+			$skin->getUser()->isRegistered()
+		) {
+			return null;
+		}
+
+		// Treatment group (gets the UI)
+		$request = $skin->getRequest();
+		$group = $this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_EXPERIMENT_NAME );
+		if (
+			$group === self::SHARE_HIGHLIGHT_GROUP_NAME ||
+			$request->getFuzzyBool( 'shareHighlight' )
+		) {
+			return 'treatment';
+		}
+
+		// Control/baseline group (gets instrumentation only)
+		$baseline = $this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_BASELINE_EXPERIMENT_NAME );
+		if ( $group !== null || $baseline !== null ) {
+			return 'baseline';
+		}
+
+		return null;
+	}
+
+	/**
+	 * Add a share icon to the Minerva page actions toolbar for
+	 * ShareHighlight-enrolled users.
+	 *
+	 * @inheritDoc
+	 */
+	public function onSkinTemplateNavigation__Universal( $sktemplate, &$links ): void {
+		if ( $this->getShareHighlightEnrollment( $sktemplate ) !== 'treatment' ) {
+			return;
+		}
+
+		// Key must stay short: Minerva's ToolbarBuilder::copyItemToGroup prefixes
+		// it with "ca-" to build the DOM id, which our JS binds to.
+		// Adding the new link at the start of the array to ensure it appears first.
+		$links['views'] = [ 're-share' => [
+			'text' => $sktemplate->msg( 'readerexperiments-toolbar-share' )->text(),
+			'href' => '#',
+			'icon' => 'share',
+			'class' => '',
+		] ] + $links['views'];
 	}
 
 	/**

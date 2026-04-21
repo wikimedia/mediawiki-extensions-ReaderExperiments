@@ -16,7 +16,7 @@
 </template>
 
 <script>
-const { ref, toRef, watch } = require( 'vue' );
+const { onMounted, onUnmounted, ref, toRef, watch } = require( 'vue' );
 const ShareQuoteButton = require( './components/ShareQuoteButton.vue' );
 const ShareQuoteDialog = require( './components/ShareQuoteDialog.vue' );
 const useTextSelection = require( './composables/useTextSelection.js' );
@@ -74,6 +74,23 @@ module.exports = exports = {
 				quoteTextForDialog.value = '';
 				clearSelection();
 			}
+		} );
+
+		// T423860 will implement article-level share here. For now, just prove
+		// the toolbar-button wiring works end-to-end.
+		function handleToolbarClick() {
+			// eslint-disable-next-line no-console
+			console.log( 'ShareHighlight: toolbar share button clicked' );
+		}
+
+		onMounted( () => {
+			mw.hook( 'ext.readerExperiments.shareHighlight.toolbarClick' )
+				.add( handleToolbarClick );
+		} );
+
+		onUnmounted( () => {
+			mw.hook( 'ext.readerExperiments.shareHighlight.toolbarClick' )
+				.remove( handleToolbarClick );
 		} );
 
 		return {

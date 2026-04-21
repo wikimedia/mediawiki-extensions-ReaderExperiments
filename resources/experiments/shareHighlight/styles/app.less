@@ -1,1 +1,15 @@
+@import 'mediawiki.skin.variables.less';
+
 /* The container itself is invisible; all visible UI is teleported/overlaid. */
+
+/*
+ * Codex share icon for the Minerva toolbar button added via
+ * SkinTemplateNavigation::Universal. "share" is not part of Minerva's OOUI icon
+ * pack (skin.json "skins.minerva.icons"), so we draw it ourselves using the
+ * Codex LESS mixin. Selector mirrors Minerva's own pattern in
+ * skins/MinervaNeue/resources/skins.minerva.styles/icons.less.
+ */
+/* stylelint-disable-next-line selector-class-pattern */
+.minerva-icon.minerva-icon--share {
+	.cdx-mixin-css-icon( @cdx-icon-share, @param-is-button-icon: true );
+}

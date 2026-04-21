@@ -1,6 +1,15 @@
 const Vue = require( 'vue' );
 const App = require( './App.vue' );
 
+// Toolbar "Share" button fires a hook that App.vue component can subscribe to.
+const toolbarShareButton = document.getElementById( 'ca-re-share' );
+if ( toolbarShareButton ) {
+	toolbarShareButton.addEventListener( 'click', ( event ) => {
+		event.preventDefault();
+		mw.hook( 'ext.readerExperiments.shareHighlight.toolbarClick' ).fire();
+	} );
+}
+
 // Find the article content container to monitor for text selection.
 const contentElement = document.querySelector( '#bodyContent' );
 if ( !contentElement ) {

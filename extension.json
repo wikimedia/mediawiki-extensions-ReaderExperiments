@@ -48,7 +48,8 @@
 	"Hooks": {
 		"BeforePageDisplay": "ReaderExperimentsHooks",
 		"BeforeInitialize": "ReaderExperimentsHooks",
-		"ShouldUseParsoid": "ReaderExperimentsHooks"
+		"ShouldUseParsoid": "ReaderExperimentsHooks",
+		"SkinTemplateNavigation::Universal": "ReaderExperimentsHooks"
 	},
 	"MessagesDirs": {
 		"ReaderExperiments": [
