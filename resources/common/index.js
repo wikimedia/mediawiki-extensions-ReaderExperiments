@@ -6,7 +6,7 @@ module.exports = {
 	fullUrls: thumbExtractor.fullUrls,
 	imageSelectors: thumbExtractor.imageSelectors,
 	excludedImageSelectors: require( './excludedImageSelectors.js' ),
-	useBackgroundColor: require( './composables/useBackgroundColor.js' ),
+	useAverageColor: require( './composables/useAverageColor.js' ),
 	useContentImages: require( './composables/useContentImages.js' ),
 	useImageModel: require( './composables/useImageModel.js' ),
 	useSummary: require( './composables/useSummary.js' )

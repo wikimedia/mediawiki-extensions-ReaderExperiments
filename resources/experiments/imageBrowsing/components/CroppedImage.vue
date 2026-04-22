@@ -36,7 +36,7 @@ const { ref, computed, defineComponent, useTemplateRef, watch } = require( 'vue'
 const { CdxIcon } = require( '@wikimedia/codex' );
 const { thumbLimits } = require( '../config.json' );
 const { cdxIconImage } = require( '../icons.json' );
-const { useBackgroundColor } = require( 'ext.readerExperiments' );
+const { useAverageColor } = require( 'ext.readerExperiments' );
 const useSmartCrop = require( '../composables/useSmartCrop.js' );
 const useAltText = require( '../composables/useAltText.js' );
 
@@ -68,7 +68,7 @@ module.exports = exports = defineComponent( {
 		const loading = ref( true );
 
 		// Background color
-		const color = useBackgroundColor( resizedSrc, imageElement );
+		const color = useAverageColor( imageElement );
 		const dominantColorHex = computed( () => {
 			return color.value ?
 				color.value.hex :
