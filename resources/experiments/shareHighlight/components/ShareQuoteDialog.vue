@@ -8,8 +8,8 @@
 		<div class="ext-readerExperiments-shareQuoteDialog__preview">
 			<quote-card
 				ref="quoteCardRef"
-				:image="quoteImage"
-				:text="quoteText"
+				:image="image"
+				:text="text"
 				:style-variant="selectedStyleRef"
 			></quote-card>
 		</div>
@@ -67,15 +67,12 @@
 <script>
 const { ref, toRef, computed, watch } = require( 'vue' );
 const { CdxButton, CdxIcon, CdxMessage, CdxProgressBar, useModelWrapper } = require( '@wikimedia/codex' );
+const { useSummary } = require( 'ext.readerExperiments' );
 const icons = require( '../icons.json' );
 const PopoverDialog = require( './PopoverDialog.vue' );
 const QuoteCard = require( './QuoteCard.vue' );
 const useShareQuote = require( '../composables/useShareQuote.js' );
 const textFragment = require( '../utils/textFragment.js' );
-
-/**
- * @typedef {import('../../../common/types').ImageData} ImageData
- */
 
 // @vue/component
 module.exports = exports = {
@@ -97,11 +94,12 @@ module.exports = exports = {
 			default: false
 		},
 		/**
-		 * The article lead image to share.
+		 * Title of the page to share.
 		 */
-		quoteImage: {
-			type: /** @type {import('vue').PropType<ImageData>} */ ( [ Object, null ] ),
-			default: null
+		title: {
+			type: /** @type {mw.Title} */ ( Object ),
+			required: true,
+			validator: ( title ) => ( title instanceof mw.Title )
 		},
 		/**
 		 * The quote text to share.
@@ -109,22 +107,116 @@ module.exports = exports = {
 		quoteText: {
 			type: String,
 			default: ''
-		},
-		/**
-		 * The article title for attribution.
-		 */
-		articleTitle: {
-			type: String,
-			default: ''
 		}
 	},
 	emits: [ 'update:open' ],
 	setup: function ( props, { emit } ) {
 		const quoteCardRef = ref( null );
-		const quoteImageRef = toRef( props, 'quoteImage' );
+
+		const titleMatchesActivePage = computed( () => props.title.getPrefixedDb() === mw.config.get( 'wgPageName' ) );
+		const ogImage = document.querySelector( 'meta[property="og:image"]' );
+		const ogImageWidth = document.querySelector( 'meta[property="og:image:width"]' );
+
+		const needsSummary = computed( () => {
+			if ( props.quoteText === '' ) {
+				// No quote selected = get extract from summary API
+				return true;
+			}
+
+			if ( !titleMatchesActivePage.value || mw.config.get( 'wgArticleId' ) === 0 ) {
+				// Not the currently active page, or not a known local page = we can't know
+				// whether there's a thumbnail & need to get it from summary API
+				return true;
+			}
+
+			if ( ogImage && ogImage.hasAttribute( 'content' ) ) {
+				// We know that the page has a thumbnail = go get data on the original file
+				// from summary API
+				return true;
+			}
+
+			return false;
+		} );
+
+		const summaryTitle = computed( () => ( props.open && needsSummary.value ? props.title : null ) );
+		const summary = useSummary( summaryTitle );
+
+		const image = computed( () => {
+			const getImageSrc = ( thumbnailSrc, originalSrc, originalWidth ) => {
+				// Minimum dimension (width and height) required for the original image.
+				// Images smaller than this threshold are excluded to avoid poor quality in the
+				// share card.
+				if ( originalWidth < 500 ) {
+					return null;
+				}
+
+				const parsedUrl = mw.util.parseImageUrl( thumbnailSrc );
+				if ( !parsedUrl ) {
+					// If we can't parse the url, default to the original src
+					return originalSrc;
+				}
+
+				// Thumbnail size to request must be a standard Wikimedia production thumbnail
+				// size to ensure the thumbnail is cached and avoid rate limiting.
+				// Refer to https://www.mediawiki.org/wiki/Common_thumbnail_sizes
+				// 960px is chosen because the QuoteCard renders at 2× pixel ratio on
+				// a ~375px-wide mobile card, requiring ~750px effective width. 960px is the
+				// smallest standard size that exceeds this threshold. 500px would be too small
+				// and result in upscaling.
+				const width = mw.util.adjustThumbWidthForSteps(
+					960,
+					originalWidth
+				);
+				return parsedUrl.resizeUrl( width );
+			};
+
+			if ( !summary.value ) {
+				// While we don't (yet) have the summary result, we could read from the
+				// opengraph tags to get an early indication of what image we'll get.
+				// It's not perfect (width & height are not the source dimensions, for
+				// example), but likely good enough to kickstart things.
+				if (
+					titleMatchesActivePage.value &&
+					ogImage && ogImage.hasAttribute( 'content' ) &&
+					ogImageWidth && ogImageWidth.hasAttribute( 'content' )
+				) {
+					return getImageSrc(
+						ogImage.getAttribute( 'content' ),
+						ogImage.getAttribute( 'content' ),
+						parseInt( ogImageWidth.getAttribute( 'content' ) )
+					);
+				}
+			} else if ( summary.value.thumbnail && summary.value.originalimage ) {
+				return getImageSrc(
+					summary.value.thumbnail.source,
+					summary.value.originalimage.source,
+					summary.value.originalimage.width
+				);
+			}
+
+			return null;
+		} );
+
+		const text = computed( () => {
+			if ( props.quoteText ) {
+				return props.quoteText;
+			}
+			if ( summary.value && summary.value.extract ) {
+				return summary.value.extract;
+			}
+			return '';
+		} );
+
 		const linkCopiedRef = ref( false ); // Copy link state
+		const articleTitle = computed( () => props.title.getMainText() );
+
 		// If there's no image, fallback to light background. Average color depends on image.
-		const selectedStyleRef = quoteImageRef.value ? ref( 'average' ) : ref( 'light' );
+		const selectedStyleRef = ref();
+		watch(
+			image,
+			() => ( selectedStyleRef.value = image.value ? 'average' : 'light' ),
+			{ immediate: true }
+		);
 
 		// Share functionality
 		const {
@@ -159,7 +251,6 @@ module.exports = exports = {
 			return props.open;
 		}, ( isOpen ) => {
 			if ( isOpen ) {
-				selectedStyleRef.value = quoteImageRef.value ? 'average' : 'light';
 				linkCopiedRef.value = false;
 			}
 		} );
@@ -177,15 +268,15 @@ module.exports = exports = {
 				// The lead image isn't passed to the Web Share API
 				shareQuote( {
 					cardElement: cardElement,
-					articleTitle: props.articleTitle,
-					quoteText: props.quoteText
+					articleTitle: articleTitle.value,
+					quoteText: text.value
 				} ).then( ( success ) => {
 					if ( success ) {
 						wrappedOpen.value = false;
 					}
 				} );
 			} else {
-				downloadQuoteImage( cardElement, props.articleTitle )
+				downloadQuoteImage( cardElement, articleTitle.value )
 					.then( ( success ) => {
 						if ( success ) {
 							wrappedOpen.value = false;
@@ -205,7 +296,7 @@ module.exports = exports = {
 		 * Copy the text fragment link to clipboard.
 		 */
 		function handleCopyLink() {
-			const url = textFragment.buildShareUrl( props.articleTitle, props.quoteText );
+			const url = textFragment.buildShareUrl( articleTitle.value, text.value );
 			// eslint-disable-next-line compat/compat
 			navigator.clipboard.writeText( url ).then( () => {
 				linkCopiedRef.value = true;
@@ -223,6 +314,8 @@ module.exports = exports = {
 			quoteCardRef,
 			selectedStyleRef,
 			isProcessing,
+			image,
+			text,
 			error,
 			wrappedOpen,
 			copyLinkLabel,

@@ -119,6 +119,22 @@ class Hooks implements
 	}
 
 	/**
+	 * ResourceLoader callback to generate virtual config.json for common module.
+	 * Provides configuration data as a packageFiles virtual module.
+	 *
+	 * @see https://www.mediawiki.org/wiki/ResourceLoader/Package_files#Generated_content
+	 *
+	 * @param Context $context
+	 * @param Config $config
+	 * @return array
+	 */
+	public static function getCommonConfig( Context $context, Config $config ): array {
+		return [
+			'apiBaseUri' => $config->get( 'ReaderExperimentsApiBaseUri' )
+		];
+	}
+
+	/**
 	 * ResourceLoader callback to generate virtual config.json for ImageBrowsing module.
 	 * Provides configuration data as a packageFiles virtual module.
 	 *

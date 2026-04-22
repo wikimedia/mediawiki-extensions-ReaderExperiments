@@ -15,10 +15,10 @@
 	>
 		<div class="ext-readerExperiments-quoteCard__content">
 			<img
-				v-if="imageSrc"
+				v-if="image"
 				ref="imageElementRef"
 				class="ext-readerExperiments-quoteCard__image"
-				:src="imageSrc"
+				:src="image"
 				crossorigin="anonymous"
 			>
 			<cdx-icon
@@ -60,11 +60,11 @@
 </template>
 
 <script>
-const { computed, ref, toRef } = require( 'vue' );
+const { computed, ref, toRef, useTemplateRef } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
+const { useBackgroundColor, useImageModel } = require( 'ext.readerExperiments' );
 const icons = require( '../icons.json' );
 const truncateText = require( '../utils/truncateText.js' );
-const { useBackgroundColor, useImageModel } = require( 'ext.readerExperiments' );
 const InlineSvg = require( './InlineSvg.vue' );
 
 // Use static URLs to load local SVG files
@@ -79,10 +79,6 @@ const creativeCommonsSA = staticBaseUrl + 'creative-commons-sa.svg';
  */
 const MAX_QUOTE_LENGTH = 280;
 
-/**
- * @typedef {import('../../../common/types').ImageData} ImageData
- */
-
 // @vue/component
 module.exports = exports = {
 	name: 'QuoteCard',
@@ -92,13 +88,11 @@ module.exports = exports = {
 	},
 	props: {
 		/**
-		 * The article lead image to display.
-		 * It's wrapped in a ref, but not directly used.
+		 * Src of the article image to display.
 		 */
-		// eslint-disable-next-line vue/no-unused-properties
 		image: {
-			type: /** @type {import('vue').PropType<ImageData>} */ ( [ Object, null ] ),
-			required: true
+			type: String,
+			default: null
 		},
 		/**
 		 * The quote text to display.
@@ -121,18 +115,12 @@ module.exports = exports = {
 	},
 	setup: function ( props, { expose } ) {
 		const cardRef = ref( null );
-		const imageRef = toRef( props, 'image' );
-		const imageElementRef = ref( null );
-
-		const imageSrc = computed( () => {
-			return imageRef.value && imageRef.value.src ? imageRef.value.src : null;
-		} );
+		const imageSrcRef = toRef( props, 'image' );
+		const imageElementRef = useTemplateRef( 'imageElementRef' );
 
 		// If there's no image,
 		// then the card is square, otherwise it's 9:16.
-		const aspectRatio = computed( () => {
-			return imageRef.value && imageRef.value.src ? '9x16' : '1x1';
-		} );
+		const aspectRatio = computed( () => ( props.image ? '9x16' : '1x1' ) );
 
 		// Truncate text with ellipsis if it exceeds max length
 		const displayText = computed( () => {
@@ -153,31 +141,27 @@ module.exports = exports = {
 		} );
 
 		// Handle average image color background
-		let dominantColorHex, dominantColorContrasting, dominantColorContrastingLegacy,
-			dominantColorLightness;
-		if ( props.styleVariant === 'average' ) {
-			const color = useBackgroundColor( imageRef, imageElementRef );
-			dominantColorHex = computed( () => {
-				return color.value ?
-					color.value.hex :
-					'var( --background-color-neutral, transparent )';
-			} );
-			dominantColorContrasting = computed( () => {
-				return color.value ?
-					`oklch( from ${ color.value.hex } calc( l * ${ color.value.isDark ? 100 : 0 } ) c h )` :
-					null;
-			} );
-			dominantColorContrastingLegacy = computed( () => {
-				return color.value ?
-					( color.value.isDark ? 'white' : 'black' ) :
-					null;
-			} );
-			dominantColorLightness = computed( () => {
-				return color.value ?
-					( color.value.isDark ? 'dark' : 'light' ) :
-					null;
-			} );
-		}
+		const color = computed( () => props.image ? useBackgroundColor( imageSrcRef, imageElementRef ).value : null );
+		const dominantColorHex = computed( () => {
+			return color.value ?
+				color.value.hex :
+				'var( --background-color-neutral, transparent )';
+		} );
+		const dominantColorContrasting = computed( () => {
+			return color.value ?
+				`oklch( from ${ color.value.hex } calc( l * ${ color.value.isDark ? 100 : 0 } ) c h )` :
+				null;
+		} );
+		const dominantColorContrastingLegacy = computed( () => {
+			return color.value ?
+				( color.value.isDark ? 'white' : 'black' ) :
+				null;
+		} );
+		const dominantColorLightness = computed( () => {
+			return color.value ?
+				( color.value.isDark ? 'dark' : 'light' ) :
+				null;
+		} );
 
 		// Expose cardRef for parent to access DOM element for image generation
 		expose( { cardRef: cardRef } );
@@ -194,7 +178,16 @@ module.exports = exports = {
 			};
 		}
 
-		const imageNameRef = computed( () => imageRef.value ? imageRef.value.name : null );
+		const imageNameRef = computed( () => {
+			if ( !imageSrcRef.value ) {
+				return null;
+			}
+			const parsedUrl = mw.util.parseImageUrl( imageSrcRef.value );
+			if ( !parsedUrl ) {
+				return null;
+			}
+			return parsedUrl.name;
+		} );
 		const imageModel = useImageModel( imageNameRef );
 		const imageAttribution = computed( () => {
 			const model = imageModel.value;
@@ -216,7 +209,6 @@ module.exports = exports = {
 		return {
 			cardRef,
 			imageElementRef,
-			imageSrc,
 			aspectRatio,
 			displayText,
 			fontSizeClass,

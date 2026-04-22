@@ -62,16 +62,22 @@
 			"localBasePath": "resources/common",
 			"remoteExtPath": "ReaderExperiments/resources/common",
 			"dependencies": [
+				"mediawiki.Title",
 				"vue",
 				"ext.readerExperiments/lib/fast-average-color"
 			],
 			"packageFiles": [
 				"index.js",
+				{
+					"name": "config.json",
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getCommonConfig"
+				},
 				"thumbExtractor.js",
 				"excludedImageSelectors.js",
-				"composables/useContentImages.js",
 				"composables/useBackgroundColor.js",
-				"composables/useImageModel.js"
+				"composables/useContentImages.js",
+				"composables/useImageModel.js",
+				"composables/useSummary.js"
 			]
 		},
 		"ext.readerExperiments/imageBrowsing": {
@@ -328,7 +334,6 @@
 				"components/PopoverDialog.vue",
 				"components/QuoteCard.vue",
 				"components/InlineSvg.vue",
-				"composables/useLeadImage.js",
 				"composables/useTextSelection.js",
 				"composables/useShareQuote.js",
 				"utils/textFragment.js",
@@ -378,7 +383,8 @@
 			"dependencies": [
 				"vue",
 				"mediawiki.Title",
-				"@wikimedia/codex"
+				"@wikimedia/codex",
+				"ext.readerExperiments"
 			],
 			"packageFiles": [
 				"init.js",

@@ -3,7 +3,6 @@ const { ref, watchEffect, readonly } = require( 'vue' );
 
 /**
  * @typedef {import('types-mediawiki')} MediaWikiTypes
- * @typedef {import('../types').ImageData} ImageData
  * @typedef {import('../../lib/fast-average-color').FastAverageColorResult} ColorResult
  * @typedef {import('vue').Ref<ColorResult | null>} ColorRef
  * @typedef {import('vue').DeepReadonly<ColorRef>} ReadonlyColorRef
@@ -73,11 +72,11 @@ function waitForImageLoad( imageElement ) {
 
 /**
  * @param {HTMLImageElement} imageElement
- * @param {ImageData} imageData
+ * @param {string} imageName
  * @return {ColorResult}
  */
-function computeColor( imageElement, imageData ) {
-	const cached = backgroundMap.get( imageData.name );
+function computeColor( imageElement, imageName ) {
+	const cached = backgroundMap.get( imageName );
 	if ( cached ) {
 		// Another instance of this image loaded first, return cached data.
 		return cached;
@@ -99,13 +98,12 @@ function computeColor( imageElement, imageData ) {
 		throw new Error( 'Failed to use image ' + imageElement.src );
 	}
 
-	backgroundMap.set( imageData.name, color );
+	backgroundMap.set( imageName, color );
 	return color;
 }
 
 /**
- * Calculate the background color for the given ImageData reference,
- * using the given `<img>` reference as a source.
+ * Calculate the background color for the given <img> element reference.
  *
  * If a cached result is already available it will be immediately
  * available in the reactive read-only ref result, otherwise it will
@@ -115,29 +113,31 @@ function computeColor( imageElement, imageData ) {
  * can be read into a canvas. If it's not already loaded it will be
  * triggered to load.
  *
- * @param {import('vue').Ref<ImageData>} imageDataRef reference to ImageData struct
+ * @param {import('vue').Ref<string>} imageSrcRef reference to img src
  * @param {import('vue').Ref<HTMLImageElement>} imageElementRef reference to live img
  * @return {ReadonlyColorRef}
  */
-module.exports = exports = function useBackgroundColor( imageDataRef, imageElementRef ) {
+module.exports = exports = function useBackgroundColor( imageSrcRef, imageElementRef ) {
 	const colorResult = ref( null );
 
 	watchEffect( () => {
-		const imageData = imageDataRef.value;
+		const imageSrc = imageSrcRef.value;
 		const imageElement = imageElementRef.value;
 
-		if ( !imageData ) {
+		const parsedUrl = mw.util.parseImageUrl( imageSrc );
+		if ( !parsedUrl || !imageElement ) {
 			colorResult.value = null;
 			return;
 		}
 
-		const cached = backgroundMap.get( imageData.name );
+		const imageName = parsedUrl.name;
+		const cached = backgroundMap.get( imageName );
 		if ( cached ) {
 			colorResult.value = cached;
 			return;
 		}
 
-		const isStale = () => imageData !== imageDataRef.value || imageElement !== imageElementRef.value;
+		const isStale = () => imageSrc !== imageSrcRef.value || imageElement !== imageElementRef.value;
 		const updateIfNotStale = ( color ) => {
 			// It could take some time for images to have completed loading,
 			// and this data having become available, so it is possible that
@@ -155,7 +155,7 @@ module.exports = exports = function useBackgroundColor( imageDataRef, imageEleme
 		// image becomes available.
 		if ( imageElement ) {
 			waitForImageLoad( imageElement )
-				.then( ( node ) => computeColor( node, imageData ) )
+				.then( ( node ) => computeColor( node, imageName ) )
 				.then( ( color ) => updateIfNotStale( color ) )
 				.catch( () => {
 					// Failures are acceptable, we just don't want them

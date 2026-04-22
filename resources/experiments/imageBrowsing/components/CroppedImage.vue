@@ -32,7 +32,7 @@
 </template>
 
 <script>
-const { ref, computed, defineComponent, useTemplateRef, watch, toRef } = require( 'vue' );
+const { ref, computed, defineComponent, useTemplateRef, watch } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
 const { thumbLimits } = require( '../config.json' );
 const { cdxIconImage } = require( '../icons.json' );
@@ -68,8 +68,7 @@ module.exports = exports = defineComponent( {
 		const loading = ref( true );
 
 		// Background color
-		const imageRef = toRef( props, 'image' );
-		const color = useBackgroundColor( imageRef, imageElement );
+		const color = useBackgroundColor( resizedSrc, imageElement );
 		const dominantColorHex = computed( () => {
 			return color.value ?
 				color.value.hex :

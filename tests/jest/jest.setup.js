@@ -86,7 +86,8 @@ const mw = {
 		isIPAddress: jest.fn(),
 		isInfinity: jest.fn(),
 		sanitizeIP: jest.fn(),
-		getParamValue: jest.fn().mockReturnValue( null )
+		getParamValue: jest.fn().mockReturnValue( null ),
+		parseImageUrl: jest.fn()
 	},
 	Rest: RestMock,
 	html: {

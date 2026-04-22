@@ -43,8 +43,8 @@
 <script>
 const { computed, defineComponent, ref, useTemplateRef, watch } = require( 'vue' );
 const { CdxThumbnail, CdxIcon } = require( '@wikimedia/codex' );
+const { useSummary } = require( 'ext.readerExperiments' );
 const { cdxIconLinkExternal } = require( '../icons.json' );
-const { apiBaseUri } = require( '../config.json' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -64,21 +64,10 @@ module.exports = exports = defineComponent( {
 	async setup( props ) {
 		const summaryRef = useTemplateRef( 'summaryRef' );
 
-		async function fetchPreview( title ) {
-			const encodedTitle = encodeURIComponent( title );
-			const origin = apiBaseUri ? new URL( apiBaseUri ).origin : '';
-			const url = `${ origin }/api/rest_v1/page/summary/${ encodedTitle }`;
-			const response = await fetch( url );
-			if ( !response.ok ) {
-				throw new Error( response.status );
-			}
-			return await response.json();
-		}
-
-		const data = ref( await fetchPreview( props.title ) );
+		const data = ref( await useSummary.fetchSummary( mw.Title.newFromText( props.title ) ) );
 		watch(
 			() => props.title,
-			async ( title ) => ( data.value = await fetchPreview( title ) )
+			async ( title ) => ( data.value = await useSummary.fetchSummary( mw.Title.newFromText( title ) ) )
 		);
 
 		const thumbnail = computed( () => ( data.value && data.value.thumbnail ) );
