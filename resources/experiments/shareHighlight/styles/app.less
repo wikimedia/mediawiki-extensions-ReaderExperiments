@@ -13,3 +13,12 @@
 .minerva-icon.minerva-icon--share {
 	.cdx-mixin-css-icon( @cdx-icon-share, @param-is-button-icon: true );
 }
+
+/*
+ * Corresponding client-side hiding of the download button temporarily
+ * (see T423858)
+ */
+/* stylelint-disable-next-line selector-max-id */
+li#minerva-download {
+	display: none;
+}
