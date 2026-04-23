@@ -81,11 +81,11 @@ mw.loader.using( 'ext.testKitchen' )
 	// Use a soft-require to determine whether Test Kitchen is available;
 	// if so use it, if not then don't enable the instrumentation.
 	.then( () => {
-		const tierOne = mw.testKitchen.getExperiment( TIER_ONE_EXPERIMENT_NAME );
+		const tierOne = mw.testKitchen.compat.getExperiment( TIER_ONE_EXPERIMENT_NAME );
 		tierOne.setSchema( SCHEMA_NAME );
 		tierOne.setStream( STREAM_NAME );
 
-		const tierTwo = mw.testKitchen.getExperiment( TIER_TWO_EXPERIMENT_NAME );
+		const tierTwo = mw.testKitchen.compat.getExperiment( TIER_TWO_EXPERIMENT_NAME );
 		tierTwo.setSchema( SCHEMA_NAME );
 		tierTwo.setStream( STREAM_NAME );
 

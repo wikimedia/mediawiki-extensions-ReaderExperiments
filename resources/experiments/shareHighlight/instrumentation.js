@@ -165,7 +165,7 @@ const analyticsConfig = {
 };
 
 for ( const name of EXPERIMENT_NAMES ) {
-	const experiment = mw.testKitchen.getExperiment( name );
+	const experiment = mw.testKitchen.compat.getExperiment( name );
 	experiment.setSchema( SCHEMA_NAME );
 	experiment.setStream( STREAM_NAME );
 	analyticsConfig.experiments.push( experiment );

@@ -12,7 +12,7 @@ if ( !isTouchDevice ) {
 // https://test-kitchen.wikimedia.org/experiment/mobile-page-previews
 const EXPERIMENT_NAME = 'mobile-page-previews';
 
-const experiment = mw.testKitchen.getExperiment( EXPERIMENT_NAME );
+const experiment = mw.testKitchen.compat.getExperiment( EXPERIMENT_NAME );
 
 // Track session length, used to compute session length as the primary metric.
 if ( mw.wikimediaEvents && mw.wikimediaEvents.SessionLengthInstrumentMixin ) {

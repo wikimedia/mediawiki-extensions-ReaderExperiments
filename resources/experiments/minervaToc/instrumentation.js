@@ -14,7 +14,7 @@ function init() {
 	const TOC_CONTAINER_SELECTOR = '.ext-readerExperiments-minerva-toc__toc';
 	const DEBUG_PARAM = 'tocInstrumentationDebug';
 
-	const experiment = mw.testKitchen.getExperiment( EXPERIMENT_NAME );
+	const experiment = mw.testKitchen.compat.getExperiment( EXPERIMENT_NAME );
 	let sessionLengthStarted = false;
 	const debugEnabled = new URLSearchParams( window.location.search ).has( DEBUG_PARAM );
 
