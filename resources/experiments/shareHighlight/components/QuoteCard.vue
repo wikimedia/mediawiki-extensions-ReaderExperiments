@@ -99,13 +99,13 @@ module.exports = exports = {
 		},
 		/**
 		 * Visual style variant.
-		 * Values: 'average', 'light', 'dark', 'transparent'
+		 * Values: 'average', 'light', 'dark'
 		 */
 		styleVariant: {
 			type: String,
 			required: true,
 			validator: function ( value ) {
-				return [ 'average', 'light', 'dark', 'transparent' ].includes( value );
+				return [ 'average', 'light', 'dark' ].includes( value );
 			}
 		}
 	},
@@ -332,15 +332,6 @@ module.exports = exports = {
 				filter: invert( 1 ) saturate( 0 );
 				opacity: 0.4;
 			}
-		}
-	}
-
-	&--transparent {
-		background-color: @background-color-transparent;
-		color: @color-base;
-
-		.ext-readerExperiments-quoteCard__quotes {
-			color: @color-subtle;
 		}
 	}
 

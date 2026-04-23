@@ -9,7 +9,6 @@ const htmlToImage = require( 'ext.readerExperiments/lib/html-to-image' );
  * Generate a PNG image blob from a DOM element.
  *
  * The background color is read from the element's computed style.
- * Transparent backgrounds produce PNGs with an alpha channel.
  *
  * @param {HTMLElement} element - The DOM element to capture
  * @param {Object} [options] - Generation options
@@ -19,7 +18,7 @@ const htmlToImage = require( 'ext.readerExperiments/lib/html-to-image' );
 function generateImageBlob( element, options ) {
 	const scale = ( options && options.scale ) || 2;
 	const computedBg = window.getComputedStyle( element ).backgroundColor;
-	const backgroundColor = computedBg === 'rgba(0, 0, 0, 0)' ? null : computedBg;
+	const backgroundColor = computedBg;
 	const toBlobOptions = {
 		pixelRatio: scale,
 		// Skip elements that might cause issues

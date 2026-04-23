@@ -161,10 +161,6 @@ module.exports = exports = {
 			{
 				value: 'dark',
 				label: mw.msg( 'readerexperiments-sharehighlight-background-dark' )
-			},
-			{
-				value: 'transparent',
-				label: mw.msg( 'readerexperiments-sharehighlight-background-transparent' )
 			}
 		];
 		// If there's no image,
