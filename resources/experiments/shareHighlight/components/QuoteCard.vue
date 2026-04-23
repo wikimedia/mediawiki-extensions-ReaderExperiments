@@ -25,22 +25,28 @@
 				{{ displayText }}
 			</blockquote>
 		</div>
-		<div class="ext-readerExperiments-quoteCard__branding">
-			<img
-				v-if="wordmark"
-				:src="wordmark.src"
-				:alt="wordmark.alt"
-				:width="wordmark.width"
-				:height="wordmark.height">
-			<template v-else>
-				{{ $i18n( 'readerexperiments-sharehighlight-branding' ).text() }}
-			</template>
-			<div class="ext-readerExperiments-quoteCard__attribution">
-				<img :src="creativeCommonsCC">
-				<img :src="creativeCommonsBY">
-				<img :src="creativeCommonsSA">
+		<div class="ext-readerExperiments-quoteCard__branding_and_attribution">
+			<div class="ext-readerExperiments-quoteCard__branding">
+				<img
+					v-if="wordmark"
+					:src="wordmark.src"
+					:alt="wordmark.alt"
+					:width="wordmark.width"
+					:height="wordmark.height">
+				<span v-else>
+					{{ $i18n( 'readerexperiments-sharehighlight-branding' ).text() }}
+				</span>
+				<div class="ext-readerExperiments-quoteCard__text_attribution">
+					<img :src="creativeCommonsCC">
+					<img :src="creativeCommonsBY">
+					<img :src="creativeCommonsSA">
+				</div>
 			</div>
-			<!-- TODO add image author and license abbreviation, 25% opacity of text color -->
+			<div
+				v-if="imageAttribution"
+				class="ext-readerExperiments-quoteCard__image_attribution">
+				{{ imageAttribution }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -50,7 +56,7 @@ const { computed, ref, toRef } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
 const icons = require( '../icons.json' );
 const truncateText = require( '../utils/truncateText.js' );
-const { useBackgroundColor } = require( 'ext.readerExperiments' );
+const { useBackgroundColor, useImageModel } = require( 'ext.readerExperiments' );
 
 // Use static URLs to load local SVG files
 const staticBaseUrl = mw.config.get( 'wgExtensionAssetsPath' ) + '/ReaderExperiments/resources/experiments/shareHighlight/images/';
@@ -172,6 +178,25 @@ module.exports = exports = {
 			};
 		}
 
+		const imageNameRef = computed( () => imageRef.value ? imageRef.value.name : null );
+		const imageModel = useImageModel( imageNameRef );
+		const imageAttribution = computed( () => {
+			const model = imageModel.value;
+			if ( !model || !model.author || !model.license ) {
+				return null;
+			}
+
+			const doc = new DOMParser().parseFromString( model.author, 'text/html' );
+			const authorText = doc.body.textContent.trim();
+			const license = imageModel.value.license.getShortName();
+
+			return mw.message(
+				'readerexperiments-sharehighlight-image-author-license',
+				authorText,
+				license
+			).text();
+		} );
+
 		return {
 			cardRef,
 			imageElementRef,
@@ -186,7 +211,8 @@ module.exports = exports = {
 			creativeCommonsSA,
 			dominantColorHex,
 			dominantColorContrasting,
-			dominantColorContrastingLegacy
+			dominantColorContrastingLegacy,
+			imageAttribution
 		};
 	}
 };
@@ -220,16 +246,24 @@ module.exports = exports = {
 		margin-top: @spacing-125;
 	}
 
+	&__branding_and_attribution {
+		font-size: @font-size-x-small;
+		font-family: @font-family-system-sans;
+		letter-spacing: 0.02em;
+		bottom: @spacing-50;
+		right: @spacing-50;
+		margin-top: @spacing-125;
+		opacity: 0.5;
+	}
+
 	&__branding {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		bottom: @spacing-50;
-		right: @spacing-50;
-		margin-top: @spacing-125;
-		font-size: @font-size-x-small;
-		font-family: @font-family-system-sans;
-		letter-spacing: 0.02em;
+	}
+
+	&__text_attribution,
+	&__image_attribution {
 		opacity: 0.5;
 	}
 

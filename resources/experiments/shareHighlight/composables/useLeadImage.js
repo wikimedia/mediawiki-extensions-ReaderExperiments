@@ -27,15 +27,15 @@ const MIN_ORIGINAL_DIMENSION = 500;
 /**
  * Fetch the article's lead image from the PageImages API.
  *
- * Returns a reactive ref that starts as an empty object and is populated
+ * Returns a reactive ref that starts as null and is populated
  * once the API call resolves. If the page has no suitable lead image
  * (missing, or original dimensions below the minimum threshold),
- * the ref remains an empty object and the QuoteCard renders without an image.
+ * the ref remains null and the QuoteCard renders without an image.
  *
- * @return {{ import('vue').Ref<Object> }}
+ * @return {{ import('vue').Ref<Object | null> }}
  */
 module.exports = exports = function useLeadImage() {
-	const leadImage = ref( {} );
+	const leadImage = ref( null );
 
 	const api = apiBaseUri ?
 		new mw.ForeignApi( apiBaseUri, { anonymous: true } ) :

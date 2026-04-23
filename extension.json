@@ -69,7 +69,8 @@
 				"thumbExtractor.js",
 				"excludedImageSelectors.js",
 				"composables/useContentImages.js",
-				"composables/useBackgroundColor.js"
+				"composables/useBackgroundColor.js",
+				"composables/useImageModel.js"
 			]
 		},
 		"ext.readerExperiments/imageBrowsing": {
@@ -349,7 +350,8 @@
 				"readerexperiments-sharehighlight-generating-image",
 				"readerexperiments-sharehighlight-share-title",
 				"readerexperiments-sharehighlight-share-text",
-				"readerexperiments-sharehighlight-branding"
+				"readerexperiments-sharehighlight-branding",
+				"readerexperiments-sharehighlight-image-author-license"
 			]
 		},
 		"ext.readerExperiments/shareHighlight.styles": {

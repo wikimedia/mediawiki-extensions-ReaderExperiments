@@ -20,7 +20,7 @@ A set of prototypes that aim at growing Wikipedia readers.
 ``` sh
 USERNAME=  # Fill in your shell user name here
 git clone ssh://${USERNAME}@gerrit.wikimedia.org:29418/mediawiki/skins/MinervaNeue skins/MinervaNeue
-for extension in MobileFrontend MobileFrontendContentProvider ReaderExperiments; do
+for extension in MobileFrontend MobileFrontendContentProvider MultimediaViewer ReaderExperiments; do
     git clone "ssh://${USERNAME}@gerrit.wikimedia.org:29418/mediawiki/extensions/${extension}" "extensions/${extension}"
 done
 ```
@@ -30,6 +30,7 @@ done
 wfLoadExtensions( [
     'MobileFrontend',
     'MobileFrontendContentProvider',
+    'MultimediaViewer',
     'ReaderExperiments'
 ] );
 

@@ -52,7 +52,7 @@ module.exports = exports = {
 		const quoteTextForDialog = ref( '' );
 		// Verify that the page has images before calling the PageImages API
 		const hasImages = props.contentElement.querySelectorAll( imageSelectors.join( ', ' ) ).length > 0;
-		const leadImageForDialog = hasImages ? useLeadImage().leadImage : null;
+		const leadImageForDialog = hasImages ? useLeadImage().leadImage : ref( null );
 
 		// Page title from MediaWiki config
 		const pageTitle = mw.config.get( 'wgTitle' );
