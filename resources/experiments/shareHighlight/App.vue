@@ -62,9 +62,10 @@ module.exports = exports = {
 		 * Captures the text immediately since clicking clears browser selection.
 		 */
 		function openShareDialog() {
+			isShareDialogOpen.value = true;
+
 			if ( hasSelection.value && selectedText.value ) {
 				quoteTextForDialog.value = selectedText.value;
-				isShareDialogOpen.value = true;
 			}
 		}
 
@@ -76,21 +77,14 @@ module.exports = exports = {
 			}
 		} );
 
-		// T423860 will implement article-level share here. For now, just prove
-		// the toolbar-button wiring works end-to-end.
-		function handleToolbarClick() {
-			// eslint-disable-next-line no-console
-			console.log( 'ShareHighlight: toolbar share button clicked' );
-		}
-
 		onMounted( () => {
 			mw.hook( 'ext.readerExperiments.shareHighlight.toolbarClick' )
-				.add( handleToolbarClick );
+				.add( openShareDialog );
 		} );
 
 		onUnmounted( () => {
 			mw.hook( 'ext.readerExperiments.shareHighlight.toolbarClick' )
-				.remove( handleToolbarClick );
+				.remove( openShareDialog );
 		} );
 
 		return {

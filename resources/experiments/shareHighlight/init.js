@@ -1,6 +1,10 @@
 const Vue = require( 'vue' );
 const App = require( './App.vue' );
 
+const container = document.createElement( 'div' );
+container.setAttribute( 'id', 'ext-readerExperiments-shareHighlight' );
+document.getElementById( 'content' ).appendChild( container );
+
 // Toolbar "Share" button fires a hook that App.vue component can subscribe to.
 const toolbarShareButton = document.getElementById( 'ca-re-share' );
 if ( toolbarShareButton ) {

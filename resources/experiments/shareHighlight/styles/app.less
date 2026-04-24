@@ -14,6 +14,11 @@
 	.cdx-mixin-css-icon( @cdx-icon-share, @param-is-button-icon: true );
 }
 
+/* stylelint-disable-next-line selector-max-id */
+body:not( :has( #ext-readerExperiments-shareHighlight ) ) #page-actions-re-share {
+	display: none;
+}
+
 /*
  * Corresponding client-side hiding of the download button temporarily
  * (see T423858)

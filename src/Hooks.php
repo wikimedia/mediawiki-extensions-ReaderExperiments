@@ -335,9 +335,6 @@ class Hooks implements
 		}
 
 		if ( $enrollment === 'treatment' ) {
-			$out->prependHTML(
-				'<div id="ext-readerExperiments-shareHighlight"></div>'
-			);
 			$out->addModuleStyles( 'ext.readerExperiments/shareHighlight.styles' );
 			$out->addModules( 'ext.readerExperiments/shareHighlight' );
 		}
@@ -379,7 +376,7 @@ class Hooks implements
 			return null;
 		}
 
-		// Bail early for ineligable requests, non-minerva skin, and logged-in users
+		// Bail early for ineligible requests, non-minerva skin, and logged-in users
 		$title = $skin->getTitle();
 		if (
 			!$title ||
@@ -424,7 +421,7 @@ class Hooks implements
 		// it with "ca-" to build the DOM id, which our JS binds to.
 		// Adding the new link at the start of the array to ensure it appears first.
 		$links['views'] = [ 're-share' => [
-			'text' => $sktemplate->msg( 'readerexperiments-toolbar-share' )->text(),
+			'text' => $sktemplate->msg( 'readerexperiments-sharehighlight-toolbar-share' )->text(),
 			'href' => '#',
 			'icon' => 'share',
 			'class' => '',
