@@ -21,7 +21,10 @@
 				:src="imageSrc"
 				crossorigin="anonymous"
 			>
-			<cdx-icon class="ext-readerExperiments-quoteCard__quotes" :icon="cdxIconQuotes"></cdx-icon>
+			<cdx-icon
+				class="ext-readerExperiments-quoteCard__quotes"
+				:icon="cdxIconQuotes">
+			</cdx-icon>
 			<blockquote class="ext-readerExperiments-quoteCard__text" :class="fontSizeClass">
 				{{ displayText }}
 			</blockquote>
@@ -106,13 +109,13 @@ module.exports = exports = {
 		},
 		/**
 		 * Visual style variant.
-		 * Values: 'average', 'light', 'dark'
+		 * Values: 'average', 'light'
 		 */
 		styleVariant: {
 			type: String,
 			required: true,
 			validator: function ( value ) {
-				return [ 'average', 'light', 'dark' ].includes( value );
+				return [ 'average', 'light' ].includes( value );
 			}
 		}
 	},
@@ -234,6 +237,7 @@ module.exports = exports = {
 
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
+@color-quotes-light: #797a7a;
 
 .ext-readerExperiments-quoteCard {
 	position: relative;
@@ -331,7 +335,7 @@ module.exports = exports = {
 		color: @color-base-fixed;
 
 		.ext-readerExperiments-quoteCard__quotes {
-			color: #797a7a;
+			color: @color-quotes-light;
 		}
 
 		.ext-readerExperiments-quoteCard__source {
@@ -343,27 +347,6 @@ module.exports = exports = {
 
 			svg path {
 				fill: #000;
-			}
-		}
-	}
-
-	&--dark {
-		background-color: #1a1a1a;
-		color: @color-inverted-fixed;
-
-		.ext-readerExperiments-quoteCard__quotes {
-			color: #a2a9b1;
-		}
-
-		.ext-readerExperiments-quoteCard__source {
-			color: rgba( 255, 255, 255, 0.7 );
-		}
-
-		.ext-readerExperiments-quoteCard__branding {
-			color: #fff;
-
-			svg path {
-				fill: #fff;
 			}
 		}
 	}

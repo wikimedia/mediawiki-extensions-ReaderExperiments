@@ -14,28 +14,6 @@
 			></quote-card>
 		</div>
 
-		<!-- Customization Options -->
-		<div class="ext-readerExperiments-shareQuoteDialog__options">
-			<!-- Background Style -->
-			<fieldset class="ext-readerExperiments-shareQuoteDialog__fieldset">
-				<legend>
-					{{ $i18n( 'readerexperiments-sharehighlight-background-legend' ).text() }}
-				</legend>
-				<div class="ext-readerExperiments-shareQuoteDialog__radio-group">
-					<cdx-radio
-						v-for="style in styleOptions"
-						:key="style.value"
-						v-model="selectedStyleRef"
-						:input-value="style.value"
-						name="style"
-						inline
-					>
-						{{ style.label }}
-					</cdx-radio>
-				</div>
-			</fieldset>
-		</div>
-
 		<!-- Error Message -->
 		<cdx-message
 			v-if="error"
@@ -88,7 +66,7 @@
 
 <script>
 const { ref, toRef, computed, watch } = require( 'vue' );
-const { CdxButton, CdxIcon, CdxRadio, CdxMessage, CdxProgressBar, useModelWrapper } = require( '@wikimedia/codex' );
+const { CdxButton, CdxIcon, CdxMessage, CdxProgressBar, useModelWrapper } = require( '@wikimedia/codex' );
 const icons = require( '../icons.json' );
 const PopoverDialog = require( './PopoverDialog.vue' );
 const QuoteCard = require( './QuoteCard.vue' );
@@ -106,7 +84,6 @@ module.exports = exports = {
 		CdxButton,
 		PopoverDialog,
 		CdxIcon,
-		CdxRadio,
 		CdxMessage,
 		CdxProgressBar,
 		QuoteCard
@@ -146,28 +123,8 @@ module.exports = exports = {
 		const quoteCardRef = ref( null );
 		const quoteImageRef = toRef( props, 'quoteImage' );
 		const linkCopiedRef = ref( false ); // Copy link state
+		// If there's no image, fallback to light background. Average color depends on image.
 		const selectedStyleRef = quoteImageRef.value ? ref( 'average' ) : ref( 'light' );
-
-		const allStyles = [
-			{
-				// Average image color background
-				value: 'average',
-				label: mw.msg( 'readerexperiments-sharehighlight-background-average' )
-			},
-			{
-				value: 'light',
-				label: mw.msg( 'readerexperiments-sharehighlight-background-light' )
-			},
-			{
-				value: 'dark',
-				label: mw.msg( 'readerexperiments-sharehighlight-background-dark' )
-			}
-		];
-		// If there's no image,
-		// there can't be an average image color background.
-		const styleOptions = computed( () => {
-			return quoteImageRef.value ? allStyles : allStyles.slice( 1 );
-		} );
 
 		// Share functionality
 		const {
@@ -265,7 +222,6 @@ module.exports = exports = {
 		return {
 			quoteCardRef,
 			selectedStyleRef,
-			styleOptions,
 			isProcessing,
 			error,
 			wrappedOpen,
@@ -291,36 +247,6 @@ module.exports = exports = {
 		background: @background-color-interactive-subtle;
 		border-radius: @border-radius-base;
 		margin-bottom: @spacing-100;
-	}
-
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
-	&__options {
-		display: flex;
-		flex-direction: column;
-		gap: @spacing-75;
-	}
-
-	&__fieldset {
-		border: 0;
-		padding: 0;
-		margin: 0;
-
-		legend {
-			font-size: @font-size-small;
-			font-weight: @font-weight-bold;
-			color: @color-subtle;
-			margin-bottom: @spacing-50;
-		}
-	}
-
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
-	&__radio-group {
-		display: flex;
-		gap: @spacing-100;
-
-		.cdx-radio {
-			color: @color-base;
-		}
 	}
 
 	&__error {
