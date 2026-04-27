@@ -41,16 +41,27 @@
 			<div class="ext-readerExperiments-quoteCard__branding">
 				<div class="ext-readerExperiments-quoteCard__wordmark">
 					<inline-svg
-						v-if="wordmark"
+						v-if="isTextSelectionShare"
+						:src="wikipediaWLogo"
+					></inline-svg>
+					<inline-svg
+						v-else-if="wordmark"
 						:src="wordmark.src"
 						:alt="wordmark.alt"
 						:style="{
 							'--wordmark-width': wordmark.width + 'px',
 							'--wordmark-height': wordmark.height + 'px'
-						}"></inline-svg>
+						}"
+					></inline-svg>
 					<template v-else>
 						{{ $i18n( 'readerexperiments-sharehighlight-branding' ).text() }}
 					</template>
+				</div>
+				<div
+					v-if="isTextSelectionShare"
+					class="ext-readerExperiments-quoteCard__article-title"
+				>
+					{{ articleTitle }}
 				</div>
 				<div class="ext-readerExperiments-quoteCard__attribution">
 					<inline-svg :src="creativeCommonsCC"></inline-svg>
@@ -79,6 +90,7 @@ const staticBaseUrl = mw.config.get( 'wgExtensionAssetsPath' ) + '/ReaderExperim
 const creativeCommonsCC = staticBaseUrl + 'creative-commons-cc.svg';
 const creativeCommonsBY = staticBaseUrl + 'creative-commons-by.svg';
 const creativeCommonsSA = staticBaseUrl + 'creative-commons-sa.svg';
+const wikipediaWLogo = staticBaseUrl + 'wikipedia-w-logo.svg';
 
 // @vue/component
 module.exports = exports = {
@@ -112,6 +124,20 @@ module.exports = exports = {
 			validator: function ( value ) {
 				return [ 'average', 'light' ].includes( value );
 			}
+		},
+		/**
+		 * The article title for attribution.
+		 */
+		articleTitle: {
+			type: String,
+			required: true
+		},
+		/**
+		 * The selected quote text. Empty string for article-level share.
+		 */
+		quoteText: {
+			type: String,
+			default: ''
 		}
 	},
 	setup: function ( props, { expose } ) {
@@ -185,6 +211,8 @@ module.exports = exports = {
 		// Expose cardRef for parent to access DOM element for image generation
 		expose( { cardRef: cardRef } );
 
+		const isTextSelectionShare = computed( () => !!props.quoteText );
+
 		const wordmark = ref( null );
 		const wordmarkImg = document.querySelector( '#mw-mf-page-center .branding-box img' );
 		if ( wordmarkImg instanceof HTMLImageElement ) {
@@ -234,10 +262,12 @@ module.exports = exports = {
 			displaySuffix,
 			fontSizeClass,
 			cdxIconQuotes: icons.cdxIconQuotes,
+			isTextSelectionShare,
 			wordmark,
 			creativeCommonsCC,
 			creativeCommonsBY,
 			creativeCommonsSA,
+			wikipediaWLogo,
 			dominantColorHex,
 			dominantColorContrasting,
 			dominantColorContrastingLegacy,
@@ -295,6 +325,10 @@ module.exports = exports = {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+
+		span {
+			vertical-align: text-top;
+		}
 	}
 
 	&__text_attribution,
@@ -322,6 +356,15 @@ module.exports = exports = {
 			width: var( --wordmark-width );
 			height: var( --wordmark-height );
 		}
+	}
+
+	&__article-title {
+		flex: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		padding: 0 @spacing-25;
+		font-size: @font-size-small;
 	}
 
 	// Style variants
@@ -395,7 +438,9 @@ module.exports = exports = {
 		font-family: @font-family-serif;
 		line-height: @line-height-medium;
 		word-wrap: break-word;
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		-webkit-line-clamp: 7;
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		line-clamp: 7;
 		text-overflow: ellipsis;
 

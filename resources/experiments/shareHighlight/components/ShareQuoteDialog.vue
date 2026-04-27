@@ -11,6 +11,8 @@
 				:image="image"
 				:text="text"
 				:style-variant="selectedStyleRef"
+				:article-title="articleTitle"
+				:quote-text="quoteText"
 			></quote-card>
 		</div>
 
@@ -316,6 +318,7 @@ module.exports = exports = {
 			isProcessing,
 			image,
 			text,
+			articleTitle,
 			error,
 			wrappedOpen,
 			copyLinkLabel,
