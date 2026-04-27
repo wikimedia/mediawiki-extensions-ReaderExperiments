@@ -26,7 +26,15 @@
 				:icon="cdxIconQuotes">
 			</cdx-icon>
 			<blockquote class="ext-readerExperiments-quoteCard__text" :class="fontSizeClass">
-				{{ displayText }}
+				<template v-if="displayPrefix">
+					{{ displayPrefix }}
+				</template>
+				<b v-if="displayTitle">
+					{{ displayTitle }}
+				</b>
+				<template v-if="displaySuffix">
+					{{ displaySuffix }}
+				</template>
 			</blockquote>
 		</div>
 		<div class="ext-readerExperiments-quoteCard__branding_and_attribution">
@@ -60,11 +68,10 @@
 </template>
 
 <script>
-const { computed, ref, toRef, useTemplateRef } = require( 'vue' );
+const { computed, ref, toRef, useTemplateRef, watch } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
 const { useBackgroundColor, useImageModel } = require( 'ext.readerExperiments' );
 const icons = require( '../icons.json' );
-const truncateText = require( '../utils/truncateText.js' );
 const InlineSvg = require( './InlineSvg.vue' );
 
 // Use static URLs to load local SVG files
@@ -72,12 +79,6 @@ const staticBaseUrl = mw.config.get( 'wgExtensionAssetsPath' ) + '/ReaderExperim
 const creativeCommonsCC = staticBaseUrl + 'creative-commons-cc.svg';
 const creativeCommonsBY = staticBaseUrl + 'creative-commons-by.svg';
 const creativeCommonsSA = staticBaseUrl + 'creative-commons-sa.svg';
-
-/**
- * Maximum characters to display in the quote card.
- * Longer quotes are truncated with ellipsis.
- */
-const MAX_QUOTE_LENGTH = 280;
 
 // @vue/component
 module.exports = exports = {
@@ -122,9 +123,27 @@ module.exports = exports = {
 		// then the card is square, otherwise it's 9:16.
 		const aspectRatio = computed( () => ( props.image ? '9x16' : '1x1' ) );
 
-		// Truncate text with ellipsis if it exceeds max length
-		const displayText = computed( () => {
-			return truncateText( props.text.trim(), MAX_QUOTE_LENGTH );
+		const displayPrefix = ref( null );
+		const displayTitle = ref( null );
+		const displaySuffix = ref( null );
+		watch( toRef( props, 'text' ), ( text ) => {
+			text = text.trim();
+			const title = mw.config.get( 'wgTitle' ) || '';
+			const reString = `^(.*?)(${ mw.util.escapeRegExp( title ) })(.*)$`;
+			// eslint-disable-next-line security/detect-non-literal-regexp
+			const re = new RegExp( reString, 'i' );
+			const matches = text.match( re );
+			if ( matches ) {
+				displayPrefix.value = matches[ 1 ];
+				displayTitle.value = matches[ 2 ];
+				displaySuffix.value = matches[ 3 ];
+			} else {
+				displayPrefix.value = null;
+				displayTitle.value = null;
+				displaySuffix.value = text;
+			}
+		}, {
+			immediate: true
 		} );
 
 		// Determine font size class based on text length.
@@ -210,7 +229,9 @@ module.exports = exports = {
 			cardRef,
 			imageElementRef,
 			aspectRatio,
-			displayText,
+			displayPrefix,
+			displayTitle,
+			displaySuffix,
 			fontSizeClass,
 			cdxIconQuotes: icons.cdxIconQuotes,
 			wordmark,
@@ -362,8 +383,10 @@ module.exports = exports = {
 	&__text {
 		// Reset inherited blockquote styles
 		all: unset;
-		display: flex;
+		display: -webkit-box;
+		display: box;
 		justify-content: center;
+		-webkit-box-orient: vertical;
 		align-items: flex-start;
 		align-self: stretch;
 		margin-top: @spacing-30;
@@ -372,6 +395,9 @@ module.exports = exports = {
 		font-family: @font-family-serif;
 		line-height: @line-height-medium;
 		word-wrap: break-word;
+		-webkit-line-clamp: 7;
+		line-clamp: 7;
+		text-overflow: ellipsis;
 
 		// Dynamic font sizing based on quote length
 		&--large {
