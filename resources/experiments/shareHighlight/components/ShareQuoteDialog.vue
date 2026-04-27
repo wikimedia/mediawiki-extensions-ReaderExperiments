@@ -1,6 +1,7 @@
 <template>
 	<popover-dialog
 		v-model:open="wrappedOpen"
+		@update:open="onOpenChange"
 		:title="$i18n( 'readerexperiments-sharehighlight-dialog-title' ).text()"
 		class="ext-readerExperiments-shareQuoteDialog"
 	>
@@ -89,6 +90,8 @@ const PopoverDialog = require( './PopoverDialog.vue' );
 const QuoteCard = require( './QuoteCard.vue' );
 const useShareQuote = require( '../composables/useShareQuote.js' );
 const textFragment = require( '../utils/textFragment.js' );
+const { getShareHighlightInstrument } = require( 'ext.readerExperiments/shareHighlight.instrumentation' );
+const instrument = getShareHighlightInstrument();
 
 // @vue/component
 module.exports = exports = {
@@ -237,6 +240,24 @@ module.exports = exports = {
 			{ immediate: true }
 		);
 
+		// eslint-disable-next-line camelcase
+		const sendEvent = ( action, action_context = undefined ) => {
+			const data = {};
+			// eslint-disable-next-line camelcase
+			if ( action_context !== undefined ) {
+				// eslint-disable-next-line camelcase
+				data.action_context = action_context;
+			}
+			if ( props.quoteText ) {
+				// eslint-disable-next-line camelcase
+				data.action_source = 'selection_share';
+			} else {
+				// eslint-disable-next-line camelcase
+				data.action_source = 'page_share';
+			}
+			instrument.send( action, data );
+		};
+
 		// Share functionality
 		const {
 			canShareFiles,
@@ -296,10 +317,21 @@ module.exports = exports = {
 			return props.open;
 		}, ( isOpen ) => {
 			if ( isOpen ) {
+				sendEvent( 'click', 'share_initiated' );
 				linkCopiedRef.value = false;
 				isDownloadingRef.value = false;
 			}
 		} );
+
+		// Only tracking share_abandoned through changes triggered
+		// in popover-dialog, not props.open/wrappedOpen changes,
+		// which would also be triggered when we auto-close the
+		// dialog after download/share
+		function onOpenChange( isOpen ) {
+			if ( !isOpen ) {
+				sendEvent( 'share_abandoned' );
+			}
+		}
 
 		/**
 		 * Handle the primary action (Share or Download).
@@ -311,6 +343,8 @@ module.exports = exports = {
 			}
 
 			if ( canShareFiles.value ) {
+				sendEvent( 'click', 'share' );
+
 				// The lead image isn't passed to the Web Share API
 				shareQuote( {
 					cardElement: cardElement,
@@ -318,10 +352,12 @@ module.exports = exports = {
 					quoteText: text.value
 				} ).then( ( success ) => {
 					if ( success ) {
+						sendEvent( 'share_completed' );
 						wrappedOpen.value = false;
 					}
 				} );
 			} else {
+				sendEvent( 'click', 'download_share_card' );
 				downloadQuoteImage( cardElement, articleTitle.value )
 					.then( ( success ) => {
 						if ( success ) {
@@ -341,6 +377,7 @@ module.exports = exports = {
 			}
 			isDownloadingRef.value = true;
 			liveRegionRef.value.textContent = mw.msg( 'readerexperiments-sharehighlight-downloading' );
+			sendEvent( 'click', 'download_share_card' );
 			downloadQuoteImage( cardElement, articleTitle.value )
 				.then( ( success ) => {
 					isDownloadingRef.value = false;
@@ -365,6 +402,7 @@ module.exports = exports = {
 					linkCopiedRef.value = false;
 					liveRegionRef.value.textContent = '';
 				}, 2000 );
+				sendEvent( 'click', 'copy_share_link' );
 			} ).catch( ( e ) => {
 				// eslint-disable-next-line no-console
 				console.error( 'Failed to copy link:', e );
@@ -399,6 +437,7 @@ module.exports = exports = {
 			liveRegionRef,
 			buttons,
 			onClick,
+			onOpenChange,
 			hasVisibleLabel
 		};
 	}

@@ -1,32 +1,29 @@
-// Instrumentation for ShareHighlight experiment; in a separate module
-// so it can be separately activated for recording a baseline of
-// text selection events with the main experiment off.
+// Instrumentation for ShareHighlight experiment.
 //
-// Since you can't conveniently export from a ResourceLoader module,
-// the factory is exposed as `mw.ReaderExperiments.getShareHighlightInstrument`
-// for access by the feature UI. This returns a Promise<ShareHighlightInstrument>
-// and exposes a `send` method which may be used for interactive elements.
+// Call `getShareHighlightInstrument()` to get the instrument; it will
+// be pre-started on load to send an exposure and `page_view` event,
+// as well as preparing to handle a navigation to fragment highlight
+// or text selection event.
+//
+// Call `instrument.send( 'action', { ... } )` to send events in response
+// to user actions.
 
-const EXPERIMENT_NAMES = [ 'share-highlight', 'share-highlight-baseline' ];
-const SCHEMA_NAME = '/analytics/product_metrics/web/base/2.0.0';
-const INSTRUMENT_NAME = 'ShareHighlightInstrument';
+const EXPERIMENT_NAME = 'share-highlight';
 const DEBOUNCE_TIMEOUT_MS = 1000;
 const MINERVA_DOWNLOAD_SELECTOR = '#minerva-download';
 
 class ShareHighlightInstrument {
 	constructor( config ) {
-		this.instrument = config.instrumentName;
-		this.experiments = config.experiments;
-		this.isInTreatmentGroup = config.isInTreatmentGroup;
+		this.experiment = config.experiment;
 		this.selectionChangeListener = null;
 		this.downloadClickListener = null;
 		this.lastSelectionSubtype = null;
 		this.debounceTimeout = null;
-
-		// @fixme get the page size approximation in our ResourceLoader module
 	}
 
 	start() {
+		this.experiment.sendExposure();
+		this.send( 'page_visit' );
 		this.checkForHighlightFragment();
 
 		if ( !this.selectionChangeListener ) {
@@ -34,7 +31,9 @@ class ShareHighlightInstrument {
 			document.addEventListener( 'selectionchange', this.selectionChangeListener );
 		}
 
-		if ( !this.isInTreatmentGroup && !this.downloadClickListener ) {
+		// Capture "download" clicks only in control group
+		const isInTreatmentGroup = this.experiment.getAssignedGroup() === 'treatment';
+		if ( !isInTreatmentGroup && !this.downloadClickListener ) {
 			this.downloadClickListener = ( event ) => this.onDownloadClick( event );
 			document.addEventListener( 'click', this.downloadClickListener );
 		}
@@ -63,7 +62,9 @@ class ShareHighlightInstrument {
 		if ( chromiumFragmentDetected ) {
 			this.send( 'navigate-to-highlight', {
 				// eslint-disable-next-line camelcase
-				action_subtype: 'confirmed'
+				action_subtype: 'confirmed',
+				// eslint-disable-next-line camelcase
+				action_context: this.pageSize()
 			} );
 			return;
 		}
@@ -77,7 +78,9 @@ class ShareHighlightInstrument {
 		if ( scrolledOnLoad && noHashAnchor && fromSearchEngine ) {
 			this.send( 'navigate-to-highlight', {
 				// eslint-disable-next-line camelcase
-				action_subtype: 'heuristic'
+				action_subtype: 'heuristic',
+				// eslint-disable-next-line camelcase
+				action_context: this.pageSize()
 			} );
 		}
 	}
@@ -126,7 +129,9 @@ class ShareHighlightInstrument {
 			if ( this.lastSelectionSubtype ) {
 				this.send( 'select', {
 					// eslint-disable-next-line camelcase
-					action_subtype: this.lastSelectionSubtype
+					action_subtype: this.lastSelectionSubtype,
+					// eslint-disable-next-line camelcase
+					action_context: this.pageSize()
 				} );
 				this.lastSelectionSubtype = null;
 			}
@@ -159,21 +164,7 @@ class ShareHighlightInstrument {
 	}
 
 	send( action, interactionData = {} ) {
-		interactionData = Object.assign( {
-			// Baseline highlight/select events use page size as their default
-			// action context. Interaction events should override this explicitly.
-			// eslint-disable-next-line camelcase
-			action_context: this.pageSize(),
-
-			// eslint-disable-next-line camelcase
-			instrument_name: INSTRUMENT_NAME
-		}, interactionData );
-		for ( const experiment of this.experiments ) {
-			if ( experiment.getAssignedGroup() ) {
-				// Record data if we're in any group.
-				experiment.send( action, interactionData );
-			}
-		}
+		this.experiment.send( action, interactionData );
 	}
 
 	pageSize() {
@@ -181,26 +172,11 @@ class ShareHighlightInstrument {
 	}
 }
 
-if ( typeof mw.ReaderExperiments !== 'object' ) {
-	mw.ReaderExperiments = {};
-}
-
-const analyticsConfig = {
-	instrumentName: INSTRUMENT_NAME,
-	experiments: [],
-	isInTreatmentGroup: false
-};
-
-for ( const name of EXPERIMENT_NAMES ) {
-	const experiment = mw.testKitchen.compat.getExperiment( name );
-	experiment.setSchema( SCHEMA_NAME );
-	analyticsConfig.experiments.push( experiment );
-	if ( name === 'share-highlight' ) {
-		analyticsConfig.isInTreatmentGroup = experiment.getAssignedGroup() === 'treatment';
-	}
-}
-
-const instrument = new ShareHighlightInstrument( analyticsConfig );
+const instrument = new ShareHighlightInstrument( {
+	experiment: mw.testKitchen.compat.getExperiment( EXPERIMENT_NAME )
+} );
 instrument.start();
 
-mw.ReaderExperiments.getShareHighlightInstrument = () => instrument;
+module.exports = {
+	getShareHighlightInstrument: () => instrument
+};
