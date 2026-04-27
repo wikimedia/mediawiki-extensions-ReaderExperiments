@@ -9,7 +9,6 @@
 
 const EXPERIMENT_NAMES = [ 'share-highlight', 'share-highlight-baseline' ];
 const SCHEMA_NAME = '/analytics/product_metrics/web/base/2.0.0';
-const STREAM_NAME = 'product_metrics.web_base';
 const INSTRUMENT_NAME = 'ShareHighlightInstrument';
 const DEBOUNCE_TIMEOUT_MS = 1000;
 const MINERVA_DOWNLOAD_SELECTOR = '#minerva-download';
@@ -195,7 +194,6 @@ const analyticsConfig = {
 for ( const name of EXPERIMENT_NAMES ) {
 	const experiment = mw.testKitchen.compat.getExperiment( name );
 	experiment.setSchema( SCHEMA_NAME );
-	experiment.setStream( STREAM_NAME );
 	analyticsConfig.experiments.push( experiment );
 	if ( name === 'share-highlight' ) {
 		analyticsConfig.isInTreatmentGroup = experiment.getAssignedGroup() === 'treatment';

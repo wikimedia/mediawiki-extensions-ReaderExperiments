@@ -4,7 +4,6 @@ function init() {
 
 	const EXPERIMENT_NAME = 'mobile-toc-abc2';
 	const SCHEMA_NAME = '/analytics/product_metrics/web/base/2.0.0';
-	const STREAM_NAME = 'mediawiki.product_metrics.reader_experiments';
 	const INSTRUMENT_NAME = 'MinervaTocInstrument';
 
 	const TOC_INIT_HOOK = 'readerExperiments.toc.init';
@@ -114,7 +113,6 @@ function init() {
 	}, true );
 
 	experiment.setSchema( SCHEMA_NAME );
-	experiment.setStream( STREAM_NAME );
 
 	submitInteraction( 'page-visited' );
 

@@ -63,9 +63,6 @@ const TIER_ONE_EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
 // https://test-kitchen.wikimedia.org/experiment/image-browsing-enwiki
 const TIER_TWO_EXPERIMENT_NAME = 'image-browsing-enwiki';
 const SCHEMA_NAME = '/analytics/product_metrics/web/base/2.0.0';
-// Naming convention: mediawiki.product_metrics.<product>_<component>_<interaction>.
-// See https://wikitech.wikimedia.org/wiki/Test_Kitchen/Stream_configuration#Choosing_a_stream_name
-const STREAM_NAME = 'mediawiki.product_metrics.readerexperiments_imagebrowsing';
 const INSTRUMENT_NAME = 'ImageBrowsingInstrument';
 
 /**
@@ -83,11 +80,9 @@ mw.loader.using( 'ext.testKitchen' )
 	.then( () => {
 		const tierOne = mw.testKitchen.compat.getExperiment( TIER_ONE_EXPERIMENT_NAME );
 		tierOne.setSchema( SCHEMA_NAME );
-		tierOne.setStream( STREAM_NAME );
 
 		const tierTwo = mw.testKitchen.compat.getExperiment( TIER_TWO_EXPERIMENT_NAME );
 		tierTwo.setSchema( SCHEMA_NAME );
-		tierTwo.setStream( STREAM_NAME );
 
 		analyticsConfig.enabled = true;
 		analyticsConfig.experiments = [ tierOne, tierTwo ];
