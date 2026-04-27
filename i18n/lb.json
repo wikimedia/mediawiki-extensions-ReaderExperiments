@@ -35,5 +35,6 @@
 	"readerexperiments-sharehighlight-background-dark": "Däischter",
 	"readerexperiments-sharehighlight-background-transparent": "Transparent",
 	"readerexperiments-sharehighlight-copy-link": "Link kopéieren",
-	"readerexperiments-sharehighlight-share": "Deelen"
+	"readerexperiments-sharehighlight-share": "Deelen",
+	"readerexperiments-sharehighlight-image-author-license": "Bild: $1 · $2"
 }

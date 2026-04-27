@@ -38,6 +38,7 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Daha çox oxu",
 	"readerexperiments-mobilepagepreviews-title": "Səhifə önizləməsi",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Bağla",
+	"readerexperiments-sharehighlight-toolbar-share": "Paylaş",
 	"readerexperiments-sharehighlight-share-quote": "Sitatı paylaş",
 	"readerexperiments-sharehighlight-dialog-title": "Sitat paylaş",
 	"readerexperiments-sharehighlight-background-legend": "Arxa plan",
@@ -52,5 +53,6 @@
 	"readerexperiments-sharehighlight-download": "Yüklə",
 	"readerexperiments-sharehighlight-generating-image": "Şəkil yaradılır…",
 	"readerexperiments-sharehighlight-share-title": "\"$1\" səhifəsindən dən sitat — Vikipediya",
-	"readerexperiments-sharehighlight-share-text": "\"$1\"\n\nƏtraflı: $2"
+	"readerexperiments-sharehighlight-share-text": "\"$1\"\n\nƏtraflı: $2",
+	"readerexperiments-sharehighlight-image-author-license": "Şəkil: $1 · $2"
 }

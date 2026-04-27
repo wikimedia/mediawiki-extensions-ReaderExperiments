@@ -36,6 +36,7 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Mehr erfahren",
 	"readerexperiments-mobilepagepreviews-title": "Seitenvorschau",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Schließen",
+	"readerexperiments-sharehighlight-toolbar-share": "Teilen",
 	"readerexperiments-sharehighlight-share-quote": "Zitat teilen",
 	"readerexperiments-sharehighlight-dialog-title": "Zitat teilen",
 	"readerexperiments-sharehighlight-background-legend": "Hintergrund",
@@ -50,5 +51,6 @@
 	"readerexperiments-sharehighlight-download": "Herunterladen",
 	"readerexperiments-sharehighlight-generating-image": "Bild wird generiert …",
 	"readerexperiments-sharehighlight-share-title": "Zitat aus „$1“ – Wikipedia",
-	"readerexperiments-sharehighlight-share-text": "„$1“\n\nWeiterlesen: $2"
+	"readerexperiments-sharehighlight-share-text": "„$1“\n\nWeiterlesen: $2",
+	"readerexperiments-sharehighlight-image-author-license": "Bild: $1 · $2"
 }

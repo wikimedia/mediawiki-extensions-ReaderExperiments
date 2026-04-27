@@ -40,6 +40,7 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Meer lezen",
 	"readerexperiments-mobilepagepreviews-title": "Paginavoorvertoning",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Sluiten",
+	"readerexperiments-sharehighlight-toolbar-share": "Delen",
 	"readerexperiments-sharehighlight-share-quote": "Citaat delen",
 	"readerexperiments-sharehighlight-dialog-title": "Citaat delen",
 	"readerexperiments-sharehighlight-background-legend": "Achtergrond",
@@ -54,5 +55,6 @@
 	"readerexperiments-sharehighlight-download": "Downloaden",
 	"readerexperiments-sharehighlight-generating-image": "Afbeelding maken…",
 	"readerexperiments-sharehighlight-share-title": "Citaat uit \"$1\" — Wikipedia",
-	"readerexperiments-sharehighlight-share-text": "\"$1\"\n\nMeer informatie: $2"
+	"readerexperiments-sharehighlight-share-text": "\"$1\"\n\nMeer informatie: $2",
+	"readerexperiments-sharehighlight-image-author-license": "Afbeelding: $1 · $2"
 }

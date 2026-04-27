@@ -38,6 +38,7 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Lue lisää",
 	"readerexperiments-mobilepagepreviews-title": "Sivun esikatselu",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Sulje",
+	"readerexperiments-sharehighlight-toolbar-share": "Jaa",
 	"readerexperiments-sharehighlight-share-quote": "Jaa lainaus",
 	"readerexperiments-sharehighlight-dialog-title": "Jaa lainaus",
 	"readerexperiments-sharehighlight-background-legend": "Tausta",
@@ -52,5 +53,6 @@
 	"readerexperiments-sharehighlight-download": "Lataa",
 	"readerexperiments-sharehighlight-generating-image": "Kuvaa luodaan…",
 	"readerexperiments-sharehighlight-share-title": "Lainaus artikkelista ”$1” – Wikipedia",
-	"readerexperiments-sharehighlight-share-text": "”$1”\n\nLue lisää: $2"
+	"readerexperiments-sharehighlight-share-text": "”$1”\n\nLue lisää: $2",
+	"readerexperiments-sharehighlight-image-author-license": "Kuva: $1 · $2"
 }
