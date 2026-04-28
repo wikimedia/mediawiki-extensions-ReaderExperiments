@@ -1,9 +1,10 @@
 <template>
 	<div>
 		<!-- Share Quote Feature -->
+		<!-- Capture selectedText immediately; clicking clears browser selection -->
 		<share-quote-button
 			:visible="hasSelection && !isShareDialogOpen"
-			@share-request="openShareDialog"
+			@share-request="() => openShareDialog( selectedText )"
 		></share-quote-button>
 
 		<share-quote-dialog
@@ -52,15 +53,14 @@ module.exports = exports = {
 		const title = mw.Title.newFromText( mw.config.get( 'wgPageName' ) );
 
 		/**
-		 * Open the share dialog with current selection.
-		 * Captures the text immediately since clicking clears browser selection.
+		 * Open the share dialog with provided text.
+		 * If none provided, dialog will load summary instead.
+		 *
+		 * @param {string} [text] Quote text to show in the dialog
 		 */
-		function openShareDialog() {
+		function openShareDialog( text = '' ) {
 			isShareDialogOpen.value = true;
-
-			if ( hasSelection.value && selectedText.value ) {
-				quoteTextForDialog.value = selectedText.value;
-			}
+			quoteTextForDialog.value = text;
 		}
 
 		// Clear selection when dialog closes
@@ -71,18 +71,17 @@ module.exports = exports = {
 			}
 		} );
 
+		const openShareDialogWithoutText = () => openShareDialog( '' );
 		onMounted( () => {
-			mw.hook( 'ext.readerExperiments.shareHighlight.toolbarClick' )
-				.add( openShareDialog );
+			mw.hook( 'ext.readerExperiments.shareHighlight.toolbarClick' ).add( openShareDialogWithoutText );
 		} );
-
 		onUnmounted( () => {
-			mw.hook( 'ext.readerExperiments.shareHighlight.toolbarClick' )
-				.remove( openShareDialog );
+			mw.hook( 'ext.readerExperiments.shareHighlight.toolbarClick' ).remove( openShareDialogWithoutText );
 		} );
 
 		return {
 			hasSelection,
+			selectedText,
 			isShareDialogOpen,
 			title,
 			quoteTextForDialog,
