@@ -2,7 +2,7 @@
 	<!-- eslint-disable vue/no-v-html -->
 	<span v-if="svgSource" v-html="svgSource"></span>
 	<!-- eslint-enable vue/no-v-html -->
-	<span v-else>alt: {{ alt }}</span>
+	<span v-else-if="alt">{{ alt }}</span>
 </template>
 
 <script>

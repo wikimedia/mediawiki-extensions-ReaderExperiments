@@ -340,7 +340,8 @@
 				"composables/useShareQuote.js",
 				"utils/textFragment.js",
 				"utils/truncateText.js",
-				"utils/imageGenerator.js"
+				"utils/imageGenerator.js",
+				"utils/rawParamsMessage.js"
 			],
 			"styles": [],
 			"messages": [

@@ -25,7 +25,12 @@
 				class="ext-readerExperiments-quoteCard__quotes"
 				:icon="cdxIconQuotes">
 			</cdx-icon>
-			<blockquote class="ext-readerExperiments-quoteCard__text" :class="fontSizeClass">
+
+			<blockquote
+				v-if="displayPrefix || displayTitle || displaySuffix"
+				class="ext-readerExperiments-quoteCard__text"
+				:class="fontSizeClass"
+			>
 				<template v-if="displayPrefix">
 					{{ displayPrefix }}
 				</template>
@@ -35,6 +40,21 @@
 				<template v-if="displaySuffix">
 					{{ displaySuffix }}
 				</template>
+			</blockquote>
+			<blockquote
+				v-else
+				aria-hidden="true"
+				class="ext-readerExperiments-quoteCard__text"
+				:class="fontSizeClass"
+			>
+				<!-- placeholder until text loads -->
+				██████ ██ ███ ███████ ██ ████████
+				██ ████ ██ ███ ███████ ████ ██ ████
+				████ ███ ███████████ ████ ███
+				███████ ████████████ ██ ███ ███
+				███████ ██████████ ██████ ███
+				████ ██████ ██ ███ ████ ██ ███
+				████████ ██████ ███ ████ ██ ████
 			</blockquote>
 		</div>
 		<div class="ext-readerExperiments-quoteCard__branding_and_attribution">
@@ -64,15 +84,24 @@
 					{{ articleTitle }}
 				</div>
 				<div class="ext-readerExperiments-quoteCard__attribution">
-					<inline-svg :src="creativeCommonsCC"></inline-svg>
-					<inline-svg :src="creativeCommonsBY"></inline-svg>
-					<inline-svg :src="creativeCommonsSA"></inline-svg>
+					<inline-svg :src="creativeCommonsCC" alt="CC"></inline-svg>
+					<inline-svg :src="creativeCommonsBY" alt="BY"></inline-svg>
+					<inline-svg :src="creativeCommonsSA" alt="SA"></inline-svg>
 				</div>
 			</div>
+			<!-- eslint-disable vue/no-v-html -->
 			<div
 				v-if="imageAttribution"
+				v-html="imageAttribution"
 				class="ext-readerExperiments-quoteCard__image_attribution">
-				{{ imageAttribution }}
+			</div>
+			<!-- eslint-enable vue/no-v-html -->
+			<div
+				v-else-if="image"
+				aria-hidden="true"
+				class="ext-readerExperiments-quoteCard__image_attribution">
+				<!-- placeholder until attribution loads -->
+				████████████████████
 			</div>
 		</div>
 	</div>
@@ -84,6 +113,7 @@ const { CdxIcon } = require( '@wikimedia/codex' );
 const { useAverageColor, useImageModel } = require( 'ext.readerExperiments' );
 const icons = require( '../icons.json' );
 const InlineSvg = require( './InlineSvg.vue' );
+const rawParamsMessage = require( '../utils/rawParamsMessage.js' );
 
 // Use static URLs to load local SVG files
 const staticBaseUrl = mw.config.get( 'wgExtensionAssetsPath' ) + '/ReaderExperiments/resources/experiments/shareHighlight/images/';
@@ -295,11 +325,12 @@ module.exports = exports = {
 			const authorText = doc.body.textContent.trim();
 			const license = imageModel.value.license.getShortName();
 
-			return mw.message(
-				'readerexperiments-sharehighlight-image-author-license',
-				authorText,
-				license
-			).text();
+			const msg = rawParamsMessage( 'readerexperiments-sharehighlight-image-author-license' );
+			msg.rawParams( [
+				'<span class="ext-readerExperiments-quoteCard__image_attribution__author">' + mw.html.escape( authorText ) + '</span>',
+				'<span class="ext-readerExperiments-quoteCard__image_attribution__license">' + mw.html.escape( license ) + '</span>'
+			] );
+			return msg.text();
 		} );
 
 		return {
@@ -383,9 +414,21 @@ module.exports = exports = {
 		}
 	}
 
-	&__text_attribution,
 	&__image_attribution {
 		opacity: 0.5;
+		display: flex;
+		white-space: pre;
+
+		&__author,
+		&__license {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		&__author {
+			flex: 1;
+		}
 	}
 
 	// Aspect ratio dimensions (preview size, rendered at 2x for image)
