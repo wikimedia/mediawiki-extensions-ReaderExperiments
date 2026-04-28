@@ -11,6 +11,9 @@
 // - platform one char = 'u' for unknown, since we don't know the platform a priori
 // - major version of feature = '0', experiment version
 const WPROV_VALUE = 'shhu0';
+// Thresholds for using 'start,end' range format
+const CHARS_THRESHOLD = 100;
+const WORDS_THRESHOLD = 20; // Whitespace will appear as separate segments
 
 /**
  * Encode text for use in a text fragment URL.
@@ -27,7 +30,7 @@ function encodeTextFragment( text ) {
 
 /**
  * Generate a text fragment directive for the given text.
- * For long texts (>100 chars), uses start,end range format.
+ * For long texts, uses start,end range format.
  *
  * Format: :~:text=[prefix-,]start[,end][,-suffix]
  *
@@ -36,14 +39,10 @@ function encodeTextFragment( text ) {
  */
 function createTextFragmentDirective( text ) {
 	const normalized = text.trim().replace( /\s+/g, ' ' );
-	const maxLen = 100;
 
-	// For long quotes, use start and end range format
-	if ( normalized.length > maxLen ) {
+	if ( normalized.length > CHARS_THRESHOLD ) {
 		// Use a primitive ASCII word break if no Intl.Segmenter:
 		let words = normalized.split( /\b/ );
-		// Whitespace will appear as separate segments
-		const maxWords = 20;
 
 		if ( typeof Intl === 'object' && typeof Intl.Segmenter === 'function' ) {
 			try {
@@ -56,9 +55,9 @@ function createTextFragmentDirective( text ) {
 			}
 		}
 
-		if ( words.length > maxWords ) {
-			const startWords = words.slice( 0, maxWords / 2 ).join( '' );
-			const endWords = words.slice( -maxWords / 2 ).join( '' );
+		if ( words.length > WORDS_THRESHOLD ) {
+			const startWords = words.slice( 0, WORDS_THRESHOLD / 2 ).join( '' );
+			const endWords = words.slice( -WORDS_THRESHOLD / 2 ).join( '' );
 
 			return ':~:text=' + encodeTextFragment( startWords ) + ',' + encodeTextFragment( endWords );
 		}
@@ -85,6 +84,7 @@ function buildShareUrl( articleTitle, selectedText ) {
 }
 
 module.exports = {
+	CHARS_THRESHOLD,
 	buildShareUrl,
 	createTextFragmentDirective,
 	encodeTextFragment
