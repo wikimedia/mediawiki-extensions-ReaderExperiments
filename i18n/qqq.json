@@ -54,7 +54,6 @@
 	"readerexperiments-sharehighlight-background-average": "Label for the average image color background style option.",
 	"readerexperiments-sharehighlight-copy-link": "Label for the button that copies a text fragment link to the clipboard.",
 	"readerexperiments-sharehighlight-link-copied": "Label shown after the link has been copied to the clipboard.",
-	"readerexperiments-sharehighlight-cancel": "Label for the cancel button in the share dialog.\n{{Identical|Cancel}}",
 	"readerexperiments-sharehighlight-share": "Label for the share button in the share dialog.\n{{Identical|Share}}",
 	"readerexperiments-sharehighlight-download": "Label for the download button shown when the Web Share API is not available.\n{{Identical|Download}}",
 	"readerexperiments-sharehighlight-downloading": "Label shown while the image is being processed for download",

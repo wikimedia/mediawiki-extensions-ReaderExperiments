@@ -325,7 +325,8 @@
 					"callbackParam": [
 						"cdxIconShare",
 						"cdxIconLink",
-						"cdxIconQuotes"
+						"cdxIconQuotes",
+						"cdxIconDownload"
 					]
 				},
 				"App.vue",
@@ -348,7 +349,6 @@
 				"readerexperiments-sharehighlight-background-average",
 				"readerexperiments-sharehighlight-copy-link",
 				"readerexperiments-sharehighlight-link-copied",
-				"readerexperiments-sharehighlight-cancel",
 				"readerexperiments-sharehighlight-share",
 				"readerexperiments-sharehighlight-download",
 				"readerexperiments-sharehighlight-downloading",

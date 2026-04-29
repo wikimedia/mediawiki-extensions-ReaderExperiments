@@ -36,28 +36,42 @@
 
 		<!-- Custom footer with Copy Link on left, actions on right -->
 		<template #footer>
+			<!-- Live region announces button state changes to screen readers -->
+			<div
+				ref="liveRegionRef"
+				aria-live="polite"
+				class="ext-readerExperiments-shareQuoteDialog__sr-announcement"
+			></div>
 			<div class="ext-readerExperiments-shareQuoteDialog__footer">
-				<cdx-button
-					weight="quiet"
-					@click="handleCopyLink"
+				<div
+					class="ext-readerExperiments-shareQuoteDialog__footer-action-secondary"
 				>
-					<cdx-icon :icon="cdxIconLink"></cdx-icon>
-					{{ copyLinkLabel }}
-				</cdx-button>
-
-				<div class="ext-readerExperiments-shareQuoteDialog__footer-actions">
+					<cdx-button-group
+						v-if="canShareFiles"
+						:class="{ 'ext-readerExperiments-shareQuoteDialog__button-group--label-visible': hasVisibleLabel }"
+						:buttons="buttons"
+						@click="onClick"
+					></cdx-button-group>
 					<cdx-button
-						:disabled="isProcessing"
-						@click="handleClose"
+						v-else
+						:aria-label="copyLinkLabel"
+						@click="handleCopyLink"
 					>
-						{{ $i18n( 'readerexperiments-sharehighlight-cancel' ).text() }}
+						<cdx-icon :icon="cdxIconLink"></cdx-icon>
+						<span v-if="linkCopiedRef" aria-hidden="true">
+							{{ $i18n( 'readerexperiments-sharehighlight-link-copied' ).text() }}
+						</span>
 					</cdx-button>
+				</div>
+
+				<div class="ext-readerExperiments-shareQuoteDialog__footer-action-primary">
 					<cdx-button
 						weight="primary"
 						action="progressive"
 						:disabled="isProcessing"
 						@click="handlePrimaryAction"
 					>
+						<cdx-icon v-if="canShareFiles" :icon="cdxIconShare"></cdx-icon>
 						{{ primaryActionLabel }}
 					</cdx-button>
 				</div>
@@ -68,7 +82,7 @@
 
 <script>
 const { ref, toRef, computed, watch } = require( 'vue' );
-const { CdxButton, CdxIcon, CdxMessage, CdxProgressBar, useModelWrapper } = require( '@wikimedia/codex' );
+const { CdxButton, CdxIcon, CdxMessage, CdxProgressBar, CdxButtonGroup, useModelWrapper } = require( '@wikimedia/codex' );
 const { useSummary } = require( 'ext.readerExperiments' );
 const icons = require( '../icons.json' );
 const PopoverDialog = require( './PopoverDialog.vue' );
@@ -85,7 +99,8 @@ module.exports = exports = {
 		CdxIcon,
 		CdxMessage,
 		CdxProgressBar,
-		QuoteCard
+		QuoteCard,
+		CdxButtonGroup
 	},
 	props: {
 		/**
@@ -209,6 +224,8 @@ module.exports = exports = {
 			return '';
 		} );
 
+		const liveRegionRef = ref( null );
+		const isDownloadingRef = ref( false );
 		const linkCopiedRef = ref( false ); // Copy link state
 		const articleTitle = computed( () => props.title.getMainText() );
 
@@ -248,12 +265,39 @@ module.exports = exports = {
 			return mw.msg( key );
 		} );
 
+		const downloadButtonLabel = computed( () => {
+			const key = isDownloadingRef.value ?
+				'readerexperiments-sharehighlight-downloading' :
+				'readerexperiments-sharehighlight-download';
+			// eslint-disable-next-line mediawiki/msg-doc
+			return mw.msg( key );
+		} );
+
+		const buttons = computed( () => [
+			{
+				value: 'copy',
+				icon: icons.cdxIconLink,
+				ariaLabel: copyLinkLabel.value,
+				label: linkCopiedRef.value ? mw.msg( 'readerexperiments-sharehighlight-link-copied' ) : null
+			},
+			{
+				value: 'download',
+				icon: icons.cdxIconDownload,
+				ariaLabel: downloadButtonLabel.value,
+				disabled: isDownloadingRef.value,
+				label: isDownloadingRef.value ? mw.msg( 'readerexperiments-sharehighlight-downloading' ) : null
+			}
+		] );
+
+		const hasVisibleLabel = computed( () => linkCopiedRef.value || isDownloadingRef.value );
+
 		// Reset options when dialog opens
 		watch( () => {
 			return props.open;
 		}, ( isOpen ) => {
 			if ( isOpen ) {
 				linkCopiedRef.value = false;
+				isDownloadingRef.value = false;
 			}
 		} );
 
@@ -288,10 +332,23 @@ module.exports = exports = {
 		}
 
 		/**
-		 * Handle dialog close.
+		 * Handle the secondary download action (shown alongside Share button).
 		 */
-		function handleClose() {
-			wrappedOpen.value = false;
+		function handleDownload() {
+			const cardElement = quoteCardRef.value && quoteCardRef.value.cardRef;
+			if ( !cardElement ) {
+				return;
+			}
+			isDownloadingRef.value = true;
+			liveRegionRef.value.textContent = mw.msg( 'readerexperiments-sharehighlight-downloading' );
+			downloadQuoteImage( cardElement, articleTitle.value )
+				.then( ( success ) => {
+					isDownloadingRef.value = false;
+					liveRegionRef.value.textContent = '';
+					if ( success ) {
+						wrappedOpen.value = false; // Close dialog
+					}
+				} );
 		}
 
 		/**
@@ -302,14 +359,24 @@ module.exports = exports = {
 			// eslint-disable-next-line compat/compat
 			navigator.clipboard.writeText( url ).then( () => {
 				linkCopiedRef.value = true;
+				liveRegionRef.value.textContent = mw.msg( 'readerexperiments-sharehighlight-link-copied' );
 				// Reset after 2 seconds
 				setTimeout( () => {
 					linkCopiedRef.value = false;
+					liveRegionRef.value.textContent = '';
 				}, 2000 );
 			} ).catch( ( e ) => {
 				// eslint-disable-next-line no-console
 				console.error( 'Failed to copy link:', e );
 			} );
+		}
+
+		function onClick( value ) {
+			if ( value === 'copy' ) {
+				handleCopyLink();
+			} else if ( value === 'download' ) {
+				handleDownload();
+			}
 		}
 
 		return {
@@ -321,12 +388,18 @@ module.exports = exports = {
 			articleTitle,
 			error,
 			wrappedOpen,
+			linkCopiedRef,
 			copyLinkLabel,
+			canShareFiles,
 			primaryActionLabel,
 			handlePrimaryAction,
-			handleClose,
 			handleCopyLink,
-			cdxIconLink: icons.cdxIconLink
+			cdxIconLink: icons.cdxIconLink,
+			cdxIconShare: icons.cdxIconShare,
+			liveRegionRef,
+			buttons,
+			onClick,
+			hasVisibleLabel
 		};
 	}
 };
@@ -363,6 +436,21 @@ module.exports = exports = {
 		}
 	}
 
+	// Visually hide screen reader text. Copied code from Codex's screen-reader-text() mixin
+	&__sr-announcement {
+		display: block;
+		clip: rect( @size-absolute-1, @size-absolute-1, @size-absolute-1, @size-absolute-1 );
+		/* stylelint-disable-next-line declaration-no-important */
+		position: absolute !important;
+		width: @size-absolute-1;
+		height: @size-absolute-1;
+		// Use negative `@size-absolute-1` token here as they are inherently connected.
+		margin: calc( -1 * @size-absolute-1 );
+		border: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+
 	&__footer {
 		display: flex;
 		align-items: center;
@@ -370,10 +458,10 @@ module.exports = exports = {
 		width: 100%;
 	}
 
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
-	&__footer-actions {
-		display: flex;
-		gap: @spacing-50;
+	&__button-group--label-visible .cdx-button {
+		// Padding needed when label is visible
+		padding-right: @spacing-25;
+		padding-left: @spacing-25;
 	}
 }
 
