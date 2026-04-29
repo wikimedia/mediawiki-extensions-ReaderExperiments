@@ -351,9 +351,11 @@
 				"readerexperiments-sharehighlight-download",
 				"readerexperiments-sharehighlight-downloading",
 				"readerexperiments-sharehighlight-loading",
+				"readerexperiments-sharehighlight-generating",
 				"readerexperiments-sharehighlight-share-title",
 				"readerexperiments-sharehighlight-share-text-with-branding",
-				"readerexperiments-sharehighlight-image-author-license"
+				"readerexperiments-sharehighlight-image-author-license",
+				"unknown-error"
 			]
 		},
 		"ext.readerExperiments/shareHighlight.styles": {

@@ -22,15 +22,25 @@ async function fetchSummary( title ) {
 }
 
 /**
+ * @callback errorHandler
+ * @param {Error} error
+ */
+
+/**
  * Fetch the article's summary through the REST API.
  *
  * Returns a reactive ref that starts as an empty object and is populated
  * once the API call resolves.
  *
  * @param {import('vue').Ref<mw.Title>} titleRef
+ * @param {errorHandler} onError
  * @return {import('vue').Ref<Object | null>}
  */
-function useSummary( titleRef ) {
+function useSummary(
+	titleRef,
+	// eslint-disable-next-line no-unused-vars
+	onError = ( error ) => {}
+) {
 	const result = ref( null );
 
 	watch(
@@ -56,10 +66,9 @@ function useSummary( titleRef ) {
 					result.value = response;
 					cachedRef.value = response;
 				},
-				// eslint-disable-next-line no-unused-vars
 				( error ) => {
 					cacheMap.delete( cacheKey );
-					// mw.log.warn( `ReaderExperiments: ${ error }` );
+					onError( error );
 				}
 			);
 		},

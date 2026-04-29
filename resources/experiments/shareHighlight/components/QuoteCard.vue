@@ -3,14 +3,18 @@
 		ref="cardRef"
 		class="ext-readerExperiments-quoteCard"
 		:class="[
-			'ext-readerExperiments-quoteCard--' + aspectRatio,
 			'ext-readerExperiments-quoteCard--' + styleVariant,
-			'ext-readerExperiments-quoteCard--image-' + dominantColorLightness
+			{
+				'ext-readerExperiments-quoteCard--9x16': image,
+				'ext-readerExperiments-quoteCard--1x1': !image,
+				'ext-readerExperiments-quoteCard--image-light': !color || !color.isDark,
+				'ext-readerExperiments-quoteCard--image-dark': color && color.isDark
+			}
 		]"
 		:style="{
-			'--dominant-color-hex': dominantColorHex,
-			'--dominant-color-contrasting': dominantColorContrasting,
-			'--dominant-color-contrasting--legacy': dominantColorContrastingLegacy
+			'--dominant-color-hex': color ? color.hex : 'var( --background-color-neutral, transparent )',
+			'--dominant-color-contrasting': color ? `oklch( from ${ color.hex } calc( l * ${ color.isDark ? 100 : 0 } ) c h )` : null,
+			'--dominant-color-contrasting--legacy': color && color.isDark ? 'white' : 'black'
 		}"
 	>
 		<div class="ext-readerExperiments-quoteCard__content">
@@ -20,6 +24,8 @@
 				class="ext-readerExperiments-quoteCard__image"
 				:src="imageSrc"
 				:crossorigin="imageCrossOrigin"
+				@load="( event ) => ( event.target.complete && $emit( 'img-load', event.target.src ) )"
+				@error="( event ) => ( $emit( 'img-error', event.target.src ) )"
 			>
 			<cdx-icon
 				class="ext-readerExperiments-quoteCard__quotes"
@@ -27,25 +33,27 @@
 			</cdx-icon>
 
 			<blockquote
-				v-if="displayPrefix || displayTitle || displaySuffix"
+				v-if="displayText"
 				class="ext-readerExperiments-quoteCard__text"
-				:class="fontSizeClass"
+				:class="{
+					'ext-readerExperiments-quoteCard__text--small': text && text.length > 400,
+					'ext-readerExperiments-quoteCard__text--medium': text && text.length > 300 && text.length <= 400,
+					'ext-readerExperiments-quoteCard__text--large': text && text.length > 0 && text.length <= 300
+				}"
 			>
-				<template v-if="displayPrefix">
-					{{ displayPrefix }}
+				<template v-if="displayText.prefix">
+					{{ displayText.prefix }}
 				</template>
-				<b v-if="displayTitle">
-					{{ displayTitle }}
+				<b v-if="displayText.title">
+					{{ displayText.title }}
 				</b>
-				<template v-if="displaySuffix">
-					{{ displaySuffix }}
+				<template v-if="displayText.suffix">
+					{{ displayText.suffix }}
 				</template>
 			</blockquote>
 			<blockquote
 				v-else
-				aria-hidden="true"
-				class="ext-readerExperiments-quoteCard__text"
-				:class="fontSizeClass"
+				class="ext-readerExperiments-quoteCard__text ext-readerExperiments-quoteCard__text--small ext-readerExperiments-quoteCard__text__placeholder"
 			>
 				<!-- placeholder until text loads -->
 				██████ ██ ███ ███████ ██ ████████
@@ -61,7 +69,7 @@
 			<div class="ext-readerExperiments-quoteCard__branding">
 				<div class="ext-readerExperiments-quoteCard__wordmark">
 					<inline-svg
-						v-if="isTextSelectionShare"
+						v-if="showArticleTitle"
 						:src="wikipediaWLogo"
 					></inline-svg>
 					<inline-svg
@@ -78,10 +86,10 @@
 					</template>
 				</div>
 				<div
-					v-if="isTextSelectionShare"
+					v-if="showArticleTitle"
 					class="ext-readerExperiments-quoteCard__article-title"
 				>
-					{{ articleTitle }}
+					{{ title.getMainText() }}
 				</div>
 				<div class="ext-readerExperiments-quoteCard__attribution">
 					<inline-svg :src="creativeCommonsCC" alt="CC"></inline-svg>
@@ -91,7 +99,7 @@
 			</div>
 			<!-- eslint-disable vue/no-v-html -->
 			<div
-				v-if="imageAttribution"
+				v-if="imageAttribution !== null"
 				class="ext-readerExperiments-quoteCard__image_attribution"
 				v-html="imageAttribution">
 			</div>
@@ -99,7 +107,7 @@
 			<div
 				v-else-if="image"
 				aria-hidden="true"
-				class="ext-readerExperiments-quoteCard__image_attribution">
+				class="ext-readerExperiments-quoteCard__image_attribution ext-readerExperiments-quoteCard__image_attribution__placeholder">
 				<!-- placeholder until attribution loads -->
 				████████████████████
 			</div>
@@ -110,7 +118,7 @@
 <script>
 const { computed, nextTick, ref, toRef, useTemplateRef, watch } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
-const { useAverageColor, useImageModel } = require( 'ext.readerExperiments' );
+const { useAverageColor } = require( 'ext.readerExperiments' );
 const icons = require( '../icons.json' );
 const InlineSvg = require( './InlineSvg.vue' );
 const rawParamsMessage = require( '../utils/rawParamsMessage.js' );
@@ -131,6 +139,21 @@ module.exports = exports = {
 	},
 	props: {
 		/**
+		 * The article title for attribution.
+		 */
+		title: {
+			type: /** @type {mw.Title} */ ( Object ),
+			required: true,
+			validator: ( title ) => ( title instanceof mw.Title )
+		},
+		/**
+		 * The text to display.
+		 */
+		text: {
+			type: String,
+			default: null
+		},
+		/**
 		 * Src of the article image to display.
 		 */
 		image: {
@@ -138,11 +161,18 @@ module.exports = exports = {
 			default: null
 		},
 		/**
-		 * The quote text to display.
+		 * Author of the article image.
 		 */
-		text: {
+		imageAuthor: {
 			type: String,
-			required: true
+			default: null
+		},
+		/**
+		 * License of the article image.
+		 */
+		imageLicense: {
+			type: String,
+			default: null
 		},
 		/**
 		 * Visual style variant.
@@ -156,20 +186,17 @@ module.exports = exports = {
 			}
 		},
 		/**
-		 * The article title for attribution.
+		 * Whether to show the article title or not.
 		 */
-		articleTitle: {
-			type: String,
-			required: true
-		},
-		/**
-		 * The selected quote text. Empty string for article-level share.
-		 */
-		quoteText: {
-			type: String,
-			default: ''
+		showArticleTitle: {
+			type: Boolean,
+			default: false
 		}
 	},
+	emits: [
+		'img-error',
+		'img-load'
+	],
 	setup: function ( props, { expose } ) {
 		const cardRef = ref( null );
 		const imageElementRef = useTemplateRef( 'imageElementRef' );
@@ -224,73 +251,33 @@ module.exports = exports = {
 			{ immediate: true }
 		);
 
-		// If there's no image,
-		// then the card is square, otherwise it's 9:16.
-		const aspectRatio = computed( () => ( props.image ? '9x16' : '1x1' ) );
+		// Bold the article title in the snippet if we otherwise don't explicitly show it
+		const displayText = computed( () => {
+			if ( props.text === null ) {
+				return null;
+			}
 
-		const displayPrefix = ref( null );
-		const displayTitle = ref( null );
-		const displaySuffix = ref( null );
-		watch( toRef( props, 'text' ), ( text ) => {
-			text = text.trim();
-			const title = mw.config.get( 'wgTitle' ) || '';
-			const reString = `^(.*?)(${ mw.util.escapeRegExp( title ) })(.*)$`;
-			// eslint-disable-next-line security/detect-non-literal-regexp
-			const re = new RegExp( reString, 'i' );
-			const matches = text.match( re );
-			if ( matches ) {
-				displayPrefix.value = matches[ 1 ];
-				displayTitle.value = matches[ 2 ];
-				displaySuffix.value = matches[ 3 ];
-			} else {
-				displayPrefix.value = null;
-				displayTitle.value = null;
-				displaySuffix.value = text;
-			}
-		}, {
-			immediate: true
-		} );
+			let prefix = null;
+			let title = null;
+			let suffix = props.text;
 
-		// Determine font size class based on text length.
-		// Shorter quotes get larger text, longer quotes get smaller text.
-		const fontSizeClass = computed( () => {
-			const length = props.text.trim().length;
-			if ( length <= 80 ) {
-				return 'ext-readerExperiments-quoteCard__text--large';
+			if ( !props.showArticleTitle ) {
+				const reString = `^(.*?)(${ mw.util.escapeRegExp( props.title.getMainText() ) })(.*)$`;
+				// eslint-disable-next-line security/detect-non-literal-regexp
+				const re = new RegExp( reString, 'i' );
+				const matches = props.text.match( re );
+				if ( matches ) {
+					prefix = matches[ 1 ];
+					title = matches[ 2 ];
+					suffix = matches[ 3 ];
+				}
 			}
-			if ( length <= 160 ) {
-				return 'ext-readerExperiments-quoteCard__text--medium';
-			}
-			return 'ext-readerExperiments-quoteCard__text--small';
+
+			return { prefix, title, suffix };
 		} );
 
 		// Handle average image color background
 		const color = useAverageColor( imageElementRef );
-		const dominantColorHex = computed( () => {
-			return color.value ?
-				color.value.hex :
-				'var( --background-color-neutral, transparent )';
-		} );
-		const dominantColorContrasting = computed( () => {
-			return color.value ?
-				`oklch( from ${ color.value.hex } calc( l * ${ color.value.isDark ? 100 : 0 } ) c h )` :
-				null;
-		} );
-		const dominantColorContrastingLegacy = computed( () => {
-			return color.value ?
-				( color.value.isDark ? 'white' : 'black' ) :
-				null;
-		} );
-		const dominantColorLightness = computed( () => {
-			return color.value ?
-				( color.value.isDark ? 'dark' : 'light' ) :
-				null;
-		} );
-
-		// Expose cardRef for parent to access DOM element for image generation
-		expose( { cardRef: cardRef } );
-
-		const isTextSelectionShare = computed( () => !!props.quoteText );
 
 		const wordmark = ref( null );
 		const wordmarkImg = document.querySelector( '#mw-mf-page-center .branding-box img' );
@@ -304,34 +291,25 @@ module.exports = exports = {
 			};
 		}
 
-		const imageNameRef = computed( () => {
-			if ( !imageSrc.value ) {
-				return null;
-			}
-			const parsedUrl = mw.util.parseImageUrl( imageSrc.value );
-			if ( !parsedUrl ) {
-				return null;
-			}
-			return parsedUrl.name;
-		} );
-		const imageModel = useImageModel( imageNameRef );
 		const imageAttribution = computed( () => {
-			const model = imageModel.value;
-			if ( !model || !model.author || !model.license ) {
+			if ( props.imageAuthor === null && props.imageLicense === null ) {
 				return null;
 			}
 
-			const doc = new DOMParser().parseFromString( model.author, 'text/html' );
-			const authorText = doc.body.textContent.trim();
-			const license = imageModel.value.license.getShortName();
+			if ( !props.imageAuthor && !props.imageLicense ) {
+				return '';
+			}
 
 			const msg = rawParamsMessage( 'readerexperiments-sharehighlight-image-author-license' );
 			msg.rawParams( [
-				'<span class="ext-readerExperiments-quoteCard__image_attribution__author">' + mw.html.escape( authorText ) + '</span>',
-				'<span class="ext-readerExperiments-quoteCard__image_attribution__license">' + mw.html.escape( license ) + '</span>'
+				'<span class="ext-readerExperiments-quoteCard__image_attribution__author">' + mw.html.escape( props.imageAuthor ) + '</span>',
+				'<span class="ext-readerExperiments-quoteCard__image_attribution__license">' + mw.html.escape( props.imageLicense ) + '</span>'
 			] );
 			return msg.text();
 		} );
+
+		// Expose cardRef for parent to access DOM element for image generation
+		expose( { cardRef: cardRef } );
 
 		return {
 			siteName: mw.config.get( 'wgSiteName' ),
@@ -339,22 +317,14 @@ module.exports = exports = {
 			imageElementRef,
 			imageSrc,
 			imageCrossOrigin,
-			aspectRatio,
-			displayPrefix,
-			displayTitle,
-			displaySuffix,
-			fontSizeClass,
+			color,
+			displayText,
 			cdxIconQuotes: icons.cdxIconQuotes,
-			isTextSelectionShare,
 			wordmark,
 			creativeCommonsCC,
 			creativeCommonsBY,
 			creativeCommonsSA,
 			wikipediaWLogo,
-			dominantColorHex,
-			dominantColorContrasting,
-			dominantColorContrastingLegacy,
-			dominantColorLightness,
 			imageAttribution
 		};
 	}
@@ -418,6 +388,10 @@ module.exports = exports = {
 		opacity: 0.5;
 		display: flex;
 		white-space: pre;
+
+		&__placeholder {
+			opacity: 0.25;
+		}
 
 		&__author,
 		&__license {
@@ -553,6 +527,10 @@ module.exports = exports = {
 		&--small {
 			font-size: @font-size-small;
 			line-height: @line-height-small;
+		}
+
+		&__placeholder {
+			opacity: 0.5;
 		}
 	}
 }

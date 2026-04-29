@@ -1,42 +1,44 @@
 <template>
 	<popover-dialog
 		v-model:open="wrappedOpen"
+		use-close-button
 		class="ext-readerExperiments-shareQuoteDialog"
 		:title="$i18n( 'readerexperiments-sharehighlight-dialog-title' ).text()"
 		@update:open="onOpenChange"
 	>
 		<!-- Quote Preview -->
-		<div class="ext-readerExperiments-shareQuoteDialog__preview">
+		<div
+			v-if="!error"
+			class="ext-readerExperiments-shareQuoteDialog__preview"
+		>
 			<quote-card
 				ref="quoteCardRef"
-				:image="image"
+				:title="title"
 				:text="text"
+				:image="image"
+				:image-author="imageAuthor"
+				:image-license="imageLicense"
 				:style-variant="selectedStyleRef"
-				:article-title="articleTitle"
-				:quote-text="quoteText"
+				:show-article-title="!!quoteText"
+				@img-load="onImageLoad"
+				@img-error="onImageError"
 			></quote-card>
 		</div>
 
 		<!-- Error Message -->
 		<cdx-message
-			v-if="error"
+			v-else
 			type="error"
 			class="ext-readerExperiments-shareQuoteDialog__error"
 		>
-			{{ error }}
+			{{ $i18n( 'unknown-error' ).text() }}
 		</cdx-message>
 
-		<!-- Loading State -->
-		<div
-			v-if="isProcessing"
-			class="ext-readerExperiments-shareQuoteDialog__loading"
-		>
-			<cdx-progress-bar></cdx-progress-bar>
-			<span>{{ $i18n( 'readerexperiments-sharehighlight-loading' ).text() }}</span>
-		</div>
-
 		<!-- Custom footer with Copy Link on left, actions on right -->
-		<template #footer>
+		<template
+			v-if="!error"
+			#footer
+		>
 			<!-- Live region announces button state changes to screen readers -->
 			<div
 				ref="liveRegionRef"
@@ -66,10 +68,21 @@
 				</div>
 
 				<div class="ext-readerExperiments-shareQuoteDialog__footer-action-primary">
+					<!-- Loading State -->
+					<div
+						v-if="isLoading || isProcessing"
+						class="ext-readerExperiments-shareQuoteDialog__loading"
+					>
+						<cdx-progress-indicator show-label>
+							{{ isLoading ? $i18n( 'readerexperiments-sharehighlight-loading' ).text() : '' }}
+							{{ isProcessing ? $i18n( 'readerexperiments-sharehighlight-generating' ).text() : '' }}
+						</cdx-progress-indicator>
+					</div>
+
 					<cdx-button
+						v-else
 						weight="primary"
 						action="progressive"
-						:disabled="isProcessing"
 						@click="handlePrimaryAction"
 					>
 						<cdx-icon v-if="canShareFiles" :icon="cdxIconShare"></cdx-icon>
@@ -83,8 +96,8 @@
 
 <script>
 const { ref, toRef, computed, watch } = require( 'vue' );
-const { CdxButton, CdxIcon, CdxMessage, CdxProgressBar, CdxButtonGroup, useModelWrapper } = require( '@wikimedia/codex' );
-const { useSummary } = require( 'ext.readerExperiments' );
+const { CdxButton, CdxIcon, CdxMessage, CdxProgressIndicator, CdxButtonGroup, useModelWrapper } = require( '@wikimedia/codex' );
+const { useImageModel, useSummary } = require( 'ext.readerExperiments' );
 const icons = require( '../icons.json' );
 const PopoverDialog = require( './PopoverDialog.vue' );
 const QuoteCard = require( './QuoteCard.vue' );
@@ -101,7 +114,7 @@ module.exports = exports = {
 		PopoverDialog,
 		CdxIcon,
 		CdxMessage,
-		CdxProgressBar,
+		CdxProgressIndicator,
 		QuoteCard,
 		CdxButtonGroup
 	},
@@ -131,9 +144,18 @@ module.exports = exports = {
 	},
 	emits: [ 'update:open' ],
 	setup: function ( props, { emit } ) {
-		const quoteCardRef = ref( null );
+		// Two-way binding for open state
+		const wrappedOpen = useModelWrapper( toRef( props, 'open' ), emit, 'update:open' );
 
+		const quoteCardRef = ref( null );
+		const liveRegionRef = ref( null );
+
+		const isDownloadingRef = ref( false );
+		const linkCopiedRef = ref( false );
+
+		const hasVisibleLabel = computed( () => linkCopiedRef.value || isDownloadingRef.value );
 		const titleMatchesActivePage = computed( () => props.title.getPrefixedDb() === mw.config.get( 'wgPageName' ) );
+
 		const ogImage = document.querySelector( 'meta[property="og:image"]' );
 		const ogImageWidth = document.querySelector( 'meta[property="og:image:width"]' );
 
@@ -158,8 +180,39 @@ module.exports = exports = {
 			return false;
 		} );
 
-		const summaryTitle = computed( () => needsSummary.value ? props.title : null );
-		const summary = useSummary( summaryTitle );
+		const error = ref( null );
+		function onError( err ) {
+			// show warning message
+			error.value = err;
+			// end up throwing still, so other error handlers (e.g. logging)
+			// can pick it up
+			throw err;
+		}
+		watch(
+			() => props.title,
+			() => ( error.value = null )
+		);
+
+		const summaryTitle = computed( () => ( needsSummary.value ? props.title : null ) );
+		const summary = useSummary( summaryTitle, onError );
+
+		// User selection is only used to generate the share link.
+		const userSelection = computed( () => {
+			return props.quoteText ? props.quoteText : null;
+		} );
+
+		// Text to share becomes the summary extract if there's no user selection.
+		const text = computed( () => {
+			if ( props.quoteText ) {
+				return props.quoteText.trim();
+			}
+
+			if ( summary.value && summary.value.extract ) {
+				return summary.value.extract.trim();
+			}
+
+			return null;
+		} );
 
 		const image = computed( () => {
 			const getImageSrc = ( thumbnailSrc, originalSrc, originalWidth ) => {
@@ -187,10 +240,14 @@ module.exports = exports = {
 					960,
 					originalWidth
 				);
-				return parsedUrl.resizeUrl( width );
+				// `width` should not be one of the thumbnail steps, unless the original
+				// image width was already to be lower. In that case, we want to use
+				// the original src instead, since thumbnail urls at non-step widths
+				// no longer work.
+				return width === originalWidth ? originalSrc : parsedUrl.resizeUrl( width );
 			};
 
-			if ( !summary.value ) {
+			if ( summary.value === null ) {
 				// While we don't (yet) have the summary result, we could read from the
 				// opengraph tags to get an early indication of what image we'll get.
 				// It's not perfect (width & height are not the source dimensions, for
@@ -217,25 +274,73 @@ module.exports = exports = {
 			return null;
 		} );
 
-		// User selection is only used to generate the share link.
-		const userSelection = computed( () => {
-			return props.quoteText ? props.quoteText : null;
+		const imageName = computed( () => {
+			if ( !image.value ) {
+				return null;
+			}
+			const parsedUrl = mw.util.parseImageUrl( image.value );
+			if ( !parsedUrl ) {
+				return null;
+			}
+			return parsedUrl.name;
 		} );
-		// Text to share becomes the summary extract if there's no user selection.
-		const text = computed( () => {
-			if ( props.quoteText ) {
-				return props.quoteText;
+		const imageModel = useImageModel( imageName, onError );
+		const imageAuthor = computed( () => {
+			if ( !imageModel.value ) {
+				return null;
 			}
-			if ( summary.value && summary.value.extract ) {
-				return summary.value.extract;
+			if ( !imageModel.value.author ) {
+				return '';
 			}
-			return '';
+			const doc = new DOMParser().parseFromString( imageModel.value.author, 'text/html' );
+			return doc.body.textContent.trim();
+		} );
+		const imageLicense = computed( () => {
+			if ( !imageModel.value ) {
+				return null;
+			}
+			if ( !imageModel.value.license ) {
+				return '';
+			}
+			return imageModel.value.license.getShortName();
 		} );
 
-		const liveRegionRef = ref( null );
-		const isDownloadingRef = ref( false );
-		const linkCopiedRef = ref( false ); // Copy link state
-		const articleTitle = computed( () => props.title.getMainText() );
+		// Most data loads (summary API, license) are handled in code, in
+		// this component; but the thumbnail is being loaded by the browser
+		// (through a node handled in the child component, which will relay
+		// the load event to this component), and we'll listen for it to
+		// complete loading.
+		// Every time the image changes, we reset & wait for it to complete.
+		const imageLoadComplete = ref( false );
+		const onImageError = ( src ) => {
+			if ( src === image.value ) {
+				onError( new Error( `Image load failed for ${ src }` ) );
+			}
+		};
+		const onImageLoad = ( src ) => ( imageLoadComplete.value = src === image.value );
+		watch(
+			image,
+			() => ( imageLoadComplete.value = false )
+		);
+
+		// Deduce whether all data has completed loading.
+		const isLoading = computed( () => {
+			if ( needsSummary.value && summary.value === null ) {
+				return true;
+			}
+
+			if (
+				image.value && (
+					!imageLoadComplete.value ||
+					imageAuthor.value === null ||
+					imageLicense.value === null
+				)
+			) {
+				return true;
+			}
+
+			return false;
+		} );
 
 		// If there's no image, fallback to light background. Average color depends on image.
 		const selectedStyleRef = ref();
@@ -267,13 +372,16 @@ module.exports = exports = {
 		const {
 			canShareFiles,
 			isProcessing,
-			error,
+			error: shareError,
 			shareQuote,
 			downloadQuoteImage
 		} = useShareQuote();
 
-		// Two-way binding for open state
-		const wrappedOpen = useModelWrapper( toRef( props, 'open' ), emit, 'update:open' );
+		watch(
+			shareError,
+			( err ) => ( err && onError( err ) ),
+			{ immediate: true }
+		);
 
 		const copyLinkLabel = computed( () => {
 			const key = linkCopiedRef.value ?
@@ -310,23 +418,22 @@ module.exports = exports = {
 				value: 'download',
 				icon: icons.cdxIconDownload,
 				ariaLabel: downloadButtonLabel.value,
-				disabled: isDownloadingRef.value,
+				disabled: isLoading.value || isDownloadingRef.value,
 				label: isDownloadingRef.value ? mw.msg( 'readerexperiments-sharehighlight-downloading' ) : null
 			}
 		] );
 
-		const hasVisibleLabel = computed( () => linkCopiedRef.value || isDownloadingRef.value );
-
-		// Reset options when dialog opens
-		watch( () => {
-			return props.open;
-		}, ( isOpen ) => {
-			if ( isOpen ) {
-				sendEvent( 'click', 'share_initiated' );
-				linkCopiedRef.value = false;
-				isDownloadingRef.value = false;
+		watch(
+			() => props.open,
+			( isOpen ) => {
+				if ( isOpen ) {
+					sendEvent( 'click', 'share_initiated' );
+					// Reset when dialog opens
+					linkCopiedRef.value = false;
+					isDownloadingRef.value = false;
+				}
 			}
-		} );
+		);
 
 		// Only tracking share_abandoned through changes triggered
 		// in popover-dialog, not props.open/wrappedOpen changes,
@@ -353,7 +460,7 @@ module.exports = exports = {
 				// The lead image isn't passed to the Web Share API
 				shareQuote( {
 					cardElement: cardElement,
-					articleTitle: articleTitle.value,
+					articleTitle: props.title.getMainText(),
 					text: text.value,
 					userSelection: userSelection.value
 				} ).then( ( success ) => {
@@ -364,7 +471,7 @@ module.exports = exports = {
 				} );
 			} else {
 				sendEvent( 'click', 'download_share_card' );
-				downloadQuoteImage( cardElement, articleTitle.value )
+				downloadQuoteImage( cardElement, props.title.getMainText() )
 					.then( ( success ) => {
 						if ( success ) {
 							wrappedOpen.value = false;
@@ -384,7 +491,7 @@ module.exports = exports = {
 			isDownloadingRef.value = true;
 			liveRegionRef.value.textContent = mw.msg( 'readerexperiments-sharehighlight-downloading' );
 			sendEvent( 'click', 'download_share_card' );
-			downloadQuoteImage( cardElement, articleTitle.value )
+			downloadQuoteImage( cardElement, props.title.getMainText() )
 				.then( ( success ) => {
 					isDownloadingRef.value = false;
 					liveRegionRef.value.textContent = '';
@@ -399,7 +506,7 @@ module.exports = exports = {
 		 */
 		function handleCopyLink() {
 			// Don't append the text fragment to the URL if there's no user selection
-			const url = textFragment.buildShareUrl( articleTitle.value, userSelection.value );
+			const url = textFragment.buildShareUrl( props.title.getMainText(), userSelection.value );
 			// eslint-disable-next-line compat/compat
 			navigator.clipboard.writeText( url ).then( () => {
 				linkCopiedRef.value = true;
@@ -427,13 +534,16 @@ module.exports = exports = {
 		return {
 			quoteCardRef,
 			selectedStyleRef,
+			linkCopiedRef,
+			liveRegionRef,
+			isLoading,
 			isProcessing,
 			image,
+			imageAuthor,
+			imageLicense,
 			text,
-			articleTitle,
 			error,
 			wrappedOpen,
-			linkCopiedRef,
 			copyLinkLabel,
 			canShareFiles,
 			primaryActionLabel,
@@ -441,10 +551,11 @@ module.exports = exports = {
 			handleCopyLink,
 			cdxIconLink: icons.cdxIconLink,
 			cdxIconShare: icons.cdxIconShare,
-			liveRegionRef,
 			buttons,
 			onClick,
 			onOpenChange,
+			onImageLoad,
+			onImageError,
 			hasVisibleLabel
 		};
 	}
@@ -468,18 +579,8 @@ module.exports = exports = {
 		margin-top: @spacing-100;
 	}
 
-	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	&__loading {
-		display: flex;
-		align-items: center;
-		gap: @spacing-75;
-		margin-top: @spacing-100;
 		color: @color-subtle;
-		font-size: @font-size-small;
-
-		.cdx-progress-bar {
-			width: 100px;
-		}
 	}
 
 	// Visually hide screen reader text. Copied code from Codex's screen-reader-text() mixin

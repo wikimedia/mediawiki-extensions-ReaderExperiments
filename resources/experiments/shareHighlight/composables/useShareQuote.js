@@ -116,7 +116,7 @@ module.exports = function useShareQuote() {
 					return false;
 				}
 
-				error.value = e.message;
+				error.value = e;
 				// eslint-disable-next-line no-console
 				console.error( 'Share failed:', e );
 				return false;
@@ -145,7 +145,7 @@ module.exports = function useShareQuote() {
 			} )
 			.catch( ( e ) => {
 				isProcessing.value = false;
-				error.value = e.message;
+				error.value = e;
 				// eslint-disable-next-line no-console
 				console.error( 'Download failed:', e );
 				return false;

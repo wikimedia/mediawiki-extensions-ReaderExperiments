@@ -9,10 +9,20 @@
 const { ref, watch } = require( 'vue' );
 
 /**
+ * @callback errorHandler
+ * @param {Error} error
+ */
+
+/**
  * @param {StringRef} nameRef
+ * @param {errorHandler} onError
  * @return {ImageModelRef}
  */
-module.exports = function useImageModel( nameRef ) {
+module.exports = function useImageModel(
+	nameRef,
+	// eslint-disable-next-line no-unused-vars
+	onError = ( error ) => {}
+) {
 	const imageModel = ref( null );
 	watch( nameRef, async ( name ) => {
 		imageModel.value = null;
@@ -25,7 +35,10 @@ module.exports = function useImageModel( nameRef ) {
 			await mw.loader.using( 'mmv.common' );
 		} catch ( error ) {
 			// MultimediaViewer is not available.
-			// Gracefully bow out and leave the imageModel empty.
+			// Gracefully bow out with an explicitly empty imageModel.
+			// Not null, to allow differentiation between this and
+			// loading.
+			imageModel.value = {};
 			return;
 		}
 
@@ -34,6 +47,7 @@ module.exports = function useImageModel( nameRef ) {
 		const title = mw.Title.makeTitle( NS_FILE, name );
 		if ( !title ) {
 			// Invalid title; won't be able to look it up.
+			onError( new Error( 'Invalid file title' ) );
 			return;
 		}
 
@@ -47,8 +61,9 @@ module.exports = function useImageModel( nameRef ) {
 			if ( nameRef.value === name ) {
 				imageModel.value = model;
 			}
-		} catch ( error ) {
-			mw.log.warn( 'ReaderExperiments: Failed to fetch image info from API', error );
+		} catch ( errorMsg ) {
+			imageModel.value = null;
+			onError( new Error( errorMsg ) );
 		}
 	}, {
 		immediate: true

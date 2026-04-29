@@ -94,7 +94,7 @@ class Hooks implements
 		if ( $mpo !== null ) {
 			$overrides = explode( ';', $mpo );
 			// Iterate in reverse to mimic test kitchen's behavior of iterating
-			// entirely, where only the last occurence would remain
+			// entirely, where only the last occurrence would remain
 			foreach ( array_reverse( $overrides ) as $override ) {
 				$overrideParts = explode( ':', $override, 2 );
 				if ( count( $overrideParts ) !== 2 ) {
