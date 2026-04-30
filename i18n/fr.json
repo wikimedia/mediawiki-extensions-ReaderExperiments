@@ -3,7 +3,8 @@
 		"authors": [
 			"Dyolf77 (WMF)",
 			"WillyM",
-			"Escargot bleu"
+			"Escargot bleu",
+			"Geugeor-WMF"
 		]
 	},
 	"readerexperiments-desc": "Un ensemble de prototypes visant à accroître le nombre de lecteurs de Wikipédia",
@@ -16,11 +17,11 @@
 	"readerexperiments-imagebrowsing-detail-share-copy": "Copier",
 	"readerexperiments-imagebrowsing-detail-view-on-commons": "Afficher sur Commons",
 	"readerexperiments-imagebrowsing-detail-download": "Télécharger",
-	"readerexperiments-imagebrowsing-detail-download-size-original": "Fichier original ( $1 x $2 px)",
-	"readerexperiments-imagebrowsing-detail-download-size-small": "Petit ( $1 x $2 px)",
-	"readerexperiments-imagebrowsing-detail-download-size-medium": "Moyen ( $1 x $2 px)",
-	"readerexperiments-imagebrowsing-detail-download-size-large": "Grand ($1 x $2 px)",
-	"readerexperiments-imagebrowsing-detail-download-size-xl": "Très grand ( $1 x $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Fichier original ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Petit ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Moyen ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Grand ($1x$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Très grand ($1x$2 px)",
 	"readerexperiments-imagebrowsing-loading": "Chargement",
 	"readerexperiments-imagebrowsing-overlay-back-button-label": "Retour à l'article",
 	"readerexperiments-imagebrowsing-overlay-close-button-label": "Fermer",
@@ -30,6 +31,6 @@
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Chargement d'images provenant d'autres projets",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Afficher dans l’article",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "De $1",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "De $1 et $2 {{PLURAL:$2|autre version linguistique|autres versions linguistiques}} de Wikipédia",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "À partir de $1 et $2, autres langues {{PLURAL:$2|édition|éditions}} de Wikipédia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "De $1"
 }
