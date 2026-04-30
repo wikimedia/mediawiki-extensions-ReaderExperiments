@@ -358,7 +358,7 @@ class Hooks implements
 		// Instrumentation loads for both 'treatment' and 'baseline' so we capture
 		// baseline metrics across the main experiment's control group and the
 		// separate baseline A/A experiment.
-		$out->addModules( 'ext.readerExperiments.shareHighlight.instrumentation' );
+		$out->addModules( 'ext.readerExperiments/shareHighlight.instrumentation' );
 
 		$pageSize = 0;
 		$context = $out->getContext();

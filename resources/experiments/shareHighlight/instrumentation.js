@@ -12,12 +12,15 @@ const SCHEMA_NAME = '/analytics/product_metrics/web/base/2.0.0';
 const STREAM_NAME = 'product_metrics.web_base';
 const INSTRUMENT_NAME = 'ShareHighlightInstrument';
 const DEBOUNCE_TIMEOUT_MS = 1000;
+const MINERVA_DOWNLOAD_SELECTOR = '#minerva-download';
 
 class ShareHighlightInstrument {
 	constructor( config ) {
 		this.instrument = config.instrumentName;
 		this.experiments = config.experiments;
+		this.isInTreatmentGroup = config.isInTreatmentGroup;
 		this.selectionChangeListener = null;
+		this.downloadClickListener = null;
 		this.lastSelectionSubtype = null;
 		this.debounceTimeout = null;
 
@@ -30,6 +33,11 @@ class ShareHighlightInstrument {
 		if ( !this.selectionChangeListener ) {
 			this.selectionChangeListener = () => this.onSelectionChange();
 			document.addEventListener( 'selectionchange', this.selectionChangeListener );
+		}
+
+		if ( !this.isInTreatmentGroup && !this.downloadClickListener ) {
+			this.downloadClickListener = ( event ) => this.onDownloadClick( event );
+			document.addEventListener( 'click', this.downloadClickListener );
 		}
 	}
 
@@ -127,15 +135,34 @@ class ShareHighlightInstrument {
 		}, DEBOUNCE_TIMEOUT_MS );
 	}
 
+	onDownloadClick( event ) {
+		if (
+			event.target instanceof Element &&
+			event.target.closest( MINERVA_DOWNLOAD_SELECTOR )
+		) {
+			this.send( 'click', {
+				// eslint-disable-next-line camelcase
+				action_context: 'download'
+			} );
+		}
+	}
+
 	stop() {
 		if ( this.selectionChangeListener ) {
 			document.removeEventListener( 'selectionchange', this.selectionChangeListener );
 			this.selectionChangeListener = null;
 		}
+
+		if ( this.downloadClickListener ) {
+			document.removeEventListener( 'click', this.downloadClickListener );
+			this.downloadClickListener = null;
+		}
 	}
 
 	send( action, interactionData = {} ) {
 		interactionData = Object.assign( {
+			// Baseline highlight/select events use page size as their default
+			// action context. Interaction events should override this explicitly.
 			// eslint-disable-next-line camelcase
 			action_context: this.pageSize(),
 
@@ -161,7 +188,8 @@ if ( typeof mw.ReaderExperiments !== 'object' ) {
 
 const analyticsConfig = {
 	instrumentName: INSTRUMENT_NAME,
-	experiments: []
+	experiments: [],
+	isInTreatmentGroup: false
 };
 
 for ( const name of EXPERIMENT_NAMES ) {
@@ -169,6 +197,9 @@ for ( const name of EXPERIMENT_NAMES ) {
 	experiment.setSchema( SCHEMA_NAME );
 	experiment.setStream( STREAM_NAME );
 	analyticsConfig.experiments.push( experiment );
+	if ( name === 'share-highlight' ) {
+		analyticsConfig.isInTreatmentGroup = experiment.getAssignedGroup() === 'treatment';
+	}
 }
 
 const instrument = new ShareHighlightInstrument( analyticsConfig );
