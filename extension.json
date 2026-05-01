@@ -351,9 +351,11 @@
 				"readerexperiments-sharehighlight-cancel",
 				"readerexperiments-sharehighlight-share",
 				"readerexperiments-sharehighlight-download",
-				"readerexperiments-sharehighlight-generating-image",
+				"readerexperiments-sharehighlight-downloading",
+				"readerexperiments-sharehighlight-loading",
 				"readerexperiments-sharehighlight-share-title",
 				"readerexperiments-sharehighlight-share-text",
+				"readerexperiments-sharehighlight-share-text-with-branding",
 				"readerexperiments-sharehighlight-branding",
 				"readerexperiments-sharehighlight-image-author-license"
 			]

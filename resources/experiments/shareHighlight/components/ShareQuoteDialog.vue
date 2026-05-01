@@ -31,7 +31,7 @@
 			class="ext-readerExperiments-shareQuoteDialog__loading"
 		>
 			<cdx-progress-bar></cdx-progress-bar>
-			<span>{{ $i18n( 'readerexperiments-sharehighlight-generating-image' ).text() }}</span>
+			<span>{{ $i18n( 'readerexperiments-sharehighlight-loading' ).text() }}</span>
 		</div>
 
 		<!-- Custom footer with Copy Link on left, actions on right -->
