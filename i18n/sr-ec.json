@@ -35,10 +35,12 @@
 	"readerexperiments-mobilepagepreviews-close-button-label": "Затвори",
 	"readerexperiments-sharehighlight-background-legend": "Позадина",
 	"readerexperiments-sharehighlight-copy-link": "Копирај",
-	"readerexperiments-sharehighlight-link-copied": "Копирано!",
+	"readerexperiments-sharehighlight-link-copied": "Копирано",
 	"readerexperiments-sharehighlight-cancel": "Откажи",
 	"readerexperiments-sharehighlight-share": "Дели",
 	"readerexperiments-sharehighlight-download": "Преузми",
-	"readerexperiments-sharehighlight-generating-image": "Генерисање слике…",
-	"readerexperiments-sharehighlight-share-text": "„$1”\n\nСазнајте више: $2"
+	"readerexperiments-sharehighlight-downloading": "Преузимање",
+	"readerexperiments-sharehighlight-loading": "Учитавање…",
+	"readerexperiments-sharehighlight-share-text": "„$1”\n\nСазнајте више: $2",
+	"readerexperiments-sharehighlight-image-author-license": "Слика: $1 · $2"
 }
