@@ -343,6 +343,7 @@
 			],
 			"styles": [],
 			"messages": [
+				"readerexperiments-sharehighlight-blue-dot-label",
 				"readerexperiments-sharehighlight-share-quote",
 				"readerexperiments-sharehighlight-dialog-title",
 				"readerexperiments-sharehighlight-background-legend",
