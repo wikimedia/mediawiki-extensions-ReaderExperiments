@@ -30,8 +30,10 @@
 	"readerexperiments-minerva-toc-edit-button-label": "Änneren",
 	"readerexperiments-mobilepagepreviews-read-more": "Méi liesen",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Zoumaachen",
-	"readerexperiments-sharehighlight-dialog-title": "Zitat deelen",
+	"readerexperiments-sharehighlight-dialog-title": "Deelen",
 	"readerexperiments-sharehighlight-copy-link": "Link kopéieren",
+	"readerexperiments-sharehighlight-link-copied": "Kopéiert",
 	"readerexperiments-sharehighlight-share": "Deelen",
+	"readerexperiments-sharehighlight-share-text-with-branding": "„$1“\n\nLiest méi op Wikipedia: $2",
 	"readerexperiments-sharehighlight-image-author-license": "Bild: $1 · $2"
 }
