@@ -310,6 +310,7 @@
 				"mediawiki.ForeignApi",
 				"mediawiki.util",
 				"ext.readerExperiments",
+				"ext.readerExperiments/shareHighlight.toolbarBlueDot",
 				"ext.readerExperiments/shareHighlight.instrumentation",
 				"ext.readerExperiments/lib/html-to-image"
 			],
@@ -343,7 +344,6 @@
 			],
 			"styles": [],
 			"messages": [
-				"readerexperiments-sharehighlight-blue-dot-label",
 				"readerexperiments-sharehighlight-share-quote",
 				"readerexperiments-sharehighlight-dialog-title",
 				"readerexperiments-sharehighlight-background-legend",
@@ -364,8 +364,25 @@
 		"ext.readerExperiments/shareHighlight.styles": {
 			"localBasePath": "resources/experiments/shareHighlight",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/shareHighlight",
+			"dependencies": [
+				"mediawiki.pulsatingdot"
+			],
 			"styles": [
 				"styles/app.less"
+			]
+		},
+		"ext.readerExperiments/shareHighlight.toolbarBlueDot": {
+			"localBasePath": "resources/experiments/shareHighlight",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/shareHighlight",
+			"dependencies": [
+				"mediawiki.storage",
+				"ext.readerExperiments/shareHighlight.styles"
+			],
+			"packageFiles": [
+				"toolbarBlueDot.js"
+			],
+			"messages": [
+				"readerexperiments-sharehighlight-blue-dot-label"
 			]
 		},
 		"ext.readerExperiments/shareHighlight.instrumentation": {
