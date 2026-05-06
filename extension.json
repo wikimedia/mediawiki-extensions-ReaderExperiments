@@ -362,9 +362,6 @@
 		"ext.readerExperiments/shareHighlight.styles": {
 			"localBasePath": "resources/experiments/shareHighlight",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/shareHighlight",
-			"dependencies": [
-				"mediawiki.pulsatingdot"
-			],
 			"styles": [
 				"styles/app.less"
 			]

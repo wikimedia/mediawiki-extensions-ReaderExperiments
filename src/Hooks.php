@@ -351,7 +351,10 @@ class Hooks implements
 		}
 
 		if ( $enrollment === 'treatment' ) {
-			$out->addModuleStyles( 'ext.readerExperiments/shareHighlight.styles' );
+			$out->addModuleStyles( [
+				'mediawiki.pulsatingdot',
+				'ext.readerExperiments/shareHighlight.styles'
+			] );
 			$out->addModules( 'ext.readerExperiments/shareHighlight' );
 		}
 
