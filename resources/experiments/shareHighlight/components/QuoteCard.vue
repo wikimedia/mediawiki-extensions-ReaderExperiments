@@ -54,7 +54,7 @@
 						}"
 					></inline-svg>
 					<template v-else>
-						{{ $i18n( 'readerexperiments-sharehighlight-branding' ).text() }}
+						{{ siteName }}
 					</template>
 				</div>
 				<div
@@ -302,6 +302,7 @@ module.exports = exports = {
 		} );
 
 		return {
+			siteName: mw.config.get( 'wgSiteName' ),
 			cardRef,
 			imageElementRef,
 			imageSrc,

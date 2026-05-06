@@ -76,14 +76,17 @@ module.exports = function useShareQuote() {
 				const shareUrl = textFragment.buildShareUrl( articleTitle, quoteText );
 
 				// Prepare share data
+				const siteName = mw.config.get( 'wgSiteName' );
 				const shareTitle = mw.msg(
 					'readerexperiments-sharehighlight-share-title',
-					articleTitle
+					articleTitle,
+					siteName
 				);
 				const shareText = mw.msg(
-					'readerexperiments-sharehighlight-share-text',
+					'readerexperiments-sharehighlight-share-text-with-branding',
 					truncateText( quoteText, MAX_SHARE_TEXT_LENGTH ),
-					shareUrl
+					shareUrl,
+					siteName
 				);
 				const shareData = {
 					files: [ imageFile ],

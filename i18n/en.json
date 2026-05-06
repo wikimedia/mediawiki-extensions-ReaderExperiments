@@ -58,9 +58,7 @@
 	"readerexperiments-sharehighlight-download": "Download",
 	"readerexperiments-sharehighlight-downloading": "Downloading",
 	"readerexperiments-sharehighlight-loading": "Loading\u2026",
-	"readerexperiments-sharehighlight-share-title": "Quote from \"$1\" \u2014 Wikipedia",
-	"readerexperiments-sharehighlight-share-text": "\"$1\"\n\nRead more: $2",
-	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nRead more on Wikipedia: $2",
-	"readerexperiments-sharehighlight-branding": "Wikipedia",
+	"readerexperiments-sharehighlight-share-title": "Quote from \"$1\" \u2014 $2",
+	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nRead more on $3: $2",
 	"readerexperiments-sharehighlight-image-author-license": "Image: $1 · $2"
 }
