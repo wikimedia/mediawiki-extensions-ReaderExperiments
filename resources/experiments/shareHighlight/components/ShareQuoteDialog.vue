@@ -1,9 +1,9 @@
 <template>
 	<popover-dialog
 		v-model:open="wrappedOpen"
-		@update:open="onOpenChange"
-		:title="$i18n( 'readerexperiments-sharehighlight-dialog-title' ).text()"
 		class="ext-readerExperiments-shareQuoteDialog"
+		:title="$i18n( 'readerexperiments-sharehighlight-dialog-title' ).text()"
+		@update:open="onOpenChange"
 	>
 		<!-- Quote Preview -->
 		<div class="ext-readerExperiments-shareQuoteDialog__preview">
@@ -158,7 +158,7 @@ module.exports = exports = {
 			return false;
 		} );
 
-		const summaryTitle = computed( () => ( props.open && needsSummary.value ? props.title : null ) );
+		const summaryTitle = computed( () => needsSummary.value ? props.title : null );
 		const summary = useSummary( summaryTitle );
 
 		const image = computed( () => {
@@ -502,10 +502,11 @@ module.exports = exports = {
 		padding-right: @spacing-25;
 		padding-left: @spacing-25;
 	}
+
+	// Override dialog width for better preview
+	&.cdx-dialog {
+		min-width: 320px;
+	}
 }
 
-// Override dialog width for better preview
-.ext-readerExperiments-shareQuoteDialog .cdx-dialog__body {
-	min-width: 320px;
-}
 </style>

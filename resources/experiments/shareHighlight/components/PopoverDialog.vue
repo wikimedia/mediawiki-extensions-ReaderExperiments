@@ -12,6 +12,7 @@
 		:stacked-action="stackedActions"
 		:target="target"
 		:render-in-place="renderInPlace"
+		:fixed-height="fixedHeight"
 
 		@update:open="onUpdateOpen"
 		@primary="onPrimary"
@@ -126,6 +127,15 @@ module.exports = exports = {
 		},
 
 		/**
+		 * Whether the dialog should maintain a fixed maximum height on mobile
+		 * screens, rather than expanding to fit the content height.
+		 */
+		fixedHeight: {
+			type: Boolean,
+			default: false
+		},
+
+		/**
 		 * Selector or DOM element identifying the container the dialog should
 		 * be rendered in. The dialog will be `<teleport>`ed to this element.
 		 * An ID selector is recommended, e.g. `#foo-bar`, but providing an
@@ -198,7 +208,6 @@ module.exports = exports = {
 	}
 
 	.ext-readerExperiments-popover-dialog.cdx-dialog {
-		height: unset;
 		border-top: @border-subtle;
 	}
 }

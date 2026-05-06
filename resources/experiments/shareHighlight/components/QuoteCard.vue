@@ -289,7 +289,6 @@ module.exports = exports = {
 	flex-direction: column;
 	justify-content: center;
 	padding: @spacing-75;
-	overflow: hidden;
 	border-radius: 0.125rem;
 
 	// stylelint-disable-next-line plugin/no-unsupported-browser-features
