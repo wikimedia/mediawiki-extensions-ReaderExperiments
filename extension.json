@@ -74,7 +74,7 @@
 				},
 				"thumbExtractor.js",
 				"excludedImageSelectors.js",
-				"composables/useAverageColor.js",
+				"composables/useBackgroundColor.js",
 				"composables/useContentImages.js",
 				"composables/useImageModel.js",
 				"composables/useSummary.js"
