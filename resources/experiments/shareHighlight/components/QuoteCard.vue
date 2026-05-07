@@ -342,9 +342,21 @@ module.exports = exports = {
 	justify-content: center;
 	padding: @spacing-75;
 	border-radius: 0.125rem;
-	width: @size-full;
 	color-scheme: only light;
 	forced-color-adjust: none;
+
+	// Consistent fixed card width to ensure a max height of 512px in 9x16 portrait mode
+	width: calc( 512px * 9 / 16 );
+	box-sizing: border-box;
+
+	// Aspect ratio dimensions (preview size, rendered at 2x for image)
+	&--1x1 {
+		aspect-ratio: 1/1;
+	}
+
+	&--9x16 {
+		aspect-ratio: 9/16;
+	}
 
 	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	&__source {
@@ -405,15 +417,6 @@ module.exports = exports = {
 		&__author {
 			flex: 1;
 		}
-	}
-
-	// Aspect ratio dimensions (preview size, rendered at 2x for image)
-	&--1x1 {
-		aspect-ratio: 1/1;
-	}
-
-	&--9x16 {
-		aspect-ratio: 9/16;
 	}
 
 	.ext-readerExperiments-quoteCard__branding {

@@ -7,10 +7,7 @@
 		@update:open="onOpenChange"
 	>
 		<!-- Quote Preview -->
-		<div
-			v-if="!error"
-			class="ext-readerExperiments-shareQuoteDialog__preview"
-		>
+		<div v-if="!error">
 			<quote-card
 				ref="quoteCardRef"
 				:title="title"
@@ -22,6 +19,7 @@
 				:show-article-title="!!quoteText"
 				@img-load="onImageLoad"
 				@img-error="onImageError"
+				:style="{ transform: 'scale(' + scale + ') translateX( calc( ( -1 * 0.5 * ( 1 - ' + scale + ' ) ) * 100% ) )' }"
 			></quote-card>
 		</div>
 
@@ -542,11 +540,26 @@ module.exports = exports = {
 			}
 		}
 
+		const scale = computed( () => {
+			const cardElement = quoteCardRef.value && quoteCardRef.value.cardRef;
+			if ( !cardElement ) {
+				return 1;
+			}
+
+			// The dialog will be adjusted to the (relatively small) width of the card.
+			// This will only ever scale *down*, and never by much, as we have a hard
+			// cap at 320px dialog width (below which Minerva already stops supporting)
+			// We will not also scale by height: if the card height exceeds the
+			// available height in the dialog, it will simply be scrollable.
+			return cardElement.parentElement.clientWidth / cardElement.scrollWidth;
+		} );
+
 		return {
 			quoteCardRef,
 			selectedStyleRef,
 			linkCopiedRef,
 			liveRegionRef,
+			scale,
 			isLoading,
 			isProcessing,
 			image,
@@ -577,15 +590,6 @@ module.exports = exports = {
 @import 'mediawiki.skin.variables.less';
 
 .ext-readerExperiments-shareQuoteDialog {
-	&__preview {
-		display: flex;
-		justify-content: center;
-		padding: @spacing-100 0;
-		background: @background-color-interactive-subtle;
-		border-radius: @border-radius-base;
-		margin-bottom: @spacing-100;
-	}
-
 	&__error {
 		margin-top: @spacing-100;
 	}
@@ -624,7 +628,11 @@ module.exports = exports = {
 
 	// Override dialog width for better preview
 	&.cdx-dialog {
+		width: auto;
+		// This pretty much only leaves a window between 320px minimum,
+		// and 336px max (288px fixed card width plus dialog padding)
 		min-width: 320px;
+		max-width: 100vw;
 	}
 }
 
