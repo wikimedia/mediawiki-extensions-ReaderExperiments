@@ -1,7 +1,28 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ykhwong"
+			"Ykhwong",
+			"Tensama0415"
 		]
-	}
+	},
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "이미지 \"$1\" 선택",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "더 보기",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "덜 보기",
+	"readerexperiments-imagebrowsing-detail-crop": "전체 화면",
+	"readerexperiments-imagebrowsing-detail-share": "공유",
+	"readerexperiments-imagebrowsing-detail-share-copy": "복사",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "공용에서 보기",
+	"readerexperiments-imagebrowsing-detail-download": "다운로드",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "원본 파일 ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "작음 ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "중간 ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "큼 ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "매우 큼 ($1×$2 px)",
+	"readerexperiments-imagebrowsing-loading": "불러오는 중",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "글로 돌아가기",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "닫기",
+	"readerexperiments-imagebrowsing-overlay-label": "이미지 정보",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "글에서 보기",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "$1에서",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "$1에서"
 }
