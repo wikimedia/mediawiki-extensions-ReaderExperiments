@@ -12,9 +12,9 @@
 			}
 		]"
 		:style="{
-			'--dominant-color-hex': color ? color.hex : 'var( --background-color-neutral, transparent )',
-			'--dominant-color-contrasting': color ? `oklch( from ${ color.hex } calc( l * ${ color.isDark ? 100 : 0 } ) c h )` : null,
-			'--dominant-color-contrasting--legacy': color && color.isDark ? 'white' : 'black'
+			'--dominant-color-hex': color ? color.hex : 'var( --background-color-base-fixed, #fff )',
+			'--dominant-color-contrasting': color ? `oklch( from ${ color.hex } calc( l * ${ color.isDark ? 100 : 0 } ) c h )` : 'var( --color-base-fixed, #000 )',
+			'--dominant-color-contrasting--legacy': color ? ( color.isDark ? 'white' : 'black' ) : 'var( --color-base-fixed, #000 )'
 		}"
 	>
 		<div class="ext-readerExperiments-quoteCard__content">
@@ -343,6 +343,8 @@ module.exports = exports = {
 	padding: @spacing-75;
 	border-radius: 0.125rem;
 	width: @size-full;
+	color-scheme: only light;
+	forced-color-adjust: none;
 
 	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	&__source {
@@ -439,18 +441,34 @@ module.exports = exports = {
 	// Style variants
 	&--average {
 		background-color: var( --dominant-color-hex );
-		color: var( --dominant-color-contrasting );
+		color: var( --dominant-color-contrasting--legacy );
+
+		@supports ( color: oklch( from white l c h ) ) {
+			color: var( --dominant-color-contrasting );
+		}
 
 		.ext-readerExperiments-quoteCard__quotes {
-			color: var( --dominant-color-contrasting );
+			color: var( --dominant-color-contrasting--legacy );
 			opacity: 0.5;
+
+			@supports ( color: oklch( from white l c h ) ) {
+				color: var( --dominant-color-contrasting );
+			}
 		}
 
 		.ext-readerExperiments-quoteCard__branding {
-			color: var( --dominant-color-contrasting );
+			color: var( --dominant-color-contrasting--legacy );
+
+			@supports ( color: oklch( from white l c h ) ) {
+				color: var( --dominant-color-contrasting );
+			}
 
 			svg path {
-				fill: var( --dominant-color-contrasting );
+				fill: var( --dominant-color-contrasting--legacy );
+
+				@supports ( color: oklch( from white l c h ) ) {
+					fill: var( --dominant-color-contrasting );
+				}
 			}
 		}
 	}
