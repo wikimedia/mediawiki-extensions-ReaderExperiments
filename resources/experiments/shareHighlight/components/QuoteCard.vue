@@ -18,8 +18,8 @@
 				v-if="image"
 				ref="imageElementRef"
 				class="ext-readerExperiments-quoteCard__image"
-				:src="image"
-				crossorigin="anonymous"
+				:src="imageSrc"
+				:crossorigin="imageCrossOrigin"
 			>
 			<cdx-icon
 				class="ext-readerExperiments-quoteCard__quotes"
@@ -79,9 +79,9 @@
 </template>
 
 <script>
-const { computed, ref, toRef, useTemplateRef, watch } = require( 'vue' );
+const { computed, nextTick, ref, toRef, useTemplateRef, watch } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
-const { useBackgroundColor, useImageModel } = require( 'ext.readerExperiments' );
+const { useAverageColor, useImageModel } = require( 'ext.readerExperiments' );
 const icons = require( '../icons.json' );
 const InlineSvg = require( './InlineSvg.vue' );
 
@@ -142,8 +142,57 @@ module.exports = exports = {
 	},
 	setup: function ( props, { expose } ) {
 		const cardRef = ref( null );
-		const imageSrcRef = toRef( props, 'image' );
 		const imageElementRef = useTemplateRef( 'imageElementRef' );
+
+		const imageSrc = ref();
+		const imageCrossOrigin = ref( 'anonymous' );
+		watch(
+			toRef( props, 'image' ),
+			( image ) => {
+				if ( !image ) {
+					// Blank "image" - this should not be needed as `imageSrc` will
+					// only be used when `image` exists, but might as well make sure
+					// we continue to deal with valid data
+					// (nit: this makes more sense than an empty string,  which is
+					// considered an error and can cause issues when accessing
+					// properties of the Image element directly)
+					imageSrc.value = 'data:,';
+					return;
+				}
+
+				const parsedUrl = mw.util.parseImageUrl( image );
+				const encodedSrcSuffix = encodeURI( parsedUrl.name.replace( / /g, '_' ) )
+					// uriencode some more special chars that encodeURI doesn't cover,
+					// but we would expect to be encoded for our thumbnail URIs
+					// @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI#description
+					// Note: I have not doublechecked all characters, so this list may
+					// not be exhaustive
+					.replace( /[\\()',]/g, ( c ) => `%${ c.charCodeAt( 0 ).toString( 16 ).toUpperCase() }` );
+				const existingImage = document.querySelector( `img[src$="${ CSS.escape( encodedSrcSuffix ) }"]` );
+
+				if ( !existingImage || !existingImage.complete || !existingImage.currentSrc ) {
+					// Could not find an existing other version of this image already
+					// loaded on the page - just start loading the intended version
+					imageSrc.value = image;
+					imageCrossOrigin.value = 'anonymous';
+					return;
+				}
+
+				// Since we already have a version of this image loaded on page,
+				// set that as the initial image (even if it is of lower resolution)
+				// to start off with; we'll start loading the intended version after
+				imageSrc.value = existingImage.currentSrc;
+				// Make sure crossorigin matches the existing image, or the browser
+				// can't get the existing resource from its cache
+				imageCrossOrigin.value = existingImage.crossOrigin;
+
+				nextTick( () => {
+					imageSrc.value = image;
+					imageCrossOrigin.value = 'anonymous';
+				} );
+			},
+			{ immediate: true }
+		);
 
 		// If there's no image,
 		// then the card is square, otherwise it's 9:16.
@@ -186,7 +235,7 @@ module.exports = exports = {
 		} );
 
 		// Handle average image color background
-		const color = computed( () => props.image ? useBackgroundColor( imageSrcRef, imageElementRef ).value : null );
+		const color = useAverageColor( imageElementRef );
 		const dominantColorHex = computed( () => {
 			return color.value ?
 				color.value.hex :
@@ -226,10 +275,10 @@ module.exports = exports = {
 		}
 
 		const imageNameRef = computed( () => {
-			if ( !imageSrcRef.value ) {
+			if ( !imageSrc.value ) {
 				return null;
 			}
-			const parsedUrl = mw.util.parseImageUrl( imageSrcRef.value );
+			const parsedUrl = mw.util.parseImageUrl( imageSrc.value );
 			if ( !parsedUrl ) {
 				return null;
 			}
@@ -257,6 +306,8 @@ module.exports = exports = {
 			siteName: mw.config.get( 'wgSiteName' ),
 			cardRef,
 			imageElementRef,
+			imageSrc,
+			imageCrossOrigin,
 			aspectRatio,
 			displayPrefix,
 			displayTitle,
@@ -290,6 +341,7 @@ module.exports = exports = {
 	justify-content: center;
 	padding: @spacing-75;
 	border-radius: 0.125rem;
+	width: @size-full;
 
 	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	&__source {
