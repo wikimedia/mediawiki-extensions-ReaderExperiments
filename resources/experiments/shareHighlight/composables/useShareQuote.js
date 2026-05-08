@@ -53,13 +53,16 @@ module.exports = function useShareQuote() {
 	 * @param {Object} options - Share options
 	 * @param {HTMLElement} options.cardElement - The QuoteCard DOM element
 	 * @param {string} options.articleTitle - Article title for attribution
-	 * @param {string} options.quoteText - The full selected quote text
+	 * @param {string} options.text - The quote text to share,
+	 * @param {string|null} options.userSelection - The text selected by the user,
+	 * or null if no text is selected
 	 * @return {Promise<boolean>} True if share was successful
 	 */
 	const shareQuote = function ( options ) {
 		const cardElement = options.cardElement;
 		const articleTitle = options.articleTitle;
-		const quoteText = options.quoteText;
+		const text = options.text;
+		const userSelection = options.userSelection;
 
 		isProcessing.value = true;
 		error.value = null;
@@ -73,7 +76,7 @@ module.exports = function useShareQuote() {
 				);
 
 				// Build text fragment URL
-				const shareUrl = textFragment.buildShareUrl( articleTitle, quoteText );
+				const shareUrl = textFragment.buildShareUrl( articleTitle, userSelection );
 
 				// Prepare share data
 				const siteName = mw.config.get( 'wgSiteName' );
@@ -84,7 +87,7 @@ module.exports = function useShareQuote() {
 				);
 				const shareText = mw.msg(
 					'readerexperiments-sharehighlight-share-text-with-branding',
-					truncateText( quoteText, MAX_SHARE_TEXT_LENGTH ),
+					truncateText( text, MAX_SHARE_TEXT_LENGTH ),
 					shareUrl,
 					siteName
 				);

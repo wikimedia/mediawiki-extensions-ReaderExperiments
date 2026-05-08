@@ -92,8 +92,8 @@
 			<!-- eslint-disable vue/no-v-html -->
 			<div
 				v-if="imageAttribution"
-				v-html="imageAttribution"
-				class="ext-readerExperiments-quoteCard__image_attribution">
+				class="ext-readerExperiments-quoteCard__image_attribution"
+				v-html="imageAttribution">
 			</div>
 			<!-- eslint-enable vue/no-v-html -->
 			<div

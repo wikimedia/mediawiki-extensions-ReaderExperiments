@@ -217,6 +217,11 @@ module.exports = exports = {
 			return null;
 		} );
 
+		// User selection is only used to generate the share link.
+		const userSelection = computed( () => {
+			return props.quoteText ? props.quoteText : null;
+		} );
+		// Text to share becomes the summary extract if there's no user selection.
 		const text = computed( () => {
 			if ( props.quoteText ) {
 				return props.quoteText;
@@ -349,7 +354,8 @@ module.exports = exports = {
 				shareQuote( {
 					cardElement: cardElement,
 					articleTitle: articleTitle.value,
-					quoteText: text.value
+					text: text.value,
+					userSelection: userSelection.value
 				} ).then( ( success ) => {
 					if ( success ) {
 						sendEvent( 'share_completed' );
@@ -392,7 +398,8 @@ module.exports = exports = {
 		 * Copy the text fragment link to clipboard.
 		 */
 		function handleCopyLink() {
-			const url = textFragment.buildShareUrl( articleTitle.value, text.value );
+			// Don't append the text fragment to the URL if there's no user selection
+			const url = textFragment.buildShareUrl( articleTitle.value, userSelection.value );
 			// eslint-disable-next-line compat/compat
 			navigator.clipboard.writeText( url ).then( () => {
 				linkCopiedRef.value = true;

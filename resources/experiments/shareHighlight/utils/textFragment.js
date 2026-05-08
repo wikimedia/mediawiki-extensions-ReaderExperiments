@@ -70,17 +70,24 @@ function createTextFragmentDirective( text ) {
  * Build the full shareable URL with text fragment for the current article.
  * Uses mw.util.getUrl() to resolve the article path, so both display titles
  * (wgTitle) and DB keys (wgPageName) are accepted.
+ * If no text is selected, the URL won't contain the text fragment.
  *
  * @param {string} articleTitle - Article title (display or DB key form)
- * @param {string} selectedText - The quoted text
+ * @param {string|null} selectedText - The quoted text, or null if no text is selected
  * @return {string} Full URL with text fragment
  */
 function buildShareUrl( articleTitle, selectedText ) {
 	const articlePath = mw.util.getUrl( articleTitle );
-	const baseUrl = new URL( articlePath, location.origin ).href;
-	const fragment = createTextFragmentDirective( selectedText );
+	let url = new URL( articlePath, location.origin ).href;
 
-	return baseUrl + '?wprov=' + WPROV_VALUE + '#' + fragment;
+	// incoming traffic detection: T422084
+	url += '?wprov=' + WPROV_VALUE;
+
+	if ( selectedText ) {
+		url += '#' + createTextFragmentDirective( selectedText );
+	}
+
+	return url;
 }
 
 module.exports = {
