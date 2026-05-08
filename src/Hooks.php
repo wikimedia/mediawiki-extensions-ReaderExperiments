@@ -391,10 +391,6 @@ class Hooks implements
 	 *   - null: unenrolled / ineligible
 	 */
 	private function getShareHighlightEnrollment( Skin $skin ): ?string {
-		if ( !$skin->getConfig()->get( 'ReaderExperimentsShareHighlightEnabled' ) ) {
-			return null;
-		}
-
 		// Bail early for ineligible requests, non-minerva skin, and logged-in users
 		$title = $skin->getTitle();
 		if (
