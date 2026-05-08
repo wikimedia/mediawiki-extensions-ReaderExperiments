@@ -29,6 +29,7 @@
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "다른 프로젝트에서 이미지를 불러오는 중",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "글에서 보기",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "$1에서",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "$1 및 위키백과의 $2개 기타 언어{{PLURAL:$2|판}}에서",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "$1에서",
 	"readerexperiments-minerva-toc-contents-button-label": "내용",
 	"readerexperiments-minerva-toc-edit-button-label": "편집",
@@ -50,7 +51,7 @@
 	"readerexperiments-sharehighlight-download": "다운로드",
 	"readerexperiments-sharehighlight-downloading": "다운로드 중",
 	"readerexperiments-sharehighlight-loading": "불러오는 중...",
-	"readerexperiments-sharehighlight-share-title": "\"$1\"에서 인용 — 위키백과",
-	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\n위키백과에서 더 보기: $2",
+	"readerexperiments-sharehighlight-share-title": "\"$1\"에서 인용 — $2",
+	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\n$3에서 더 보기: $2",
 	"readerexperiments-sharehighlight-image-author-license": "이미지: $1 · $2"
 }

@@ -50,7 +50,7 @@
 	"readerexperiments-sharehighlight-download": "Lataa",
 	"readerexperiments-sharehighlight-downloading": "Ladataan",
 	"readerexperiments-sharehighlight-loading": "Ladataan…",
-	"readerexperiments-sharehighlight-share-title": "Lainaus artikkelista ”$1” – Wikipedia",
-	"readerexperiments-sharehighlight-share-text-with-branding": "”$1”\n\nLue lisää Wikipediassa: $2",
+	"readerexperiments-sharehighlight-share-title": "Lainaus artikkelista ”$1” – $2",
+	"readerexperiments-sharehighlight-share-text-with-branding": "”$1”\n\nLue lisää {{GRAMMAR:inessive|$3}}: $2",
 	"readerexperiments-sharehighlight-image-author-license": "Kuva: $1 · $2"
 }
