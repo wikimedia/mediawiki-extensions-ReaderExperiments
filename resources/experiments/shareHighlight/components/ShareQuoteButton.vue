@@ -8,6 +8,7 @@
 				<cdx-button
 					weight="primary"
 					action="progressive"
+					size="large"
 					@click="$emit( 'share-request' )"
 				>
 					<cdx-icon :icon="cdxIconShare"></cdx-icon>
