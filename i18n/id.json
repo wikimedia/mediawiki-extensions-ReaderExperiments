@@ -29,5 +29,21 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Lihat di artikel",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Dari $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Berasal dari $1 dan $2 bahasa lainnya di Wikipedia",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Dari $1"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Dari $1",
+	"readerexperiments-minerva-toc-contents-button-label": "Daftar isi",
+	"readerexperiments-minerva-toc-edit-button-label": "Sunting",
+	"readerexperiments-minerva-toc-region-label": "Daftar isi",
+	"readerexperiments-minerva-toc-top-link": "(Atas)",
+	"readerexperiments-mobilepagepreviews-loading": "Memuat pratinjau",
+	"readerexperiments-mobilepagepreviews-read-more": "Baca selengkapnya",
+	"readerexperiments-mobilepagepreviews-title": "Pratinjau halaman",
+	"readerexperiments-mobilepagepreviews-close-button-label": "Tutup",
+	"readerexperiments-sharehighlight-toolbar-share": "Bagikan",
+	"readerexperiments-sharehighlight-share-quote": "Bagikan kutipan",
+	"readerexperiments-sharehighlight-background-legend": "Latar belakang",
+	"readerexperiments-sharehighlight-background-average": "Rerata",
+	"readerexperiments-sharehighlight-copy-link": "Salin pranala",
+	"readerexperiments-sharehighlight-share": "Bagikan",
+	"readerexperiments-sharehighlight-download": "Unduh",
+	"readerexperiments-sharehighlight-image-author-license": "Gambar: $1 · $2"
 }

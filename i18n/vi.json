@@ -32,5 +32,19 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Từ $1 và $2 {{PLURAL:$2|phiên bản}} ngôn ngữ khác của Wikipedia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Từ $1",
 	"readerexperiments-minerva-toc-contents-button-label": "Nội dung",
-	"readerexperiments-mobilepagepreviews-read-more": "Đọc thêm"
+	"readerexperiments-minerva-toc-edit-button-label": "Sửa đổi",
+	"readerexperiments-minerva-toc-region-label": "Mục lục",
+	"readerexperiments-minerva-toc-top-link": "(Đầu)",
+	"readerexperiments-mobilepagepreviews-loading": "Đang tải bản xem trước",
+	"readerexperiments-mobilepagepreviews-read-more": "Đọc thêm",
+	"readerexperiments-mobilepagepreviews-title": "Xem trước trang",
+	"readerexperiments-mobilepagepreviews-close-button-label": "Đóng",
+	"readerexperiments-sharehighlight-toolbar-share": "Chia sẻ",
+	"readerexperiments-sharehighlight-share-quote": "Chia sẻ trích dẫn",
+	"readerexperiments-sharehighlight-background-legend": "Nền",
+	"readerexperiments-sharehighlight-background-average": "Trung bình",
+	"readerexperiments-sharehighlight-copy-link": "Sao chép liên kết",
+	"readerexperiments-sharehighlight-share": "Chia sẻ",
+	"readerexperiments-sharehighlight-download": "Tải về",
+	"readerexperiments-sharehighlight-image-author-license": "Hình ảnh: $1 · $2"
 }

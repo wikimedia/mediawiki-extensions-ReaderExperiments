@@ -32,5 +32,19 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "從 $1 和 $2 個其他語言{{PLURAL:$2|版本}}的維基百科",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "從$1",
 	"readerexperiments-minerva-toc-contents-button-label": "目次",
-	"readerexperiments-minerva-toc-top-link": "（首段）"
+	"readerexperiments-minerva-toc-edit-button-label": "編輯",
+	"readerexperiments-minerva-toc-region-label": "目錄",
+	"readerexperiments-minerva-toc-top-link": "（首段）",
+	"readerexperiments-mobilepagepreviews-loading": "載入預覽",
+	"readerexperiments-mobilepagepreviews-read-more": "延伸閱讀",
+	"readerexperiments-mobilepagepreviews-title": "頁面預覽",
+	"readerexperiments-mobilepagepreviews-close-button-label": "關閉",
+	"readerexperiments-sharehighlight-toolbar-share": "分享",
+	"readerexperiments-sharehighlight-share-quote": "分享引用",
+	"readerexperiments-sharehighlight-background-legend": "背景",
+	"readerexperiments-sharehighlight-background-average": "平均",
+	"readerexperiments-sharehighlight-copy-link": "複製連結",
+	"readerexperiments-sharehighlight-share": "分享",
+	"readerexperiments-sharehighlight-download": "下載",
+	"readerexperiments-sharehighlight-image-author-license": "圖片：$1 · $2"
 }

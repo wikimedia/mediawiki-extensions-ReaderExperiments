@@ -3,7 +3,8 @@
 		"authors": [
 			"Dyolf77 (WMF)",
 			"Meno25",
-			"Mohammed Qays"
+			"Mohammed Qays",
+			"Bachounda"
 		]
 	},
 	"readerexperiments-desc": "مجموعة من النماذج الأولية التي تهدف إلى زيادة عدد قراء ويكيبيديا",
@@ -40,6 +41,7 @@
 	"readerexperiments-mobilepagepreviews-read-more": "اقرأ المزيد",
 	"readerexperiments-mobilepagepreviews-title": "معاينة الصفحة",
 	"readerexperiments-mobilepagepreviews-close-button-label": "أغلق",
+	"readerexperiments-sharehighlight-toolbar-share": "شارك",
 	"readerexperiments-sharehighlight-share-quote": "شارك الاقتباس",
 	"readerexperiments-sharehighlight-dialog-title": "شارك الاقتباس",
 	"readerexperiments-sharehighlight-background-legend": "الخلفية",
@@ -52,5 +54,6 @@
 	"readerexperiments-sharehighlight-generating-image": "جارٍ إنشاء الصورة...",
 	"readerexperiments-sharehighlight-share-title": "اقتباس من «$1» - ويكيبيديا",
 	"readerexperiments-sharehighlight-share-text": "«$1»\n\nاقرأ المزيد: $2",
-	"readerexperiments-sharehighlight-branding": "ويكيبيديا"
+	"readerexperiments-sharehighlight-branding": "ويكيبيديا",
+	"readerexperiments-sharehighlight-image-author-license": "الصورة: $1 · $2"
 }
