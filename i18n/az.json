@@ -50,7 +50,7 @@
 	"readerexperiments-sharehighlight-download": "Yüklə",
 	"readerexperiments-sharehighlight-downloading": "Endirilir",
 	"readerexperiments-sharehighlight-loading": "Yüklənir…",
-	"readerexperiments-sharehighlight-share-title": "\"$1\" səhifəsindən dən sitat — Vikipediya",
-	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nDaha ətraflı Vikipediyada oxuyun: $2",
+	"readerexperiments-sharehighlight-share-title": "\"$1\" səhifəsindən dən sitat — $2",
+	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nDaha ətraflı $3 saytında oxuyun: $2",
 	"readerexperiments-sharehighlight-image-author-license": "Şəkil: $1 · $2"
 }

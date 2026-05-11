@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Repakr"
+		]
+	},
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Більше",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Менше",
+	"readerexperiments-imagebrowsing-detail-crop": "Повний екран",
+	"readerexperiments-imagebrowsing-detail-share": "Поділитися",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Переглянути у Вікісховищі",
+	"readerexperiments-imagebrowsing-detail-download": "Завантажити",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Закрити",
+	"readerexperiments-imagebrowsing-overlay-label": "Подробиці файлу",
+	"readerexperiments-mobilepagepreviews-read-more": "Читати більше",
+	"readerexperiments-mobilepagepreviews-close-button-label": "Закрити",
+	"readerexperiments-sharehighlight-dialog-title": "Поділитися",
+	"readerexperiments-sharehighlight-share": "Поділитися",
+	"readerexperiments-sharehighlight-download": "Завантажити",
+	"readerexperiments-sharehighlight-downloading": "Завантаження",
+	"readerexperiments-sharehighlight-loading": "Завантаження…"
+}
