@@ -4,13 +4,14 @@
 		<!-- Capture selectedText immediately; clicking clears browser selection -->
 		<share-quote-button
 			:visible="hasSelection && !isShareDialogOpen"
-			@share-request="() => openShareDialog( selectedText )"
+			@share-request="() => openShareDialog( selectedText, fragmentText )"
 		></share-quote-button>
 
 		<share-quote-dialog
 			v-model:open="isShareDialogOpen"
 			:title="title"
 			:quote-text="quoteTextForDialog"
+			:quote-fragment="quoteFragmentForDialog"
 		></share-quote-dialog>
 	</div>
 </template>
@@ -44,11 +45,12 @@ module.exports = exports = {
 		const contentRef = toRef( props, 'contentElement' );
 
 		// Text selection handling
-		const { selectedText, hasSelection, clearSelection } = useTextSelection( contentRef );
+		const { selectedText, fragmentText, hasSelection, clearSelection } = useTextSelection( contentRef );
 
 		// Share dialog state
 		const isShareDialogOpen = ref( false );
 		const quoteTextForDialog = ref( '' );
+		const quoteFragmentForDialog = ref( '' );
 
 		const title = mw.Title.newFromText( mw.config.get( 'wgPageName' ) );
 
@@ -57,16 +59,20 @@ module.exports = exports = {
 		 * If none provided, dialog will load summary instead.
 		 *
 		 * @param {string} [text] Quote text to show in the dialog
+		 * @param {string} [fragment] Raw selection text (with footnote markers
+		 *   etc. retained) used to generate the share link's text fragment
 		 */
-		function openShareDialog( text = '' ) {
+		function openShareDialog( text = '', fragment = '' ) {
 			isShareDialogOpen.value = true;
 			quoteTextForDialog.value = text;
+			quoteFragmentForDialog.value = fragment;
 		}
 
 		// Clear selection when dialog closes
 		watch( isShareDialogOpen, ( isOpen ) => {
 			if ( !isOpen ) {
 				quoteTextForDialog.value = '';
+				quoteFragmentForDialog.value = '';
 				clearSelection();
 			}
 		} );
@@ -82,9 +88,11 @@ module.exports = exports = {
 		return {
 			hasSelection,
 			selectedText,
+			fragmentText,
 			isShareDialogOpen,
 			title,
 			quoteTextForDialog,
+			quoteFragmentForDialog,
 			openShareDialog
 		};
 	}

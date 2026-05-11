@@ -140,6 +140,16 @@ module.exports = exports = {
 		quoteText: {
 			type: String,
 			default: ''
+		},
+		/**
+		 * The raw selection text form to use in fragment links.
+		 * This will include things like footnotes that are excluded
+		 * from the displayed text but need to be preserved in the
+		 * link.
+		 */
+		quoteFragment: {
+			type: String,
+			default: ''
 		}
 	},
 	emits: [ 'update:open' ],
@@ -196,10 +206,11 @@ module.exports = exports = {
 		const summaryTitle = computed( () => ( needsSummary.value ? props.title : null ) );
 		const summary = useSummary( summaryTitle, onError );
 
-		// User selection is only used to generate the share link.
-		const userSelection = computed( () => {
-			return props.quoteText ? props.quoteText : null;
-		} );
+		// Raw user selection (with footnote markers etc. retained) — used to
+		// build the URL fragment so it still matches the rendered DOM text
+		// content. Falls back to null when there's no selection, which causes
+		// buildShareUrl to omit the text fragment directive entirely.
+		const userSelection = computed( () => props.quoteFragment ? props.quoteFragment : null );
 
 		// Text to share becomes the summary extract if there's no user selection.
 		const text = computed( () => {
@@ -505,7 +516,9 @@ module.exports = exports = {
 		 * Copy the text fragment link to clipboard.
 		 */
 		function handleCopyLink() {
-			// Don't append the text fragment to the URL if there's no user selection
+			// userSelection is the raw selection (including footnote markers)
+			// so the fragment text matches what's in the rendered DOM.
+			// It's null when there's no selection, which omits the directive.
 			const url = textFragment.buildShareUrl( props.title.getMainText(), userSelection.value );
 			// eslint-disable-next-line compat/compat
 			navigator.clipboard.writeText( url ).then( () => {
