@@ -4,6 +4,7 @@
 
 const { ref, onMounted, onUnmounted } = require( 'vue' );
 const { CHARS_THRESHOLD } = require( '../utils/textFragment.js' );
+const EXCLUDED_SELECTORS = '.mw-editsection, .reference, .noexcerpt';
 
 /**
  * Manage text selection detection within a specific container element.
@@ -15,6 +16,7 @@ module.exports = function useTextSelection( containerRef ) {
 	const minWords = 2;
 
 	const selectedText = ref( '' );
+	const fragmentText = ref( '' );
 	const hasSelection = ref( false );
 
 	let debounceTimer = null;
@@ -42,60 +44,74 @@ module.exports = function useTextSelection( containerRef ) {
 		}
 
 		debounceTimer = setTimeout( () => {
-			const selection = window.getSelection();
+			const finalRange = computeFinalRange();
 
-			// Check if there's a valid selection
-			if ( !selection || selection.rangeCount === 0 || selection.isCollapsed ) {
-				hasSelection.value = false;
+			if ( !finalRange ) {
 				selectedText.value = '';
+				fragmentText.value = '';
+				hasSelection.value = false;
 				return;
 			}
 
-			const range = selection.getRangeAt( 0 );
-
-			// Check if selection is within our container
-			if ( !isWithinContainer( range.commonAncestorContainer ) ) {
-				hasSelection.value = false;
-				selectedText.value = '';
-				return;
-			}
-
-			let text = selection.toString();
-			const tokens = tokenize( text );
-
-			// If Intl.Segmenter is not available or tokenization failed,
-			// fall back to a split on ASCII non-word characters.
-			// Filter out non-word-like tokens.
-			let wordTokens;
-			if ( tokens !== null ) {
-				wordTokens = tokens.filter( ( t ) => t.isWordLike );
-			} else {
-				wordTokens = text.split( /\W+/ );
-			}
-
-			// Check minimum length.
-			// Mid-word selections would still count as a word.
-			if ( wordTokens.length < minWords ) {
-				hasSelection.value = false;
-				selectedText.value = '';
-				return;
-			}
-
-			// Snap selection to entire words
-			// if its start and/or end is in the middle of a word.
-			const snappedRange = snapToWords( range, tokens );
-
-			// Clip selection to its starting block element
-			// if it's short enough and spans multiple blocks.
-			text = clipToStartBlock( snappedRange, containerRef.value );
-			if ( text === null ) {
-				text = snappedRange.toString().trim();
-			}
-
-			// Update state
-			selectedText.value = text;
+			selectedText.value = rangeToText( finalRange, false );
+			fragmentText.value = rangeToText( finalRange, true );
 			hasSelection.value = true;
 		}, 150 );
+	}
+
+	/**
+	 * Adjust the selection range to include partial words, and clip it to a single
+	 * block element.
+	 *
+	 * @return {Range|null}
+	 */
+	function computeFinalRange() {
+		const selection = window.getSelection();
+
+		// Check if there's a valid selection
+		if ( !selection || selection.rangeCount === 0 || selection.isCollapsed ) {
+			return null;
+		}
+
+		// Note: the API allows discontinuous selections, but nobody
+		// seems to implement that, that we know of, so we're simplifying
+		// our life by using only a single range.
+		const range = selection.getRangeAt( 0 );
+
+		// Check if selection is within our container
+		if ( !isWithinContainer( range.commonAncestorContainer ) ) {
+			return null;
+		}
+
+		// Tokenize the raw selection string. The exclusion list only
+		// matters for the final display/fragment text, so cloning the
+		// contents here would be wasted work.
+		const text = range.toString();
+		const tokens = tokenize( text );
+
+		// If Intl.Segmenter is not available or tokenization failed,
+		// fall back to a split on ASCII non-word characters.
+		// Filter out non-word-like tokens.
+		let wordTokens;
+		if ( tokens !== null ) {
+			wordTokens = tokens.filter( ( t ) => t.isWordLike );
+		} else {
+			wordTokens = text.split( /\W+/ );
+		}
+
+		// Check minimum length.
+		// Mid-word selections would still count as a word.
+		if ( wordTokens.length < minWords ) {
+			return null;
+		}
+
+		// Snap selection to entire words
+		// if its start and/or end is in the middle of a word.
+		const snappedRange = snapToWords( range, tokens );
+
+		// Clip selection to its starting block element if it's short
+		// enough and spans multiple blocks.
+		return clipToStartBlockRange( snappedRange, containerRef.value ) || snappedRange;
 	}
 
 	/**
@@ -104,6 +120,7 @@ module.exports = function useTextSelection( containerRef ) {
 	function clearSelection() {
 		hasSelection.value = false;
 		selectedText.value = '';
+		fragmentText.value = '';
 		const selection = window.getSelection();
 		if ( selection ) {
 			selection.removeAllRanges();
@@ -305,9 +322,9 @@ module.exports = function useTextSelection( containerRef ) {
 	 *
 	 * @param {Range} range - Selection range to clip
 	 * @param {HTMLElement} container - Range container element
-	 * @return {string|null} Starting block text, or null if no clipping is necessary
+	 * @return {Range|null} Clipped range, or null if no clipping is necessary
 	 */
-	function clipToStartBlock( range, container ) {
+	function clipToStartBlockRange( range, container ) {
 		// Selection is long enough: clipping shouldn't be necessary
 		if ( range.toString().trim().length > CHARS_THRESHOLD ) {
 			return null;
@@ -321,12 +338,36 @@ module.exports = function useTextSelection( containerRef ) {
 			return null;
 		}
 
-		// Clip the range to the end of startBlock and return its text
+		// Clip the range to the end of startBlock
 		const clipped = document.createRange();
 		clipped.setStart( range.startContainer, range.startOffset );
 		clipped.setEnd( startBlock, startBlock.childNodes.length );
 
-		return clipped.toString().trim();
+		return clipped;
+	}
+
+	/**
+	 * Convert a Range to its text content. When keepExcluded is true, returns
+	 * the raw range string (used for the URL fragment, which must match the
+	 * rendered DOM including footnote markers and edit links). When false,
+	 * clones the range and strips EXCLUDED_SELECTORS before extracting text
+	 * (used for the visible quote text shown to the user).
+	 *
+	 * @param {Range} range
+	 * @param {boolean} keepExcluded - If true, return raw text including
+	 *   excluded selectors; if false, strip them first
+	 * @return {string}
+	 */
+	function rangeToText( range, keepExcluded ) {
+		if ( keepExcluded ) {
+			return range.toString().trim();
+		}
+		const fragment = range.cloneContents();
+		const excluded = fragment.querySelectorAll( EXCLUDED_SELECTORS );
+		for ( const el of excluded ) {
+			el.remove();
+		}
+		return fragment.textContent.trim();
 	}
 
 	onMounted( () => {
@@ -341,8 +382,9 @@ module.exports = function useTextSelection( containerRef ) {
 	} );
 
 	return {
-		selectedText: selectedText,
-		hasSelection: hasSelection,
-		clearSelection: clearSelection
+		selectedText,
+		fragmentText,
+		hasSelection,
+		clearSelection
 	};
 };
