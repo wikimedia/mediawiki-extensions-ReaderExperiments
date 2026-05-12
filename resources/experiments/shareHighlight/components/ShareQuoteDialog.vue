@@ -230,7 +230,7 @@ module.exports = exports = {
 				// Minimum dimension (width and height) required for the original image.
 				// Images smaller than this threshold are excluded to avoid poor quality in the
 				// share card.
-				if ( originalWidth < 500 ) {
+				if ( originalWidth < 264 ) {
 					return null;
 				}
 
@@ -243,12 +243,10 @@ module.exports = exports = {
 				// Thumbnail size to request must be a standard Wikimedia production thumbnail
 				// size to ensure the thumbnail is cached and avoid rate limiting.
 				// Refer to https://www.mediawiki.org/wiki/Common_thumbnail_sizes
-				// 960px is chosen because the QuoteCard renders at 2× pixel ratio on
-				// a ~375px-wide mobile card, requiring ~750px effective width. 960px is the
-				// smallest standard size that exceeds this threshold. 500px would be too small
-				// and result in upscaling.
+				// The QuoteCard renders at 264px wide which, at a 2× pixel ratio
+				// requires at least 528px effective width.
 				const width = mw.util.adjustThumbWidthForSteps(
-					960,
+					528,
 					originalWidth
 				);
 				// `width` should not be one of the thumbnail steps, unless the original
