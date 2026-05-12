@@ -1,6 +1,12 @@
 const Vue = require( 'vue' );
 const App = require( './App.vue' );
 
+// Don't initialize if the browser doesn't support CSS has (T424873).
+// https://developer.mozilla.org/en-US/docs/Web/API/CSS/supports_static#examples
+if ( !CSS.supports( 'selector(:has(a))' ) ) {
+	return;
+}
+
 const container = document.createElement( 'div' );
 container.setAttribute( 'id', 'ext-readerExperiments-shareHighlight' );
 document.getElementById( 'content' ).appendChild( container );

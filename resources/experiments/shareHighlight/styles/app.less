@@ -30,7 +30,8 @@
 	z-index: @z-index-above-content;
 }
 
-/* stylelint-disable-next-line selector-max-id */
+/* :has() support is checked in init.js */
+/* stylelint-disable-next-line selector-max-id, plugin/no-unsupported-browser-features */
 body:not( :has( #ext-readerExperiments-shareHighlight ) ) #page-actions-re-share {
 	display: none;
 }
