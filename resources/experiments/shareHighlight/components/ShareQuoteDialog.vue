@@ -233,8 +233,9 @@ module.exports = exports = {
 				}
 
 				const parsedUrl = mw.util.parseImageUrl( thumbnailSrc );
-				if ( !parsedUrl ) {
-					// If we can't parse the url, default to the original src
+				if ( !parsedUrl || !parsedUrl.resizeUrl ) {
+					// If we can't construct a new thumbnail URL, default to the
+					// original src instead of throwing on unusual image URL shapes.
 					return originalSrc;
 				}
 
