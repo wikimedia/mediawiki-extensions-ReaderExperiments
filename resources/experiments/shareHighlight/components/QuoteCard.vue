@@ -218,6 +218,11 @@ module.exports = exports = {
 				}
 
 				const parsedUrl = mw.util.parseImageUrl( image );
+				if ( !parsedUrl || !parsedUrl.name ) {
+					imageSrc.value = image;
+					imageCrossOrigin.value = 'anonymous';
+					return;
+				}
 				const encodedSrcSuffix = encodeURI( parsedUrl.name.replace( / /g, '_' ) )
 					// uriencode some more special chars that encodeURI doesn't cover,
 					// but we would expect to be encoded for our thumbnail URIs
