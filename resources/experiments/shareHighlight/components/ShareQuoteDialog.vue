@@ -7,7 +7,7 @@
 		@update:open="onOpenChange"
 	>
 		<!-- Quote Preview -->
-		<div v-if="!error">
+		<div v-if="!error" class="ext-readerExperiments-shareQuoteDialog__preview">
 			<quote-card
 				ref="quoteCardRef"
 				:title="title"
@@ -17,9 +17,9 @@
 				:image-license="imageLicense"
 				:style-variant="selectedStyleRef"
 				:show-article-title="!!quoteText"
+				:style="{ transform: 'scale(' + scale + ')' }"
 				@img-load="onImageLoad"
 				@img-error="onImageError"
-				:style="{ transform: 'scale(' + scale + ') translateX( calc( ( -1 * 0.5 * ( 1 - ' + scale + ' ) ) * 100% ) )' }"
 			></quote-card>
 		</div>
 
@@ -547,12 +547,14 @@ module.exports = exports = {
 				return 1;
 			}
 
-			// The dialog will be adjusted to the (relatively small) width of the card.
-			// This will only ever scale *down*, and never by much, as we have a hard
-			// cap at 320px dialog width (below which Minerva already stops supporting)
-			// We will not also scale by height: if the card height exceeds the
-			// available height in the dialog, it will simply be scrollable.
-			return cardElement.parentElement.clientWidth / cardElement.scrollWidth;
+			// Scale down to whichever axis is more constrained, so the card
+			// fits both the dialog's width (capped at ~320px) and its
+			// available height (capped via the __preview wrapper on small
+			// viewports — see the style block). Never scale up.
+			const parent = cardElement.parentElement;
+			const widthRatio = parent.clientWidth / cardElement.scrollWidth;
+			const heightRatio = parent.clientHeight / cardElement.scrollHeight;
+			return Math.min( widthRatio, heightRatio, 1 );
 		} );
 
 		return {
@@ -591,6 +593,29 @@ module.exports = exports = {
 @import 'mediawiki.skin.variables.less';
 
 .ext-readerExperiments-shareQuoteDialog {
+	&__preview {
+		// Pin the card's top edge so vertical scaling (see the `scale`
+		// computed) shrinks toward the bottom rather than the center.
+		> * {
+			transform-origin: top center;
+		}
+
+		// Cap the preview height on sub-tablet viewports so the dialog
+		// (which is bottom-aligned at this breakpoint) cannot push its
+		// own header off the top of the screen. The JS `scale` computed
+		// reads `clientHeight` here and scales the card to fit.
+		// `vh` for legacy Safari (<15.4, e.g. iPhone 5/6, 1st-gen SE on
+		// iOS 15.0–15.3); `dvh` where supported so the cap also accounts
+		// for the address bar showing/hiding.
+		@media ( max-width: @min-width-breakpoint-tablet ) {
+			max-height: 70vh;
+
+			@supports ( max-height: 70dvh ) {
+				max-height: 70dvh;
+			}
+		}
+	}
+
 	&__error {
 		margin-top: @spacing-100;
 	}
