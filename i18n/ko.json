@@ -29,6 +29,7 @@
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "다른 프로젝트에서 이미지를 불러오는 중",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "글에서 보기",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "$1에서",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "$1 및 위키백과의 $2개 기타 언어{{PLURAL:$2|판}}에서",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "$1에서",
 	"readerexperiments-minerva-toc-contents-button-label": "내용",
 	"readerexperiments-minerva-toc-edit-button-label": "편집",
