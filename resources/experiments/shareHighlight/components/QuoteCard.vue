@@ -516,7 +516,7 @@ module.exports = exports = {
 
 	&__image {
 		flex: 1 1 0;
-		min-height: 14.77rem;
+		min-height: 0;
 		width: 100%;
 		display: block;
 		object-fit: cover;
