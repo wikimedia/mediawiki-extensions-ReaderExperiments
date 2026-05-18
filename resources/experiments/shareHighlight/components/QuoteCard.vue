@@ -515,8 +515,9 @@ module.exports = exports = {
 	}
 
 	&__image {
+		background: @background-color-base-fixed;
 		flex: 1 1 0;
-		min-height: 14.77rem;
+		min-height: 0;
 		width: 100%;
 		display: block;
 		object-fit: cover;
