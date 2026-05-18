@@ -395,7 +395,7 @@ module.exports = exports = {
 			const key = linkCopiedRef.value ?
 				'readerexperiments-sharehighlight-link-copied' :
 				'readerexperiments-sharehighlight-copy-link';
-			// eslint-disable-next-line mediawiki/msg-doc
+
 			return mw.msg( key );
 		} );
 
@@ -403,7 +403,7 @@ module.exports = exports = {
 			const key = canShareFiles.value ?
 				'readerexperiments-sharehighlight-share' :
 				'readerexperiments-sharehighlight-download';
-			// eslint-disable-next-line mediawiki/msg-doc
+
 			return mw.msg( key );
 		} );
 
@@ -411,7 +411,7 @@ module.exports = exports = {
 			const key = isDownloadingRef.value ?
 				'readerexperiments-sharehighlight-downloading' :
 				'readerexperiments-sharehighlight-download';
-			// eslint-disable-next-line mediawiki/msg-doc
+
 			return mw.msg( key );
 		} );
 

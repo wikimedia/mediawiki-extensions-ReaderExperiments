@@ -13,7 +13,7 @@
  * @return {mw.Message}
  */
 module.exports = function rawParamsMessage( key, ...parameters ) {
-	// eslint-disable-next-line mediawiki/msg-doc
+
 	const msg = mw.message( key, ...parameters );
 	const rawParameters = parameters.map( ( value, index ) => '$' + ( index + 1 ) );
 
