@@ -1,7 +1,6 @@
 {
 	"@metadata": {
 		"authors": [
-			"Aquasen",
 			"Dyolf77 (WMF)",
 			"Escargot bleu",
 			"Geugeor-WMF",
@@ -54,7 +53,7 @@
 	"readerexperiments-sharehighlight-download": "Télécharger",
 	"readerexperiments-sharehighlight-downloading": "Téléchargement",
 	"readerexperiments-sharehighlight-loading": "Chargement en cours...",
-	"readerexperiments-sharehighlight-share-title": "Citation tirée de \"$1\" — $2",
-	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nEn savoir plus sur $3: $2",
+	"readerexperiments-sharehighlight-share-title": "Citation tirée de \"$1\" — Wikipédia",
+	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nEn savoir plus sur Wikipédia : $2",
 	"readerexperiments-sharehighlight-image-author-license": "Image: $1 · $2"
 }

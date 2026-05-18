@@ -201,7 +201,7 @@ module.exports = exports = {
 			() => ( error.value = null )
 		);
 
-		const summaryTitle = computed( () => ( props.open && needsSummary.value ? props.title : null ) );
+		const summaryTitle = computed( () => ( needsSummary.value ? props.title : null ) );
 		const summary = useSummary( summaryTitle, onError );
 
 		// Raw user selection (with footnote markers etc. retained) — used to
