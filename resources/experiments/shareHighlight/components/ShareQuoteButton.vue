@@ -6,7 +6,6 @@
 				class="ext-readerExperiments-shareQuoteButton"
 			>
 				<cdx-button
-					weight="primary"
 					action="progressive"
 					size="large"
 					@click="$emit( 'share-request' )"
@@ -61,6 +60,7 @@ module.exports = exports = {
 	.cdx-button {
 		box-shadow: @box-shadow-drop-medium;
 		white-space: nowrap;
+		border-radius: @border-radius-pill;
 	}
 }
 
