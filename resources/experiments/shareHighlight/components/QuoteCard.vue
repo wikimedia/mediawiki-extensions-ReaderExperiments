@@ -357,10 +357,15 @@ module.exports = exports = {
 	// Aspect ratio dimensions (preview size, rendered at 2x for image)
 	&--1x1 {
 		aspect-ratio: 1/1;
+		border: @border-base;
 	}
 
 	&--9x16 {
 		aspect-ratio: 9/16;
+
+		.ext-readerExperiments-quoteCard__quotes {
+			margin-top: @spacing-125;
+		}
 	}
 
 	// stylelint-disable-next-line plugin/no-unsupported-browser-features
@@ -372,11 +377,11 @@ module.exports = exports = {
 		font-style: normal;
 	}
 
+	/* stylelint-disable-next-line no-descending-specificity */
 	&__quotes {
 		display: flex;
 		align-items: center;
 		align-self: stretch;
-		margin-top: @spacing-125;
 	}
 
 	&__branding_and_attribution {

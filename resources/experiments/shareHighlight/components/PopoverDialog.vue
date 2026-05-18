@@ -198,15 +198,7 @@ module.exports = exports = {
 <style lang="less">
 @import 'mediawiki.skin.variables.less';
 
-// Instead of a fullscreen dialog, style as a "popover" on mobile screens.
-// This is anchored to the bottom of the screen and sized vertically to fit
-// its content.
 @media ( max-width: @min-width-breakpoint-tablet ) {
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-	.cdx-dialog-backdrop:has( .ext-readerExperiments-popover-dialog ) {
-		align-items: end;
-	}
-
 	.ext-readerExperiments-popover-dialog.cdx-dialog {
 		border-top: @border-subtle;
 	}
