@@ -17,8 +17,7 @@ const htmlToImage = require( 'ext.readerExperiments/lib/html-to-image' );
  */
 function generateImageBlob( element, options ) {
 	const scale = ( options && options.scale ) || 2;
-	const computedBg = window.getComputedStyle( element ).backgroundColor;
-	const backgroundColor = computedBg;
+	const backgroundColor = window.getComputedStyle( element ).backgroundColor;
 	// Force the captured PNG to the card's natural size, regardless of
 	// any preview-scaling the dialog applies to the live element:
 	//   - `width` / `height`: pin the SVG dimensions html-to-image
