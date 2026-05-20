@@ -12,9 +12,8 @@
 			}
 		]"
 		:style="{
-			'--dominant-color-hex': color ? color.hex : 'var( --background-color-base-fixed, #fff )',
-			'--dominant-color-contrasting': color ? `oklch( from ${ color.hex } calc( l * ${ color.isDark ? 100 : 0 } ) c h )` : 'var( --color-base-fixed, #000 )',
-			'--dominant-color-contrasting--legacy': color ? ( color.isDark ? 'white' : 'black' ) : 'var( --color-base-fixed, #000 )'
+			'--dominant-color-hex': dominantColorHex,
+			'--dominant-color-contrasting': dominantColorContrasting
 		}"
 	>
 		<div class="ext-readerExperiments-quoteCard__content">
@@ -71,10 +70,13 @@
 					<inline-svg
 						v-if="showArticleTitle"
 						:src="wikipediaWLogo"
+						:inline-styles="{ 'path:not( [ fill=\'none\' ] )': { fill: dominantColorContrasting } }"
+						:alt="wordmark ? wordmark.alt : ''"
 					></inline-svg>
 					<inline-svg
 						v-else-if="wordmark"
 						:src="wordmark.src"
+						:inline-styles="{ 'path:not( [ fill=\'none\' ] )': { fill: dominantColorContrasting } }"
 						:alt="wordmark.alt"
 						:style="{
 							'--wordmark-width': wordmark.width + 'px',
@@ -92,9 +94,21 @@
 					{{ title.getMainText() }}
 				</div>
 				<div class="ext-readerExperiments-quoteCard__attribution">
-					<inline-svg :src="creativeCommonsCC" alt="CC"></inline-svg>
-					<inline-svg :src="creativeCommonsBY" alt="BY"></inline-svg>
-					<inline-svg :src="creativeCommonsSA" alt="SA"></inline-svg>
+					<inline-svg
+						:src="creativeCommonsCC"
+						:inline-styles="{ 'path:not( [ fill=\'none\' ] )': { fill: dominantColorContrasting } }"
+						alt="CC"
+					></inline-svg>
+					<inline-svg
+						:src="creativeCommonsBY"
+						:inline-styles="{ 'path:not( [ fill=\'none\' ] )': { fill: dominantColorContrasting } }"
+						alt="BY"
+					></inline-svg>
+					<inline-svg
+						:src="creativeCommonsSA"
+						:inline-styles="{ 'path:not( [ fill=\'none\' ] )': { fill: dominantColorContrasting } }"
+						alt="SA"
+					></inline-svg>
 				</div>
 			</div>
 			<!-- eslint-disable vue/no-v-html -->
@@ -313,6 +327,20 @@ module.exports = exports = {
 			return msg.text();
 		} );
 
+		// Note that we're not using 'var( --background-color-base-fixed )' etc.
+		// on purpose here: these styles may be applied directly onto standalone
+		// elements (SVGs) that lack the context of the document's other styles.
+		const dominantColorHex = computed( () => color.value ? color.value.hex : /* --background-color-base-fixed */ '#fff' );
+		const dominantColorContrasting = computed( () => {
+			if ( !color.value ) {
+				return /* --color-base-fixed */ '#202122';
+			} else if ( CSS.supports( 'color', 'oklch( from white l c h )' ) ) {
+				return `oklch( from ${ color.value.hex } calc( l * ${ color.value.isDark ? 100 : 0 } ) c h )`;
+			} else {
+				return color.value.isDark ? '#fff' : '#000';
+			}
+		} );
+
 		// Expose cardRef for parent to access DOM element for image generation
 		expose( { cardRef: cardRef } );
 
@@ -330,7 +358,9 @@ module.exports = exports = {
 			creativeCommonsBY,
 			creativeCommonsSA,
 			wikipediaWLogo,
-			imageAttribution
+			imageAttribution,
+			dominantColorHex,
+			dominantColorContrasting
 		};
 	}
 };
@@ -402,10 +432,6 @@ module.exports = exports = {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-
-		span {
-			vertical-align: text-top;
-		}
 	}
 
 	&__image_attribution {
@@ -429,12 +455,6 @@ module.exports = exports = {
 		}
 	}
 
-	.ext-readerExperiments-quoteCard__branding {
-		svg path[ fill='none' ] {
-			fill: none;
-		}
-	}
-
 	.ext-readerExperiments-quoteCard__wordmark {
 		svg {
 			width: var( --wordmark-width );
@@ -454,35 +474,15 @@ module.exports = exports = {
 	// Style variants
 	&--average {
 		background-color: var( --dominant-color-hex );
-		color: var( --dominant-color-contrasting--legacy );
-
-		@supports ( color: oklch( from white l c h ) ) {
-			color: var( --dominant-color-contrasting );
-		}
+		color: var( --dominant-color-contrasting );
 
 		.ext-readerExperiments-quoteCard__quotes {
-			color: var( --dominant-color-contrasting--legacy );
+			color: var( --dominant-color-contrasting );
 			opacity: 0.5;
-
-			@supports ( color: oklch( from white l c h ) ) {
-				color: var( --dominant-color-contrasting );
-			}
 		}
 
 		.ext-readerExperiments-quoteCard__branding {
-			color: var( --dominant-color-contrasting--legacy );
-
-			@supports ( color: oklch( from white l c h ) ) {
-				color: var( --dominant-color-contrasting );
-			}
-
-			svg path {
-				fill: var( --dominant-color-contrasting--legacy );
-
-				@supports ( color: oklch( from white l c h ) ) {
-					fill: var( --dominant-color-contrasting );
-				}
-			}
+			color: var( --dominant-color-contrasting );
 		}
 	}
 
@@ -500,10 +500,6 @@ module.exports = exports = {
 
 		.ext-readerExperiments-quoteCard__branding {
 			color: #000;
-
-			svg path {
-				fill: #000;
-			}
 		}
 	}
 
