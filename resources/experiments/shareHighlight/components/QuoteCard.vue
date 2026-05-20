@@ -456,7 +456,7 @@ module.exports = exports = {
 	}
 
 	.ext-readerExperiments-quoteCard__wordmark {
-		svg {
+		img {
 			width: var( --wordmark-width );
 			height: var( --wordmark-height );
 		}
