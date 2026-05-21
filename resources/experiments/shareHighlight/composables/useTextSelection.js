@@ -4,7 +4,7 @@
 
 const { ref, onMounted, onUnmounted } = require( 'vue' );
 const { CHARS_THRESHOLD } = require( '../utils/textFragment.js' );
-const EXCLUDED_SELECTORS = '.mw-editsection, .reference, .noexcerpt';
+const EXCLUDED_SELECTORS = '.mw-editsection, .reference, .noexcerpt, .noprint, .mw-empty-elt, [typeof="mw:Extension/templatestyles"]';
 
 /**
  * Manage text selection detection within a specific container element.
