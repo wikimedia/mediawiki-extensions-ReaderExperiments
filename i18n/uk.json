@@ -38,6 +38,7 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Читати більше",
 	"readerexperiments-mobilepagepreviews-title": "Попередній перегляд сторінки",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Закрити",
+	"readerexperiments-sharehighlight-blue-dot-label": "Нова функція поширення",
 	"readerexperiments-sharehighlight-toolbar-share": "Поділитися",
 	"readerexperiments-sharehighlight-share-quote": "Поділитися цитатою",
 	"readerexperiments-sharehighlight-dialog-title": "Поділитися",
@@ -49,6 +50,7 @@
 	"readerexperiments-sharehighlight-download": "Завантажити",
 	"readerexperiments-sharehighlight-downloading": "Завантаження",
 	"readerexperiments-sharehighlight-loading": "Завантаження…",
+	"readerexperiments-sharehighlight-generating": "Генерується зображення",
 	"readerexperiments-sharehighlight-share-title": "Цитата з «$1» — $2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "«$1»\n\nЧитайте більше у $3: $2",
 	"readerexperiments-sharehighlight-image-author-license": "Зображення: $1 · $2"
