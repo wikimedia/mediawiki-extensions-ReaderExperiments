@@ -3,5 +3,31 @@
 		"authors": [
 			"AhmedG612"
 		]
-	}
+	},
+	"readerexperiments-desc": "Qayb tijaabooyin ah oo loogu talagalay kordhinta akhristayaasha Wikipedia",
+	"readerexperiments-imagebrowsing-carousel-label": "Baadhista sawirrada",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Dooro sawirka \"$1\"",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Dheeraad",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Ka yar",
+	"readerexperiments-imagebrowsing-detail-crop": "Shaashad Buuxa",
+	"readerexperiments-imagebrowsing-detail-share": "Faafi",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Nuqul",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Ka eeg Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Soo deji",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Faylka asalka ah ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Yar ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Dhexdhexaad ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Weyn ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Aad u weyn ($1×$2 px)",
+	"readerexperiments-imagebrowsing-loading": "Soo raraya",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Ku noqo maqaalka",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Xir",
+	"readerexperiments-imagebrowsing-overlay-label": "Faahfaahinta sawirka",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Wax badan oo ka socda maqaalkan",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Warbaahin ka timid mashaariic kale",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Soo rarista sawirrada mashaariicda kale",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Eeg maqaalka",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Laga bilaabo $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Laga soo qaatay $1 iyo $2 {{PLURAL:$2|daabacaad|daabacaado}} luqado kale oo Wikipedia ah",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Laga bilaabo $1"
 }
