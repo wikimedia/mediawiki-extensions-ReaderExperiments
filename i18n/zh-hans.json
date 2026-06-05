@@ -3,7 +3,8 @@
 		"authors": [
 			"EBlackorby-WMF",
 			"GuoPC",
-			"Peterxy12"
+			"Peterxy12",
+			"Peterxy"
 		]
 	},
 	"readerexperiments-desc": "一套旨在增加维基百科读者的原型版本",
@@ -36,9 +37,15 @@
 	"readerexperiments-minerva-toc-edit-button-label": "编辑",
 	"readerexperiments-minerva-toc-region-label": "目录",
 	"readerexperiments-minerva-toc-top-link": "（首段）",
+	"readerexperiments-mobilepagepreviews-loading": "正在加载预览",
+	"readerexperiments-mobilepagepreviews-read-more": "阅读更多",
+	"readerexperiments-mobilepagepreviews-title": "页面预览",
+	"readerexperiments-mobilepagepreviews-close-button-label": "关闭",
+	"readerexperiments-sharehighlight-toolbar-share": "分享",
 	"readerexperiments-sharehighlight-share-quote": "分享引文",
 	"readerexperiments-sharehighlight-dialog-title": "分享引文",
 	"readerexperiments-sharehighlight-background-legend": "背景",
+	"readerexperiments-sharehighlight-background-average": "平均",
 	"readerexperiments-sharehighlight-copy-link": "复制链接",
 	"readerexperiments-sharehighlight-link-copied": "已复制！",
 	"readerexperiments-sharehighlight-cancel": "取消",
@@ -46,5 +53,6 @@
 	"readerexperiments-sharehighlight-download": "下载",
 	"readerexperiments-sharehighlight-generating-image": "正在生成图像…",
 	"readerexperiments-sharehighlight-share-title": "引自“$1”——维基百科",
-	"readerexperiments-sharehighlight-share-text": "“$1”\n\n阅读更多：$2"
+	"readerexperiments-sharehighlight-share-text": "“$1”\n\n阅读更多：$2",
+	"readerexperiments-sharehighlight-image-author-license": "图像：$1 · $2"
 }
