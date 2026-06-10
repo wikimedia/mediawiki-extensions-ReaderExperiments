@@ -153,40 +153,8 @@ $wgTestKitchenEnable = true;
 $wgTestKitchenEnableExperiments = true;
 $wgTestKitchenEnableExperimentOverrides = true;
 
-# Image browsing experiment's stream, pasted from
-# https://github.com/wikimedia/operations-mediawiki-config/blob/f9cafeb65f80a685b64eb519691e8e4a95486e56/wmf-config/ext-EventStreamConfig.php#L2518
 $wgEventStreams = [
-	'mediawiki.product_metrics.readerexperiments_imagebrowsing' => [
-		'schema_title' => 'analytics/product_metrics/web/base',
-		'destination_event_service' => 'eventgate-analytics-external',
-		'producers' => [
-			'metrics_platform_client' => [
-				'provide_values' => [
-					// Contextual attributes, see
-					// https://wikitech.wikimedia.org/wiki/Test_Kitchen/Contextual_attributes
-					'agent_client_platform',
-					'agent_client_platform_family',
-					'mediawiki_database',
-					'mediawiki_skin',
-					'page_content_language',
-					'page_namespace_id',
-					'performer_is_bot',
-					'performer_is_logged_in',
-					'performer_is_temp',
-					'performer_session_id',
-				],
-			],
-			'eventgate' => [
-				'enrich_fields_from_http_headers' => [
-					// Don't collect the HTTP user agent.
-					'http.request_headers.user-agent' => false,
-				],
-				// Target non-logged readers through edge unique cookies, see
-				// https://wikitech.wikimedia.org/wiki/Edge_uniques
-				'use_edge_uniques' => true,
-			],
-		],
-	],
+	// Add custom streams here.
 ];
 $wgTestKitchenExperimentStreamNames = array_keys( $wgEventStreams );
 ```
