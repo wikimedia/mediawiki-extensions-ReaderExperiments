@@ -7,5 +7,9 @@
 	},
 	"readerexperiments-imagebrowsing-detail-share": "Jyevi",
 	"readerexperiments-imagebrowsing-detail-download": "Luođii",
-	"readerexperiments-sharehighlight-download": "Luođii"
+	"readerexperiments-sharehighlight-toolbar-share": "Jyevi",
+	"readerexperiments-sharehighlight-dialog-title": "Jyevi",
+	"readerexperiments-sharehighlight-share": "Jyevi",
+	"readerexperiments-sharehighlight-download": "Luođii",
+	"readerexperiments-sharehighlight-image-author-license": "Kove: $1 · $2"
 }
