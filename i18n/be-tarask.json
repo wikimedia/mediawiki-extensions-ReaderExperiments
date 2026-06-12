@@ -5,7 +5,9 @@
 		]
 	},
 	"readerexperiments-imagebrowsing-detail-share-copy": "Капіяваць",
+	"readerexperiments-imagebrowsing-detail-download": "Сьцягнуць",
 	"readerexperiments-imagebrowsing-loading": "Ладаваньне",
 	"readerexperiments-minerva-toc-edit-button-label": "Рэдагаваць",
-	"readerexperiments-mobilepagepreviews-loading": "Ладаваньне папярэдняга прагляду"
+	"readerexperiments-mobilepagepreviews-loading": "Ладаваньне папярэдняга прагляду",
+	"readerexperiments-sharehighlight-download": "Сьцягнуць"
 }
