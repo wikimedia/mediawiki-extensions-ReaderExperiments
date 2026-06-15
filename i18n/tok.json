@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Palinasin"
+			"Palinasin",
+			"Recqy"
 		]
 	},
 	"readerexperiments-minerva-toc-edit-button-label": "o ante",
 	"readerexperiments-minerva-toc-region-label": "lipu jo",
 	"readerexperiments-sharehighlight-share-quote": "o pana e toki ni",
-	"readerexperiments-sharehighlight-dialog-title": "o pana e toki ni",
+	"readerexperiments-sharehighlight-dialog-title": "o pana",
 	"readerexperiments-sharehighlight-background-legend": "sitelen monsi",
 	"readerexperiments-sharehighlight-share": "o pana"
 }
