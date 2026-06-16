@@ -129,8 +129,7 @@
 				"composables/useSmartCrop.js",
 				"composables/useMediaSearchResults.js",
 				"composables/useMwApi.js",
-				"composables/useUniqueExternalGlobalUsageWikis.js",
-				"plugins/instrumentationPlugin.js"
+				"composables/useUniqueExternalGlobalUsageWikis.js"
 			],
 			"styles": [],
 			"messages": [
@@ -258,16 +257,6 @@
 				"@wikimedia/codex"
 			]
 		},
-		"ext.readerExperiments/minervaToc.instrumentation": {
-			"localBasePath": "resources/experiments/minervaToc",
-			"remoteExtPath": "ReaderExperiments/resources/experiments/minervaToc",
-			"dependencies": [
-				"ext.testKitchen"
-			],
-			"packageFiles": [
-				"instrumentation.js"
-			]
-		},
 		"ext.readerExperiments/minervaToc.sticky": {
 			"localBasePath": "resources/experiments/minervaToc",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/minervaToc",
@@ -275,8 +264,7 @@
 				"initStickyHeader.js"
 			],
 			"dependencies": [
-				"ext.readerExperiments/minervaToc",
-				"ext.readerExperiments/minervaToc.instrumentation"
+				"ext.readerExperiments/minervaToc"
 			]
 		},
 		"ext.readerExperiments/minervaToc.button": {
@@ -286,8 +274,7 @@
 				"initFloatingButton.js"
 			],
 			"dependencies": [
-				"ext.readerExperiments/minervaToc",
-				"ext.readerExperiments/minervaToc.instrumentation"
+				"ext.readerExperiments/minervaToc"
 			]
 		},
 		"ext.readerExperiments/lib/html-to-image": {
@@ -307,7 +294,6 @@
 				"mediawiki.util",
 				"ext.readerExperiments",
 				"ext.readerExperiments/shareHighlight.toolbarBlueDot",
-				"ext.readerExperiments/shareHighlight.instrumentation",
 				"ext.readerExperiments/lib/html-to-image"
 			],
 			"packageFiles": [
@@ -379,18 +365,6 @@
 				"readerexperiments-sharehighlight-blue-dot-label"
 			]
 		},
-		"ext.readerExperiments/shareHighlight.instrumentation": {
-			"localBasePath": "resources/experiments/shareHighlight",
-			"remoteExtPath": "ReaderExperiments/resources/experiments/shareHighlight",
-			"dependencies": [
-				"ext.testKitchen"
-			],
-			"packageFiles": [
-				"instrumentation.js"
-			],
-			"styles": [],
-			"messages": []
-		},
 		"ext.readerExperiments/mobilePagePreviews": {
 			"localBasePath": "resources/experiments/mobilePagePreviews",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/mobilePagePreviews",
@@ -426,22 +400,6 @@
 				"readerexperiments-mobilepagepreviews-read-more",
 				"readerexperiments-mobilepagepreviews-title",
 				"readerexperiments-mobilepagepreviews-close-button-label"
-			]
-		},
-		"ext.readerExperiments/mobilePagePreviews.instrumentation": {
-			"localBasePath": "resources/experiments/mobilePagePreviews",
-			"remoteExtPath": "ReaderExperiments/resources/experiments/mobilePagePreviews",
-			"dependencies": [
-				"ext.testKitchen",
-				"ext.wikimediaEvents"
-			],
-			"packageFiles": [
-				"instrumentation.js",
-				{
-					"name": "config.json",
-					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getMobilePagePreviewsConfig"
-				},
-				"copiedFromPopups.js"
 			]
 		}
 	},

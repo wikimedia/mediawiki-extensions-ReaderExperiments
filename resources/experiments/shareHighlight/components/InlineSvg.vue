@@ -23,7 +23,6 @@ module.exports = exports = {
 		/**
 		 * URL to source image; must be local-origin.
 		 */
-		// eslint-disable-next-line vue/no-unused-properties
 		src: {
 			type: [ String, null ],
 			default: null

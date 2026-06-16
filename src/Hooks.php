@@ -41,35 +41,21 @@ class Hooks implements
 	ShouldUseParsoidHook,
 	SkinTemplateNavigation__UniversalHook
 {
-	// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
-	// https://test-kitchen.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
-	private const IMAGE_BROWSING_EXPERIMENT_1_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
-	private const IMAGE_BROWSING_GROUP_1_NAME = 'image-browsing-test';
-	// Tier 2: 0.1% English Wikipedia.
-	// https://test-kitchen.wikimedia.org/experiment/image-browsing-enwiki
-	private const IMAGE_BROWSING_EXPERIMENT_2_NAME = 'image-browsing-enwiki';
-	private const IMAGE_BROWSING_GROUP_2_NAME = 'treatment';
+	private const IMAGE_BROWSING_EXPERIMENT_NAME = 'image-browsing-enwiki';
+	private const IMAGE_BROWSING_GROUP_NAME = 'treatment';
 
-	// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
-	// https://test-kitchen.wikimedia.org/experiment/sticky-headers
 	private const STICKY_HEADERS_EXPERIMENT_NAME = 'sticky-headers';
 	private const STICKY_HEADERS_GROUP_NAME = 'treatment';
 
-	// TODO: Replace with actual TestKitchen experiment name & treatment group once defined
 	private const SHARE_HIGHLIGHT_EXPERIMENT_NAME = 'share-highlight';
 	private const SHARE_HIGHLIGHT_GROUP_NAME = 'treatment';
 
-	// For baseline A/A test:
 	private const SHARE_HIGHLIGHT_BASELINE_EXPERIMENT_NAME = 'share-highlight-baseline';
 
-	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
-	// https://test-kitchen.wikimedia.org/experiment/mobile-toc-abc2
 	private const MINERVA_TOC_EXPERIMENT_NAME = 'mobile-toc-abc2';
 	private const MINERVA_TOC_GROUP_STICKY = 'treatment1';
 	private const MINERVA_TOC_GROUP_BUTTON = 'treatment2';
-	// END MINERVA_TOC_EXPERIMENTS (T415611)
 
-	// https://test-kitchen.wikimedia.org/experiment/mobile-page-previews
 	private const MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME = 'mobile-page-previews';
 	private const MOBILE_PAGE_PREVIEWS_GROUP_NAME = 'treatment';
 
@@ -246,8 +232,7 @@ class Hooks implements
 			$out->getSkin()->getSkinName() === 'minerva' &&
 			(
 				// phpcs:disable Generic.Files.LineLength.TooLong
-				$this->getAssignedGroup( $request, self::IMAGE_BROWSING_EXPERIMENT_1_NAME ) === self::IMAGE_BROWSING_GROUP_1_NAME ||
-				$this->getAssignedGroup( $request, self::IMAGE_BROWSING_EXPERIMENT_2_NAME ) === self::IMAGE_BROWSING_GROUP_2_NAME ||
+				$this->getAssignedGroup( $request, self::IMAGE_BROWSING_EXPERIMENT_NAME ) === self::IMAGE_BROWSING_GROUP_NAME ||
 				// phpcs:enable Generic.Files.LineLength.TooLong
 				$request->getFuzzyBool( 'imageBrowsing' )
 			)
@@ -331,10 +316,6 @@ class Hooks implements
 			// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
 			$assignedGroup = $this->getAssignedGroup( $request, self::MINERVA_TOC_EXPERIMENT_NAME );
 
-			if ( $assignedGroup !== null ) {
-				$out->addModules( 'ext.readerExperiments/minervaToc.instrumentation' );
-			}
-
 			if ( $assignedGroup === self::MINERVA_TOC_GROUP_STICKY ) {
 				$out->addModules( 'ext.readerExperiments/minervaToc.sticky' );
 			}
@@ -357,11 +338,6 @@ class Hooks implements
 			] );
 			$out->addModules( 'ext.readerExperiments/shareHighlight' );
 		}
-
-		// Instrumentation loads for both 'treatment' and 'baseline' so we capture
-		// baseline metrics across the main experiment's control group and the
-		// separate baseline A/A experiment.
-		$out->addModules( 'ext.readerExperiments/shareHighlight.instrumentation' );
 
 		$pageSize = 0;
 		$context = $out->getContext();
@@ -412,7 +388,7 @@ class Hooks implements
 			return 'treatment';
 		}
 
-		// Control/baseline group (gets instrumentation only)
+		// Control/baseline group
 		$baseline = $this->getAssignedGroup( $request, self::SHARE_HIGHLIGHT_BASELINE_EXPERIMENT_NAME );
 		if ( $group !== null || $baseline !== null ) {
 			return 'baseline';
@@ -467,10 +443,6 @@ class Hooks implements
 		}
 
 		$assignedGroup = $this->getAssignedGroup( $request, self::MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME );
-
-		if ( $assignedGroup !== null ) {
-			$out->addModules( 'ext.readerExperiments/mobilePagePreviews.instrumentation' );
-		}
 
 		if ( $assignedGroup === self::MOBILE_PAGE_PREVIEWS_GROUP_NAME ) {
 			$out->addModules( 'ext.readerExperiments/mobilePagePreviews' );

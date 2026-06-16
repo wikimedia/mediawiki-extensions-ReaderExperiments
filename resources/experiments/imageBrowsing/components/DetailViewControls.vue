@@ -18,7 +18,6 @@
 			class="ib-detail-view-controls__share"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-share' ).text()"
 			:disabled="loading"
-			@update:model-value="onShareToggle"
 		>
 			<cdx-icon :icon="cdxIconShare"></cdx-icon>
 		</cdx-toggle-button>
@@ -51,7 +50,6 @@
 			target="_blank"
 			rel="noreferrer noopener"
 			:disabled="loading"
-			@click="onCommonsGoTo"
 		>
 			<cdx-icon :icon="cdxIconLogoWikimediaCommons"></cdx-icon>
 		</a>
@@ -63,7 +61,6 @@
 			class="ib-detail-view-controls__download"
 			:aria-label="$i18n( 'readerexperiments-imagebrowsing-detail-download' ).text()"
 			:disabled="loading"
-			@update:model-value="onDownloadToggle"
 		>
 			<cdx-icon :icon="cdxIconDownload"></cdx-icon>
 		</cdx-toggle-button>
@@ -153,8 +150,6 @@ module.exports = exports = defineComponent( {
 		const triggerDownloadElement = useTemplateRef( 'triggerDownloadElement' );
 
 		const imageInfo = ref( null );
-
-		const submitInteraction = inject( 'submitInteraction' ); // Instrumentation plugin
 
 		const fetchImageInfo = async ( image ) => {
 			loading.value = true;
@@ -290,42 +285,6 @@ module.exports = exports = defineComponent( {
 			emit( 'detail-view-crop-toggle', !toggled );
 		}
 
-		/* eslint-disable camelcase */
-		function onShareToggle( toggled ) {
-			if ( toggled ) {
-				submitInteraction(
-					'click',
-					{
-						action_subtype: 'share',
-						action_source: 'detail_view'
-					}
-				);
-			}
-		}
-
-		function onCommonsGoTo() {
-			submitInteraction(
-				'click',
-				{
-					action_subtype: 'commons',
-					action_source: 'detail_view'
-				}
-			);
-		}
-
-		function onDownloadToggle( toggled ) {
-			if ( toggled ) {
-				submitInteraction(
-					'click',
-					{
-						action_subtype: 'download',
-						action_source: 'detail_view'
-					}
-				);
-			}
-		}
-		/* eslint-enable camelcase */
-
 		function onClipboardCopyTo() {
 			// navigator.clipboard() is not supported in Safari 11.1, iOS Safari 11.3-11.4
 			if ( navigator.clipboard && navigator.clipboard.writeText ) {
@@ -359,9 +318,6 @@ module.exports = exports = defineComponent( {
 			triggerDownloadElement,
 			triggerShareElement,
 			onCropToggle,
-			onShareToggle,
-			onCommonsGoTo,
-			onDownloadToggle,
 			onClipboardCopyTo,
 			onFileDownload,
 			onDownloadSizeChange

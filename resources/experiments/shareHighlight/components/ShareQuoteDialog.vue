@@ -17,9 +17,9 @@
 				:image-license="imageLicense"
 				:style-variant="selectedStyleRef"
 				:show-article-title="!!quoteText"
+				:style="{ transform: 'scale(' + scale + ') translateX( calc( ( -1 * 0.5 * ( 1 - ' + scale + ' ) ) * 100% ) )' }"
 				@img-load="onImageLoad"
 				@img-error="onImageError"
-				:style="{ transform: 'scale(' + scale + ') translateX( calc( ( -1 * 0.5 * ( 1 - ' + scale + ' ) ) * 100% ) )' }"
 			></quote-card>
 		</div>
 
@@ -101,8 +101,6 @@ const PopoverDialog = require( './PopoverDialog.vue' );
 const QuoteCard = require( './QuoteCard.vue' );
 const useShareQuote = require( '../composables/useShareQuote.js' );
 const textFragment = require( '../utils/textFragment.js' );
-const { getShareHighlightInstrument } = require( 'ext.readerExperiments/shareHighlight.instrumentation' );
-const instrument = getShareHighlightInstrument();
 
 // @vue/component
 module.exports = exports = {
@@ -373,7 +371,6 @@ module.exports = exports = {
 				// eslint-disable-next-line camelcase
 				data.action_source = 'page_share';
 			}
-			instrument.send( action, data );
 		};
 
 		// Share functionality
@@ -396,6 +393,7 @@ module.exports = exports = {
 				'readerexperiments-sharehighlight-link-copied' :
 				'readerexperiments-sharehighlight-copy-link';
 
+			// eslint-disable-next-line mediawiki/msg-doc
 			return mw.msg( key );
 		} );
 
@@ -404,6 +402,7 @@ module.exports = exports = {
 				'readerexperiments-sharehighlight-share' :
 				'readerexperiments-sharehighlight-download';
 
+			// eslint-disable-next-line mediawiki/msg-doc
 			return mw.msg( key );
 		} );
 
@@ -412,6 +411,7 @@ module.exports = exports = {
 				'readerexperiments-sharehighlight-downloading' :
 				'readerexperiments-sharehighlight-download';
 
+			// eslint-disable-next-line mediawiki/msg-doc
 			return mw.msg( key );
 		} );
 
@@ -642,6 +642,7 @@ module.exports = exports = {
 		// bar (dis)appearing while swiping), and iOS Safari (at least in
 		// simulator) has been observed to get it wrong.
 		// 100dvh more clearly expresses the intent!
+		// stylelint-disable-next-line plugin/no-unsupported-browser-features
 		max-height: calc( 100dvh - 2rem );
 	}
 }

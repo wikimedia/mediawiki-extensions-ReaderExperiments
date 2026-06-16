@@ -25,7 +25,7 @@
 </template>
 
 <script>
-const { defineComponent, ref, inject, onMounted, ComponentPublicInstance } = require( 'vue' );
+const { defineComponent, ref, ComponentPublicInstance } = require( 'vue' );
 const CarouselItem = require( './CarouselItem.vue' );
 
 // @vue/component
@@ -62,40 +62,14 @@ module.exports = exports = defineComponent( {
 		// This follows Codex Tabs pattern.
 		const carouselItemRefs = ref( new Map() );
 
-		// Instrumentation.
-		const clickCounter = ref( 0 );
-		const submitInteraction = inject( 'submitInteraction' );
-
-		/* eslint-disable camelcase */
-		onMounted( () => {
-			// Instrument carousel load.
-			submitInteraction( 'image_carousel_load', { action_source: 'init' } );
-		} );
-
 		/**
 		 * @param {import("../types").ImageData} image
 		 */
 		function onItemClick( image ) {
 			// By now, this is either a mouse-induced click, a <Space> keyup,
 			// or an <Enter> keyup.
-
 			emit( 'carousel-item-click', image );
-
-			clickCounter.value += 1;
-
-			// Instrument click on a carousel image.
-			const interactionData = {
-				action_subtype: 'view_image',
-				action_source: 'image_carousel'
-			};
-			// Additional interaction field on the first image click only.
-			// To be used for click-through rate computation.
-			if ( clickCounter.value === 1 ) {
-				interactionData.action_context = 'image1';
-			}
-			submitInteraction( 'click', interactionData );
 		}
-		/* eslint-enable camelcase */
 
 		/**
 		 * Store pointers to each carousel item element following Codex Tabs pattern

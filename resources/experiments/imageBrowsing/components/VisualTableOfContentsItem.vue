@@ -51,7 +51,7 @@
 </template>
 
 <script>
-const { computed, defineComponent, inject, onMounted, onUnmounted, useTemplateRef } = require( 'vue' );
+const { computed, defineComponent, useTemplateRef } = require( 'vue' );
 const { CdxButton, useResizeObserver } = require( '@wikimedia/codex' );
 const CroppedImage = require( './CroppedImage.vue' );
 const { getCaptionIfAvailable } = require( 'ext.readerExperiments' );
@@ -129,50 +129,13 @@ module.exports = exports = defineComponent( {
 		// Event handlers.
 		//
 
-		// Instrumentation plugin.
-		const submitInteraction = inject( 'submitInteraction' );
-		const manageLinkEventListeners = inject( 'manageLinkEventListeners' );
-
-		onMounted( () => {
-			manageLinkEventListeners( captionTextElement, onCaptionLinkClick );
-		} );
-
-		// When the component is unmounted,
-		// remove wikilinks' click event listeners.
-		onUnmounted( () => {
-			manageLinkEventListeners(
-				captionTextElement, onCaptionLinkClick, true
-			);
-		} );
-
 		function onItemClick( image ) {
 			emit( 'vtoc-item-click', image );
 		}
 
-		/* eslint-disable camelcase */
-		function onCaptionLinkClick() {
-			// Instrument click on a VTOC caption's link.
-			submitInteraction(
-				'click',
-				{
-					action_subtype: 'caption_link',
-					action_source: 'visual_table_of_contents'
-				}
-			);
-		}
-
 		function onViewInArticle( image ) {
 			emit( 'vtoc-view-in-article', image );
-
-			submitInteraction(
-				'click',
-				{
-					action_subtype: 'view_in_article',
-					action_source: 'visual_table_of_contents'
-				}
-			);
 		}
-		/* eslint-enable camelcase */
 
 		const imageLabel = computed( () => useImageLabel( props.image ) );
 

@@ -39,7 +39,9 @@ function maybeShowToolbarBlueDot( buttonElement ) {
 
 	const blueDot = document.createElement( 'div' );
 
+	// eslint-disable-next-line mediawiki/class-doc
 	toolbarShareButtonItem.classList.add( TOOLBAR_BLUE_DOT_HOST_CLASS );
+	// eslint-disable-next-line mediawiki/class-doc
 	blueDot.className = 'mw-pulsating-dot ' + TOOLBAR_BLUE_DOT_CLASS;
 	blueDot.setAttribute( 'role', 'img' );
 	blueDot.setAttribute(

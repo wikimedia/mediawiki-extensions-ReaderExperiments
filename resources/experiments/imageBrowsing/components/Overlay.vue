@@ -64,7 +64,7 @@
 </template>
 
 <script>
-const { defineComponent, useTemplateRef, inject, onMounted, onBeforeUnmount } = require( 'vue' );
+const { defineComponent, useTemplateRef, onMounted, onBeforeUnmount } = require( 'vue' );
 const DetailView = require( './DetailView.vue' );
 const VisualTableOfContents = require( './VisualTableOfContents.vue' );
 const VisualTableOfContentsOtherWikis = require( './VisualTableOfContentsOtherWikis.vue' );
@@ -122,8 +122,6 @@ module.exports = exports = defineComponent( {
 		const detailViewRef = useTemplateRef( 'detailViewRef' );
 		const existingBodyOverflow = document.body.style.overflow;
 
-		const submitInteraction = inject( 'submitInteraction' ); // Instrumentation plugin
-
 		function focusFirstFocusableElement( container, backwards = false, preventScroll = false ) {
 			// Find all focusable elements in the container.
 			// Exclude elements with a negative tabindex; those are technically focusable, but are
@@ -178,11 +176,6 @@ module.exports = exports = defineComponent( {
 
 		function onClose() {
 			emit( 'overlay-close' );
-
-			// Instrument overlay close.
-			// Same action as the carousel load, but 'close' instead of 'init'.
-			// eslint-disable-next-line camelcase
-			submitInteraction( 'image_carousel_load', { action_source: 'close' } );
 		}
 
 		/**
@@ -200,19 +193,6 @@ module.exports = exports = defineComponent( {
 					behavior: 'smooth'
 				} );
 			}
-
-			// Instrument click on a VTOC image.
-			// There's no distinction between images in the article and from other wikis:
-			// the event is the same, thus firing here.
-			submitInteraction(
-				'click',
-				{
-					/* eslint-disable camelcase */
-					action_subtype: 'view_image',
-					action_source: 'visual_table_of_contents'
-					/* eslint-enable camelcase */
-				}
-			);
 		}
 
 		/**

@@ -20,12 +20,6 @@ jest.mock(
 	} ) )
 );
 
-jest.mock( 'ext.readerExperiments/shareHighlight.instrumentation', () => ( {
-	getShareHighlightInstrument: () => ( {
-		send: jest.fn()
-	} )
-} ), { virtual: true } );
-
 const ShareQuoteDialog = require( '../../resources/experiments/shareHighlight/components/ShareQuoteDialog.vue' );
 
 describe( 'ShareQuoteDialog', () => {

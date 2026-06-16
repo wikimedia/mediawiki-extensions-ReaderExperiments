@@ -4,7 +4,6 @@
 
 const Vue = require( 'vue' );
 const App = require( './App.vue' );
-const instrumentation = require( './plugins/instrumentationPlugin.js' );
 
 /**
  * Check if the current browser is supported.
@@ -52,45 +51,5 @@ if ( !isSupportedBrowser() ) {
 	return;
 }
 
-//
-// Instrumentation setup
-//
-
-// Tier 1: 10% Arabic, Chinese, French, Indonesian, and Vietnamese Wikipedias.
-// https://test-kitchen.wikimedia.org/experiment/fy2025-26-we3.1-image-browsing-ab-test
-const TIER_ONE_EXPERIMENT_NAME = 'fy2025-26-we3.1-image-browsing-ab-test';
-// Tier 2: 0.1% English Wikipedia.
-// https://test-kitchen.wikimedia.org/experiment/image-browsing-enwiki
-const TIER_TWO_EXPERIMENT_NAME = 'image-browsing-enwiki';
-const SCHEMA_NAME = '/analytics/product_metrics/web/base/2.0.0';
-const INSTRUMENT_NAME = 'ImageBrowsingInstrument';
-
-/**
- * @type {InstrumentationPluginConfig}
- */
-const analyticsConfig = {
-	enabled: false,
-	instrumentName: INSTRUMENT_NAME,
-	experiments: null
-};
-
-mw.loader.using( 'ext.testKitchen' )
-	// Use a soft-require to determine whether Test Kitchen is available;
-	// if so use it, if not then don't enable the instrumentation.
-	.then( () => {
-		const tierOne = mw.testKitchen.compat.getExperiment( TIER_ONE_EXPERIMENT_NAME );
-		tierOne.setSchema( SCHEMA_NAME );
-
-		const tierTwo = mw.testKitchen.compat.getExperiment( TIER_TWO_EXPERIMENT_NAME );
-		tierTwo.setSchema( SCHEMA_NAME );
-
-		analyticsConfig.enabled = true;
-		analyticsConfig.experiments = [ tierOne, tierTwo ];
-	} )
-	// Mount the Vue app regardless of whether logging is enabled, but if so
-	// then ensure the instrumentation plugin gets the appropriate config
-	.always( () => {
-		const imageBrowsingApp = Vue.createMwApp( App );
-		imageBrowsingApp.use( instrumentation, analyticsConfig );
-		imageBrowsingApp.mount( '#ext-readerExperiments-imageBrowsing' );
-	} );
+const imageBrowsingApp = Vue.createMwApp( App );
+imageBrowsingApp.mount( '#ext-readerExperiments-imageBrowsing' );

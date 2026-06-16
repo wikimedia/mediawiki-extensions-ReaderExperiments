@@ -50,7 +50,7 @@
 </template>
 
 <script>
-const { defineComponent, computed, ref, useTemplateRef, inject, onMounted, onUnmounted, watch, nextTick } = require( 'vue' );
+const { defineComponent, computed, ref, useTemplateRef, onMounted, watch, nextTick } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const { cdxIconAdd, cdxIconSubtract } = require( '../icons.json' );
 const { getCaptionIfAvailable } = require( 'ext.readerExperiments' );
@@ -83,10 +83,6 @@ module.exports = exports = defineComponent( {
 		const isCaptionExpanded = ref( false );
 		const captionTextElement = useTemplateRef( 'captionTextElement' );
 
-		// Instrumentation plugin.
-		const submitInteraction = inject( 'submitInteraction' );
-		const manageLinkEventListeners = inject( 'manageLinkEventListeners' );
-
 		function calculateCaptionOverflow() {
 			canCaptionExpand.value = captionTextElement.value &&
 				captionTextElement.value.clientHeight !== captionTextElement.value.scrollHeight;
@@ -97,7 +93,6 @@ module.exports = exports = defineComponent( {
 		// - add click event listeners to wikilinks
 		onMounted( () => {
 			calculateCaptionOverflow();
-			manageLinkEventListeners( captionTextElement, onCaptionLinkClick );
 		} );
 
 		// Check this again if the caption text changes (regardless of source)
@@ -107,52 +102,17 @@ module.exports = exports = defineComponent( {
 				isCaptionExpanded.value = false;
 				nextTick( () => {
 					calculateCaptionOverflow();
-					manageLinkEventListeners( captionTextElement, onCaptionLinkClick );
 				} );
 			}
 		);
-
-		// When the component is unmounted, remove wikilinks' click event listeners.
-		onUnmounted( () => {
-			manageLinkEventListeners(
-				captionTextElement, onCaptionLinkClick, true
-			);
-		} );
-
-		// When the caption expands or collapses, update wikilinks' click event listeners.
-		watch( isCaptionExpanded, () => {
-			nextTick( manageLinkEventListeners( captionTextElement, onCaptionLinkClick ) );
-		} );
 
 		//
 		// Event handlers.
 		//
 
-		/* eslint-disable camelcase */
-		function onCaptionLinkClick() {
-			// Instrument click on a detail view caption's link.
-			submitInteraction(
-				'click',
-				{
-					action_subtype: 'caption_link',
-					action_source: 'detail_view'
-				}
-			);
-		}
-
 		function onCaptionExpand() {
 			isCaptionExpanded.value = true;
-
-			// Instrument click on the 'More' button.
-			submitInteraction(
-				'click',
-				{
-					action_subtype: 'more',
-					action_source: 'detail_view'
-				}
-			);
 		}
-		/* eslint-enable camelcase */
 
 		function onCaptionCollapse() {
 			isCaptionExpanded.value = false;

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-const { defineComponent, inject, ref, watch } = require( 'vue' );
+const { defineComponent, ref, watch } = require( 'vue' );
 const CroppedImage = require( './CroppedImage.vue' );
 const DetailViewCaption = require( './DetailViewCaption.vue' );
 const DetailViewControls = require( './DetailViewControls.vue' );
@@ -59,24 +59,8 @@ module.exports = exports = defineComponent( {
 
 		// The child component `DetailViewControls` emits an untoggled state.
 		// See comment in the same event handler there for an explanation.
-		const submitInteraction = inject( 'submitInteraction' );
 		function onCropToggle( untoggled ) {
 			isCropped.value = untoggled;
-
-			// Instrument click on the crop button.
-			// Not implemented in the child component,
-			// since the state check doesn't work there.
-			if ( !untoggled ) {
-				submitInteraction(
-					'click',
-					{
-						/* eslint-disable camelcase */
-						action_subtype: 'full_image',
-						action_source: 'detail_view'
-						/* eslint-enable camelcase */
-					}
-				);
-			}
 		}
 
 		return {
