@@ -4,5 +4,11 @@
 			"Yupik"
 		]
 	},
-	"readerexperiments-imagebrowsing-detail-share": "Juoge"
+	"readerexperiments-imagebrowsing-detail-share": "Juoge",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Máŋge",
+	"readerexperiments-sharehighlight-toolbar-share": "Juoge",
+	"readerexperiments-sharehighlight-background-average": "Gaskaárvu",
+	"readerexperiments-sharehighlight-share": "Juoge",
+	"readerexperiments-sharehighlight-download": "Viečča",
+	"readerexperiments-sharehighlight-image-author-license": "Govva: $1 · $2"
 }
