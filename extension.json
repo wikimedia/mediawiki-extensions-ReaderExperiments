@@ -39,13 +39,20 @@
 			"optional_services": [
 				"TestKitchen.ExperimentManager"
 			]
+		},
+		"MinervaHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\MinervaHooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager"
+			]
 		}
 	},
 	"Hooks": {
 		"BeforePageDisplay": "ReaderExperimentsHooks",
 		"BeforeInitialize": "ReaderExperimentsHooks",
 		"ShouldUseParsoid": "ReaderExperimentsHooks",
-		"SkinTemplateNavigation::Universal": "ReaderExperimentsHooks"
+		"SkinTemplateNavigation::Universal": "ReaderExperimentsHooks",
+		"SkinMinervaOptionsInit": "MinervaHooks"
 	},
 	"MessagesDirs": {
 		"ReaderExperiments": [

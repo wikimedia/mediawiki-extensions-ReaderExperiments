@@ -22,7 +22,6 @@ namespace MediaWiki\Extension\ReaderExperiments;
 use MediaWiki\Config\Config;
 use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\ParserMigration\Hook\ShouldUseParsoidHook;
-use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Hook\BeforeInitializeHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
@@ -35,75 +34,12 @@ use MediaWiki\Skin\Skin;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 
-class Hooks implements
+class Hooks extends HooksBase implements
 	BeforePageDisplayHook,
 	BeforeInitializeHook,
 	ShouldUseParsoidHook,
 	SkinTemplateNavigation__UniversalHook
 {
-	private const IMAGE_BROWSING_EXPERIMENT_NAME = 'image-browsing-enwiki';
-	private const IMAGE_BROWSING_GROUP_NAME = 'treatment';
-
-	private const STICKY_HEADERS_EXPERIMENT_NAME = 'sticky-headers';
-	private const STICKY_HEADERS_GROUP_NAME = 'treatment';
-
-	private const SHARE_HIGHLIGHT_EXPERIMENT_NAME = 'share-highlight';
-	private const SHARE_HIGHLIGHT_GROUP_NAME = 'treatment';
-
-	private const SHARE_HIGHLIGHT_BASELINE_EXPERIMENT_NAME = 'share-highlight-baseline';
-
-	private const MINERVA_TOC_EXPERIMENT_NAME = 'mobile-toc-abc2';
-	private const MINERVA_TOC_GROUP_STICKY = 'treatment1';
-	private const MINERVA_TOC_GROUP_BUTTON = 'treatment2';
-
-	private const MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME = 'mobile-page-previews';
-	private const MOBILE_PAGE_PREVIEWS_GROUP_NAME = 'treatment';
-
-	private ?ExperimentManager $experimentManager;
-
-	// BEGIN MINERVA_TOC_EXPERIMENTS (T415611)
-	private function getAssignedGroup( WebRequest $request, string $experimentName ): ?string {
-		if ( $this->experimentManager ) {
-			$experiment = $this->experimentManager->getExperiment( $experimentName );
-			$assignedGroup = $experiment->getAssignedGroup();
-			if ( $assignedGroup !== null ) {
-				return $assignedGroup;
-			}
-		}
-
-		// For dev convenience, when the experiment is not active, we'll mimic
-		// test kitchen's enrollment override URL param so that we can start
-		// development before having set up experiments (or test in
-		// environments where setting it up is inconvenient)
-		// This looks something like: ?mpo=minerva-toc-abc:treatment1
-		$mpo = $request->getRawVal( 'mpo' );
-		if ( $mpo !== null ) {
-			$overrides = explode( ';', $mpo );
-			// Iterate in reverse to mimic test kitchen's behavior of iterating
-			// entirely, where only the last occurrence would remain
-			foreach ( array_reverse( $overrides ) as $override ) {
-				$overrideParts = explode( ':', $override, 2 );
-				if ( count( $overrideParts ) !== 2 ) {
-					// Improperly formatted mpo param, ignore altogether,
-					// like test kitchen does
-					return null;
-				}
-
-				if ( $overrideParts[0] === $experimentName ) {
-					return $overrideParts[1];
-				}
-			}
-		}
-
-		return null;
-	}
-
-	// END MINERVA_TOC_EXPERIMENTS (T415611)
-
-	public function __construct( ?ExperimentManager $experimentManager = null ) {
-		$this->experimentManager = $experimentManager;
-	}
-
 	/**
 	 * ResourceLoader callback to generate virtual config.json for common module.
 	 * Provides configuration data as a packageFiles virtual module.

@@ -11,6 +11,7 @@ $cfg['directory_list'] = array_merge(
 		'../../extensions/MobileFrontend',
 		'../../extensions/ParserMigration',
 		'../../extensions/TestKitchen',
+		'../../skins/MinervaNeue',
 	]
 );
 
@@ -23,6 +24,7 @@ $cfg['exclude_analysis_directory_list'] = array_merge(
 		'../../extensions/MobileFrontend',
 		'../../extensions/ParserMigration',
 		'../../extensions/TestKitchen',
+		'../../skins/MinervaNeue',
 	]
 );
 
