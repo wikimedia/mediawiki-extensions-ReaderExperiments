@@ -170,7 +170,13 @@ npm run eventgate-devserver
 - Load a page like `http://localhost:4000/index.php/Eddie_Cochran`
 - In the browser console, fire a test event:
 ``` js
-mw.eventLog.submitInteraction('foo', '/analytics/product_metrics/web/base/2.0.0', 'bar')
+mw.eventLog.submit(
+  'foo',
+  {
+    $schema: '/analytics/product_metrics/web/base/2.1.0',
+    action: 'test'
+  }
+);
 ```
 - You should see the event JSON in `events.json`
 
