@@ -37,7 +37,6 @@ class MinervaHooks extends HooksBase implements SkinMinervaOptionsInitHook {
 		) {
 			$skinOptions->setMultiple( [
 				SkinOptions::MINIMAL => true,
-				SkinOptions::TOOLBAR_SUBMENU => true,
 			] );
 		}
 	}
