@@ -133,18 +133,21 @@ module.exports = exports = defineComponent( {
 			// Preview card's font size is smaller than article body
 			/* stylelint-disable-next-line selector-class-pattern */
 			.mf-font-size-clientpref-small .mw-body &,
+			/* stylelint-disable-next-line selector-class-pattern */
 			.mf-font-size-clientpref-small .content & {
 				font-size: @font-size-small;
 			}
 
 			/* stylelint-disable-next-line selector-class-pattern */
 			.mf-font-size-clientpref-regular .mw-body &,
+			/* stylelint-disable-next-line selector-class-pattern */
 			.mf-font-size-clientpref-regular .content & {
 				font-size: @font-size-medium;
 			}
 
 			/* stylelint-disable-next-line selector-class-pattern */
 			.mf-font-size-clientpref-large .mw-body &,
+			/* stylelint-disable-next-line selector-class-pattern */
 			.mf-font-size-clientpref-large .content & {
 				font-size: @font-size-large;
 			}

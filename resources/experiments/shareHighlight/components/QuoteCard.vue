@@ -407,7 +407,6 @@ module.exports = exports = {
 		font-style: normal;
 	}
 
-	/* stylelint-disable-next-line no-descending-specificity */
 	&__quotes {
 		display: flex;
 		align-items: center;

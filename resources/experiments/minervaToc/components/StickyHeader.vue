@@ -165,6 +165,7 @@ module.exports = exports = defineComponent( {
 			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 			-webkit-line-clamp: 2; // Truncate after 2 lines
 			overflow: hidden;
+			/* stylelint-disable-next-line declaration-property-value-keyword-no-deprecated */
 			word-break: break-word;
 			white-space: normal;
 		}

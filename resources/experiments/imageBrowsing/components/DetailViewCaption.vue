@@ -195,7 +195,6 @@ module.exports = exports = defineComponent( {
 		-webkit-box-orient: vertical;
 		-moz-box-orient: vertical;
 		-ms-box-orient: vertical;
-		// stylelint-disable-next-line property-no-unknown
 		box-orient: vertical;
 		// stylelint-disable-next-line plugin/no-unsupported-browser-features
 		-webkit-line-clamp: var( --line-clamp );
@@ -233,7 +232,6 @@ module.exports = exports = defineComponent( {
 	// stylelint-disable-next-line selector-class-pattern
 	.mw-body .ib-detail-view-caption p,
 	.content .ib-detail-view-caption p {
-		// stylelint-disable-next-line function-no-unknown
 		font-size: unit( ( 14 / 16 ), rem );
 	}
 
@@ -263,7 +261,6 @@ module.exports = exports = defineComponent( {
 	// stylelint-disable-next-line selector-class-pattern
 	.mw-body .ib-detail-view-caption p,
 	.content .ib-detail-view-caption p {
-		// stylelint-disable-next-line function-no-unknown
 		font-size: unit( ( 18 / 16 ), rem );
 	}
 
