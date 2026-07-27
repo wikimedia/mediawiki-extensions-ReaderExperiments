@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Hakimi97",
 			"Tofeiku"
 		]
 	},
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Lihat di Commons",
 	"readerexperiments-minerva-toc-contents-button-label": "Kandungan"
 }
