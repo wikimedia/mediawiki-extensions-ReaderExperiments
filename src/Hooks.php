@@ -121,6 +121,7 @@ class Hooks extends HooksBase implements
 		$this->maybeInitImageBrowsing( $out );
 		$this->maybeInitStickyHeaders( $out );
 		$this->maybeInitToc( $out );
+		$this->maybeInitMinimalMinervaToolbar( $out );
 		$this->maybeInitShareHighlight( $out );
 		$this->maybeInitMobilePagePreviews( $out );
 	}
@@ -259,6 +260,33 @@ class Hooks extends HooksBase implements
 				$out->addModules( 'ext.readerExperiments/minervaToc.button' );
 			}
 		}
+	}
+
+	/**
+	 * Returns the MinMin toolbar enrollment state for the current request.
+	 *
+	 * @param OutputPage $out
+	 * @return string|null One of:
+	 *   - 'control': user gets instrumentation only.
+	 *   - 'treatment': user gets the treatment UI and instrumentation.
+	 *   - null: unenrolled / ineligible.
+	 */
+	private function getMinimalMinervaToolbarEnrollment( OutputPage $out ): ?string {
+		return ( new MinervaHooks( $this->experimentManager ) )
+			->getMinimalMinervaToolbarEnrollmentFromSkin( $out->getSkin() );
+	}
+
+	private function maybeInitMinimalMinervaToolbar( OutputPage $out ): void {
+		$enrollment = $this->getMinimalMinervaToolbarEnrollment( $out );
+		if ( $enrollment === null ) {
+			return;
+		}
+
+		$out->addJsConfigVars( 'wgReaderExperimentsMinimalMinervaToolbar', [
+			'experimentName' => self::MINIMAL_MINERVA_EXPERIMENT_NAME,
+			'group' => $enrollment
+		] );
+		$out->addModules( 'ext.readerExperiments/minimalMinervaToolbar' );
 	}
 
 	private function maybeInitShareHighlight( OutputPage $out ): void {

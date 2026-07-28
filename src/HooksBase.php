@@ -21,6 +21,7 @@ namespace MediaWiki\Extension\ReaderExperiments;
 
 use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Request\WebRequest;
+use MediaWiki\Skin\Skin;
 
 abstract class HooksBase {
 	protected const IMAGE_BROWSING_EXPERIMENT_NAME = 'image-browsing-enwiki';
@@ -42,7 +43,10 @@ abstract class HooksBase {
 	protected const MOBILE_PAGE_PREVIEWS_GROUP_NAME = 'treatment';
 
 	protected const MINIMAL_MINERVA_EXPERIMENT_NAME = 'minimal-minerva-toolbar';
+	protected const MINIMAL_MINERVA_GROUP_CONTROL = 'control';
+	protected const MINIMAL_MINERVA_GROUP_TREATMENT = 'treatment';
 	protected const MINIMAL_MINERVA_GROUP_NAME = 'treatment';
+	protected const EVERYONE_EXPERIMENTS_ENROLLMENTS_HEADER_NAME = 'X-Experiment-Enrollments';
 
 	protected ?ExperimentManager $experimentManager;
 
@@ -81,6 +85,77 @@ abstract class HooksBase {
 					return $overrideParts[1];
 				}
 			}
+		}
+
+		return null;
+	}
+
+	protected function getAssignedGroupFromEveryoneExperimentsHeader(
+		WebRequest $request,
+		string $experimentName
+	): ?string {
+		$headerValue = $request->getHeader( self::EVERYONE_EXPERIMENTS_ENROLLMENTS_HEADER_NAME ) ?? '';
+		if ( $headerValue === '' ) {
+			return null;
+		}
+
+		$assignedGroup = null;
+		$rawEnrollments = explode( ';', rtrim( $headerValue, ';' ) );
+		foreach ( $rawEnrollments as $rawEnrollment ) {
+			$enrollment = array_filter( explode( '=', $rawEnrollment ) );
+			if ( count( $enrollment ) !== 2 ) {
+				return null;
+			}
+
+			if ( $enrollment[0] === $experimentName ) {
+				$assignedGroup = $enrollment[1];
+			}
+		}
+
+		return $assignedGroup;
+	}
+
+	protected function getAssignedGroupFromRequest( WebRequest $request, string $experimentName ): ?string {
+		$assignedGroup = $this->getAssignedGroupFromEveryoneExperimentsHeader( $request, $experimentName );
+
+		// Keep this header fallback for tools like Inssman that simulate
+		// enrollment by setting X-Experiment-Enrollments on the request,
+		// even when ExperimentManager does not surface that assignment here.
+		// URL overrides should still win, matching Test Kitchen's precedence.
+		return $this->getAssignedGroup( $request, $experimentName ) ?? $assignedGroup;
+	}
+
+	protected function getMinimalMinervaToolbarEnrollmentFromSkin( Skin $skin ): ?string {
+		$title = $skin->getTitle();
+
+		if (
+			!$title ||
+			$title->getNamespace() !== NS_MAIN ||
+			$skin->getSkinName() !== 'minerva' ||
+			$skin->getUser()->isRegistered()
+		) {
+			return null;
+		}
+
+		$request = $skin->getRequest();
+		$assignedGroup = $this->getAssignedGroupFromRequest(
+			$request,
+			self::MINIMAL_MINERVA_EXPERIMENT_NAME
+		);
+
+		if ( in_array(
+			$assignedGroup,
+			[
+				self::MINIMAL_MINERVA_GROUP_CONTROL,
+				self::MINIMAL_MINERVA_GROUP_TREATMENT
+			],
+			true
+		) ) {
+			return $assignedGroup;
+		}
+
+		if ( $request->getFuzzyBool( 'minMinToolbar' ) ) {
+			return self::MINIMAL_MINERVA_GROUP_TREATMENT;
 		}
 
 		return null;

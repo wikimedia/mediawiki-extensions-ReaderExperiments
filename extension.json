@@ -408,6 +408,13 @@
 				"readerexperiments-mobilepagepreviews-title",
 				"readerexperiments-mobilepagepreviews-close-button-label"
 			]
+		},
+		"ext.readerExperiments/minimalMinervaToolbar": {
+			"localBasePath": "resources/experiments/minimalMinervaToolbar",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/minimalMinervaToolbar",
+			"packageFiles": [
+				"instrumentation.js"
+			]
 		}
 	},
 	"manifest_version": 2

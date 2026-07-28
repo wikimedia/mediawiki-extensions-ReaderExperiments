@@ -19,27 +19,22 @@
 
 namespace MediaWiki\Extension\ReaderExperiments;
 
-use MediaWiki\Minerva\Hooks\SkinMinervaOptionsInitHook;
 use MediaWiki\Minerva\SkinOptions;
 use MediaWiki\Skin\Skin;
 
-class MinervaHooks extends HooksBase implements SkinMinervaOptionsInitHook {
+class MinervaHooks extends HooksBase {
 	/**
 	 * @inheritDoc
 	 */
 	public function onSkinMinervaOptionsInit( Skin $skin, SkinOptions $skinOptions ) {
-		$request = $skin->getRequest();
-		$assignedGroup = $this->getAssignedGroup( $request, self::MINIMAL_MINERVA_EXPERIMENT_NAME );
-		$isTreatmentGroup = $assignedGroup === self::MINIMAL_MINERVA_GROUP_NAME;
-		$hasUrlParameter = $request->getFuzzyBool( 'minimalMinerva' );
-
-		if ( ( $isTreatmentGroup || $hasUrlParameter ) &&
-			$skin->getTitle()->getNamespace() === NS_MAIN &&
-			$skin->getUser()->isAnon()
+		if ( $this->getMinimalMinervaToolbarEnrollmentFromSkin( $skin ) !==
+			self::MINIMAL_MINERVA_GROUP_TREATMENT
 		) {
-			$skinOptions->setMultiple( [
-				SkinOptions::MINIMAL => true,
-			] );
+			return;
 		}
+
+		$skinOptions->setMultiple( [
+			SkinOptions::MINIMAL => true,
+		] );
 	}
 }
