@@ -30,8 +30,10 @@ class MinervaHooks extends HooksBase implements SkinMinervaOptionsInitHook {
 	public function onSkinMinervaOptionsInit( Skin $skin, SkinOptions $skinOptions ) {
 		$request = $skin->getRequest();
 		$assignedGroup = $this->getAssignedGroup( $request, self::MINIMAL_MINERVA_EXPERIMENT_NAME );
-		if (
-			$assignedGroup === self::MINIMAL_MINERVA_GROUP_NAME &&
+		$isTreatmentGroup = $assignedGroup === self::MINIMAL_MINERVA_GROUP_NAME;
+		$hasUrlParameter = $request->getFuzzyBool( 'minimalMinerva' );
+
+		if ( ( $isTreatmentGroup || $hasUrlParameter ) &&
 			$skin->getTitle()->getNamespace() === NS_MAIN &&
 			$skin->getUser()->isAnon()
 		) {
