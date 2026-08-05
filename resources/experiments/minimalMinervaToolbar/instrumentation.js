@@ -2,7 +2,6 @@ const CONFIG_KEY = 'wgReaderExperimentsMinimalMinervaToolbar';
 const GROUP_TREATMENT = 'treatment';
 const SOURCE_CONTROL = 'toolbar';
 const SOURCE_TREATMENT = 'minmin_toolbar';
-const SOURCE_OVERFLOW = 'overflow_menu';
 const INIT_STATE_KEY = '__readerExperimentsMinimalMinervaToolbarInstrumentation';
 
 function isTreatmentActive() {
@@ -20,7 +19,12 @@ function getExperiment() {
 
 	return mw.loader.using( 'ext.testKitchen' )
 		.then( () => mw.testKitchen.getExperiment( config.experimentName ) )
-		.catch( () => null );
+		.catch( () => (
+			// eslint-disable-next-line no-console
+			console.info(
+				'[Minimal Minerva Toolbar] TestKitchen not available: skipping instrumentation.'
+			)
+		) );
 }
 
 function isLanguageElement( element, treatmentActive ) {
@@ -56,15 +60,9 @@ function getActionSubtype( element ) {
 		return null;
 	}
 
-	if ( element.closest( '#page-actions-overflow-toggle' ) ) {
-		return 'overflow_menu';
-	}
-
 	if (
 		element.closest(
-			'#page-actions-edit a, #page-actions-ve-edit a, #page-actions-viewsource a,' +
-			'#page-actions-overflow a#ca-edit, #page-actions-overflow a#ca-ve-edit,' +
-			'#page-actions-overflow a#ca-viewsource'
+			'#page-actions-edit a, #page-actions-ve-edit a, #page-actions-viewsource a'
 		)
 	) {
 		return 'edit';
@@ -72,19 +70,10 @@ function getActionSubtype( element ) {
 
 	if (
 		element.closest(
-			'#page-actions-watch a, #page-actions-unwatch a,' +
-			'#page-actions-overflow a#ca-watch, #page-actions-overflow a#ca-unwatch'
+			'#page-actions-watch a, #page-actions-unwatch a'
 		)
 	) {
 		return 'watch';
-	}
-
-	if (
-		element.closest(
-			'#minerva-download, #page-actions-overflow #minerva-download'
-		)
-	) {
-		return 'download';
 	}
 
 	return null;
@@ -112,20 +101,6 @@ function getActionData( element, treatmentActive ) {
 	const subtype = getActionSubtype( element );
 	if ( !subtype ) {
 		return null;
-	}
-
-	if ( element.closest( '#page-actions-overflow-toggle' ) ) {
-		return {
-			subtype,
-			source: treatmentActive ? SOURCE_TREATMENT : SOURCE_CONTROL
-		};
-	}
-
-	if ( element.closest( '#page-actions-overflow' ) ) {
-		return {
-			subtype,
-			source: SOURCE_OVERFLOW
-		};
 	}
 
 	return {
@@ -174,6 +149,7 @@ function initInstrumentation() {
 
 		experiment.sendExposure();
 		experiment.send( 'page_visit' );
+
 		sendClick = ( subtype, source ) => {
 			const data = {};
 			// eslint-disable-next-line camelcase
@@ -191,10 +167,8 @@ function initInstrumentation() {
 
 initInstrumentation();
 
+// Export for tests
 module.exports = {
 	getActionData,
-	getActionSubtype,
-	isCommentsElement,
-	isLanguageElement,
 	isTreatmentActive
 };

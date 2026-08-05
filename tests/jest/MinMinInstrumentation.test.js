@@ -69,7 +69,7 @@ describe( 'minimalMinervaToolbar instrumentation', () => {
 		} );
 	} );
 
-	it( 'maps treatment page tags and overflow items', () => {
+	it( 'maps treatment page tags', () => {
 		mw.config.get.mockImplementation( ( key ) => {
 			if ( key === 'wgReaderExperimentsMinimalMinervaToolbar' ) {
 				return {
@@ -86,21 +86,11 @@ describe( 'minimalMinervaToolbar instrumentation', () => {
 				<a href="#p-lang">86 languages</a>
 				<a href="/wiki/Talk:Foo">20 comments</a>
 			</nav>
-			<label id="page-actions-overflow-toggle">More</label>
-			<div id="page-actions-overflow">
-				<ul class="page-actions-overflow-list">
-					<li class="toggle-list-item">
-						<a id="ca-watch" class="toggle-list-item__anchor">Watch</a>
-					</li>
-				</ul>
-			</div>
 		`;
 		loadModule();
 
 		const language = document.querySelector( '.minerva__page-tags-container a[href="#p-lang"]' );
 		const comments = document.querySelector( '.minerva__page-tags-container a[href="/wiki/Talk:Foo"]' );
-		const overflowToggle = document.getElementById( 'page-actions-overflow-toggle' );
-		const watch = document.querySelector( '#page-actions-overflow #ca-watch' );
 
 		expect( module.isTreatmentActive() ).toBe( true );
 		expect( module.getActionData( language, true ) ).toEqual( {
@@ -111,20 +101,15 @@ describe( 'minimalMinervaToolbar instrumentation', () => {
 			subtype: 'comments',
 			source: 'minmin_toolbar'
 		} );
-		expect( module.getActionData( overflowToggle, true ) ).toEqual( {
-			subtype: 'overflow_menu',
-			source: 'minmin_toolbar'
-		} );
-		expect( module.getActionData( watch, true ) ).toEqual( {
-			subtype: 'watch',
-			source: 'overflow_menu'
-		} );
 	} );
 
 	it( 'maps visible edit buttons', () => {
 		document.body.innerHTML = `
 			<nav class="page-actions-menu">
 				<ul id="p-views">
+					<li id="page-actions-watch">
+						<a id="ca-watch" class="cdx-button"><span>Watch</span></a>
+					</li>
 					<li id="page-actions-edit">
 						<a id="ca-edit" class="cdx-button"><span>Edit</span></a>
 					</li>
@@ -133,7 +118,13 @@ describe( 'minimalMinervaToolbar instrumentation', () => {
 		`;
 		loadModule();
 
+		const watch = document.getElementById( 'ca-watch' );
 		const edit = document.getElementById( 'ca-edit' );
+
+		expect( module.getActionData( watch, false ) ).toEqual( {
+			subtype: 'watch',
+			source: 'toolbar'
+		} );
 		expect( module.getActionData( edit, false ) ).toEqual( {
 			subtype: 'edit',
 			source: 'toolbar'
