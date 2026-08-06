@@ -71,7 +71,6 @@ module.exports = exports = ( topMargin = 0 ) => {
 		}
 	};
 
-	// eslint-disable-next-line compat/compat
 	const intersectionObserver = new IntersectionObserver(
 		updateActiveHeading,
 		{

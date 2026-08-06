@@ -58,7 +58,6 @@ function setupStickyHeaders( headings ) {
 		}
 	};
 
-	// eslint-disable-next-line compat/compat
 	const intersectionObserver = new IntersectionObserver( ( sections ) => {
 		sections.forEach( ( section ) => {
 			const heading = section.target.previousSibling;

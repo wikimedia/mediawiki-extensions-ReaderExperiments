@@ -393,7 +393,6 @@ module.exports = exports = {
 				'readerexperiments-sharehighlight-link-copied' :
 				'readerexperiments-sharehighlight-copy-link';
 
-			// eslint-disable-next-line mediawiki/msg-doc
 			return mw.msg( key );
 		} );
 
@@ -402,7 +401,6 @@ module.exports = exports = {
 				'readerexperiments-sharehighlight-share' :
 				'readerexperiments-sharehighlight-download';
 
-			// eslint-disable-next-line mediawiki/msg-doc
 			return mw.msg( key );
 		} );
 
@@ -411,7 +409,6 @@ module.exports = exports = {
 				'readerexperiments-sharehighlight-downloading' :
 				'readerexperiments-sharehighlight-download';
 
-			// eslint-disable-next-line mediawiki/msg-doc
 			return mw.msg( key );
 		} );
 
