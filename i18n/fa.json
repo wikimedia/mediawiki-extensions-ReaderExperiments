@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Jeeputer",
-			"LordProfo"
+			"LordProfo",
+			"Mohammad ebz"
 		]
 	},
 	"readerexperiments-imagebrowsing-carousel-item-button-label": "انتخاب یک تصویر",
@@ -26,5 +27,6 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "مشاهده در مقاله",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "از $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "از $1 و $2 {{PLURAL:$2|نسخهٔ}} زبانی دیگر ویکی‌پدیا",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "از $1"
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "از $1",
+	"readerexperiments-sharehighlight-copy-link": "رونویسی پیوند"
 }
