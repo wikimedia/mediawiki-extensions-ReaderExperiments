@@ -114,6 +114,8 @@ class Hooks extends HooksBase implements
 	}
 
 	/**
+	 * Conditionally initialize experiments depending on their gating logic.
+	 *
 	 * @inheritDoc
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {

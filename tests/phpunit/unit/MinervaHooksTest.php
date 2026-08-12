@@ -76,7 +76,7 @@ class MinervaHooksTest extends MediaWikiUnitTestCase {
 		$this->assertSame( 'treatment', $enrollment );
 	}
 
-	public function testSkinMinervaOptionsInitEnablesMinimalForTreatmentFromUrl(): void {
+	public function testSkinMinervaOptionsInitEnablesMinimalForTreatmentWhenNotEnrolled(): void {
 		$this->requireMinervaSkinOptions();
 
 		$request = new FauxRequest();
