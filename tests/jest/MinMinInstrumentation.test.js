@@ -166,4 +166,75 @@ describe( 'minimalMinervaToolbar instrumentation', () => {
 		expect( experiment.send ).toHaveBeenNthCalledWith( 1, 'page_visit' );
 		expect( experiment.send ).toHaveBeenNthCalledWith( 2, 'click', expectedClickData );
 	} );
+
+	it( 'sends edit_saved with the page_revision_id contextual attribute on postEdit', async () => {
+		const experiment = {
+			sendExposure: jest.fn(),
+			send: jest.fn()
+		};
+		mw.testKitchen.getExperiment.mockResolvedValue( experiment );
+
+		jest.resetModules();
+		loadModule();
+		await flushAsync();
+
+		const [ [ postEditHandler ] ] = mw.hook().add.mock.calls;
+		postEditHandler();
+
+		expect( experiment.send ).toHaveBeenCalledWith(
+			'edit_saved', {}, [ 'page_revision_id' ]
+		);
+	} );
+
+	it( 'deregisters the previous postEdit handler when re-initialized', () => {
+		loadModule();
+		jest.resetModules();
+		loadModule();
+
+		expect( mw.hook().remove ).toHaveBeenCalled();
+	} );
+
+	it( 'sends edit_attempt_init on an editAttemptStep init event', async () => {
+		const experiment = {
+			sendExposure: jest.fn(),
+			send: jest.fn()
+		};
+		mw.testKitchen.getExperiment.mockResolvedValue( experiment );
+
+		jest.resetModules();
+		loadModule();
+		await flushAsync();
+
+		const [ [ topic, editAttemptStepHandler ] ] = mw.trackSubscribe.mock.calls;
+		expect( topic ).toBe( 'editAttemptStep' );
+
+		editAttemptStepHandler( 'editAttemptStep', { action: 'init' } );
+
+		expect( experiment.send ).toHaveBeenCalledWith( 'edit_attempt_init' );
+	} );
+
+	it( 'does not send edit_attempt_init for the non-init editAttemptStep actions', async () => {
+		const experiment = {
+			sendExposure: jest.fn(),
+			send: jest.fn()
+		};
+		mw.testKitchen.getExperiment.mockResolvedValue( experiment );
+
+		jest.resetModules();
+		loadModule();
+		await flushAsync();
+
+		const [ [ , editAttemptStepHandler ] ] = mw.trackSubscribe.mock.calls;
+		editAttemptStepHandler( 'editAttemptStep', { action: 'saveAttempt' } );
+
+		expect( experiment.send ).not.toHaveBeenCalledWith( 'edit_attempt_init' );
+	} );
+
+	it( 'deregisters the previous editAttemptStep handler when re-initialized', () => {
+		loadModule();
+		jest.resetModules();
+		loadModule();
+
+		expect( mw.trackUnsubscribe ).toHaveBeenCalled();
+	} );
 } );

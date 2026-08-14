@@ -36,13 +36,15 @@ class MinervaHooksTest extends MediaWikiUnitTestCase {
 		FauxRequest $request,
 		int $namespace = NS_MAIN,
 		string $skinName = 'minerva',
-		bool $isRegistered = false
+		bool $isRegistered = false,
+		bool $isTemp = false
 	): Skin {
 		$title = $this->createMock( Title::class );
 		$title->method( 'getNamespace' )->willReturn( $namespace );
 
 		$user = $this->createMock( User::class );
 		$user->method( 'isRegistered' )->willReturn( $isRegistered );
+		$user->method( 'isTemp' )->willReturn( $isTemp );
 
 		$skin = $this->createMock( Skin::class );
 		$skin->method( 'getTitle' )->willReturn( $title );
@@ -141,6 +143,24 @@ class MinervaHooksTest extends MediaWikiUnitTestCase {
 		yield 'talk namespace' => [ NS_TALK, 'minerva', false ];
 		yield 'wrong skin' => [ NS_MAIN, 'vector', false ];
 		yield 'registered user' => [ NS_MAIN, 'minerva', true ];
+	}
+
+	public function testTemporaryAccountsRemainEligible(): void {
+		$this->requireMinervaSkinOptions();
+
+		$enrollment = $this->invokeMethod(
+			new MinervaHooks(),
+			'getMinimalMinervaToolbarEnrollment',
+			$this->newSkin(
+				new FauxRequest( [ 'minMinToolbar' => '1' ] ),
+				NS_MAIN,
+				'minerva',
+				true,
+				true
+			)
+		);
+
+		$this->assertSame( 'treatment', $enrollment );
 	}
 
 	public function testMaybeInitMinimalMinervaToolbarAddsControlJsConfig(): void {

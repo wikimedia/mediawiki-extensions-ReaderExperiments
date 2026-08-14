@@ -63,8 +63,11 @@ const mw = {
 	},
 	hook: jest.fn().mockReturnValue( {
 		add: jest.fn(),
+		remove: jest.fn(),
 		fire: jest.fn()
 	} ),
+	trackSubscribe: jest.fn(),
+	trackUnsubscribe: jest.fn(),
 	message: $i18nMock,
 	msg: ( ...args ) => $i18nMock( ...args ).text(),
 	user: {

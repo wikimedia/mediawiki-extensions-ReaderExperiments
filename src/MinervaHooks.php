@@ -31,12 +31,15 @@ use MediaWiki\Skin\Skin;
 class MinervaHooks extends HooksBase {
 	private function getMinimalMinervaToolbarEnrollment( Skin $skin ): ?string {
 		// Bail early for ineligible requests, non-minerva skin, and logged-in users
+		// Note: temporary accounts are eligible
 		$title = $skin->getTitle();
+		$user = $skin->getUser();
+
 		if (
 			!$title ||
 			$title->getNamespace() !== NS_MAIN ||
 			$skin->getSkinName() !== 'minerva' ||
-			$skin->getUser()->isRegistered()
+			( $user->isRegistered() && !$user->isTemp() )
 		) {
 			return null;
 		}

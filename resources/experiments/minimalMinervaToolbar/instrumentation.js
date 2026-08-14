@@ -132,6 +132,12 @@ function initInstrumentation() {
 	if ( previousState && previousState.clickHandler ) {
 		document.removeEventListener( 'click', previousState.clickHandler );
 	}
+	if ( previousState && previousState.postEditHandler ) {
+		mw.hook( 'postEdit' ).remove( previousState.postEditHandler );
+	}
+	if ( previousState && previousState.editAttemptStepHandler ) {
+		mw.trackUnsubscribe( previousState.editAttemptStepHandler );
+	}
 
 	let sendClick = () => {};
 	const pendingClicks = [];
@@ -140,7 +146,24 @@ function initInstrumentation() {
 		sendClick( subtype, source );
 	} );
 
-	document[ INIT_STATE_KEY ] = { clickHandler };
+	// postEdit does not fire for null edits, and wgRevisionId is set to the new
+	// revision before it fires: https://gerrit.wikimedia.org/g/mediawiki/core/+/master/resources/src/mediawiki.action/mediawiki.action.view.postEdit.js
+	let sendEditSaved = () => {};
+	const postEditHandler = () => sendEditSaved();
+	mw.hook( 'postEdit' ).add( postEditHandler );
+
+	// editAttemptStep is VisualEditor's own instrumentation (Schema:EditAttemptStep,
+	// also consumed by WikimediaEvents). Its 'init' action fires once the editor has
+	// activated, which is a later and more meaningful step than the edit button 'click'.
+	let sendEditAttemptInit = () => {};
+	const editAttemptStepHandler = ( topic, data ) => {
+		if ( data && data.action === 'init' ) {
+			sendEditAttemptInit();
+		}
+	};
+	mw.trackSubscribe( 'editAttemptStep', editAttemptStepHandler );
+
+	document[ INIT_STATE_KEY ] = { clickHandler, postEditHandler, editAttemptStepHandler };
 
 	getExperiment().then( ( experiment ) => {
 		if ( !experiment ) {
@@ -157,6 +180,14 @@ function initInstrumentation() {
 			// eslint-disable-next-line camelcase
 			data.action_subtype = subtype;
 			experiment.send( 'click', data );
+		};
+
+		sendEditSaved = () => {
+			experiment.send( 'edit_saved', {}, [ 'page_revision_id' ] );
+		};
+
+		sendEditAttemptInit = () => {
+			experiment.send( 'edit_attempt_init' );
 		};
 
 		pendingClicks.splice( 0 ).forEach( ( click ) => {
