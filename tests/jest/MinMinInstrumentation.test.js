@@ -131,6 +131,26 @@ describe( 'minimalMinervaToolbar instrumentation', () => {
 		} );
 	} );
 
+	it( 'maps control download button', () => {
+		document.body.innerHTML = `
+			<nav class="page-actions-menu">
+				<ul id="p-views">
+					<li id="minerva-download" data-minerva-portlet="true">
+						<a href="#" class="cdx-button"><span>Download PDF</span></a>
+					</li>
+				</ul>
+			</nav>
+		`;
+		loadModule();
+
+		const download = document.querySelector( '#minerva-download a' );
+
+		expect( module.getActionData( download, false ) ).toEqual( {
+			subtype: 'download',
+			source: 'toolbar'
+		} );
+	} );
+
 	it( 'initializes experiment tracking when loaded', async () => {
 		const experiment = {
 			sendExposure: jest.fn(),
@@ -162,6 +182,43 @@ describe( 'minimalMinervaToolbar instrumentation', () => {
 
 		expect( mw.loader.using ).toHaveBeenCalledWith( 'ext.testKitchen' );
 		expect( mw.testKitchen.getExperiment ).toHaveBeenCalledWith( 'minimal-minerva-toolbar' );
+		expect( experiment.sendExposure ).toHaveBeenCalledTimes( 1 );
+		expect( experiment.send ).toHaveBeenNthCalledWith( 1, 'page_visit' );
+		expect( experiment.send ).toHaveBeenNthCalledWith( 2, 'click', expectedClickData );
+	} );
+
+	it( 'emits a download click when clicking the icon inside the download button', async () => {
+		const experiment = {
+			sendExposure: jest.fn(),
+			send: jest.fn()
+		};
+		mw.testKitchen.getExperiment.mockResolvedValue( experiment );
+		document.body.innerHTML = `
+			<nav class="page-actions-menu">
+				<ul id="p-views">
+					<li id="minerva-download" data-minerva-portlet="true">
+						<a href="#" class="cdx-button">
+							<span class="minerva-icon minerva-icon-portletlink-minerva-download"></span>
+							<span>Download PDF</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		`;
+
+		jest.resetModules();
+		loadModule();
+
+		document.querySelector( '#minerva-download .minerva-icon' ).click();
+		await flushAsync();
+		await flushAsync();
+
+		const actionSourceKey = 'action_source';
+		const actionSubtypeKey = 'action_subtype';
+		const expectedClickData = {};
+		expectedClickData[ actionSourceKey ] = 'toolbar';
+		expectedClickData[ actionSubtypeKey ] = 'download';
+
 		expect( experiment.sendExposure ).toHaveBeenCalledTimes( 1 );
 		expect( experiment.send ).toHaveBeenNthCalledWith( 1, 'page_visit' );
 		expect( experiment.send ).toHaveBeenNthCalledWith( 2, 'click', expectedClickData );

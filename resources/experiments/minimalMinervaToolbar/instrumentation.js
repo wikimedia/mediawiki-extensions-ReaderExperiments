@@ -1,6 +1,7 @@
 const CONFIG_KEY = 'wgReaderExperimentsMinimalMinervaToolbar';
 const GROUP_TREATMENT = 'treatment';
 const SOURCE_CONTROL = 'toolbar';
+const SOURCE_OVERFLOW = 'overflow_menu';
 const SOURCE_TREATMENT = 'minmin_toolbar';
 const INIT_STATE_KEY = '__readerExperimentsMinimalMinervaToolbarInstrumentation';
 
@@ -79,6 +80,22 @@ function getActionSubtype( element ) {
 	return null;
 }
 
+function getDownloadActionData( element ) {
+	if (
+		!element ||
+		!element.closest( '#minerva-download a, a#minerva-download' )
+	) {
+		return null;
+	}
+
+	return {
+		subtype: 'download',
+		source: element.closest( '.page-actions-overflow-list, #page-actions-overflow' ) ?
+			SOURCE_OVERFLOW :
+			SOURCE_CONTROL
+	};
+}
+
 function getActionData( element, treatmentActive ) {
 	if ( !element ) {
 		return null;
@@ -96,6 +113,11 @@ function getActionData( element, treatmentActive ) {
 			subtype: 'comments',
 			source: treatmentActive ? SOURCE_TREATMENT : 'page_tab'
 		};
+	}
+
+	const downloadAction = getDownloadActionData( element );
+	if ( downloadAction ) {
+		return downloadAction;
 	}
 
 	const subtype = getActionSubtype( element );
