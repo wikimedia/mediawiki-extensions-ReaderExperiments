@@ -4,6 +4,9 @@
 			"شاه زمان پټان"
 		]
 	},
+	"readerexperiments-desc": "د لومړنيو ډولونو يوه ټولگه چې موخه يې د ويکي‌پېډيا لوستونکو ته وده ورکول دي",
+	"readerexperiments-imagebrowsing-carousel-label": "انځور لټون کول",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "\"$1\" انځور غوره کړئ",
 	"readerexperiments-imagebrowsing-detail-caption-expand": "نور",
 	"readerexperiments-imagebrowsing-detail-caption-collapse": "لږ",
 	"readerexperiments-imagebrowsing-detail-crop": "ډکه‌پرده",
@@ -45,5 +48,7 @@
 	"readerexperiments-sharehighlight-download": "راکښته‌کول",
 	"readerexperiments-sharehighlight-downloading": "راکښته‌کول",
 	"readerexperiments-sharehighlight-loading": "بارېږي...",
-	"readerexperiments-sharehighlight-generating": "انځور زېږول"
+	"readerexperiments-sharehighlight-generating": "انځور زېږول",
+	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nپه $3 کې لانور ولولئ: $2",
+	"readerexperiments-sharehighlight-image-author-license": "انځور: $1 · $2"
 }
