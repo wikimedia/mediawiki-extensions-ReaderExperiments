@@ -44,6 +44,9 @@ abstract class HooksBase {
 	protected const MINIMAL_MINERVA_EXPERIMENT_NAME = 'minimal-minerva-toolbar';
 	protected const MINIMAL_MINERVA_GROUP_NAME = 'treatment';
 
+	protected const PREFERRED_SOURCES_EXPERIMENT_NAME = 'preferred-sources';
+	protected const PREFERRED_SOURCES_GROUP_NAME = 'treatment';
+
 	protected ?ExperimentManager $experimentManager;
 
 	public function __construct( ?ExperimentManager $experimentManager = null ) {

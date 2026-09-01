@@ -31,6 +31,10 @@
 				"wikipedia.org": "/* i18n-unused */",
 				"wikidata.org": "wikibase-otherprojects-wikidata"
 			}
+		},
+		"ReaderExperimentsPreferredSourcesDebug": {
+			"description": "Local development only: bypass the Google-referrer gate and the CTA suppression flag for the preferred-sources experiment.",
+			"value": false
 		}
 	},
 	"HookHandlers": {
@@ -414,6 +418,23 @@
 			"remoteExtPath": "ReaderExperiments/resources/experiments/minimalMinervaToolbar",
 			"packageFiles": [
 				"instrumentation.js"
+			]
+		},
+		"ext.readerExperiments/preferredSources": {
+			"localBasePath": "resources/experiments/preferredSources",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/preferredSources",
+			"dependencies": [
+				"vue",
+				"@wikimedia/codex",
+				"mediawiki.storage"
+			],
+			"packageFiles": [
+				"init.js",
+				"App.vue"
+			],
+			"messages": [
+				"readerexperiments-preferredsources-cta-message",
+				"readerexperiments-preferredsources-cta-action"
 			]
 		}
 	},
