@@ -31,6 +31,10 @@
 				"wikipedia.org": "/* i18n-unused */",
 				"wikidata.org": "wikibase-otherprojects-wikidata"
 			}
+		},
+		"ReaderExperimentsPreferredSourcesDebug": {
+			"description": "Local development only: bypass the Google-referrer gate and the CTA suppression flag for the preferred-sources experiment.",
+			"value": false
 		}
 	},
 	"HookHandlers": {
@@ -64,6 +68,9 @@
 				"TestKitchen.ExperimentManager"
 			]
 		},
+		"PreferredSourcesHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\PreferredSources\\Hooks"
+		},
 		"ShareHighlightHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ShareHighlight\\Hooks",
 			"optional_services": [
@@ -89,6 +96,7 @@
 			"ImageBrowsingHooks",
 			"MinervaTocHooks",
 			"MobilePagePreviewsHooks",
+			"PreferredSourcesHooks",
 			"ShareHighlightHooks",
 			"StickyHeadersHooks",
 			"MinervaCompactLeadHooks"
@@ -443,7 +451,6 @@
 					"name": "icons.json",
 					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
 					"callbackParam": [
-						"cdxIconClose",
 						"cdxIconLinkExternal"
 					]
 				},
@@ -466,6 +473,50 @@
 			"remoteExtPath": "ReaderExperiments/resources/experiments/minimalMinervaToolbar",
 			"packageFiles": [
 				"instrumentation.js"
+			]
+		},
+		"ext.readerExperiments/preferredSources": {
+			"localBasePath": "resources/experiments/preferredSources",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/preferredSources",
+			"dependencies": [
+				"mediawiki.storage"
+			],
+			"packageFiles": [
+				"init.js",
+				{
+					"name": "config.json",
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\PreferredSources\\ResourceLoader::getConfig"
+				}
+			]
+		},
+		"ext.readerExperiments/preferredSources.cta": {
+			"localBasePath": "resources/experiments/preferredSources",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/preferredSources",
+			"dependencies": [
+				"vue",
+				"@wikimedia/codex",
+				"mediawiki.storage",
+				"ext.readerExperiments/preferredSources"
+			],
+			"packageFiles": [
+				"cta.js",
+				{
+					"name": "icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconLinkExternal",
+						"cdxIconHeart"
+					]
+				},
+				"App.vue"
+			],
+			"messages": [
+				"readerexperiments-preferredsources-cta-message",
+				"readerexperiments-preferredsources-cta-action",
+				"readerexperiments-preferredsources-dialog-title",
+				"readerexperiments-preferredsources-dialog-body",
+				"readerexperiments-preferredsources-dialog-action",
+				"readerexperiments-preferredsources-dialog-dismiss"
 			]
 		},
 		"ext.readerExperiments/minervaCompactLead": {

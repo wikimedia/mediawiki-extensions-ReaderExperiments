@@ -61,5 +61,11 @@
 	"readerexperiments-sharehighlight-generating": "Generating image",
 	"readerexperiments-sharehighlight-share-title": "Quote from \"$1\" \u2014 $2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nRead more on $3: $2",
-	"readerexperiments-sharehighlight-image-author-license": "Image: $1 · $2"
+	"readerexperiments-sharehighlight-image-author-license": "Image: $1 · $2",
+	"readerexperiments-preferredsources-cta-message": "Keep Wikipedia visible in your Google searches",
+	"readerexperiments-preferredsources-cta-action": "Learn more",
+	"readerexperiments-preferredsources-dialog-title": "Keep Wikipedia visible in your Google searches",
+	"readerexperiments-preferredsources-dialog-body": "Prioritize reliable information that has been fact-checked by humans. Choose Wikipedia as a preferred source on Google.",
+	"readerexperiments-preferredsources-dialog-action": "Choose Wikipedia",
+	"readerexperiments-preferredsources-dialog-dismiss": "Don't show again"
 }
