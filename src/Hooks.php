@@ -124,7 +124,6 @@ class Hooks extends HooksBase implements
 		$this->maybeInitToc( $out );
 		$this->maybeInitShareHighlight( $out );
 		$this->maybeInitMobilePagePreviews( $out );
-		$this->maybeInitPreferredSources( $out );
 	}
 
 	/**
@@ -365,39 +364,6 @@ class Hooks extends HooksBase implements
 		$first = substr( $str, 0, 1 );
 		$rest = str_repeat( '0', strlen( $str ) - 1 );
 		return intval( $first . $rest );
-	}
-
-	private function maybeInitPreferredSources( OutputPage $out ): void {
-		$context = $out->getContext();
-		$request = $context->getRequest();
-		$title = $context->getTitle();
-		$user = $context->getUser();
-
-		// Logged-out Minerva article views only. Temporary accounts are
-		// excluded for now; whether they are in scope is an open question
-		// on T435229.
-		if (
-			!$title ||
-			$title->getNamespace() !== NS_MAIN ||
-			$out->getSkin()->getSkinName() !== 'minerva' ||
-			$user->isRegistered()
-		) {
-			return;
-		}
-
-		$group = $this->getAssignedGroup( $request, self::PREFERRED_SOURCES_EXPERIMENT_NAME );
-		if ( $group === null ) {
-			return;
-		}
-
-		// Both groups load the module: control sends exposure and page_visit
-		// events too; only treatment renders the CTA.
-		$out->addJsConfigVars( 'wgReaderExperimentsPreferredSources', [
-			'experimentName' => self::PREFERRED_SOURCES_EXPERIMENT_NAME,
-			'group' => $group,
-			'debug' => (bool)$out->getConfig()->get( 'ReaderExperimentsPreferredSourcesDebug' ),
-		] );
-		$out->addModules( 'ext.readerExperiments/preferredSources' );
 	}
 
 	private function maybeInitMobilePagePreviews( OutputPage $out ): void {

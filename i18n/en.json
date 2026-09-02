@@ -61,7 +61,5 @@
 	"readerexperiments-sharehighlight-generating": "Generating image",
 	"readerexperiments-sharehighlight-share-title": "Quote from \"$1\" \u2014 $2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nRead more on $3: $2",
-	"readerexperiments-sharehighlight-image-author-license": "Image: $1 · $2",
-	"readerexperiments-preferredsources-cta-message": "See Wikipedia more often in your Google search results.",
-	"readerexperiments-preferredsources-cta-action": "Add Wikipedia"
+	"readerexperiments-sharehighlight-image-author-license": "Image: $1 · $2"
 }

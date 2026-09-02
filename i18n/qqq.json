@@ -62,7 +62,5 @@
 	"readerexperiments-sharehighlight-generating": "Text shown while the quote card image is being generated.",
 	"readerexperiments-sharehighlight-share-title": "Title used when sharing a quote via the Web Share API.\n\nParameters:\n* $1: the article title\n* $2: the project name (e.g. 'Wikipedia')",
 	"readerexperiments-sharehighlight-share-text-with-branding": "Text body used when sharing a quote via the Web Share API.\n\nParameters:\n* $1: the truncated quote text\n* $2: the URL to the article with a text fragment\n* $3: the project name (e.g. 'Wikipedia')",
-	"readerexperiments-sharehighlight-image-author-license": "Label prefix for image author, and separator for license, for the image used with a share.\n\nParameters:\n* $1: the image author(s) name(s)\n* $2: shortname of the image's license",
-	"readerexperiments-preferredsources-cta-message": "Text of a call-to-action toast shown to readers who arrive from Google, inviting them to add Wikipedia as a preferred source in their Google search settings.",
-	"readerexperiments-preferredsources-cta-action": "Label of the toast's action button. Tapping it opens Google's preferred-sources settings page with Wikipedia pre-filled. Keep it short."
+	"readerexperiments-sharehighlight-image-author-license": "Label prefix for image author, and separator for license, for the image used with a share.\n\nParameters:\n* $1: the image author(s) name(s)\n* $2: shortname of the image's license"
 }
