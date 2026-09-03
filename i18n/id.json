@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"BAPerdana-WMF"
+			"BAPerdana-WMF",
+			"Bennylin"
 		]
 	},
 	"readerexperiments-desc": "Serangkaian sistem uji coba untuk meningkatkan pengalaman membaca di Wikipedia",
@@ -44,7 +45,7 @@
 	"readerexperiments-sharehighlight-background-legend": "Latar belakang",
 	"readerexperiments-sharehighlight-background-average": "Rerata",
 	"readerexperiments-sharehighlight-copy-link": "Salin pranala",
-	"readerexperiments-sharehighlight-link-copied": "Berhasil disalin",
+	"readerexperiments-sharehighlight-link-copied": "Tersalin",
 	"readerexperiments-sharehighlight-share": "Bagikan",
 	"readerexperiments-sharehighlight-download": "Unduh",
 	"readerexperiments-sharehighlight-downloading": "Mengunduh",
