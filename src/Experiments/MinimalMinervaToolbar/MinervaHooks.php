@@ -17,18 +17,46 @@
  * @file
  */
 
-namespace MediaWiki\Extension\ReaderExperiments;
+namespace MediaWiki\Extension\ReaderExperiments\Experiments\MinimalMinervaToolbar;
 
+use MediaWiki\Extension\ReaderExperiments\Common\FeatureFlagExperiment;
+use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
+use MediaWiki\Minerva\Hooks\SkinMinervaOptionsInitHook;
 use MediaWiki\Minerva\SkinOptions;
 use MediaWiki\Skin\Skin;
 
-// NOTE This class implements `onSkinMinervaOptionsInit`,
-//      so `implements SkinMinervaOptionsInitHook` should be declared.
-//      However, CI cries with an import error.
-//      The hook still works because MediaWiki automatically registers
-//      on<HookName> methods by naming convention.
+class MinervaHooks implements SkinMinervaOptionsInitHook {
+	public const EXPERIMENT_NAME = 'minimal-minerva-toolbar';
+	public const GROUP_NAME = 'treatment';
 
-class MinervaHooks extends HooksBase {
+	public function __construct(
+		private ?ExperimentManager $experimentManager = null
+	) {
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onSkinMinervaOptionsInit( Skin $skin, SkinOptions $skinOptions ): void {
+		$enrollment = $this->getMinimalMinervaToolbarEnrollment( $skin );
+		if ( $enrollment === null ) {
+			return;
+		}
+
+		// Add instrumentation module
+		$out = $skin->getOutput();
+		$out->addJsConfigVars( 'wgReaderExperimentsMinimalMinervaToolbar', [
+			'experimentName' => self::EXPERIMENT_NAME,
+			'group' => $enrollment
+		] );
+		$out->addModules( 'ext.readerExperiments/minimalMinervaToolbar' );
+
+		// Treatment gets minimal mode
+		if ( $enrollment === self::GROUP_NAME ) {
+			$skinOptions->setMultiple( [ SkinOptions::MINIMAL => true ] );
+		}
+	}
+
 	private function getMinimalMinervaToolbarEnrollment( Skin $skin ): ?string {
 		// Bail early for ineligible requests, non-minerva skin, and logged-in users
 		// Note: temporary accounts are eligible
@@ -47,39 +75,15 @@ class MinervaHooks extends HooksBase {
 		// Enroll via URL parameter
 		$request = $skin->getRequest();
 		if ( $request->getFuzzyBool( 'minMinToolbar' ) ) {
-			return self::MINIMAL_MINERVA_GROUP_NAME;
+			return self::GROUP_NAME;
 		}
 
 		// Enroll via TestKitchen
-		return $this->getAssignedGroup(
-			$request, self::MINIMAL_MINERVA_EXPERIMENT_NAME
+		$experiment = new FeatureFlagExperiment(
+			$this->experimentManager,
+			$request,
+			self::EXPERIMENT_NAME
 		);
-	}
-
-	private function maybeInitMinimalMinervaToolbar( Skin $skin, SkinOptions $skinOptions ): void {
-		$enrollment = $this->getMinimalMinervaToolbarEnrollment( $skin );
-		if ( $enrollment === null ) {
-			return;
-		}
-
-		// Add instrumentation module
-		$out = $skin->getOutput();
-		$out->addJsConfigVars( 'wgReaderExperimentsMinimalMinervaToolbar', [
-			'experimentName' => self::MINIMAL_MINERVA_EXPERIMENT_NAME,
-			'group' => $enrollment
-		] );
-		$out->addModules( 'ext.readerExperiments/minimalMinervaToolbar' );
-
-		// Treatment gets minimal mode
-		if ( $enrollment === self::MINIMAL_MINERVA_GROUP_NAME ) {
-			$skinOptions->setMultiple( [ SkinOptions::MINIMAL => true ] );
-		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function onSkinMinervaOptionsInit( Skin $skin, SkinOptions $skinOptions ): void {
-		$this->maybeInitMinimalMinervaToolbar( $skin, $skinOptions );
+		return $experiment->getAssignedGroup();
 	}
 }

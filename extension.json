@@ -34,25 +34,69 @@
 		}
 	},
 	"HookHandlers": {
-		"ReaderExperimentsHooks": {
-			"class": "MediaWiki\\Extension\\ReaderExperiments\\Hooks",
+		"ImageBrowsingHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ImageBrowsing\\Hooks",
 			"optional_services": [
 				"TestKitchen.ExperimentManager"
 			]
 		},
-		"MinervaHooks": {
-			"class": "MediaWiki\\Extension\\ReaderExperiments\\MinervaHooks",
+		"MinervaTocHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\MinervaToc\\Hooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager"
+			]
+		},
+		"MinervaTocParserMigrationHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\MinervaToc\\ParserMigrationHooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager"
+			]
+		},
+		"MinimalMinervaToolbarMinervaHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\MinimalMinervaToolbar\\MinervaHooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager"
+			]
+		},
+		"MobilePagePreviewsHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\MobilePagePreviews\\Hooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager"
+			]
+		},
+		"ShareHighlightHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ShareHighlight\\Hooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager"
+			]
+		},
+		"StickyHeadersHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\StickyHeaders\\Hooks",
 			"optional_services": [
 				"TestKitchen.ExperimentManager"
 			]
 		}
 	},
 	"Hooks": {
-		"BeforePageDisplay": "ReaderExperimentsHooks",
-		"BeforeInitialize": "ReaderExperimentsHooks",
-		"ShouldUseParsoid": "ReaderExperimentsHooks",
-		"SkinTemplateNavigation::Universal": "ReaderExperimentsHooks",
-		"SkinMinervaOptionsInit": "MinervaHooks"
+		"BeforePageDisplay": [
+			"ImageBrowsingHooks",
+			"MinervaTocHooks",
+			"MobilePagePreviewsHooks",
+			"ShareHighlightHooks",
+			"StickyHeadersHooks"
+		],
+		"BeforeInitialize": [
+			"MinervaTocHooks"
+		],
+		"ShouldUseParsoid": [
+			"MinervaTocParserMigrationHooks"
+		],
+		"SkinTemplateNavigation::Universal": [
+			"ShareHighlightHooks"
+		],
+		"SkinMinervaOptionsInit": [
+			"MinimalMinervaToolbarMinervaHooks"
+		]
 	},
 	"MessagesDirs": {
 		"ReaderExperiments": [
@@ -73,7 +117,7 @@
 				"index.js",
 				{
 					"name": "config.json",
-					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getCommonConfig"
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Common\\ResourceLoader::getConfig"
 				},
 				"thumbExtractor.js",
 				"excludedImageSelectors.js",
@@ -100,7 +144,7 @@
 				"init.js",
 				{
 					"name": "config.json",
-					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getImageBrowsingConfig"
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ImageBrowsing\\ResourceLoader::getConfig"
 				},
 				{
 					"name": "icons.json",
@@ -307,7 +351,7 @@
 				"init.js",
 				{
 					"name": "config.json",
-					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getShareHighlightConfig"
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ShareHighlight\\ResourceLoader::getConfig"
 				},
 				{
 					"name": "icons.json",
@@ -385,7 +429,7 @@
 				"init.js",
 				{
 					"name": "config.json",
-					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Hooks::getMobilePagePreviewsConfig"
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\MobilePagePreviews\\ResourceLoader::getConfig"
 				},
 				{
 					"name": "icons.json",

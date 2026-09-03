@@ -17,42 +17,36 @@
  * @file
  */
 
-namespace MediaWiki\Extension\ReaderExperiments;
+namespace MediaWiki\Extension\ReaderExperiments\Common;
 
 use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Request\WebRequest;
 
-abstract class HooksBase {
-	protected const IMAGE_BROWSING_EXPERIMENT_NAME = 'image-browsing-enwiki';
-	protected const IMAGE_BROWSING_GROUP_NAME = 'treatment';
-
-	protected const STICKY_HEADERS_EXPERIMENT_NAME = 'sticky-headers';
-	protected const STICKY_HEADERS_GROUP_NAME = 'treatment';
-
-	protected const SHARE_HIGHLIGHT_EXPERIMENT_NAME = 'share-highlight';
-	protected const SHARE_HIGHLIGHT_GROUP_NAME = 'treatment';
-
-	protected const SHARE_HIGHLIGHT_BASELINE_EXPERIMENT_NAME = 'share-highlight-baseline';
-
-	protected const MINERVA_TOC_EXPERIMENT_NAME = 'mobile-toc-abc2';
-	protected const MINERVA_TOC_GROUP_STICKY = 'treatment1';
-	protected const MINERVA_TOC_GROUP_BUTTON = 'treatment2';
-
-	protected const MOBILE_PAGE_PREVIEWS_EXPERIMENT_NAME = 'mobile-page-previews';
-	protected const MOBILE_PAGE_PREVIEWS_GROUP_NAME = 'treatment';
-
-	protected const MINIMAL_MINERVA_EXPERIMENT_NAME = 'minimal-minerva-toolbar';
-	protected const MINIMAL_MINERVA_GROUP_NAME = 'treatment';
-
-	protected ?ExperimentManager $experimentManager;
-
-	public function __construct( ?ExperimentManager $experimentManager = null ) {
-		$this->experimentManager = $experimentManager;
+/**
+ * This is a class that's similar to
+ * MediaWiki\Extension\TestKitchen\Sdk\ExperimentInterface
+ * (although it doesn't implement all its methods) in the
+ * sense that it will check an active experiment in order
+ * to determine what group the user is enrolled in, but
+ * also mimics TestKitchen's url query param overrides in
+ * cases there is no such active experiment (which can be
+ * useful during development/testing to split out the code
+ * paths that are/will be needed)
+ */
+class FeatureFlagExperiment {
+	public function __construct(
+		private ?ExperimentManager $experimentManager,
+		private WebRequest $request,
+		private string $experimentName
+	) {
 	}
 
-	protected function getAssignedGroup( WebRequest $request, string $experimentName ): ?string {
+	/**
+	 * @return string|null
+	 */
+	public function getAssignedGroup(): ?string {
 		if ( $this->experimentManager ) {
-			$experiment = $this->experimentManager->getExperiment( $experimentName );
+			$experiment = $this->experimentManager->getExperiment( $this->experimentName );
 			$assignedGroup = $experiment->getAssignedGroup();
 			if ( $assignedGroup !== null ) {
 				return $assignedGroup;
@@ -64,7 +58,7 @@ abstract class HooksBase {
 		// development before having set up experiments (or test in
 		// environments where setting it up is inconvenient)
 		// This looks something like: ?mpo=minerva-toc-abc:treatment1
-		$mpo = $request->getRawVal( 'mpo' );
+		$mpo = $this->request->getRawVal( 'mpo' );
 		if ( $mpo !== null ) {
 			$overrides = explode( ';', $mpo );
 			// Iterate in reverse to mimic test kitchen's behavior of iterating
@@ -77,7 +71,7 @@ abstract class HooksBase {
 					return null;
 				}
 
-				if ( $overrideParts[0] === $experimentName ) {
+				if ( $overrideParts[0] === $this->experimentName ) {
 					return $overrideParts[1];
 				}
 			}
@@ -86,4 +80,11 @@ abstract class HooksBase {
 		return null;
 	}
 
+	/**
+	 * @param string ...$groups
+	 * * @return bool
+	 */
+	public function isAssignedGroup( string ...$groups ): bool {
+		return in_array( $this->getAssignedGroup(), $groups, true );
+	}
 }

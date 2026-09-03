@@ -45,20 +45,48 @@ $wgGenerateThumbnailOnParse = false;
 
 Consider using [Fresh](https://github.com/wikimedia/fresh) to handle Node.js and/or npm.
 
+## Repo structure/code organization
 
-### Enable Image Browsing
+This repository is not a single project, but a collection of multiple
+different experiments.
 
-This feature can be enabled in two ways:
+In order to facilitate work across these experiments, we would like to
+set up a clear structure that looks like this:
 
-1. **URL parameter** (for testing) - append `?imageBrowsing=1` to any article URL
-2. **Experiment assignment** - users assigned to the treatment group via `ExperimentManager`
+|                            | PHP Directory     | JS Directory            | RL module                   |
+|----------------------------|-------------------|-------------------------|-----------------------------|
+| **Shared components**      | src/Common        | resources/common        | ext.readerExperiments       |
+| **Individual experiments** | src/Experiments/* | resources/experiments/* | ext.readerExperiments/*     |
+| **External libraries**     |                   | resources/lib/*         | ext.readerExperiments/lib/* |
 
-Example with URL parameter: `/wiki/Angkor_Wat?imageBrowsing=1`
+### Shared components
 
-Notes:
+Frontend code shared across multiple experiments is expected to go into
+the `resources/common` directory, exported through its `index.js`
+entrypoint, and accessible from the `ext.readerExperiments` ResourceLoader
+module. Shared PHP goes in `src/Common`.
 
-- The URL parameter bypasses experiment gating for easy testing
-- Without the URL parameter, the feature only loads for users in the experiment treatment group
+For these shared resources, we suggest implementing them in the relevant
+experiment first (although if we can make it somewhat generic from the go,
+all the better) and not move them into "common" until we have a 2nd
+experiment where they will actually be re-used (to prevent premature
+optimization when we can't properly assess re-use nuances yet)
+
+### Individual experiments
+
+Each distinct experiment is placed in a standalone subdirectory under
+`src/Experiments` or `resources/experiments`. The ResourceLoader module
+name will be `ext.readerExperiments/<name>`, where the experiment name
+suffix matches the directory name.
+
+### External libraries
+
+External libraries should be located in `resources/lib` and are managed
+through `resources/lib/foreign-resources.yaml`.
+
+In order to prevent conflicts with other extensions, we'll prefix the
+ResourceLoader module names so that they look like
+`ext.readerExperiments/lib/<name>`.
 
 
 ## Development

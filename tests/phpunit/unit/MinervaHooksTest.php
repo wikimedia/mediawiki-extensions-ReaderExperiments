@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\ReaderExperiments\Tests;
 
-use MediaWiki\Extension\ReaderExperiments\MinervaHooks;
+use MediaWiki\Extension\ReaderExperiments\Experiments\MinimalMinervaToolbar\MinervaHooks;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Minerva\SkinOptions;
 use MediaWiki\Minerva\Skins\SkinUserPageHelper;
@@ -16,7 +16,7 @@ use ReflectionMethod;
 
 /**
  * @group ReaderExperiments
- * @covers \MediaWiki\Extension\ReaderExperiments\MinervaHooks
+ * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\MinimalMinervaToolbar\MinervaHooks
  */
 class MinervaHooksTest extends MediaWikiUnitTestCase {
 	private function requireMinervaSkinOptions(): void {
