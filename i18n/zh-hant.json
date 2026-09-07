@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"EBlackorby-WMF",
-			"Kly"
+			"Kly",
+			"LowensteinYang"
 		]
 	},
 	"readerexperiments-desc": "一套旨在增加維基百科讀者的原型版本",
@@ -51,7 +52,7 @@
 	"readerexperiments-sharehighlight-download": "下載",
 	"readerexperiments-sharehighlight-downloading": "正在下載",
 	"readerexperiments-sharehighlight-loading": "載入中…",
-	"readerexperiments-sharehighlight-share-title": "引自「$1」 — 維基百科",
-	"readerexperiments-sharehighlight-share-text-with-branding": "「$1」 在維基百科上閱讀更多：$2",
+	"readerexperiments-sharehighlight-share-title": "引自「$1」 — $2",
+	"readerexperiments-sharehighlight-share-text-with-branding": "「$1」\n\n更多相關內容請見$3：$2",
 	"readerexperiments-sharehighlight-image-author-license": "圖片：$1 · $2"
 }
