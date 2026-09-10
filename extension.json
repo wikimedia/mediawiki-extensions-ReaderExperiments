@@ -75,6 +75,13 @@
 			"optional_services": [
 				"TestKitchen.ExperimentManager"
 			]
+		},
+		"MinervaCompactLeadHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\MinervaCompactLead\\Hooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager",
+				"MobileFrontend.Context"
+			]
 		}
 	},
 	"Hooks": {
@@ -83,7 +90,8 @@
 			"MinervaTocHooks",
 			"MobilePagePreviewsHooks",
 			"ShareHighlightHooks",
-			"StickyHeadersHooks"
+			"StickyHeadersHooks",
+			"MinervaCompactLeadHooks"
 		],
 		"BeforeInitialize": [
 			"MinervaTocHooks"
@@ -458,6 +466,18 @@
 			"remoteExtPath": "ReaderExperiments/resources/experiments/minimalMinervaToolbar",
 			"packageFiles": [
 				"instrumentation.js"
+			]
+		},
+		"ext.readerExperiments/minervaCompactLead": {
+			"localBasePath": "resources/experiments/minervaCompactLead",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/minervaCompactLead",
+			"packageFiles": [
+				"instrumentation.js",
+				"sessionTracker.js"
+			],
+			"dependencies": [
+				"skins.minerva.scripts",
+				"mediawiki.storage"
 			]
 		}
 	},
