@@ -1,0 +1,54 @@
+{{#output.resultsCountText}}
+	<span>
+		{{.}}
+	</span>
+{{/output.resultsCountText}}
+
+{{#output.didYouMeanText}}
+	<div
+		class="cdx-message cdx-message--block cdx-message--notice"
+		aria-live="polite"
+	>
+		<span class="cdx-message__icon"></span>
+		<div class="cdx-message__content">{{{.}}}</div>
+	</div>
+{{/output.didYouMeanText}}
+
+{{^results}}
+	{{^error}}
+		{{#request.hasTerm}}
+			<div
+				class="cdx-message cdx-message--block cdx-message--notice"
+				aria-live="polite"
+			>
+				<span class="cdx-message__icon"></span>
+				<div class="cdx-message__content">{{output.noResultsText}}</div>
+			</div>
+		{{/request.hasTerm}}
+	{{/error}}
+{{/results}}
+
+{{#warnings}}
+	<div
+		class="cdx-message cdx-message--block cdx-message--warning"
+		aria-live="polite"
+	>
+		<span class="cdx-message__icon"></span>
+		<div class="cdx-message__content">{{.}}</div>
+	</div>
+{{/warnings}}
+
+{{#error}}
+	<div class="cdx-message cdx-message--block cdx-message--error" role="alert">
+		<span class="cdx-message__icon"></span>
+		<div class="cdx-message__content">
+			<p><strong>{{output.errorTitleText}}</strong></p>
+			<p>
+				{{{.}}}
+			</p>
+			<p>
+				{{output.errorText}}
+			</p>
+		</div>
+	</div>
+{{/error}}

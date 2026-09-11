@@ -1,0 +1,68 @@
+<a
+	href="{{canonicalurl}}"
+	title="{{title}}"
+	class="cdx-card cdx-card--is-link cdx-docs-card-group-with-thumbnails__card"
+>
+	<span class="cdx-thumbnail cdx-card__thumbnail">
+		<span
+			{{#thumbnail}}style="background-image: url( {{source}} );"{{/thumbnail}}
+			class="cdx-thumbnail__image"
+		></span>
+	</span>
+	<span class="cdx-card__text">
+		<span class="cdx-card__text__title">
+			{{#namespacePrefix}}<span class="ext-readerExperiments-semanticsearch-result__namespace">{{.}}</span>{{/namespacePrefix}}
+			{{title}}
+		</span>
+		{{#snippet}}
+			<div class="cdx-card__text__description">
+				{{{.}}}
+			</div>
+		{{/snippet}}
+		<span class="cdx-card__text__supporting-text">
+			{{#output.categoryInfoText}}
+				{{!
+					3 members (0 subcategories, 3 files)
+				}}
+				<span>{{.}}</span>
+			{{/output.categoryInfoText}}
+
+			{{^categoryInfoText}}
+				{{!
+					11 KB (816 words)
+				}}
+				{{#formattedPageSizeText}}
+					<span>{{.}}</span>
+				{{/formattedPageSizeText}}
+
+				{{#wordcountText}}
+					<span>{{.}}</span>
+				{{/wordcountText}}
+			{{/categoryInfoText}}
+
+			{{#lastEditedText}}
+				-
+				{{!
+					7:24, June 8, 2026
+				}}
+				<span>{{.}}</span>
+			{{/lastEditedText}}
+
+			{{#contributorsText}}
+				-
+				{{!
+					1573 contributors
+				}}
+				<span>{{.}}</span>
+			{{/contributorsText}}
+
+			{{#referencesText}}
+				-
+				{{!
+					42 contributors
+				}}
+				<span>{{.}}</span>
+			{{/referencesText}}
+		</span>
+	</span>
+</a>

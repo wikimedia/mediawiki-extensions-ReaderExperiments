@@ -9,5 +9,6 @@ module.exports = {
 	useAverageColor: require( './composables/useAverageColor.js' ),
 	useContentImages: require( './composables/useContentImages.js' ),
 	useImageModel: require( './composables/useImageModel.js' ),
-	useSummary: require( './composables/useSummary.js' )
+	useSummary: require( './composables/useSummary.js' ),
+	rawParamsMessage: require( './utils/rawParamsMessage.js' )
 };

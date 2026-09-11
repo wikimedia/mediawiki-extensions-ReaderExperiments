@@ -132,10 +132,9 @@
 <script>
 const { computed, nextTick, ref, toRef, useTemplateRef, watch } = require( 'vue' );
 const { CdxIcon } = require( '@wikimedia/codex' );
-const { useAverageColor } = require( 'ext.readerExperiments' );
+const { useAverageColor, rawParamsMessage } = require( 'ext.readerExperiments' );
 const icons = require( '../icons.json' );
 const InlineSvg = require( './InlineSvg.vue' );
-const rawParamsMessage = require( '../utils/rawParamsMessage.js' );
 
 // Use static URLs to load local SVG files
 const staticBaseUrl = mw.config.get( 'wgExtensionAssetsPath' ) + '/ReaderExperiments/resources/experiments/shareHighlight/images/';

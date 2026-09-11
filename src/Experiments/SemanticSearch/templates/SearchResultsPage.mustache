@@ -1,0 +1,68 @@
+{{!
+	SERPWidget template. This file sets up the no-JS fallback UI for
+	Special:SemanticSearch using simple HTML form tags.
+}}
+<form method="get" action="{{request.page}}">
+	{{#request.queryParams}}
+		{{!
+			New searches will have a new search term,
+			and should always start from first result
+		}}
+		{{^isSearch}}
+			{{^isContinue}}
+				<input type="hidden" name="{{key}}" value="{{value}}" />
+			{{/isContinue}}
+		{{/isSearch}}
+	{{/request.queryParams}}
+	<input type="hidden" name="noredirect" value="" />
+
+	<div class="cdx-search-input cdx-search-input--has-end-button">
+		<div class="cdx-search-input__input-wrapper">
+			<div class="cdx-text-input cdx-text-input--has-start-icon cdx-text-input--status-{{#response.lexical.error}}error{{/response.lexical.error}}{{^response.lexical.error}}default{{/response.lexical.error}} cdx-search-input__text-input">
+				<input
+					class="cdx-text-input__input {{#request.hasTerm}}cdx-text-input__input--has-value{{/request.hasTerm}}"
+					type="search"
+					placeholder="{{output.searchPlaceholderText}}"
+					value="{{request.term}}"
+					name="search"
+					dir="auto"
+				>
+				<span class="cdx-text-input__icon cdx-text-input__start-icon"></span>
+			</div>
+		</div>
+		<button class="cdx-button cdx-button--action-default cdx-button--weight-normal cdx-button--size-medium cdx-button--framed cdx-search-input__end-button">{{output.searchButtonText}}</button>
+	</div>
+</form>
+
+{{#response.lexical}}
+	{{>SearchInfo}}
+{{/response.lexical}}
+
+{{#response.semantic}}
+	<h1>Semantic</h1>
+	<div class="cdx-docs-card-group-with-thumbnails">
+		{{#results}}
+			{{>SearchResult}}
+		{{/results}}
+	</div>
+{{/response.semantic}}
+
+{{#response.lexical}}
+	<h1>Lexical</h1>
+	<div class="cdx-docs-card-group-with-thumbnails">
+		{{#results}}
+			{{>SearchResult}}
+		{{/results}}
+	</div>
+{{/response.lexical}}
+
+{{#output.pagination}}
+	<div>
+		{{#prev}}
+			<a href="{{.}}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{{output.previousText}}</a>
+		{{/prev}}
+		{{#next}}
+			<a href="{{.}}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{{output.continueText}}</a>
+		{{/next}}
+	</div>
+{{/output.pagination}}

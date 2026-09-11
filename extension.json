@@ -35,6 +35,10 @@
 		"ReaderExperimentsPreferredSourcesDebug": {
 			"description": "Local development only: bypass the Google-referrer gate and the CTA suppression flag for the preferred-sources experiment.",
 			"value": false
+		},
+		"ReaderExperimentsSemanticSearchAllowOptIn": {
+			"description": "Whether or not to provide the option for users to opt in to Special:SemanticSearch",
+			"value": false
 		}
 	},
 	"HookHandlers": {
@@ -77,6 +81,12 @@
 				"TestKitchen.ExperimentManager"
 			]
 		},
+		"SemanticSearchHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\Hooks",
+			"optional_services": [
+				"MainConfig"
+			]
+		},
 		"StickyHeadersHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\StickyHeaders\\Hooks",
 			"optional_services": [
@@ -104,6 +114,9 @@
 		"BeforeInitialize": [
 			"MinervaTocHooks"
 		],
+		"GetPreferences": [
+			"SemanticSearchHooks"
+		],
 		"ShouldUseParsoid": [
 			"MinervaTocParserMigrationHooks"
 		],
@@ -118,6 +131,9 @@
 		"ReaderExperiments": [
 			"i18n"
 		]
+	},
+	"ExtensionMessagesFiles": {
+		"ReaderExperimentsAlias": "ReaderExperiments.i18n.alias.php"
 	},
 	"ForeignResourcesDir": "resources/lib",
 	"ResourceModules": {
@@ -140,7 +156,8 @@
 				"composables/useAverageColor.js",
 				"composables/useContentImages.js",
 				"composables/useImageModel.js",
-				"composables/useSummary.js"
+				"composables/useSummary.js",
+				"utils/rawParamsMessage.js"
 			]
 		},
 		"ext.readerExperiments/imageBrowsing": {
@@ -389,8 +406,7 @@
 				"composables/useShareQuote.js",
 				"utils/textFragment.js",
 				"utils/truncateText.js",
-				"utils/imageGenerator.js",
-				"utils/rawParamsMessage.js"
+				"utils/imageGenerator.js"
 			],
 			"styles": [],
 			"messages": [
@@ -468,6 +484,49 @@
 				"readerexperiments-mobilepagepreviews-close-button-label"
 			]
 		},
+		"ext.readerExperiments/semanticSearch": {
+			"localBasePath": "resources/experiments/semanticSearch",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/semanticSearch",
+			"packageFiles": [
+				"init.js",
+				"components/SearchInfo.vue",
+				"components/SearchResult.vue",
+				"components/SearchResultsPage.vue",
+				"utils/formatSize.js"
+			],
+			"messages": [
+				"readerexperiments-semanticsearch-search-button",
+				"readerexperiments-semanticsearch-input-placeholder",
+				"readerexperiments-semanticsearch-load-more-results",
+				"readerexperiments-semanticsearch-results-count",
+				"readerexperiments-semanticsearch-did-you-mean",
+				"readerexperiments-semanticsearch-no-results",
+				"readerexperiments-semanticsearch-error-message",
+				"readerexperiments-semanticsearch-error-text",
+				"readerexperiments-semanticsearch-category-info",
+				"readerexperiments-semanticsearch-wordcount",
+				"size-bytes",
+				"size-kilobytes",
+				"size-megabytes",
+				"size-gigabytes"
+			],
+			"dependencies": [
+				"mediawiki.api",
+				"mediawiki.language",
+				"mediawiki.util",
+				"mediawiki.DateFormatter",
+				"@wikimedia/codex",
+				"vue",
+				"ext.readerExperiments"
+			]
+		},
+		"ext.readerExperiments/semanticSearch.styles": {
+			"localBasePath": "resources/experiments/semanticSearch/styles",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/semanticSearch/styles",
+			"styles": [
+				"searchResult.less"
+			]
+		},
 		"ext.readerExperiments/minimalMinervaToolbar": {
 			"localBasePath": "resources/experiments/minimalMinervaToolbar",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/minimalMinervaToolbar",
@@ -532,5 +591,31 @@
 			]
 		}
 	},
+	"SpecialPages": {
+		"SemanticSearch": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\SpecialSemanticSearch",
+			"services": [
+				"ReaderExperiments.SemanticSearch.Api.RestApi",
+				"MainConfig",
+				"TitleMatcher",
+				"UserOptionsManager"
+			]
+		}
+	},
+	"RestRoutes": [
+		{
+			"path": "/semanticsearch/v0/{term}",
+			"method": "GET",
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\Rest\\GetSemanticSearch",
+			"services": [
+				"ReaderExperiments.SemanticSearch.Api.RoutedApi",
+				"MainConfig",
+				"ContentLanguage"
+			]
+		}
+	],
+	"ServiceWiringFiles": [
+		"src/Experiments/SemanticSearch/ServiceWiring.php"
+	],
 	"manifest_version": 2
 }
