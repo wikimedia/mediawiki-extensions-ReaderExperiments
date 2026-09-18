@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"EBlackorby-WMF",
-			"Kly"
+			"Kly",
+			"LowensteinYang"
 		]
 	},
 	"readerexperiments-desc": "一套旨在增加維基百科讀者的原型版本",
