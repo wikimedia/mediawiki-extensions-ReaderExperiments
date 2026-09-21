@@ -1,0 +1,32 @@
+{
+	"control": {
+		"showCarousel": false,
+		"showCaptions": false,
+		"showJumpLink": false,
+		"showToggle": false
+	},
+	"vanilla-carousel": {
+		"showCarousel": true,
+		"showCaptions": false,
+		"showJumpLink": false,
+		"showToggle": true
+	},
+	"carousel-captions-only": {
+		"showCarousel": true,
+		"showCaptions": true,
+		"showJumpLink": false,
+		"showToggle": true
+	},
+	"carousel-jump-only": {
+		"showCarousel": true,
+		"showCaptions": false,
+		"showJumpLink": true,
+		"showToggle": true
+	},
+	"carousel-captions-jump": {
+		"showCarousel": true,
+		"showCaptions": true,
+		"showJumpLink": true,
+		"showToggle": true
+	}
+}
