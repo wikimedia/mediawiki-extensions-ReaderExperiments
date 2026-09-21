@@ -53,5 +53,10 @@
 	"readerexperiments-sharehighlight-generating": "Luodaan kuvaa",
 	"readerexperiments-sharehighlight-share-title": "Lainaus artikkelista ”$1” – $2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "”$1”\n\nLue lisää {{GRAMMAR:inessive|$3}}: $2",
-	"readerexperiments-sharehighlight-image-author-license": "Kuva: $1 · $2"
+	"readerexperiments-sharehighlight-image-author-license": "Kuva: $1 · $2",
+	"readerexperiments-preferredsources-cta-message": "Pidä Wikipedia näkyvissä Google-hauissasi",
+	"readerexperiments-preferredsources-cta-action": "Lisätietoja",
+	"readerexperiments-preferredsources-dialog-title": "Pidä Wikipedia näkyvissä Google-hauissasi",
+	"readerexperiments-preferredsources-dialog-action": "Valitse Wikipedia",
+	"readerexperiments-preferredsources-dialog-dismiss": "Älä näytä uudelleen"
 }

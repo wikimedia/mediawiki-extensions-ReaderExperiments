@@ -51,5 +51,11 @@
 	"readerexperiments-sharehighlight-generating": "Bild wird erstellt",
 	"readerexperiments-sharehighlight-share-title": "Zitat aus „$1“ – $2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "„$1“ \n\nLies mehr auf $3: $2",
-	"readerexperiments-sharehighlight-image-author-license": "Bild: $1 · $2"
+	"readerexperiments-sharehighlight-image-author-license": "Bild: $1 · $2",
+	"readerexperiments-preferredsources-cta-message": "Sorge dafür, dass Wikipedia in deinen Google-Suchergebnissen weiterhin angezeigt wird",
+	"readerexperiments-preferredsources-cta-action": "Mehr erfahren",
+	"readerexperiments-preferredsources-dialog-title": "Sorge dafür, dass Wikipedia in deinen Google-Suchergebnissen weiterhin angezeigt wird",
+	"readerexperiments-preferredsources-dialog-body": "Lege Wert auf zuverlässige Informationen, die von Menschen auf ihre Richtigkeit überprüft wurden. Wähle Wikipedia als bevorzugte Quelle bei Google.",
+	"readerexperiments-preferredsources-dialog-action": "Wikipedia auswählen",
+	"readerexperiments-preferredsources-dialog-dismiss": "Nicht wieder anzeigen"
 }

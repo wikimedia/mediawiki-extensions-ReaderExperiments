@@ -53,5 +53,11 @@
 	"readerexperiments-sharehighlight-generating": "Abuurista sawir",
 	"readerexperiments-sharehighlight-share-title": "Xigasho ka timid \"$1\" — $2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nSii akhri $3: $2",
-	"readerexperiments-sharehighlight-image-author-license": "Sawir: $1 · $2"
+	"readerexperiments-sharehighlight-image-author-license": "Sawir: $1 · $2",
+	"readerexperiments-preferredsources-cta-message": "Wikipedia ka dhig mid ka muuqda raadintaada Google",
+	"readerexperiments-preferredsources-cta-action": "Wax badan baro",
+	"readerexperiments-preferredsources-dialog-title": "Wikipedia ka dhig mid ka muuqda raadintaada Google",
+	"readerexperiments-preferredsources-dialog-body": "Mudnaanta sii macluumaadka lagu kalsoonaan karo ee ay dadku xaqiijiyeen. Wikipedia ka dooro ilo aad doorbidayso ee Google.",
+	"readerexperiments-preferredsources-dialog-action": "Dooro Wikipedia",
+	"readerexperiments-preferredsources-dialog-dismiss": "Mar dambe ha tusin"
 }

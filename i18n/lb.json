@@ -36,5 +36,9 @@
 	"readerexperiments-sharehighlight-share": "Deelen",
 	"readerexperiments-sharehighlight-generating": "Bild gëtt generéiert",
 	"readerexperiments-sharehighlight-share-text-with-branding": "„$1“\n\nLiest méi op Wikipedia: $2",
-	"readerexperiments-sharehighlight-image-author-license": "Bild: $1 · $2"
+	"readerexperiments-sharehighlight-image-author-license": "Bild: $1 · $2",
+	"readerexperiments-preferredsources-cta-message": "Suergt dofir, datt Wikipedia an Äre Google-Sichresultater visibel bleift",
+	"readerexperiments-preferredsources-dialog-title": "Suergt dofir, datt Wikipedia an Äre Google-Sichresultater visibel bleift",
+	"readerexperiments-preferredsources-dialog-action": "Wikipedia auswielen",
+	"readerexperiments-preferredsources-dialog-dismiss": "Net nach eng Kéier weisen"
 }

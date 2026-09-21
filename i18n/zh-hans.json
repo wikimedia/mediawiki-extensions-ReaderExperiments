@@ -56,5 +56,11 @@
 	"readerexperiments-sharehighlight-generating": "正在生成图像…",
 	"readerexperiments-sharehighlight-share-title": "引自“$1”——$2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "“$1”\n\n在$3上阅读更多：$2",
-	"readerexperiments-sharehighlight-image-author-license": "图像：$1 · $2"
+	"readerexperiments-sharehighlight-image-author-license": "图像：$1 · $2",
+	"readerexperiments-preferredsources-cta-message": "在您的Google搜索中保持维基百科可见",
+	"readerexperiments-preferredsources-cta-action": "了解更多",
+	"readerexperiments-preferredsources-dialog-title": "在您的Google搜索中保持维基百科可见",
+	"readerexperiments-preferredsources-dialog-body": "优先提供经过人工核实的可靠信息。在Google上将维基百科设为首选信息来源。",
+	"readerexperiments-preferredsources-dialog-action": "选择维基百科",
+	"readerexperiments-preferredsources-dialog-dismiss": "不再显示"
 }

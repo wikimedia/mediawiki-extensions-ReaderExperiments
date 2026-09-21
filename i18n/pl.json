@@ -1,8 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"PanWor",
 			"Tar Lócesilion"
 		]
 	},
-	"readerexperiments-mobilepagepreviews-read-more": "Czytaj więcej"
+	"readerexperiments-mobilepagepreviews-read-more": "Czytaj więcej",
+	"readerexperiments-preferredsources-cta-message": "Pokazuj Wikipedię w wynikach wyszukiwania Google",
+	"readerexperiments-preferredsources-cta-action": "Dowiedz się więcej",
+	"readerexperiments-preferredsources-dialog-title": "Pokazuj Wikipedię w wynikach wyszukiwania Google",
+	"readerexperiments-preferredsources-dialog-body": "Stawiaj na rzetelne informacje, które zostały zweryfikowane przez ludzi. Wybierz Wikipedię jako preferowane źródło w wyszukiwarce Google.",
+	"readerexperiments-preferredsources-dialog-action": "Wybierz Wikipedię",
+	"readerexperiments-preferredsources-dialog-dismiss": "Nie pokazuj ponownie"
 }

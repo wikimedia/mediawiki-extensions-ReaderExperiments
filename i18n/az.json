@@ -53,5 +53,11 @@
 	"readerexperiments-sharehighlight-generating": "Şəkil yaradılır",
 	"readerexperiments-sharehighlight-share-title": "\"$1\" səhifəsindən dən sitat — $2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\"\n\nDaha ətraflı $3 saytında oxuyun: $2",
-	"readerexperiments-sharehighlight-image-author-license": "Şəkil: $1 · $2"
+	"readerexperiments-sharehighlight-image-author-license": "Şəkil: $1 · $2",
+	"readerexperiments-preferredsources-cta-message": "Google axtarışlarınızda Vikipediyanı görünən saxlayın",
+	"readerexperiments-preferredsources-cta-action": "Daha ətraflı",
+	"readerexperiments-preferredsources-dialog-title": "Google axtarışlarınızda Vikipediyanı görünən saxlayın",
+	"readerexperiments-preferredsources-dialog-body": "İnsanlar tərəfindən fakt yoxlanışından keçirilmiş etibarlı məlumatlara üstünlük verin. Google-da üstünlük verilən mənbə kimi Vikipediyanı seçin.",
+	"readerexperiments-preferredsources-dialog-action": "Vikipediyanı seç",
+	"readerexperiments-preferredsources-dialog-dismiss": "Bir daha göstərmə"
 }

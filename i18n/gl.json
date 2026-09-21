@@ -53,5 +53,11 @@
 	"readerexperiments-sharehighlight-generating": "Xerando a imaxe",
 	"readerexperiments-sharehighlight-share-title": "Cita de «$1» — $2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "«$1»\n\nMáis información en $3: $2",
-	"readerexperiments-sharehighlight-image-author-license": "Imaxe: $1 · $2"
+	"readerexperiments-sharehighlight-image-author-license": "Imaxe: $1 · $2",
+	"readerexperiments-preferredsources-cta-message": "Mantén a Wikipedia visible nas buscas de Google",
+	"readerexperiments-preferredsources-cta-action": "Máis información",
+	"readerexperiments-preferredsources-dialog-title": "Mantén a Wikipedia visible nas buscas de Google",
+	"readerexperiments-preferredsources-dialog-body": "Prioriza a información fiable e verificada por humanos. Escolle a Wikipedia como fonte preferida en Google.",
+	"readerexperiments-preferredsources-dialog-action": "Escolle a Wikipedia",
+	"readerexperiments-preferredsources-dialog-dismiss": "Non mostrar de novo"
 }
