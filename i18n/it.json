@@ -3,6 +3,7 @@
 		"authors": [
 			"Asteralee",
 			"Beta16",
+			"Matroz",
 			"Neonsn0w",
 			"Sannita"
 		]
@@ -41,6 +42,9 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Per saperne di più",
 	"readerexperiments-mobilepagepreviews-title": "Anteprima della pagina",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Chiudi",
+	"readerexperiments-semanticsearch-switch-special-search": "Passa a {{#Special:Search}}",
+	"readerexperiments-semanticsearch-search-button": "Cerca",
+	"readerexperiments-semanticsearch-error-message": "Ricerca non valida",
 	"readerexperiments-sharehighlight-share-quote": "Condividi citazione",
 	"readerexperiments-sharehighlight-dialog-title": "Condividi",
 	"readerexperiments-sharehighlight-background-legend": "Sfondo",
@@ -51,5 +55,11 @@
 	"readerexperiments-sharehighlight-download": "Scarica",
 	"readerexperiments-sharehighlight-generating": "Generando l'immagine",
 	"readerexperiments-sharehighlight-share-title": "Citazione da \"$1\" — $2",
-	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\" \n\n Leggi di più su $3: $2"
+	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\" \n\n Leggi di più su $3: $2",
+	"readerexperiments-preferredsources-cta-message": "Mantieni Wikipedia visibile nelle tue ricerche su Google",
+	"readerexperiments-preferredsources-cta-action": "Scopri di più",
+	"readerexperiments-preferredsources-dialog-title": "Mantieni Wikipedia visibile nei risultati di ricerca su Google",
+	"readerexperiments-preferredsources-dialog-body": "Dai priorità alle informazioni affidabili verificate da esseri umani. Scegli Wikipedia come fonte preferita su Google.",
+	"readerexperiments-preferredsources-dialog-action": "Scegli Wikipedia",
+	"readerexperiments-preferredsources-dialog-dismiss": "Non mostrare più"
 }
