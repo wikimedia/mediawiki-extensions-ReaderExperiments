@@ -17,6 +17,12 @@
 					class="ext-readerExperiments-semanticsearch-result__namespace"
 				>{{ namespacePrefix }}</span>
 				{{ result.title }}
+				<template v-if="result.sectiontitle">
+					{{ $i18n( 'readerexperiments-semanticsearch-match-section', result.sectiontitle ) }}
+				</template>
+				<template v-if="result.redirecttitle">
+					{{ $i18n( 'readerexperiments-semanticsearch-match-redirect', result.redirecttitle ) }}
+				</template>
 			</span>
 
 			<div

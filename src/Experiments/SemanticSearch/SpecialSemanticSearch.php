@@ -377,6 +377,16 @@ class SpecialSemanticSearch extends SpecialPage {
 			null :
 			$this->getContentLanguage()->getFormattedNsText( $result['ns'] );
 
+		// Section
+		$result['sectionText'] = isset( $result['sectiontitle'] ) ?
+			$this->msg( 'readerexperiments-semanticsearch-match-section', $result['sectiontitle'] )->text() :
+			null;
+
+		// Redirect
+		$result['redirectText'] = isset( $result['redirecttitle'] ) ?
+			$this->msg( 'readerexperiments-semanticsearch-match-redirect', $result['redirecttitle'] )->text() :
+			null;
+
 		// Last edited date
 		$result['lastEditedText'] = $userLanguage->timeanddate( $result['timestamp'] );
 

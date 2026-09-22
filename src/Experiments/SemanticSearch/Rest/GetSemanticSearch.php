@@ -81,7 +81,7 @@ class GetSemanticSearch extends Handler {
 				'gsroffset' => $params['continue'] ?: 0,
 				'gsrsort' => $params['sort'],
 				'gsrinfo' => 'totalhits|suggestion',
-				'gsrprop' => 'size|wordcount|timestamp|snippet',
+				'gsrprop' => 'size|wordcount|timestamp|snippet|redirecttitle|sectiontitle',
 				'prop' => 'info|categoryinfo|pageimages',
 				'inprop' => 'url',
 				'piprop' => 'thumbnail',

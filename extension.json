@@ -527,6 +527,8 @@
 				"readerexperiments-semanticsearch-error-text",
 				"readerexperiments-semanticsearch-category-info",
 				"readerexperiments-semanticsearch-wordcount",
+				"readerexperiments-semanticsearch-match-section",
+				"readerexperiments-semanticsearch-match-redirect",
 				"size-bytes",
 				"size-kilobytes",
 				"size-megabytes",
