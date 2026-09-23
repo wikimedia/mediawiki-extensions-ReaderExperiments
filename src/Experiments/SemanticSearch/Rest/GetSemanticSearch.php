@@ -30,10 +30,12 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
  * GET /semanticsearch/v0/{term}
  */
 class GetSemanticSearch extends Handler {
+	// Public to enable testing
+	public const TYPE_SEMANTIC = 'semantic';
 	private const TYPE_LEXICAL = 'lexical';
-	private const TYPE_SEMANTIC = 'semantic';
 
-	private ?SearchConfig $searchConfig = null;
+	// Protected to enable testing
+	protected ?SearchConfig $searchConfig = null;
 	private readonly string $localApiUrl;
 	private readonly string $externalApiUrl;
 
@@ -131,47 +133,22 @@ class GetSemanticSearch extends Handler {
 	}
 
 	/**
-	 * Returns a boolean to indicate whether the given search type
-	 * is one that can be handled.
+	 * Thin wrapper around SearchEngine::parseNamespacePrefixes to enable testing.
 	 *
-	 * Non-NS_MAIN namespace searches, and special lexical search
-	 * features are not currently supported in semantic search.
+	 * The real implementation reaches into MediaWikiServices via the message system.
 	 */
-	private function isSupportedType( string $type, string $term, array $namespaces ): bool {
-		if ( $type === self::TYPE_SEMANTIC ) {
-			if ( count( $namespaces ) !== 1 || !in_array( NS_MAIN, $namespaces ) ) {
-				return false;
-			}
-
-			if ( $this->searchConfig ) {
-				// check for namespace-specific directive within search query
-				$nsInTerm = SearchEngine::parseNamespacePrefixes( $term, true, true );
-				if ( $nsInTerm && ( count( $nsInTerm[1] ) !== 1 || !in_array( NS_MAIN, $nsInTerm[1] ) ) ) {
-					return false;
-				}
-
-				// Check for keywords, like `insource:`, `incategory:`,
-				// `hastemplate:`, `filesize:` etc.
-				$keywords = $this->getSearchKeywords();
-				$match = preg_match(
-					'/(?<=^|\s)(' . implode( '|', $keywords ) . '):.+?(?=$|\s)/',
-					$term
-				);
-				if ( $match ) {
-					return false;
-				}
-			}
-		}
-
-		return true;
+	protected function parseNamespacePrefixes( string $term ): array|false {
+		return SearchEngine::parseNamespacePrefixes( $term, true, true );
 	}
 
 	/**
 	 * Returns a list of supported search keyword prefixes.
 	 *
+	 * Protected to enable testing.
+	 *
 	 * @throws NoCirrusSearchException
 	 */
-	private function getSearchKeywords(): array {
+	protected function getSearchKeywords(): array {
 		if ( !$this->searchConfig ) {
 			throw new NoCirrusSearchException( 'CirrusSearch required for search keyword prefixes' );
 		}
@@ -182,6 +159,65 @@ class GetSemanticSearch extends Handler {
 			$keywords = array_merge( $keywords, $feature->getKeywordPrefixes() );
 		}
 		return $keywords;
+	}
+
+	/**
+	 * Returns a boolean to indicate whether the given search type
+	 * is one that can be handled.
+	 *
+	 * Semantic search does not support:
+	 * - non-main namespace search
+	 * - non-main namespace prefixes
+	 * - keywords like insource:, incategory:, hastemplate:, filesize:, etc.
+	 * - Lucene/CirrusSearch operators
+	 */
+	private function isSupportedType( string $type, string $term, array $namespaces ): bool {
+		// Non-main namespace search
+		if ( $type === self::TYPE_SEMANTIC ) {
+			if ( count( $namespaces ) !== 1 || !in_array( NS_MAIN, $namespaces ) ) {
+				return false;
+			}
+
+			if ( $this->searchConfig ) {
+				// Non-main namespace prefixes
+				$nsInTerm = $this->parseNamespacePrefixes( $term );
+				if ( $nsInTerm && ( count( $nsInTerm[1] ) !== 1 || !in_array( NS_MAIN, $nsInTerm[1] ) ) ) {
+					return false;
+				}
+
+				// Keywords and Lucene/CirrusSearch operators:
+				// - escape regex special characters as an extra-safe check
+				// - keywords (insource:, incategory:, hastemplate:, filesize:, etc.),
+				//   optionally negated with - or !
+				// - wildcard (*)
+				// - boosting (^)
+				// - fuzzy / proximity search (~)
+				// - boolean (AND, OR, NOT)
+				//
+				// Ignore the following operators, since they can be common in natural language
+				// and can lead to false positives:
+				// - bare negations (-, !)
+				// - question mark wildcard (?)
+				// - exact match ("...")
+				// - grouping with parentheses ()
+				$keywords = $this->getSearchKeywords();
+				$quotedKeywords = array_map( 'preg_quote', $keywords );
+				$pattern = '/'
+					// Keywords
+					. '(?<=^|\s)[-!]?(' . implode( '|', $quotedKeywords ) . '):\S+'
+					// Wildcard, boosting, fuzzy / proximity
+					. '|[*^~]'
+					// Boolean operators
+					. '|(?<=^|\s)(?:AND|OR|NOT)(?=$|\s)'
+					. '/';
+
+				if ( preg_match( $pattern, $term ) ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	public function needsWriteAccess(): bool {
