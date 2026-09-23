@@ -44,6 +44,7 @@
 	"readerexperiments-mobilepagepreviews-close-button-label": "Chiudi",
 	"readerexperiments-semanticsearch-switch-special-search": "Passa a {{#Special:Search}}",
 	"readerexperiments-semanticsearch-search-button": "Cerca",
+	"readerexperiments-semanticsearch-load-less-results": "Torna indietro",
 	"readerexperiments-semanticsearch-error-message": "Ricerca non valida",
 	"readerexperiments-sharehighlight-share-quote": "Condividi citazione",
 	"readerexperiments-sharehighlight-dialog-title": "Condividi",
