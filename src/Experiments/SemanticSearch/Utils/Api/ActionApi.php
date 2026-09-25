@@ -25,14 +25,25 @@ class ActionApi implements MediaWikiApi {
 	}
 
 	public function execute( WebRequest $request ): array {
-		$context = new DerivativeContext( RequestContext::getMain() );
+		$originalContext = RequestContext::getMain();
+		$originalRequest = $originalContext->getRequest();
+
+		$context = new DerivativeContext( $originalContext );
 		$context->setRequest( $request );
+
+		// Also temporarily override original request so that invoked code that reaches
+		// into e.g. RequestContext::getMain()->getRequest() rather than reading from
+		// the API's context directly, at least gets to see the intended request
+		$originalContext->setRequest( $request );
 
 		try {
 			$this->api->setContext( $context );
 			$this->api->execute();
-			return $this->api->getResult()->getResultData( [], [ 'Strip' => 'all' ] );
+			$data = $this->api->getResult()->getResultData( [], [ 'Strip' => 'all' ] );
+			$originalContext->setRequest( $originalRequest );
+			return $data;
 		} catch ( ApiUsageException $e ) {
+			$originalContext->setRequest( $originalRequest );
 			throw new Exception(
 				// We are executing the API in internal mode which means there's no error
 				// handling for us, ergo, the API would directly throw ApiUsageException

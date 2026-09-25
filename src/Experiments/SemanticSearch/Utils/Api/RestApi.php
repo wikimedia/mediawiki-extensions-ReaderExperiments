@@ -11,7 +11,6 @@ use MediaWiki\Request\WebRequest;
 use MediaWiki\Rest\CorsUtils;
 use MediaWiki\Rest\EntryPoint;
 use MediaWiki\Rest\RequestData;
-use MediaWiki\Rest\ResponseFactory;
 
 class RestApi implements MediaWikiApi {
 	public function __construct(
@@ -38,7 +37,6 @@ class RestApi implements MediaWikiApi {
 			'postParams' => $request->getPostValues(),
 		] );
 		$textFormatters = [ new TextFormatter( $this->languageCode ) ];
-		$responseFactory = new ResponseFactory( $textFormatters );
 		$router = EntryPoint::createRouter(
 			$services,
 			$context,
@@ -53,7 +51,18 @@ class RestApi implements MediaWikiApi {
 				$context->getUser(),
 			)
 		);
+
+		// Also temporarily override original request so that invoked code that reaches
+		// into e.g. RequestContext::getMain()->getRequest() rather than reading from
+		// the $requestData passed in directly, at least gets to see the intended request
+		$originalContext = RequestContext::getMain();
+		$originalRequest = $originalContext->getRequest();
+		$originalContext->setRequest( $request );
+
 		$response = $router->execute( $requestData );
+
+		$originalContext->setRequest( $originalRequest );
+
 		$body = (string)$response->getBody();
 		$data = json_decode( $body, true ) ?? [];
 		if ( $response->getStatusCode() !== 200 ) {

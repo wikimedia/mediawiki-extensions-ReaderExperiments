@@ -75,6 +75,7 @@ class GetSemanticSearch extends Handler {
 				'uselang' => $params['uselang'],
 				'action' => 'query',
 				'generator' => 'search',
+				'gsrwhat' => 'text',
 				'gsrsearch' => $params['term'],
 				'gsrnamespace' => implode( '|', $params['namespace'] ),
 				'gsrlimit' => $params['limit'],
