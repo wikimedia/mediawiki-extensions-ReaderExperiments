@@ -1,8 +1,50 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tar Lócesilion"
+			"Tar Lócesilion",
+			"PanWor"
 		]
 	},
-	"readerexperiments-mobilepagepreviews-read-more": "Czytaj więcej"
+	"readerexperiments-desc": "Zestaw prototypów mających na celu zwiększenie liczby czytelników Wikipedii",
+	"readerexperiments-imagebrowsing-carousel-label": "Przeglądanie grafik",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Wybierz grafikę „$1”",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Więcej",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Mniej",
+	"readerexperiments-imagebrowsing-detail-crop": "Pełny ekran",
+	"readerexperiments-imagebrowsing-detail-share": "Udostępnij",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Kopiuj",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Zobacz w Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Pobierz",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Oryginalny plik ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Mały ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Średni ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Duży ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Bardzo duży ($1 × $2 px)",
+	"readerexperiments-imagebrowsing-loading": "Wczytywanie",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Wróć do artykułu",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Zamknij",
+	"readerexperiments-imagebrowsing-overlay-label": "Szczegóły grafiki",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Więcej z tego artykułu",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Multimedia z innych projektów",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Wczytywanie grafik z innych projektów",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Zobacz w artykule",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Z $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Z $1 i jeszcze {{PLURAL:$2|jednej wersji językowej|$2 wersji językowych}} Wikipedii",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Z $1",
+	"readerexperiments-minerva-toc-contents-button-label": "Spis treści",
+	"readerexperiments-minerva-toc-edit-button-label": "Edytuj",
+	"readerexperiments-minerva-toc-region-label": "Spis treści",
+	"readerexperiments-minerva-toc-top-link": "(do góry)",
+	"readerexperiments-mobilepagepreviews-loading": "Wczytywanie podglądu",
+	"readerexperiments-mobilepagepreviews-read-more": "Czytaj więcej",
+	"readerexperiments-mobilepagepreviews-title": "Podgląd strony",
+	"readerexperiments-mobilepagepreviews-close-button-label": "Zamknij",
+	"readerexperiments-sharehighlight-toolbar-share": "Udostępnij",
+	"readerexperiments-sharehighlight-share-quote": "Udostępnij cytat",
+	"readerexperiments-sharehighlight-background-legend": "Tło",
+	"readerexperiments-sharehighlight-background-average": "Średnia",
+	"readerexperiments-sharehighlight-copy-link": "Skopiuj link",
+	"readerexperiments-sharehighlight-share": "Udostępnij",
+	"readerexperiments-sharehighlight-download": "Pobierz",
+	"readerexperiments-sharehighlight-image-author-license": "Grafika: $1 · $2"
 }
