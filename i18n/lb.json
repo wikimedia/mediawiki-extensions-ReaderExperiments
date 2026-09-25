@@ -38,6 +38,7 @@
 	"readerexperiments-semanticsearch-error-message": "Ongülteg Sich",
 	"readerexperiments-semanticsearch-no-results": "Mir hu keng Resultater fonnt",
 	"readerexperiments-semanticsearch-wordcount": "($1 {{PLURAL:$1|1=Wuert|Wierder}})",
+	"readerexperiments-semanticsearch-category-info": "$1 {{PLURAL:$1|1=Member|Memberen}} ($2 {{PLURAL:$2|1=Ënnerkategorie|Ënnerkategorien}}, $3 {{PLURAL:$3|1=Fichier|Fichieren}})",
 	"readerexperiments-sharehighlight-dialog-title": "Deelen",
 	"readerexperiments-sharehighlight-copy-link": "Link kopéieren",
 	"readerexperiments-sharehighlight-link-copied": "Kopéiert",
