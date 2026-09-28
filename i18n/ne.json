@@ -1,8 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"पर्वत सुबेदी"
+			"पर्वत सुबेदी",
+			"बडा काजी"
 		]
 	},
-	"readerexperiments-minerva-toc-top-link": "(शीर्ष)"
+	"readerexperiments-minerva-toc-top-link": "(शीर्ष)",
+	"readerexperiments-semanticsearch-search-button": "खोज्नुहोस्",
+	"readerexperiments-semanticsearch-input-placeholder": "{{SITENAME}}लाई केहि पनि सोध्नुहोस्...",
+	"readerexperiments-semanticsearch-load-more-results": "थप पढ्नुहोस्",
+	"readerexperiments-semanticsearch-load-less-results": "पछाडि पर्कनुहोस्",
+	"readerexperiments-semanticsearch-did-you-mean": "के तपाईंले \"$1\" खोज्नुभयोको त थिएन?",
+	"readerexperiments-semanticsearch-no-results": "हामीले कुनै परिणाम फेला पारेका छैनौँ"
 }
