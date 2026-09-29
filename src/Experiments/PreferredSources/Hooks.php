@@ -26,23 +26,9 @@ class Hooks implements BeforePageDisplayHook {
 	 * @inheritDoc
 	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
-		$context = $out->getContext();
-		$title = $context->getTitle();
-		$user = $context->getUser();
-
-		// Logged-out Minerva article views only
-		if (
-			!$title ||
-			$title->getNamespace() !== NS_MAIN ||
-			$out->getSkin()->getSkinName() !== 'minerva' ||
-			$user->isRegistered()
-		) {
-			return;
-		}
-
-		// Non-cache-splitting experiment: PHP does not determine inclusion.
-		// The bootstrap module is served to every eligible pageview, and
-		// experiment inclusion is determined client-side.
+		// Non-cache-splitting experiment: enrollment and eligibility are
+		// both determined client-side, so every pageview gets the bootstrap
+		// module.
 		$out->addModules( 'ext.readerExperiments/preferredSources' );
 	}
 }
