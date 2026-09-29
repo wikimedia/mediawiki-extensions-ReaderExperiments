@@ -4,13 +4,13 @@ This experiment tests different versions of the mobile Wikipedia image carousel.
 
 Readers are placed into one of five groups:
 
-| Group                  | Carousel | Captions | Jump link | Hide/Show |
-| ---------------------- | -------: | -------: | --------: | --------: |
-| Control                |       No |       No |        No |        No |
-| Vanilla carousel       |      Yes |       No |        No |       Yes |
-| Captions only          |      Yes |      Yes |        No |       Yes |
-| Jump link only         |      Yes |       No |       Yes |       Yes |
-| Captions and jump link |      Yes |      Yes |       Yes |       Yes |
+| Group                  | Carousel | Captions | Jump link | Hide/Show | Opens        |
+| ---------------------- | -------: | -------: | --------: | --------: | ------------ |
+| Control                |       No |       No |        No |        No | N/A |
+| Vanilla carousel       |      Yes |       No |        No |       Yes | Media Viewer |
+| Captions only          |      Yes |      Yes |        No |       Yes | Media Viewer |
+| Jump link only         |      Yes |       No |       Yes |       Yes | Preview      |
+| Captions and jump link |      Yes |      Yes |       Yes |       Yes | Preview      |
 
 ## Eligibility
 
@@ -54,6 +54,11 @@ Actions before the experiment is ready, actions from the control group, and unkn
 
 The jump link is available only in the two groups that include it. There is no separate caption event.
 
+The action source identifies where the interaction starts: thumbnail taps use
+`image_carousel`, View details and Scroll to image use `image_preview`, and
+license information clicks in Media Viewer use `image_detail_view`. Metric
+filters for the two preview actions must use `image_preview`.
+
 New controls should send actions through the shared action system instead of calling `recordInteraction()` directly.
 
 ## MMV and carousel behavior
@@ -68,7 +73,7 @@ Tracking errors must not stop the carousel from working.
 
 Actions are recorded at these points:
 
-* `thumbnailOpen`: after a valid thumbnail opens the image details
+* `thumbnailOpen`: after a valid thumbnail opens the preview, or when it navigates directly to Media Viewer
 * `carouselHide` and `carouselShow`: after the reader changes the carousel’s state
 * `viewDetails`: just before opening the Media Viewer
 * `scrollToImage`: after the jump-link action is accepted
@@ -103,7 +108,11 @@ The browser waits for the carousel to finish loading before recording the exposu
 
 If configuration is missing, assignments do not match, or loading fails, no exposure is recorded.
 
-Experiment pages disable MMV’s normal automatic startup so the carousel cannot start with the wrong settings. License information and View details remain available in every treatment group.
+Experiment pages disable MMV’s normal automatic startup so the carousel cannot start with the wrong settings. The vanilla-carousel and carousel-captions-only groups open Media Viewer directly
+when a thumbnail is activated. The two jump-link groups retain the preview and
+its View details button. Direct opens record thumbnailOpen, but not viewDetails;
+viewDetails is reserved for the preview button. License information remains
+available in Media Viewer in every treatment group.
 
 The GrowthBook key is:
 
