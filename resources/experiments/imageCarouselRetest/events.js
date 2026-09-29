@@ -6,9 +6,9 @@ const events = {
 	thumbnailOpen: [ 'open', 'image_carousel', 'image_thumbnail' ],
 	carouselHide: [ 'collapse', 'image_carousel', 'carousel_toggle' ],
 	carouselShow: [ 'expand', 'image_carousel', 'carousel_toggle' ],
-	viewDetails: [ 'navigate', 'image_detail_view', 'view_details_link' ],
+	viewDetails: [ 'navigate', 'image_preview', 'view_details_link' ],
 	licenseInfo: [ 'open', 'image_detail_view', 'license_info' ],
-	scrollToImage: [ 'navigate', 'image_detail_view', 'scroll_to_image_link' ]
+	scrollToImage: [ 'navigate', 'image_preview', 'scroll_to_image_link' ]
 };
 
 for ( const name of Object.keys( events ) ) {

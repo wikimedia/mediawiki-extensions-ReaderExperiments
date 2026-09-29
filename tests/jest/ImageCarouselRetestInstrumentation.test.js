@@ -67,6 +67,10 @@ describe( 'Image carousel retest Test Kitchen connection', () => {
 		} );
 		expect( experiment.send ).toHaveBeenCalledTimes( 6 );
 		expect( experiment.send.mock.calls.every( ( call ) => call[ 0 ] === 'click' ) ).toBe( true );
+		expect( experiment.send.mock.calls.map( ( call ) => call[ 1 ].action_source ) ).toEqual( [
+			'image_carousel', 'image_carousel', 'image_carousel',
+			'image_preview', 'image_preview', 'image_detail_view'
+		] );
 	} );
 
 	it( 'queues accepted actions while readiness is pending without leaking telemetry failures', async () => {
@@ -96,19 +100,20 @@ describe( 'Image carousel retest Test Kitchen connection', () => {
 	} );
 
 	it.each( [
-		[ 'control', false, false, false, false ],
-		[ 'vanilla-carousel', true, false, false, true ],
-		[ 'carousel-captions-only', true, true, false, true ],
-		[ 'carousel-jump-only', true, false, true, true ],
-		[ 'carousel-captions-jump', true, true, true, true ]
+		[ 'control', false, false, false, false, false ],
+		[ 'vanilla-carousel', true, false, false, true, true ],
+		[ 'carousel-captions-only', true, true, false, true, true ],
+		[ 'carousel-jump-only', true, false, true, true, false ],
+		[ 'carousel-captions-jump', true, true, true, true, false ]
 	] )( 'exposes the specified UI options for %s without sending events', async (
-		group, showCarousel, showCaptions, showJumpLink, showToggle
+		group, showCarousel, showCaptions, showJumpLink, showToggle, openMediaViewerDirectly
 	) => {
 		experiment.getAssignedGroup.mockReturnValue( group );
 		const assignment = await instrumentation.getAssignment();
-		expect( assignment ).toEqual( {
-			group, showCarousel, showCaptions, showJumpLink, showToggle
-		} );
+		const expected = {
+			group, showCarousel, showCaptions, showJumpLink, showToggle, openMediaViewerDirectly
+		};
+		expect( assignment ).toEqual( expected );
 		expect( Object.isFrozen( assignment ) ).toBe( true );
 		expect( experiment.send ).not.toHaveBeenCalled();
 		expect( mw.testKitchen.getExperiment ).toHaveBeenCalledWith( 'image-carousel-retest' );

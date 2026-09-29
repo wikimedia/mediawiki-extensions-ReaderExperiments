@@ -1,29 +1,34 @@
 {
 	"control": {
+		"openMediaViewerDirectly": false,
 		"showCarousel": false,
 		"showCaptions": false,
 		"showJumpLink": false,
 		"showToggle": false
 	},
 	"vanilla-carousel": {
+		"openMediaViewerDirectly": true,
 		"showCarousel": true,
 		"showCaptions": false,
 		"showJumpLink": false,
 		"showToggle": true
 	},
 	"carousel-captions-only": {
+		"openMediaViewerDirectly": true,
 		"showCarousel": true,
 		"showCaptions": true,
 		"showJumpLink": false,
 		"showToggle": true
 	},
 	"carousel-jump-only": {
+		"openMediaViewerDirectly": false,
 		"showCarousel": true,
 		"showCaptions": false,
 		"showJumpLink": true,
 		"showToggle": true
 	},
 	"carousel-captions-jump": {
+		"openMediaViewerDirectly": false,
 		"showCarousel": true,
 		"showCaptions": true,
 		"showJumpLink": true,
