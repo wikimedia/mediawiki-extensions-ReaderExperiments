@@ -562,7 +562,8 @@
 			"localBasePath": "resources/experiments/preferredSources",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/preferredSources",
 			"dependencies": [
-				"mediawiki.storage"
+				"mediawiki.storage",
+				"mediawiki.user"
 			],
 			"packageFiles": [
 				"init.js",

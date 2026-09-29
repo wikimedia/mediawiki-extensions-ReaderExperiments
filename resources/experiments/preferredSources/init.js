@@ -31,6 +31,19 @@ function isGoogleReferrer( referrer ) {
 }
 
 /**
+ * Logged-out Minerva article views only. Test Kitchen enrolls readers
+ * regardless of skin or login state. mw.user.isAnon() is false for
+ * temporary accounts.
+ *
+ * @return {boolean}
+ */
+function isEligible() {
+	return mw.config.get( 'skin' ) === 'minerva' &&
+		mw.config.get( 'wgNamespaceNumber' ) === 0 &&
+		mw.user.isAnon();
+}
+
+/**
  * Clicking the CTA or hard-dismissing it sets a permanent flag; a soft
  * dismissal sets one that lasts for the rest of the browsing session.
  *
@@ -76,25 +89,24 @@ function init() {
 			return;
 		}
 
-		// Every enrolled pageview, both groups, any referrer (T435229).
-		trackPageVisits( experiment );
-
-		if ( !debug && !isGoogleReferrer( document.referrer ) ) {
+		if ( !isEligible() ) {
 			return;
 		}
 
-		// Point of divergence: treatment sees the CTA, control does not.
-		// Exposure must fire in both groups so the arms stay comparable.
-		experiment.sendExposure();
+		if ( debug || isGoogleReferrer( document.referrer ) ) {
+			if (
+				experiment.isAssignedGroup( GROUP_TREATMENT ) &&
+				( debug || !isSuppressed() )
+			) {
+				mw.loader.using( CTA_MODULE ).then( ( req ) => {
+					req( CTA_MODULE ).show( experiment, debug );
+				} );
+			}
 
-		if (
-			experiment.isAssignedGroup( GROUP_TREATMENT ) &&
-			( debug || !isSuppressed() )
-		) {
-			mw.loader.using( CTA_MODULE ).then( ( req ) => {
-				req( CTA_MODULE ).show( experiment, debug );
-			} );
+			experiment.sendExposure();
 		}
+
+		trackPageVisits( experiment );
 	} );
 }
 
