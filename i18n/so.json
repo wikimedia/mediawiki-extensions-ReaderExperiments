@@ -53,6 +53,8 @@
 	"readerexperiments-semanticsearch-no-results": "Wax natiijo ah ma aanan helin",
 	"readerexperiments-semanticsearch-wordcount": "($1 {{PLURAL:$1|1=erey|ereyo}})",
 	"readerexperiments-semanticsearch-category-info": "$1 {{PLURAL:$1|1=xubin|xubno}} ($2 {{PLURAL:$2|1=Qayb-hoosaad|Qayb-hoosaadyo}}, $3 {{PLURAL:$3|1=fayl|faylal}})",
+	"readerexperiments-semanticsearch-match-section": "(qaybta: $1 )",
+	"readerexperiments-semanticsearch-match-redirect": "(sii toosin: $1)",
 	"readerexperiments-sharehighlight-blue-dot-label": "Astaanta wadaagista cusub",
 	"readerexperiments-sharehighlight-toolbar-share": "Faafi",
 	"readerexperiments-sharehighlight-share-quote": "Wadaag xigashada",

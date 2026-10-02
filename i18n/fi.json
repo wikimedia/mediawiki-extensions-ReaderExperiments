@@ -53,6 +53,8 @@
 	"readerexperiments-semanticsearch-no-results": "Emme löytäneet tuloksia",
 	"readerexperiments-semanticsearch-wordcount": "($1 {{PLURAL:$1|1=sana|sanaa}})",
 	"readerexperiments-semanticsearch-category-info": "{{PLURAL:$1|1 jäsen|$1 jäsentä}} ({{PLURAL:$2|1 alaluokka|$2 alaluokkaa}}, {{PLURAL:$3|1 tiedosto|$3 tiedostoa}})",
+	"readerexperiments-semanticsearch-match-section": "(osio: $1)",
+	"readerexperiments-semanticsearch-match-redirect": "(ohjaus: $1 )",
 	"readerexperiments-sharehighlight-blue-dot-label": "Uusi jakamisominaisuus",
 	"readerexperiments-sharehighlight-toolbar-share": "Jaa",
 	"readerexperiments-sharehighlight-share-quote": "Jaa lainaus",

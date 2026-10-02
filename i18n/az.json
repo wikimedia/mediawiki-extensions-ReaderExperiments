@@ -53,6 +53,8 @@
 	"readerexperiments-semanticsearch-no-results": "Heç bir nəticə tapmadıq",
 	"readerexperiments-semanticsearch-wordcount": "($1 {{PLURAL:$1|1=söz|söz}})",
 	"readerexperiments-semanticsearch-category-info": "$1 {{PLURAL:$1|1=üzv|üzv}} ($2 {{PLURAL:$2|1=altkateqoriya|altkateqoriya}}, $3 {{PLURAL:$3|1=fayl|fayl}})",
+	"readerexperiments-semanticsearch-match-section": "(bölmə: $1)",
+	"readerexperiments-semanticsearch-match-redirect": "(yönləndirmə: $1)",
 	"readerexperiments-sharehighlight-blue-dot-label": "Yeni paylaşmaq funksiyası",
 	"readerexperiments-sharehighlight-toolbar-share": "Paylaş",
 	"readerexperiments-sharehighlight-share-quote": "Sitatı paylaş",
