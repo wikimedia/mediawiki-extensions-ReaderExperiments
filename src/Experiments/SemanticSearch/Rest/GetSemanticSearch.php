@@ -17,6 +17,7 @@ use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Search\SearchEngine;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -36,15 +37,25 @@ class GetSemanticSearch extends Handler {
 
 	// Protected to enable testing
 	protected ?SearchConfig $searchConfig = null;
-	private readonly string $localApiUrl;
-	private readonly string $externalApiUrl;
+	protected string $localActionApiUrl;
+	protected string $localRestUrl;
+	protected string $externalActionApiUrl;
+	protected string $externalRestApiUrl;
+
+	protected MediaWikiApi $mwApiRequest;
+	protected Config $config;
+	protected Language $contentLanguage;
 
 	public function __construct(
-		private readonly MediaWikiApi $mwApiRequest,
-		private readonly Config $config,
-		private readonly Language $contentLanguage,
+		MediaWikiApi $mwApiRequest,
+		Config $config,
+		Language $contentLanguage,
 		?SearchConfig $searchConfig = null,
 	) {
+		$this->mwApiRequest = $mwApiRequest;
+		$this->config = $config;
+		$this->contentLanguage = $contentLanguage;
+
 		$mwServices = MediaWikiServices::getInstance();
 		try {
 			$this->searchConfig = $searchConfig ?? $mwServices
@@ -54,8 +65,10 @@ class GetSemanticSearch extends Handler {
 			// CirrusSearch not installed
 		}
 
-		$this->localApiUrl = $config->get( MainConfigNames::ScriptPath ) . '/api.php';
-		$this->externalApiUrl = $this->config->get( 'ReaderExperimentsApiBaseUri' );
+		$this->localActionApiUrl = $config->get( MainConfigNames::ScriptPath ) . '/api.php';
+		$this->localRestUrl = $config->get( MainConfigNames::RestPath );
+		$this->externalActionApiUrl = $this->config->get( 'ReaderExperimentsApiBaseUri' );
+		$this->externalRestApiUrl = $this->config->get( 'ReaderExperimentsRestApiBaseUri' );
 	}
 
 	public function execute(): Response {
@@ -93,7 +106,7 @@ class GetSemanticSearch extends Handler {
 			] + ( $params['type'] === self::TYPE_SEMANTIC ? [ 'cirrusSemanticSearch' => 'hl' ] : [] )
 		);
 		// Grab external results if configured as such; otherwise from local wiki
-		$apiUrl = $this->externalApiUrl ?: $this->localApiUrl;
+		$apiUrl = $this->externalActionApiUrl ?: $this->localActionApiUrl;
 		$request->setRequestURL( $apiUrl . '?' . http_build_query( $request->getQueryValues() ) );
 
 		try {
@@ -125,12 +138,96 @@ class GetSemanticSearch extends Handler {
 			return $a['index'] <=> $b['index'];
 		} );
 
+		// Enrich each search result with attribution data if requested
+		$attributionApiData = [ 'referencecount' ];
+		$needsAttributionApi = (bool)array_intersect( $attributionApiData, $params[ 'data' ] );
+		if ( $needsAttributionApi ) {
+			foreach ( $results as &$result ) {
+				$attribution = $this->fetchAttribution( $result['title'] ?? null );
+				$referenceCount = $attribution['trust_and_relevance']['reference_count'] ?? null;
+				// TODO add contributors count (T438419):
+				//      $attribution['trust_and_relevance']['contributor_counts']
+
+				if (
+					$referenceCount !== null &&
+					in_array( 'referencecount', $params[ 'data' ], true )
+				) {
+					// Use 'referencecount' for consistency with other keys
+					$result['referencecount'] = $referenceCount;
+				}
+			}
+			unset( $result );
+		}
+
 		return $this->getResponseFactory()->createJson( [
 			'results' => $results,
 			'info' => $response['query']['searchinfo'] ?? [],
 			'continue' => $response['continue']['gsroffset'] ?? null,
 			'warnings' => $response['warnings']['search']['warnings'] ?? null,
 		] );
+	}
+
+	/**
+	 * Fetches the reference count of a page from the
+	 * WikimediaCustomizations signals REST endpoint:
+	 * /attribution/v0-beta/pages/{title}/signals?expand=trust_and_relevance
+	 *
+	 * Should be called alongside a search request. Any failure
+	 * (null title, API URL not built, failed request, response with an error message)
+	 * degrades to a null return value so that the search response is not affected.
+	 *
+	 * @param string|null $titleText
+	 * @return array|null
+	 */
+	protected function fetchAttribution( ?string $titleText ): ?array {
+		if ( $titleText === null ) {
+			return null;
+		}
+
+		$url = $this->buildSignalsApiUrl( $titleText );
+		if ( $url === null ) {
+			return null;
+		}
+
+		$request = new FauxRequest();
+		$request->setParams( [ 'expand' => [ 'trust_and_relevance' ] ] );
+		$request->setRequestURL( $url );
+
+		try {
+			$response = $this->mwApiRequest->execute( $request );
+		} catch ( Exception ) {
+			return null;
+		}
+
+		// Successful request, but error message in the response
+		if ( isset( $response['errorKey'] ) ) {
+			return null;
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Builds the WikimediaCustomizations signals REST URL for the given page title.
+	 *
+	 * @param string $titleText
+	 * @return string|null
+	 */
+	protected function buildSignalsApiUrl( string $titleText ): ?string {
+		$title = Title::newFromText( $titleText );
+
+		// Invalid title
+		if ( $title === null || $title->getDBkey() === '' ) {
+			return null;
+		}
+		// Interwiki title
+		if ( $title->getInterwiki() !== '' ) {
+			return null;
+		}
+
+		$base = $this->externalRestApiUrl ?: $this->localRestUrl;
+
+		return $base . '/attribution/v0-beta/pages/' . rawurlencode( $title->getDBkey() ) . '/signals';
 	}
 
 	/**
@@ -260,6 +357,14 @@ class GetSemanticSearch extends Handler {
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => 'string',
 				ParamValidator::PARAM_DEFAULT => 'relevance',
+			],
+			'data' => [
+				self::PARAM_SOURCE => 'query',
+				ParamValidator::PARAM_TYPE => [
+					'referencecount',
+				],
+				ParamValidator::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_DEFAULT => [],
 			],
 			'uselang' => [
 				self::PARAM_SOURCE => 'query',

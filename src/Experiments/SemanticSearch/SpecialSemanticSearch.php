@@ -86,13 +86,15 @@ class SpecialSemanticSearch extends SpecialPage {
 		$responses = [];
 		try {
 			$responses['lexical'] = $this->search(
-				'lexical',
 				$term,
-				$namespaces,
-				$limit,
-				$currentContinue,
-				$sort,
-				$userLanguage->getCode()
+				[
+					'type' => 'lexical',
+					'namespace' => $namespaces,
+					'limit' => $limit,
+					'continue' => $currentContinue,
+					'sort' => $sort,
+					'uselang' => $userLanguage->getCode(),
+				]
 			);
 		} catch ( Exception $e ) {
 			$responses['lexical']['error'] = $e->getMessage();
@@ -102,13 +104,16 @@ class SpecialSemanticSearch extends SpecialPage {
 		if ( $currentContinue === 0 ) {
 			try {
 				$responses['semantic'] = $this->search(
-					'semantic',
 					$term,
-					$namespaces,
-					3,
-					0,
-					$sort,
-					$userLanguage->getCode()
+					[
+						'type' => 'semantic',
+						'namespace' => $namespaces,
+						'limit' => 3,
+						'continue' => 0,
+						'sort' => $sort,
+						'data' => [ 'referencecount' ],
+						'uselang' => $userLanguage->getCode(),
+					]
 				);
 			} catch ( Exception $e ) {
 				$responses['semantic']['error'] = $e->getMessage();
@@ -203,15 +208,7 @@ class SpecialSemanticSearch extends SpecialPage {
 	 *
 	 * @throws Exception
 	 */
-	private function search(
-		string $type,
-		string $term,
-		array $namespaces,
-		int $limit,
-		int $continue,
-		string $sort,
-		string $uselang,
-	): array {
+	private function search( string $term, array $data ): array {
 		if ( !$term ) {
 			return [
 				'results' => [],
@@ -222,14 +219,7 @@ class SpecialSemanticSearch extends SpecialPage {
 		}
 
 		$request = new FauxRequest();
-		$request->setParams( [
-			'type' => $type,
-			'namespace' => $namespaces,
-			'limit' => $limit,
-			'continue' => $continue,
-			'sort' => $sort,
-			'uselang' => $uselang,
-		] );
+		$request->setParams( $data );
 		$request->setRequestURL( $this->localApiUrl . '/semanticsearch/v0/' . rawurlencode( $term ) );
 
 		return $this->mwApiRequest->execute( $request );
@@ -407,7 +397,12 @@ class SpecialSemanticSearch extends SpecialPage {
 		// @todo
 
 		// References
-		// @todo
+		if ( isset( $result['referencecount'] ) ) {
+			$result['referencesText'] = $this->msg(
+				'readerexperiments-semanticsearch-referencecount',
+				$userLanguage->formatNum( $result['referencecount'] )
+			)->text();
+		}
 
 		return $result;
 	}

@@ -22,7 +22,11 @@
 	},
 	"config": {
 		"ReaderExperimentsApiBaseUri": {
-			"description": "Url to API of MediaWiki instance to use for external data (e.g. when using MobileFrontendContentProvider, in which case this should be equal to $wgMFMwApiContentProviderBaseUri), or leave empty to use local API.",
+			"description": "Action API URL of MediaWiki instance to use for external data (e.g., https://en.wikipedia.org/w/api.php when using MobileFrontendContentProvider, in which case this should be equal to $wgMFMwApiContentProviderBaseUri), or leave empty to use local API.",
+			"value": ""
+		},
+		"ReaderExperimentsRestApiBaseUri": {
+			"description": "REST API URL of MediaWiki instance to use for external data (e.g., https://en.wikipedia.org/w/rest.php), or leave empty to use local API.",
 			"value": ""
 		},
 		"ReaderExperimentsImageBrowsingExternalWikis": {
@@ -536,6 +540,7 @@
 				"readerexperiments-semanticsearch-wordcount",
 				"readerexperiments-semanticsearch-match-section",
 				"readerexperiments-semanticsearch-match-redirect",
+				"readerexperiments-semanticsearch-referencecount",
 				"size-bytes",
 				"size-kilobytes",
 				"size-megabytes",

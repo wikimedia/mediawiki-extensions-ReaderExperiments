@@ -52,8 +52,8 @@
 				</template>
 
 				<template v-if="referencesText">
-					-
-					<!-- 42 contributors -->
+					•
+					<!-- 42 references -->
 					<span>{{ referencesText }}</span>
 				</template>
 			</span>
@@ -119,7 +119,15 @@ module.exports = exports = defineComponent( {
 		} );
 
 		const contributorsText = ''; // @todo
-		const referencesText = ''; // @todo
+		const referencesText = computed( () => {
+			if ( props.result.referencecount === undefined ) {
+				return null;
+			}
+			return $i18n(
+				'readerexperiments-semanticsearch-referencecount',
+				mw.language.convertNumber( props.result.referencecount )
+			).text();
+		} );
 
 		return {
 			categoryInfoText,
