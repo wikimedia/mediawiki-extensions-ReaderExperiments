@@ -53,11 +53,11 @@ class Hooks {
 			'pageEligible' => true
 		] );
 		$out->addModules( 'ext.readerExperiments.imageCarouselRetest.init' );
+		$out->addModuleStyles( 'ext.readerExperiments.imageCarouselRetest.styles' );
 		if ( $render ) {
-			// Prevent both default MMV initialization and a flash of the wrong arm.
-			// The client reveals this root only after confirming the SDK assignment.
+			// Prevent default MMV initialization. The client mounts the viewer
+			// with arm-specific options after confirming the SDK assignment.
 			$attributes['data-mmv-defer-init'] = '1';
-			$attributes['style'] = 'display: none;';
 		}
 	}
 }
