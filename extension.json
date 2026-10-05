@@ -159,6 +159,13 @@
 				"events.js"
 			]
 		},
+		"ext.readerExperiments.imageCarouselRetest.styles": {
+			"localBasePath": "resources/experiments/imageCarouselRetest",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/imageCarouselRetest",
+			"styles": [
+				"styles.less"
+			]
+		},
 		"ext.readerExperiments": {
 			"localBasePath": "resources/common",
 			"remoteExtPath": "ReaderExperiments/resources/common",

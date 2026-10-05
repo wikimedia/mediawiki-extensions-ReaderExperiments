@@ -31,18 +31,22 @@ class ImageCarouselRetestHooksTest extends MediaWikiUnitTestCase {
 		if ( $expectedRender !== null ) {
 			$out->expects( $this->once() )->method( 'addModules' )
 				->with( 'ext.readerExperiments.imageCarouselRetest.init' );
+			$out->expects( $this->once() )->method( 'addModuleStyles' )
+				->with( 'ext.readerExperiments.imageCarouselRetest.styles' );
 			$out->expects( $this->once() )->method( 'addJsConfigVars' )->with(
 				'wgReaderExperimentsImageCarouselRetest',
 				[ 'group' => $group, 'imageCount' => 4, 'pageEligible' => true ]
 			);
 		} else {
 			$out->expects( $this->never() )->method( 'addModules' );
+			$out->expects( $this->never() )->method( 'addModuleStyles' );
 		}
 		$render = false;
 		$attributes = [];
 		( new Hooks() )->onMultimediaViewerBeforeMobileCarousel( $out, 4, $render, $attributes );
 		$this->assertSame( $expectedRender ?? false, $render );
 		$this->assertSame( $expectedRender === true, isset( $attributes['data-mmv-defer-init'] ) );
+		$this->assertArrayNotHasKey( 'style', $attributes );
 	}
 
 	public static function provideGroups(): array {
