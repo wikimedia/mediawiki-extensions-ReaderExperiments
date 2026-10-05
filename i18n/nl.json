@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"HanV",
+			"Mainframe98",
 			"McDutchie",
 			"Siebrand"
 		]
@@ -40,6 +41,7 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Meer lezen",
 	"readerexperiments-mobilepagepreviews-title": "Paginavoorvertoning",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Sluiten",
+	"readerexperiments-semanticsearch-results-count": "$1 {{PLURAL:$1|resultaat|resultaten}}",
 	"readerexperiments-sharehighlight-blue-dot-label": "Nieuwe deelfunctie",
 	"readerexperiments-sharehighlight-toolbar-share": "Delen",
 	"readerexperiments-sharehighlight-share-quote": "Citaat delen",
