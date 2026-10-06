@@ -68,7 +68,7 @@ class SpecialSemanticSearch extends SpecialPage {
 
 		$namespaces = $this->getSearchNamespaces( $queryParams );
 		$sort = $request->getText( 'sort', 'relevance' );
-		$limit = $request->getText( 'limit' ) ? (int)$request->getText( 'limit' ) : 20;
+		$limit = $request->getText( 'limit' ) ? (int)$request->getText( 'limit' ) : 10;
 		$currentContinue = (int)$request->getText( 'continue' );
 
 		// Template params that allow rebuilding a form to (re)submit the same
