@@ -75,6 +75,7 @@
 	"readerexperiments-preferredsources-cta-message": "구글 검색 결과에 위키백과가 계속 표시되도록 하기",
 	"readerexperiments-preferredsources-cta-action": "더 알아보기",
 	"readerexperiments-preferredsources-dialog-title": "구글 검색 결과에 위키백과가 계속 표시되도록 하기",
+	"readerexperiments-preferredsources-dialog-body": "사람이 직접 사실 확인을 거친 신뢰할 수 있는 정보를 우선적으로 고려하세요. 구글 검색 시 위키백과를 선호하는 출처로 선택하세요.",
 	"readerexperiments-preferredsources-dialog-action": "위키백과 선택",
 	"readerexperiments-preferredsources-dialog-dismiss": "다시 보지 않음"
 }
