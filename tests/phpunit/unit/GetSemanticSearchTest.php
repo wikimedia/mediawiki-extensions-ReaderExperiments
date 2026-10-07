@@ -9,6 +9,7 @@ use ReflectionMethod;
 
 /**
  * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::isSupportedType
+ * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::getTargetUrl
  */
 class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 
@@ -186,5 +187,42 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 		$this->assertTrue(
 			$this->invokeIsSupportedType( $engine, 'intitle:London', [ NS_MAIN ] )
 		);
+	}
+
+	/**
+	 * These results carry no sectiontitle on purpose: the fallback path escapes one
+	 * through Sanitizer, which reads $wgFragmentMode from globals and so is out of
+	 * reach here. TextFragmentTest covers the fragment building itself.
+	 */
+	private function invokeGetTargetUrl( string $type, array $result ): string {
+		$engine = new class() extends GetSemanticSearch {
+			public function __construct() {
+			}
+		};
+
+		$method = new ReflectionMethod( GetSemanticSearch::class, 'getTargetUrl' );
+		return $method->invoke( $engine, $type, $result );
+	}
+
+	public function testGetTargetUrlAddsFragmentForSemanticResults(): void {
+		$url = $this->invokeGetTargetUrl( GetSemanticSearch::TYPE_SEMANTIC, [
+			'canonicalurl' => 'https://en.wikipedia.org/wiki/Purr',
+			'snippet' => 'Cats also purr <span class="searchmatch">to manage pain</span> and soothe themselves',
+		] );
+
+		$this->assertSame(
+			'https://en.wikipedia.org/wiki/Purr?wprov=sscw1'
+				. '#:~:text=Cats%20also%20purr-,to%20manage%20pain',
+			$url
+		);
+	}
+
+	public function testGetTargetUrlLeavesLexicalResultsAlone(): void {
+		$url = $this->invokeGetTargetUrl( 'lexical', [
+			'canonicalurl' => 'https://en.wikipedia.org/wiki/Purr',
+			'snippet' => 'Cats also purr <span class="searchmatch">to manage pain</span> and soothe themselves',
+		] );
+
+		$this->assertSame( 'https://en.wikipedia.org/wiki/Purr', $url );
 	}
 }

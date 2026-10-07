@@ -9,9 +9,11 @@ use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\MediaWikiApi;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\TextFragment;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
@@ -159,6 +161,13 @@ class GetSemanticSearch extends Handler {
 			unset( $result );
 		}
 
+		$results = array_map(
+			fn ( array $result ) => $result + [
+				'targeturl' => $this->getTargetUrl( $params['type'], $result ),
+			],
+			$results
+		);
+
 		return $this->getResponseFactory()->createJson( [
 			'results' => $results,
 			'info' => $response['query']['searchinfo'] ?? [],
@@ -228,6 +237,33 @@ class GetSemanticSearch extends Handler {
 		$base = $this->externalRestApiUrl ?: $this->localRestUrl;
 
 		return $base . '/attribution/v0-beta/pages/' . rawurlencode( $title->getDBkey() ) . '/signals';
+	}
+
+	/**
+	 * Url to send the reader to when they click through on a result.
+	 *
+	 * For semantic results this carries a text fragment directive pointing at the
+	 * passage that was matched, so the browser scrolls to and highlights it. Lexical
+	 * snippets may quote raw wikitext that the rendered article does not contain, so
+	 * those keep the plain article url.
+	 *
+	 * Protected to enable testing.
+	 */
+	protected function getTargetUrl( string $type, array $result ): string {
+		$canonicalUrl = $result['canonicalurl'] ?? '';
+		if ( $type !== self::TYPE_SEMANTIC ) {
+			return $canonicalUrl;
+		}
+
+		// Escape the anchor here rather than in TextFragment, since Sanitizer
+		// reads $wgFragmentMode from globals and that would put the fragment
+		// building beyond the reach of unit tests.
+		$sectionTitle = $result['sectiontitle'] ?? null;
+		$sectionAnchor = $sectionTitle !== null
+			? Sanitizer::escapeIdForLink( TextFragment::normalizeText( $sectionTitle ) )
+			: null;
+
+		return TextFragment::buildUrl( $canonicalUrl, $result['snippet'] ?? null, $sectionAnchor );
 	}
 
 	/**

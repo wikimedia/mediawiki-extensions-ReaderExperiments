@@ -1,6 +1,6 @@
 <template>
 	<a
-		:href="result.canonicalurl"
+		:href="result.targeturl"
 		:title="result.title"
 		class="cdx-card cdx-card--is-link cdx-docs-card-group-with-thumbnails__card"
 	>
