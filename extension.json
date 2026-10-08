@@ -100,7 +100,10 @@
 		"SemanticSearchHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\Hooks",
 			"optional_services": [
-				"MainConfig"
+				"MainConfig",
+				"UserOptionsManager",
+				"ReaderExperiments.SemanticSearch.RequestInspector",
+				"TestKitchen.ExperimentManager"
 			]
 		},
 		"StickyHeadersHooks": {
@@ -129,7 +132,8 @@
 			"MinervaCompactLeadHooks"
 		],
 		"BeforeInitialize": [
-			"MinervaTocHooks"
+			"MinervaTocHooks",
+			"SemanticSearchHooks"
 		],
 		"GetPreferences": [
 			"SemanticSearchHooks"
@@ -667,7 +671,8 @@
 				"ReaderExperiments.SemanticSearch.Api.ActionApi",
 				"ReaderExperiments.SemanticSearch.Api.RestApi",
 				"MainConfig",
-				"ContentLanguage"
+				"ContentLanguage",
+				"ReaderExperiments.SemanticSearch.RequestInspector"
 			]
 		}
 	],
