@@ -22,7 +22,7 @@
 
 	<h1>Semantic</h1>
 	<div
-		v-if="responseSemanticRef.results"
+		v-if="responseSemanticRef.results && !isLoading"
 		class="cdx-docs-card-group-with-thumbnails"
 	>
 		<search-result
@@ -34,7 +34,7 @@
 
 	<h1>Lexical</h1>
 	<div
-		v-if="responseLexicalRef.results"
+		v-if="responseLexicalRef.results && !isLoading"
 		class="cdx-docs-card-group-with-thumbnails"
 	>
 		<search-result
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-const { defineComponent, ref } = require( 'vue' );
+const { computed, defineComponent, ref } = require( 'vue' );
 const { CdxButton, CdxSearchInput } = require( '@wikimedia/codex' );
 const SearchInfo = require( './SearchInfo.vue' );
 const SearchResult = require( './SearchResult.vue' );
@@ -82,7 +82,11 @@ module.exports = exports = defineComponent( {
 		}
 	},
 	setup( props ) {
-		const restApi = new mw.Rest();
+		// Unique mw.Rest instances are needed to allow Lexical and
+		// Semantic search to be run in parallel. Otherwise, any simultaneous,
+		// in-flight requests are aborted when search() is called.
+		const restApiLexical = new mw.Rest();
+		const restApiSemantic = new mw.Rest();
 
 		const inputValueRef = ref( props.request.term );
 		const termRef = ref( props.request.term );
@@ -90,6 +94,12 @@ module.exports = exports = defineComponent( {
 		const nextContinueRef = ref( props.response.lexical.continue );
 		const responseLexicalRef = ref( props.response.lexical );
 		const responseSemanticRef = ref( props.response.semantic );
+
+		const loadingLexicalRef = ref( false );
+		const loadingSemanticRef = ref( false );
+		// Loading state resolves only once semantic AND lexical search
+		// API calls have completed (T440348).
+		const isLoading = computed( () => loadingLexicalRef.value || loadingSemanticRef.value );
 
 		const useLang = mw.config.get( 'wgUserLanguage' );
 
@@ -106,7 +116,7 @@ module.exports = exports = defineComponent( {
 			} );
 		}
 
-		async function search( term, params ) {
+		async function search( restApi, term, params ) {
 			// Abort any in-flight requests
 			restApi.abort();
 
@@ -149,11 +159,12 @@ module.exports = exports = defineComponent( {
 			responseSemanticRef.value = [];
 			currentContinueRef.value = 0;
 			nextContinueRef.value = null;
+			loadingLexicalRef.value = true;
+			loadingSemanticRef.value = true;
 
-			try {
-				const response = await search(
-					term,
-					{
+			async function searchLexical() {
+				try {
+					const response = await search( restApiLexical, term, {
 						type: 'lexical',
 						namespace: props.request.namespaces,
 						limit: props.request.limit,
@@ -161,18 +172,21 @@ module.exports = exports = defineComponent( {
 						sort: props.request.sort,
 						uselang: useLang
 					}
-				);
-				response.results = Object.values( response.results );
-				responseLexicalRef.value = response;
-				nextContinueRef.value = response.continue;
-			} catch ( e ) {
-				responseLexicalRef.value = { error: e.message };
+					);
+					response.results = Object.values( response.results );
+					responseLexicalRef.value = response;
+					nextContinueRef.value = response.continue;
+
+				} catch ( e ) {
+					responseLexicalRef.value = { error: e.message };
+				} finally {
+					loadingLexicalRef.value = false;
+				}
 			}
 
-			try {
-				const response = await search(
-					term,
-					{
+			async function searchSemantic() {
+				try {
+					const response = await search( restApiSemantic, term, {
 						type: 'semantic',
 						namespace: props.request.namespaces,
 						limit: 3,
@@ -181,12 +195,17 @@ module.exports = exports = defineComponent( {
 						data: [ 'referencecount' ],
 						uselang: useLang
 					}
-				);
-				response.results = Object.values( response.results );
-				responseSemanticRef.value = response;
-			} catch ( e ) {
-				responseSemanticRef.value = { error: e.message };
+					);
+					response.results = Object.values( response.results );
+					responseSemanticRef.value = response;
+				} catch ( e ) {
+					responseSemanticRef.value = { error: e.message };
+				} finally {
+					loadingSemanticRef.value = false;
+				}
 			}
+
+			await Promise.all( [ searchLexical(), searchSemantic() ] );
 		}
 
 		async function onLoadMore() {
@@ -199,6 +218,7 @@ module.exports = exports = defineComponent( {
 
 			try {
 				const response = await search(
+					restApiLexical,
 					termRef.value,
 					{
 						type: 'lexical',
@@ -232,7 +252,8 @@ module.exports = exports = defineComponent( {
 			responseSemanticRef,
 			onSubmit,
 			onLoadMore,
-			generateSearchUrl
+			generateSearchUrl,
+			isLoading
 		};
 	}
 } );
