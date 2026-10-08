@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch;
 
 use MediaWiki\Config\Config;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
-use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\MediaWikiApi;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
@@ -17,10 +17,8 @@ use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
 
 class SpecialSemanticSearch extends SpecialPage {
-	private readonly string $localApiUrl;
-
 	public function __construct(
-		private readonly MediaWikiApi $mwApiRequest,
+		private readonly RestApi $restApiRequest,
 		private readonly Config $config,
 		private readonly TitleMatcher $titleMatcher,
 		private readonly UserOptionsManager $userOptionsManager,
@@ -28,8 +26,6 @@ class SpecialSemanticSearch extends SpecialPage {
 		string $name = 'SemanticSearch'
 	) {
 		parent::__construct( $name );
-
-		$this->localApiUrl = $this->config->get( MainConfigNames::RestPath );
 	}
 
 	public function isListed(): bool {
@@ -220,9 +216,10 @@ class SpecialSemanticSearch extends SpecialPage {
 
 		$request = new FauxRequest();
 		$request->setParams( $data );
-		$request->setRequestURL( $this->localApiUrl . '/semanticsearch/v0/' . rawurlencode( $term ) );
+		$base = $this->config->get( MainConfigNames::RestPath );
+		$request->setRequestURL( $base . '/semanticsearch/v0/' . rawurlencode( $term ) );
 
-		return $this->mwApiRequest->execute( $request );
+		return $this->restApiRequest->execute( $request );
 	}
 
 	/**

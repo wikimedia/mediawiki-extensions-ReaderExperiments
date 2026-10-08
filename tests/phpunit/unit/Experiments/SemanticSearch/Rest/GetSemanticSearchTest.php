@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\ReaderExperiments\Tests;
+namespace MediaWiki\Extension\ReaderExperiments\Tests\Unit\Experiments\SemanticSearch\Rest;
 
 use CirrusSearch\SearchConfig;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch;

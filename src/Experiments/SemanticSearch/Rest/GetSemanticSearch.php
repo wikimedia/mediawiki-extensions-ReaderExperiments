@@ -7,8 +7,9 @@ use CirrusSearch\SearchConfig;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Config\Config;
 use MediaWiki\Config\ConfigException;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
-use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\MediaWikiApi;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\TextFragment;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
@@ -39,22 +40,20 @@ class GetSemanticSearch extends Handler {
 
 	// Protected to enable testing
 	protected ?SearchConfig $searchConfig = null;
-	protected string $localActionApiUrl;
-	protected string $localRestUrl;
-	protected string $externalActionApiUrl;
-	protected string $externalRestApiUrl;
-
-	protected MediaWikiApi $mwApiRequest;
+	protected ActionApi $actionApiRequest;
+	protected RestApi $restApiRequest;
 	protected Config $config;
 	protected Language $contentLanguage;
 
 	public function __construct(
-		MediaWikiApi $mwApiRequest,
+		ActionApi $actionApiRequest,
+		RestApi $restApiRequest,
 		Config $config,
 		Language $contentLanguage,
 		?SearchConfig $searchConfig = null,
 	) {
-		$this->mwApiRequest = $mwApiRequest;
+		$this->actionApiRequest = $actionApiRequest;
+		$this->restApiRequest = $restApiRequest;
 		$this->config = $config;
 		$this->contentLanguage = $contentLanguage;
 
@@ -66,11 +65,6 @@ class GetSemanticSearch extends Handler {
 		} catch ( ConfigException ) {
 			// CirrusSearch not installed
 		}
-
-		$this->localActionApiUrl = $config->get( MainConfigNames::ScriptPath ) . '/api.php';
-		$this->localRestUrl = $config->get( MainConfigNames::RestPath );
-		$this->externalActionApiUrl = $this->config->get( 'ReaderExperimentsApiBaseUri' );
-		$this->externalRestApiUrl = $this->config->get( 'ReaderExperimentsRestApiBaseUri' );
 	}
 
 	public function execute(): Response {
@@ -108,11 +102,10 @@ class GetSemanticSearch extends Handler {
 			] + ( $params['type'] === self::TYPE_SEMANTIC ? [ 'cirrusSemanticSearch' => 'hl' ] : [] )
 		);
 		// Grab external results if configured as such; otherwise from local wiki
-		$apiUrl = $this->externalActionApiUrl ?: $this->localActionApiUrl;
-		$request->setRequestURL( $apiUrl . '?' . http_build_query( $request->getQueryValues() ) );
+		$request->setRequestURL( '?' . http_build_query( $request->getQueryValues() ) );
 
 		try {
-			$response = $this->mwApiRequest->execute( $request );
+			$response = $this->actionApiRequest->execute( $request );
 		} catch ( Exception $e ) {
 			throw new HttpException(
 				// We are executing the API in internal mode which means there's no error
@@ -203,7 +196,7 @@ class GetSemanticSearch extends Handler {
 		$request->setRequestURL( $url );
 
 		try {
-			$response = $this->mwApiRequest->execute( $request );
+			$response = $this->restApiRequest->execute( $request );
 		} catch ( Exception ) {
 			return null;
 		}
@@ -234,8 +227,7 @@ class GetSemanticSearch extends Handler {
 			return null;
 		}
 
-		$base = $this->externalRestApiUrl ?: $this->localRestUrl;
-
+		$base = $this->config->get( MainConfigNames::RestPath );
 		return $base . '/attribution/v0-beta/pages/' . rawurlencode( $title->getDBkey() ) . '/signals';
 	}
 

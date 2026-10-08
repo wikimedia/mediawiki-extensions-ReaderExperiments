@@ -1,11 +1,14 @@
 <?php
 
-namespace MediaWiki\Extension\ReaderExperiments\Tests;
+namespace MediaWiki\Extension\ReaderExperiments\Tests\Integration\Experiments\SemanticSearch\Rest;
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
-use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\MediaWikiApi;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
 use MediaWiki\Language\Language;
+use MediaWiki\MainConfigNames;
 use MediaWikiIntegrationTestCase;
 use ReflectionMethod;
 
@@ -17,33 +20,20 @@ use ReflectionMethod;
  * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::buildSignalsApiUrl
  */
 class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
+	private function newHandler(): array {
+		$actionApiMock = $this->createMock( ActionApi::class );
+		$restApiMock = $this->createMock( RestApi::class );
+		$languageMock = $this->createMock( Language::class );
+		$languageMock->method( 'getCode' )->willReturn( 'en' );
 
-	/**
-	 * Build a handler with a mocked MediaWikiApi and known local/external
-	 * REST bases, bypassing the real constructor.
-	 */
-	private function newHandlerWithStubbedApi( string $externalRestBase ): array {
-		$apiMock = $this->createMock( MediaWikiApi::class );
-		$language = $this->createMock( Language::class );
-		$language->method( 'getCode' )->willReturn( 'en' );
+		$engine = new GetSemanticSearch(
+			$actionApiMock,
+			$restApiMock,
+			new HashConfig( [ MainConfigNames::RestPath => '/w/rest.php' ] ),
+			$languageMock
+		);
 
-		$engine = new class( $apiMock, $language, $externalRestBase ) extends GetSemanticSearch {
-			public function __construct(
-				MediaWikiApi $api,
-				Language $language,
-				string $externalRestBase
-			) {
-				$this->mwApiRequest = $api;
-				$this->contentLanguage = $language;
-				$this->searchConfig = null;
-				$this->localActionApiUrl = '/w/api.php';
-				$this->localRestUrl = '/w/rest.php';
-				$this->externalActionApiUrl = '';
-				$this->externalRestApiUrl = $externalRestBase;
-			}
-		};
-
-		return [ $engine, $apiMock ];
+		return [ $engine, $actionApiMock, $restApiMock ];
 	}
 
 	private function callFetchAttribution( GetSemanticSearch $engine, ?string $title ): ?array {
@@ -52,11 +42,11 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testUsesLocalRestUrlAndExpandParam(): void {
-		[ $engine, $apiMock ] = $this->newHandlerWithStubbedApi( '' );
+		[ $engine, , $restApiMock ] = $this->newHandler();
 
-		$apiMock->expects( $this->once() )->method( 'execute' )
+		$restApiMock->expects( $this->once() )->method( 'execute' )
 			->willReturnCallback( function ( $request ) {
-				$this->assertStringContainsString(
+				$this->assertSame(
 					'/w/rest.php/attribution/v0-beta/pages/Mars/signals',
 					$request->getRequestURL()
 				);
@@ -78,30 +68,10 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( 666, $attribution['trust_and_relevance']['reference_count'] );
 	}
 
-	public function testExternalRestBaseUriIsUsedAsIs(): void {
-		[ $engine, $apiMock ] = $this->newHandlerWithStubbedApi(
-			'https://en.wikipedia.org/w/rest.php'
-		);
-
-		$apiMock->expects( $this->once() )->method( 'execute' )
-			->willReturnCallback( function ( $request ) {
-				$this->assertStringStartsWith(
-					'https://en.wikipedia.org/w/rest.php/attribution/v0-beta/pages/Venus/signals',
-					$request->getRequestURL()
-				);
-				// The local REST path must not leak into the external URL
-				$this->assertStringNotContainsString( '/w/rest.php/w/rest.php', $request->getRequestURL() );
-				return [ 'trust_and_relevance' => [ 'reference_count' => 7 ] ];
-			} );
-
-		$attribution = $this->callFetchAttribution( $engine, 'Venus' );
-		$this->assertSame( 7, $attribution['trust_and_relevance']['reference_count'] );
-	}
-
 	public function testTitleIsDbKeyedAndUrlEncoded(): void {
-		[ $engine, $apiMock ] = $this->newHandlerWithStubbedApi( '' );
+		[ $engine, , $restApiMock ] = $this->newHandler();
 
-		$apiMock->expects( $this->once() )->method( 'execute' )
+		$restApiMock->expects( $this->once() )->method( 'execute' )
 			->willReturnCallback( function ( $request ) {
 				// Spaces become underscores (DB key), parentheses are percent-encoded
 				$this->assertStringContainsString(
@@ -116,9 +86,9 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testReturnsNullWhenApiThrows(): void {
-		[ $engine, $apiMock ] = $this->newHandlerWithStubbedApi( '' );
+		[ $engine, , $restApiMock ] = $this->newHandler();
 
-		$apiMock->method( 'execute' )
+		$restApiMock->method( 'execute' )
 			->willThrowException( new Exception( 'restapihandler-notfound' ) );
 
 		$attribution = $this->callFetchAttribution( $engine, 'Nonexistent' );
@@ -126,9 +96,9 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testReturnsNullWhenResponseContainsErrorKey(): void {
-		[ $engine, $apiMock ] = $this->newHandlerWithStubbedApi( '' );
+		[ $engine, , $restApiMock ] = $this->newHandler();
 
-		$apiMock->method( 'execute' )->willReturn( [
+		$restApiMock->method( 'execute' )->willReturn( [
 			'errorKey' => 'rest-nonexistent-title',
 			'messageTranslations' => [ 'en' => 'The specified page does not exist' ],
 		] );
@@ -138,26 +108,26 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testReturnsNullForNullTitleWithoutCallingApi(): void {
-		[ $engine, $apiMock ] = $this->newHandlerWithStubbedApi( '' );
+		[ $engine, , $restApiMock ] = $this->newHandler();
 
-		$apiMock->expects( $this->never() )->method( 'execute' );
+		$restApiMock->expects( $this->never() )->method( 'execute' );
 		$attribution = $this->callFetchAttribution( $engine, null );
 		$this->assertNull( $attribution );
 	}
 
 	public function testReturnsNullForInvalidTitleWithoutCallingApi(): void {
-		[ $engine, $apiMock ] = $this->newHandlerWithStubbedApi( '' );
+		[ $engine, , $restApiMock ] = $this->newHandler();
 
-		$apiMock->expects( $this->never() )->method( 'execute' );
+		$restApiMock->expects( $this->never() )->method( 'execute' );
 		// Illegal characters: Title::newFromText() returns null
 		$attribution = $this->callFetchAttribution( $engine, '<invalid>' );
 		$this->assertNull( $attribution );
 	}
 
 	public function testReturnsNullForEmptyTitleWithoutCallingApi(): void {
-		[ $engine, $apiMock ] = $this->newHandlerWithStubbedApi( '' );
+		[ $engine, , $restApiMock ] = $this->newHandler();
 
-		$apiMock->expects( $this->never() )->method( 'execute' );
+		$restApiMock->expects( $this->never() )->method( 'execute' );
 		$attribution = $this->callFetchAttribution( $engine, '' );
 		$this->assertNull( $attribution );
 	}
