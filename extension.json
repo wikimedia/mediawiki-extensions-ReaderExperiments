@@ -20,6 +20,11 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\ReaderExperiments\\": "src/"
 	},
+	"TestAutoloadNamespaces": {
+		"MediaWiki\\Extension\\ReaderExperiments\\Tests\\Integration\\": "tests/phpunit/integration/",
+		"MediaWiki\\Extension\\ReaderExperiments\\Tests\\Unit\\": "tests/phpunit/unit/",
+		"MediaWiki\\Extension\\ReaderExperiments\\Tests\\": "tests/phpunit/"
+	},
 	"config": {
 		"ReaderExperimentsApiBaseUri": {
 			"description": "Action API URL of MediaWiki instance to use for external data (e.g., https://en.wikipedia.org/w/api.php when using MobileFrontendContentProvider, in which case this should be equal to $wgMFMwApiContentProviderBaseUri), or leave empty to use local API.",
@@ -632,7 +637,7 @@
 		"SemanticSearch": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\SpecialSemanticSearch",
 			"services": [
-				"ReaderExperiments.SemanticSearch.Api.RestApi",
+				"ReaderExperiments.SemanticSearch.Api.InternalRestApi",
 				"MainConfig",
 				"TitleMatcher",
 				"UserOptionsManager"
@@ -645,7 +650,8 @@
 			"method": "GET",
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\Rest\\GetSemanticSearch",
 			"services": [
-				"ReaderExperiments.SemanticSearch.Api.RoutedApi",
+				"ReaderExperiments.SemanticSearch.Api.ActionApi",
+				"ReaderExperiments.SemanticSearch.Api.RestApi",
 				"MainConfig",
 				"ContentLanguage"
 			]

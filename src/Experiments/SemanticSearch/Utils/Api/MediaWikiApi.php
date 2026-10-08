@@ -5,8 +5,6 @@ namespace MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils
 use MediaWiki\Request\WebRequest;
 
 interface MediaWikiApi {
-	public function supports( WebRequest $request ): bool;
-
 	/**
 	 * @throws Exception
 	 */
