@@ -48,6 +48,7 @@
 	"readerexperiments-semanticsearch-error-message": "Ricerca non valida",
 	"readerexperiments-semanticsearch-match-section": "(sezione: $1)",
 	"readerexperiments-semanticsearch-match-redirect": "(reindirizzamento: $1)",
+	"readerexperiments-semanticsearch-referencecount": "$1 {{PLURAL:$1|1=riferimento|riferimenti}}",
 	"readerexperiments-sharehighlight-share-quote": "Condividi citazione",
 	"readerexperiments-sharehighlight-dialog-title": "Condividi",
 	"readerexperiments-sharehighlight-background-legend": "Sfondo",

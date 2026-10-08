@@ -53,6 +53,7 @@
 	"readerexperiments-semanticsearch-category-info": "$1 {{PLURAL:$1|1=Mitglied|Mitglieder}} ( $2 {{PLURAL:$2|1=Unterkategorie|Unterkategorien}}, $3 {{PLURAL:$3|1=Datei|Dateien}})",
 	"readerexperiments-semanticsearch-match-section": "(Abschnitt: $1)",
 	"readerexperiments-semanticsearch-match-redirect": "(Weiterleitung: $1)",
+	"readerexperiments-semanticsearch-referencecount": "{{PLURAL:$1|Eine Fundstelle|$1 Fundstellen}}",
 	"readerexperiments-sharehighlight-blue-dot-label": "Neue Teilen-Funktion",
 	"readerexperiments-sharehighlight-toolbar-share": "Teilen",
 	"readerexperiments-sharehighlight-share-quote": "Zitat teilen",

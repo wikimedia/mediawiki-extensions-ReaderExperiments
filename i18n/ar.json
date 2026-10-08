@@ -50,6 +50,11 @@
 	"readerexperiments-semanticsearch-load-more-results": "تحميل المزيد",
 	"readerexperiments-semanticsearch-load-less-results": "رجوع",
 	"readerexperiments-semanticsearch-error-message": "البحث غير صالح",
+	"readerexperiments-semanticsearch-error-text": "أدخل بحثًا جديدًا أعلاه وحاول مرة أخرى",
+	"readerexperiments-semanticsearch-did-you-mean": "هل تقصد: $1",
+	"readerexperiments-semanticsearch-no-results": "لم نعثر على أي نتائج",
+	"readerexperiments-semanticsearch-match-section": "(القسم: $1 )",
+	"readerexperiments-semanticsearch-match-redirect": "(إعادة التوجيه: $1 )",
 	"readerexperiments-sharehighlight-blue-dot-label": "ميزة مشاركة جديدة",
 	"readerexperiments-sharehighlight-toolbar-share": "شارك",
 	"readerexperiments-sharehighlight-share-quote": "شارك الاقتباس",
@@ -65,5 +70,11 @@
 	"readerexperiments-sharehighlight-generating": "توليد الصورة",
 	"readerexperiments-sharehighlight-share-title": "اقتباس من \"$1\" - $2",
 	"readerexperiments-sharehighlight-share-text-with-branding": "\"$1\" \n\nاقرأ المزيد على ويكيبيديا $3: $2",
-	"readerexperiments-sharehighlight-image-author-license": "الصورة: $1 · $2"
+	"readerexperiments-sharehighlight-image-author-license": "الصورة: $1 · $2",
+	"readerexperiments-preferredsources-cta-message": "اجعل ويكيبيديا ظاهرة في نتائج بحثك على جوجل.",
+	"readerexperiments-preferredsources-cta-action": "معرفة المزيد",
+	"readerexperiments-preferredsources-dialog-title": "اجعل ويكيبيديا ظاهرة في نتائج بحثك على جوجل.",
+	"readerexperiments-preferredsources-dialog-body": "أعطِ الأولوية للمعلومات الموثوقة التي تم التحقق من صحتها من قبل البشر. اختر ويكيبيديا كمصدر مفضل على جوجل.",
+	"readerexperiments-preferredsources-dialog-action": "اختر ويكيبيديا",
+	"readerexperiments-preferredsources-dialog-dismiss": "لا تظهر مرة أخرى"
 }
