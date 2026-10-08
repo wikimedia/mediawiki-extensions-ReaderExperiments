@@ -102,18 +102,22 @@ class SpecialSemanticSearch extends SpecialPage {
 		// Only get a handful of semantic results, only on the first page
 		$responses['semantic'] = [];
 		if ( $currentContinue === 0 ) {
-			$responses['semantic'] = $this->search(
-				$term,
-				[
-					'type' => 'semantic',
-					'namespace' => $namespaces,
-					'limit' => 3,
-					'continue' => 0,
-					'sort' => $sort,
-					'data' => [ 'referencecount' ],
-					'uselang' => $userLanguage->getCode(),
-				]
-			);
+			try {
+				$responses['semantic'] = $this->search(
+					$term,
+					[
+						'type' => 'semantic',
+						'namespace' => $namespaces,
+						'limit' => 3,
+						'continue' => 0,
+						'sort' => $sort,
+						'data' => [ 'referencecount' ],
+						'uselang' => $userLanguage->getCode(),
+					]
+				);
+			} catch ( Exception $e ) {
+				$responses['semantic']['error'] = $e->getMessage();
+			}
 		}
 
 		// Handle optional searchinfo that may be present in the API response:
