@@ -56,6 +56,7 @@
 	"readerexperiments-semanticsearch-category-info": "$1 {{PLURAL:$1|użytkownik|użytkowników}} ($2 {{PLURAL:$2|podkategoria|podkategorie|podkategorii}}, $3 {{PLURAL:$3|plik|pliki|plików}})",
 	"readerexperiments-semanticsearch-match-section": "(sekcja „$1”)",
 	"readerexperiments-semanticsearch-match-redirect": "(przekierowanie z „$1”)",
+	"readerexperiments-semanticsearch-referencecount": "$1 {{PLURAL:$1|przypis|przypisy|przypisów|przypisu}}",
 	"readerexperiments-sharehighlight-blue-dot-label": "Nowa opcja udostępniania",
 	"readerexperiments-sharehighlight-toolbar-share": "Udostępnij",
 	"readerexperiments-sharehighlight-share-quote": "Udostępnij cytat",

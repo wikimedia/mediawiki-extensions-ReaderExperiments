@@ -58,6 +58,7 @@
 	"readerexperiments-semanticsearch-category-info": "$1个{{PLURAL:$1|成员}}（$2个{{PLURAL:$2|子分类}}，$3个{{PLURAL:$3|文件}}）",
 	"readerexperiments-semanticsearch-match-section": "（章节：$1）",
 	"readerexperiments-semanticsearch-match-redirect": "（重定向：$1）",
+	"readerexperiments-semanticsearch-referencecount": "$1篇{{PLURAL:$1|参考文献}}",
 	"readerexperiments-sharehighlight-blue-dot-label": "新分享功能",
 	"readerexperiments-sharehighlight-toolbar-share": "分享",
 	"readerexperiments-sharehighlight-share-quote": "分享引文",
