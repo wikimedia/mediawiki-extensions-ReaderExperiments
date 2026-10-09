@@ -166,6 +166,15 @@ class TextFragmentTest extends MediaWikiUnitTestCase {
 			self::URL . self::WPROV,
 		];
 
+		// A section titled "0" is a legitimate anchor, not an absent
+		// one. It must not be coerced to falsy and dropped.
+		yield 'a section anchor of "0" is not treated as absent' => [
+			self::URL,
+			null,
+			'0',
+			self::URL . self::WPROV . '#0',
+		];
+
 		yield 'wprov joins an existing query string' => [
 			'https://example.org/index.php?title=Purr',
 			'x <span class="searchmatch">a purring cat</span> y',

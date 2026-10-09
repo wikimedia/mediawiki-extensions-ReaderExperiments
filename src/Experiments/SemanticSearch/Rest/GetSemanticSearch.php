@@ -243,9 +243,12 @@ class GetSemanticSearch extends Handler {
 	 * Url to send the reader to when they click through on a result.
 	 *
 	 * For semantic results this carries a text fragment directive pointing at the
-	 * passage that was matched, so the browser scrolls to and highlights it. Lexical
-	 * snippets may quote raw wikitext that the rendered article does not contain, so
-	 * those keep the plain article url.
+	 * passage that was matched, so the browser scrolls to and highlights it.
+	 *
+	 * Lexical results keep the plain article url. Their snippet highlights are
+	 * single words rather than one contiguous passage, so a directive built
+	 * from the longest searchmatch span could land on the wrong occurrence of
+	 * a common word instead of the one actually matched.
 	 *
 	 * Protected to enable testing.
 	 */

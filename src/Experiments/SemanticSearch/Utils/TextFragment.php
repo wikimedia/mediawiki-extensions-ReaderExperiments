@@ -124,7 +124,7 @@ class TextFragment {
 		$url = wfAppendQuery( $canonicalUrl, [ 'wprov' => self::WPROV_VALUE ] );
 
 		$directive = $snippet !== null ? self::createDirective( $snippet ) : null;
-		$anchor = $sectionAnchor ?: '';
+		$anchor = $sectionAnchor ?? '';
 
 		if ( $directive === null && $anchor === '' ) {
 			return $url;
@@ -202,10 +202,10 @@ class TextFragment {
 
 		$best = null;
 		foreach ( $matches as $match ) {
-			[ $span, $offset ] = $match[0];
+			$offset = $match[0][1];
 			$inner = $match[1][0];
 			if ( $best === null || mb_strlen( $inner ) > mb_strlen( $best['inner'] ) ) {
-				$best = [ 'inner' => $inner, 'offset' => $offset, 'length' => strlen( $span ) ];
+				$best = [ 'inner' => $inner, 'offset' => $offset ];
 			}
 		}
 		if ( $best === null ) {
