@@ -37,7 +37,7 @@
 			}
 		},
 		"ReaderExperimentsPreferredSourcesDebug": {
-			"description": "Local development only: bypass the Google-referrer gate and the CTA suppression flag for the preferred-sources experiment.",
+			"description": "Local development only: bypass the Google-referrer gate and the CTA suppression flag for the preferred-sources-ab experiment.",
 			"value": false
 		},
 		"ReaderExperimentsSemanticSearchAllowOptIn": {

@@ -1,5 +1,5 @@
 // Tracking key as registered in Test Kitchen / GrowthBook (see T435229).
-const EXPERIMENT_NAME = 'preferred-sources';
+const EXPERIMENT_NAME = 'preferred-sources-ab';
 const GROUP_TREATMENT = 'treatment';
 const SUPPRESS_STORAGE_KEY = 'ext-readerexperiments-preferredsources-cta';
 const CTA_MODULE = 'ext.readerExperiments/preferredSources.cta';
