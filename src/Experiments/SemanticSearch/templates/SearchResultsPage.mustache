@@ -40,35 +40,31 @@
 
 {{#request.semanticEnabled}}
 	{{#response.semantic}}
-		<h1>Semantic</h1>
-		<div class="cdx-docs-card-group-with-thumbnails">
+		<section class="ext-readerExperiments-semanticsearch-results ext-readerExperiments-semanticsearch-results--semantic" aria-label="{{output.semanticResultsLabel}}">
 			{{#results}}
 				{{>SearchResult}}
 			{{/results}}
-		</div>
+		</section>
 	{{/response.semantic}}
 {{/request.semanticEnabled}}
 
 {{#response.lexical}}
-	<h1>Lexical</h1>
-	<div class="cdx-docs-card-group-with-thumbnails">
+	<section class="ext-readerExperiments-semanticsearch-results ext-readerExperiments-semanticsearch-results--lexical" aria-label="{{output.lexicalResultsLabel}}">
 		{{#results}}
 			{{>SearchResult}}
 		{{/results}}
-	</div>
+	</section>
 {{/response.lexical}}
 
 {{#output.pagination}}
-	<div>
+	<div class="ext-readerExperiments-semanticsearch-actions">
 		{{#prev}}
-			<a href="{{.}}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{{output.previousText}}</a>
+			<a href="{{.}}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive cdx-button--weight-primary">{{output.previousText}}</a>
 		{{/prev}}
 		{{#next}}
-			<a href="{{.}}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{{output.continueText}}</a>
+			<a href="{{.}}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive cdx-button--weight-primary">{{output.continueText}}</a>
 		{{/next}}
 	</div>
 {{/output.pagination}}
 
-<div class="ext-readerExperiments-semanticsearch-switch-search">
-	<a href="{{output.classicSearchUrl}}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive cdx-button--weight-quiet cdx-button--size-small">{{output.switchToClassicSearchText}}</a>
-</div>
+<a href="{{output.classicSearchUrl}}" id="readerexperiments-semanticsearch-switch-special-search" class="ext-readerExperiments-semanticsearch-classic">{{output.switchToClassicSearchText}}</a>

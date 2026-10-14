@@ -1,15 +1,195 @@
 @import 'mediawiki.skin.variables.less';
 
 .ext-readerExperiments-semanticsearch {
-	&-result__namespace {
-		font-weight: normal;
-		background: @background-color-neutral;
-		padding: @spacing-25 @spacing-50;
-	}
+	display: block;
 
 	// stylelint-disable-next-line selector-class-pattern
-	.searchmatch {
-		background: @background-color-warning-subtle;
+	&-suggestion .searchmatch,
+	&-suggestion em {
+		font-weight: @font-weight-bold;
+		font-style: normal;
+	}
+
+	// Code currently only checks for lexical results to be present before showing
+	// this message, but in the current presentation, showing this when there are
+	// any sort of results, lexical or semantic, makes no sense. This forces it to
+	// be hidden if no result containers are found.
+	:has( .ext-readerExperiments-semanticsearch-results ) &-no-results {
+		display: none;
+	}
+
+	&-results,
+	&-loading {
+		margin-top: @spacing-100;
+	}
+
+	&-results--lexical {
+		margin-top: @spacing-250;
+	}
+
+	&-result.cdx-card {
+		display: block;
+		margin-bottom: @spacing-75;
+		font-size: @font-size-small;
+		line-height: @line-height-small;
+
+		// Include the floated thumbnail in the card's height.
+		&::after {
+			content: '';
+			display: block;
+			clear: both;
+		}
+
+		.cdx-card__text__supporting-text {
+			display: block;
+			margin-top: 0;
+
+			span + span::before {
+				content: ' • ';
+			}
+		}
+
+		.cdx-card__text {
+			display: block;
+			overflow: hidden;
+		}
+
+		.cdx-card__text__title {
+			color: @color-progressive;
+		}
+
+		.cdx-card__thumbnail {
+			display: none;
+			float: left;
+			margin: 0;
+			margin-inline-end: @spacing-50;
+		}
+
+		// NS_FILE results retain their thumbnails on mobile, like Special:Search.
+		&[ data-namespace='6' ] .cdx-card__thumbnail {
+			display: inline-flex;
+		}
+
+		// stylelint-disable-next-line selector-class-pattern
+		.searchmatch {
+			font-weight: @font-weight-bold;
+		}
+	}
+
+	&-result.cdx-card:not( .ext-readerExperiments-semanticsearch-result--semantic ) {
+		border: 0;
+		padding: @spacing-50 @spacing-75;
+	}
+
+	&-result--semantic.cdx-card {
+		// stylelint-disable-next-line selector-class-pattern
+		.searchmatch {
+			background-color: @background-color-warning-subtle;
+			font-weight: @font-weight-normal;
+		}
+	}
+
+	&-result__quote {
+		color: @color-base;
+		font-family: @font-family-serif;
+		font-size: @font-size-large;
+		line-height: @line-height-large;
+		padding-bottom: @spacing-75;
+		margin-bottom: @spacing-50;
+		border-bottom: @border-subtle;
+		overflow-wrap: anywhere;
+	}
+
+	&-result__quote-mark {
+		.cdx-mixin-css-icon( @cdx-icon-quotes, @param-fill-color: @color-subtle );
+		margin-inline-end: @spacing-25;
+	}
+
+	&-result__section-arrow {
+		display: inline-block;
+	}
+
+	&-result__section {
+		color: @color-subtle;
+	}
+
+	&-actions {
+		margin-top: @spacing-250;
+	}
+
+	&-classic {
+		display: inline-block;
+		margin-block: @spacing-200;
+		font-size: @font-size-small;
+		font-weight: @font-weight-bold;
+	}
+
+	&-loading {
+		&__card {
+			border: @border-base;
+			border-radius: @border-radius-base;
+			padding: @spacing-75;
+			margin-bottom: @spacing-75;
+		}
+
+		&__quote {
+			padding-bottom: @spacing-100;
+			margin-bottom: @spacing-75;
+			border-bottom: @border-subtle;
+		}
+
+		&__quote span,
+		&__text span {
+			display: block;
+			height: @size-125;
+			margin-block: @spacing-50;
+			background-color: @background-color-neutral;
+		}
+
+		&__quote span:nth-child( 2 ) {
+			width: 94%;
+		}
+
+		&__quote span:nth-child( 3 ) {
+			width: 91%;
+		}
+
+		&__quote span:nth-child( 4 ) {
+			width: 88%;
+		}
+
+		&__quote span:last-child {
+			width: 26%;
+		}
+
+		&__details {
+			display: flex;
+			align-items: center;
+		}
+
+		&__thumbnail {
+			display: none;
+			margin-inline-end: @spacing-50;
+		}
+
+		&__text {
+			flex: 1;
+
+			span:first-child {
+				width: 36%;
+			}
+
+			span:last-child {
+				width: 78%;
+			}
+		}
+	}
+
+	@media ( min-width: @min-width-breakpoint-tablet ) {
+		&-result.cdx-card .cdx-card__thumbnail,
+		&-loading__thumbnail {
+			display: inline-flex;
+		}
 	}
 
 	&-switch-search {
@@ -54,3 +234,7 @@
 	}
 }
 /* stylelint-enable selector-class-pattern, declaration-no-important */
+
+[ dir='rtl' ] .ext-readerExperiments-semanticsearch-result__section-arrow {
+	transform: scaleX( -1 );
+}

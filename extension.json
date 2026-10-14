@@ -539,36 +539,31 @@
 				"init.js",
 				"components/SearchInfo.vue",
 				"components/SearchResult.vue",
-				"components/SearchResultsPage.vue",
-				"utils/formatSize.js"
+				"components/SearchResultsPage.vue"
 			],
 			"messages": [
 				"readerexperiments-semanticsearch-search-button",
 				"readerexperiments-semanticsearch-input-placeholder",
 				"readerexperiments-semanticsearch-load-more-results",
-				"readerexperiments-semanticsearch-results-count",
 				"readerexperiments-semanticsearch-did-you-mean",
 				"readerexperiments-semanticsearch-no-results",
 				"readerexperiments-semanticsearch-error-message",
 				"readerexperiments-semanticsearch-error-text",
-				"readerexperiments-semanticsearch-category-info",
-				"readerexperiments-semanticsearch-wordcount",
 				"readerexperiments-semanticsearch-match-section",
 				"readerexperiments-semanticsearch-match-redirect",
 				"readerexperiments-semanticsearch-contributorcount",
 				"readerexperiments-semanticsearch-referencecount",
 				"readerexperiments-semanticsearch-switch-classic-search",
-				"readerexperiments-semanticsearch-switch-special-search",
-				"size-bytes",
-				"size-kilobytes",
-				"size-megabytes",
-				"size-gigabytes"
+				"readerexperiments-semanticsearch-loading",
+				"readerexperiments-semanticsearch-semantic-results-label",
+				"readerexperiments-semanticsearch-lexical-results-label",
+				"ellipsis",
+				"readerexperiments-semanticsearch-switch-special-search"
 			],
 			"dependencies": [
 				"mediawiki.api",
 				"mediawiki.language",
 				"mediawiki.util",
-				"mediawiki.DateFormatter",
 				"@wikimedia/codex",
 				"vue",
 				"ext.readerExperiments"

@@ -4,7 +4,7 @@ const { flushPromises, mount } = require( '@vue/test-utils' );
 
 const SearchResultsPage = require( '../../resources/experiments/semanticSearch/components/SearchResultsPage.vue' );
 
-const SWITCH_LINK = '.ext-readerExperiments-semanticsearch-switch-search a';
+const SWITCH_LINK = '.ext-readerExperiments-semanticsearch-classic';
 
 const request = {
 	queryParams: [],
@@ -17,7 +17,8 @@ const request = {
 	continue: 0,
 	classicSearchPage: 'Special:Search',
 	// Empty unless the reader explicitly passed ns<N> query params
-	requestedNamespaces: []
+	requestedNamespaces: [],
+	semanticEnabled: true
 };
 
 const response = {
@@ -155,9 +156,19 @@ describe( 'SearchResultsPage', () => {
 		const treatmentRequest = { ...request, semanticEnabled: true };
 
 		it( 'renders the semantic results section', () => {
-			const wrapper = mount( SearchResultsPage, { props: { request: treatmentRequest, response } } );
+			const result = { title: 'Example', targeturl: '/wiki/Example', ns: 0, index: 0, snippet: 'Example' };
+			const wrapper = mount( SearchResultsPage, {
+				props: {
+					request: treatmentRequest,
+					response: {
+						semantic: { ...response.semantic, results: [ result ] },
+						lexical: { ...response.lexical, results: [ result ] }
+					}
+				}
+			} );
 
-			expect( wrapper.findAll( 'h1' ).map( ( w ) => w.text() ) ).toContain( 'Semantic' );
+			const sections = wrapper.findAll( 'section.ext-readerExperiments-semanticsearch-results' );
+			expect( sections.map( ( w ) => w.attributes( 'aria-label' ) ) ).toContain( 'readerexperiments-semanticsearch-semantic-results-label' );
 		} );
 
 		it( 'fetches semantic and lexical results on new searches', async () => {
@@ -170,9 +181,19 @@ describe( 'SearchResultsPage', () => {
 		const controlRequest = { ...request, semanticEnabled: false };
 
 		it( 'does not render the semantic results section', () => {
-			const wrapper = mount( SearchResultsPage, { props: { request: controlRequest, response } } );
+			const result = { title: 'Example', targeturl: '/wiki/Example', ns: 0, index: 0, snippet: 'Example' };
+			const wrapper = mount( SearchResultsPage, {
+				props: {
+					request: controlRequest,
+					response: {
+						semantic: { ...response.semantic, results: [ result ] },
+						lexical: { ...response.lexical, results: [ result ] }
+					}
+				}
+			} );
 
-			expect( wrapper.findAll( 'h1' ).map( ( w ) => w.text() ) ).not.toContain( 'Semantic' );
+			const sections = wrapper.findAll( 'section.ext-readerExperiments-semanticsearch-results' );
+			expect( sections.map( ( w ) => w.attributes( 'aria-label' ) ) ).not.toContain( 'readerexperiments-semanticsearch-semantic-results-label' );
 		} );
 
 		it( 'only fetches lexical results on new searches', async () => {
@@ -264,4 +285,28 @@ describe( 'SearchResultsPage', () => {
 			expect( wrapper.vm.responseSemanticRef ).not.toHaveProperty( 'error' );
 		} );
 	} );
+} );
+
+test( 'provides distinct accessible labels for the result sections', () => {
+	const result = { title: 'Example', targeturl: '/wiki/Example', ns: 0, index: 0, snippet: 'Example' };
+	const wrapper = mount( SearchResultsPage, {
+		props: {
+			request,
+			response: {
+				semantic: { ...response.semantic, results: [ result ] },
+				lexical: { ...response.lexical, results: [ result ] }
+			}
+		}
+	} );
+	const sections = wrapper.findAll( 'section.ext-readerExperiments-semanticsearch-results' );
+	expect( sections ).toHaveLength( 2 );
+	expect( sections[ 0 ].attributes( 'aria-label' ) )
+		.toBe( 'readerexperiments-semanticsearch-semantic-results-label' );
+	expect( sections[ 1 ].attributes( 'aria-label' ) )
+		.toBe( 'readerexperiments-semanticsearch-lexical-results-label' );
+} );
+
+test( 'omits empty result sections', () => {
+	const wrapper = mount( SearchResultsPage, { props: { request, response } } );
+	expect( wrapper.findAll( 'section.ext-readerExperiments-semanticsearch-results' ) ).toHaveLength( 0 );
 } );

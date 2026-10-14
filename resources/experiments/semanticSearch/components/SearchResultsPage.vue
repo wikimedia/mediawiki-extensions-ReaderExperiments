@@ -10,6 +10,7 @@
 	></cdx-search-input>
 
 	<search-info
+		v-if="!isLoading"
 		:term="termRef"
 		:namespaces="request.namespaces"
 		:limit="request.limit"
@@ -22,57 +23,73 @@
 	></search-info>
 
 	<template v-if="semanticEnabled">
-		<h1>Semantic</h1>
 		<div
-			v-if="responseSemanticRef.results && !isLoading"
-			class="cdx-docs-card-group-with-thumbnails"
+			v-if="isLoading"
+			class="ext-readerExperiments-semanticsearch-loading"
+			role="status"
+			:aria-label="$i18n( 'readerexperiments-semanticsearch-loading' ).text()">
+			<div
+				v-for="index in 3"
+				:key="index"
+				class="ext-readerExperiments-semanticsearch-loading__card"
+				aria-hidden="true">
+				<div class="ext-readerExperiments-semanticsearch-loading__quote">
+					<span v-for="line in 5" :key="line"></span>
+				</div>
+				<div class="ext-readerExperiments-semanticsearch-loading__details">
+					<span class="cdx-thumbnail ext-readerExperiments-semanticsearch-loading__thumbnail">
+						<span class="cdx-thumbnail__placeholder"><span class="cdx-thumbnail__placeholder__icon"></span></span>
+					</span>
+					<div class="ext-readerExperiments-semanticsearch-loading__text">
+						<span></span><span></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<section
+			v-if="responseSemanticRef.results && responseSemanticRef.results.length && !isLoading"
+			class="ext-readerExperiments-semanticsearch-results ext-readerExperiments-semanticsearch-results--semantic"
+			:aria-label="$i18n( 'readerexperiments-semanticsearch-semantic-results-label' ).text()"
 		>
+			<h1>Semantic</h1>
 			<search-result
 				v-for="( result, index ) in Object.values( responseSemanticRef.results ).sort( ( a, b ) => a.index - b.index )"
 				:key="`result=${index}`"
 				:result="result"
+				semantic
 			></search-result>
-		</div>
+		</section>
 	</template>
 
-	<h1>Lexical</h1>
-	<div
-		v-if="responseLexicalRef.results && !isLoading"
-		class="cdx-docs-card-group-with-thumbnails"
+	<section
+		v-if="responseLexicalRef.results && responseLexicalRef.results.length && !isLoading"
+		class="ext-readerExperiments-semanticsearch-results ext-readerExperiments-semanticsearch-results--lexical"
+		:aria-label="$i18n( 'readerexperiments-semanticsearch-lexical-results-label' ).text()"
 	>
 		<search-result
 			v-for="( result, index ) in Object.values( responseLexicalRef.results ).sort( ( a, b ) => a.index - b.index )"
 			:key="`result=${index}`"
 			:result="result"
 		></search-result>
-	</div>
+	</section>
 
-	<div>
+	<div class="ext-readerExperiments-semanticsearch-actions">
 		<!-- @todo add functionality (or maybe just a link?) to go back to previous results? -->
 		<cdx-button
 			v-if="nextContinueRef"
 			action="progressive"
+			weight="primary"
 			@click="onLoadMore"
 		>
 			{{ $i18n( 'readerexperiments-semanticsearch-load-more-results' ).text() }}
 		</cdx-button>
 	</div>
-
-	<div class="ext-readerExperiments-semanticsearch-switch-search">
-		<a
-			:href="classicSearchUrl"
-			class="
-				cdx-button
-				cdx-button--fake-button
-				cdx-button--fake-button--enabled
-				cdx-button--action-progressive
-				cdx-button--weight-quiet
-				cdx-button--size-small
-			"
-		>
-			{{ $i18n( 'readerexperiments-semanticsearch-switch-classic-search' ).text() }}
-		</a>
-	</div>
+	<a
+		id="readerexperiments-semanticsearch-switch-special-search"
+		:href="classicSearchUrl"
+		class="ext-readerExperiments-semanticsearch-classic">
+		{{ $i18n( 'readerexperiments-semanticsearch-switch-classic-search' ).text() }}
+	</a>
 </template>
 
 <script>

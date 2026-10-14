@@ -7,6 +7,7 @@ use MediaWiki\Config\Config;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticExcerpt;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\TextFragment;
 use MediaWiki\Language\Language;
@@ -153,6 +154,8 @@ class GetSemanticSearch extends Handler {
 		$results = array_map(
 			fn ( array $result ) => $result + [
 				'targeturl' => $this->getTargetUrl( $params['type'], $result ),
+				'semanticExcerpt' => $params['type'] === self::TYPE_SEMANTIC
+					? SemanticExcerpt::format( $result['snippet'] ?? '' ) : null,
 			],
 			$results
 		);
