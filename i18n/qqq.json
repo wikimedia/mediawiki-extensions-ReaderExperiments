@@ -9,6 +9,7 @@
 			"Marco Fossati",
 			"Matthias Mullie",
 			"Roan Kattouw",
+			"Stjn",
 			"Toliño"
 		]
 	},
@@ -53,7 +54,7 @@
 	"readerexperiments-semanticsearch-preference-specialsearch-label": "{{optional}}\nLabel for the Special:Search interface option",
 	"readerexperiments-semanticsearch-preference-help": "Help text for preference to allow user to choose their search interface",
 	"readerexperiments-semanticsearch-switch-special-search": "A link so that the user can go to Special:Search",
-	"readerexperiments-semanticsearch-search-button": "Label text for the Semantic Search search button",
+	"readerexperiments-semanticsearch-search-button": "Label text for the Semantic Search search button\n\n{{Identical|Search}}",
 	"readerexperiments-semanticsearch-input-placeholder": "Placeholder text for Semantic Search search input",
 	"readerexperiments-semanticsearch-load-more-results": "Text for the 'load more results' button",
 	"readerexperiments-semanticsearch-load-less-results": "Text for the 'Go back' button",
