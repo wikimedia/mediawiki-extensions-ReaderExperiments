@@ -1,4 +1,4 @@
-// TODO(image-carousel-retest): Remove this experiment-only file after the retest.
+// TODO(image-carousel-retest-v2): Remove this experiment-only file after the retest.
 // See README.md for the coordinated cleanup across ReaderExperiments and MMV.
 /* eslint-disable camelcase */
 // Provisional payloads from the instrumentation spec.

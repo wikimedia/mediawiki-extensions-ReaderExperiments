@@ -161,7 +161,7 @@
 		"ext.readerExperiments.imageCarouselRetest.init": {
 			"localBasePath": "resources/experiments/imageCarouselRetest",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/imageCarouselRetest",
-			"dependencies": [ "ext.readerExperiments.imageCarouselRetest" ],
+			"dependencies": [ "ext.readerExperiments.imageCarouselRetest", "mediawiki.user" ],
 			"packageFiles": [ "init.js" ]
 		},
 		"ext.readerExperiments.imageCarouselRetest": {

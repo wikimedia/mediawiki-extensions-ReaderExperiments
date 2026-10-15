@@ -1,6 +1,6 @@
 <?php
 
-// TODO(image-carousel-retest): Remove this experiment-only file after the retest.
+// TODO(image-carousel-retest-v2): Remove this experiment-only file after the retest.
 // Remove the hook registrations and modules listed in the experiment README too.
 
 namespace MediaWiki\Extension\ReaderExperiments\Experiments\ImageCarouselRetest;
@@ -10,7 +10,7 @@ use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Output\OutputPage;
 
 class Hooks {
-	public const EXPERIMENT_NAME = 'image-carousel-retest';
+	public const EXPERIMENT_NAME = 'image-carousel-retest-v2';
 
 	public function __construct( private ?ExperimentManager $experimentManager = null ) {
 	}

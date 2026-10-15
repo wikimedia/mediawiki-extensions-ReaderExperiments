@@ -32,12 +32,30 @@ Tracking begins only after:
 
 1. The reader passes the eligibility checks.
 2. The system finds the reader’s assigned group.
-3. The correct carousel version is applied.
-4. The carousel finishes loading.
+3. The browser confirms that its assignment matches the server’s assignment.
 
-The system then records the reader’s experiment exposure and page visit. A shared setup process prevents duplicate visits if the page starts more than once.
+The server has already delivered different page output: treatments receive carousel
+markup and control does not. The browser records exposure and the page visit before
+waiting for carousel initialization. Initialization failures do not suppress these
+events. A shared setup process prevents duplicate visits if the page starts more
+than once.
 
 If setup fails, it is not automatically retried on the same page.
+
+## Initialization diagnostic
+
+After treatment initialization returns success, the entry point sends one
+`carousel_initialize` event per page with `action_subtype: success` and
+`action_source: image_carousel`. It explicitly requests `performer_session_id`
+and `performer_pageview_id`; the SDK adds experiment membership information.
+Control and unsuccessful initialization do not send this event. Recording errors
+are caught and do not change the UI initialization result.
+
+This event measures JavaScript initialization.
+It does not require exposure logging to have succeeded. No matching success event
+means no success was recorded.
+To compare exposure and success within a session or page view, ensure exposure
+configuration includes the same identifiers and match them in the analysis query.
 
 ## Actions that are recorded
 
@@ -104,9 +122,11 @@ The server checks eligibility, reads the assigned group, and:
 
 The browser then confirms that its assignment matches the server’s assignment. It applies the correct settings for captions, the jump link, and the Hide/Show button.
 
-The browser waits for the carousel to finish loading before recording the exposure.
+The browser records exposure and the page visit before waiting for the carousel
+module and initializing it. Telemetry failures do not prevent carousel initialization.
 
-If configuration is missing, assignments do not match, or loading fails, no exposure is recorded.
+If configuration is missing or assignments do not match, no exposure is recorded.
+Telemetry loading failures can still prevent recording in any group.
 
 Experiment pages disable MMV’s normal automatic startup so the carousel cannot start with the wrong settings. The vanilla-carousel and carousel-captions-only groups open Media Viewer directly
 when a thumbnail is activated. The two jump-link groups retain the preview and
@@ -116,17 +136,17 @@ available in Media Viewer in every treatment group.
 
 The GrowthBook key is:
 
-`image-carousel-retest`
+`image-carousel-retest-v2`
 
 
-## TODO(image-carousel-retest): Cleanup after the experiment
+## TODO(image-carousel-retest-v2): Cleanup after the experiment
 
 Coordinate removal across ReaderExperiments and MultimediaViewer after the
 experiment's measurement period, including the 21-day retention follow-up, is
 complete. Choose the permanent carousel UI before removing treatment options.
-Search both repositories for `TODO(image-carousel-retest)` to find inline reminders.
+Search both repositories for `TODO(image-carousel-retest-v2)` to find inline reminders.
 
-- [ ] Retire the `image-carousel-retest` assignment/configuration in Test Kitchen
+- [ ] Retire the `image-carousel-retest-v2` assignment/configuration in Test Kitchen
   as part of experiment shutdown. Configuration is outside this directory.
 - [ ] Remove this entire `resources/experiments/imageCarouselRetest/` directory,
   including `groups.json` and this README, after completing this checklist.
