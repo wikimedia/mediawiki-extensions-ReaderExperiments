@@ -1,8 +1,51 @@
 {
 	"@metadata": {
 		"authors": [
-			"Merrahtar"
+			"Merrahtar",
+			"Mehman97",
+			"Stjn"
 		]
 	},
-	"readerexperiments-sharehighlight-copy-link": "Скопировать ссылку"
+	"readerexperiments-desc": "Набор прототипов, направленных на увеличение числа читателей Википедии",
+	"readerexperiments-imagebrowsing-carousel-label": "Поиск изображений",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Выберите изображение \"$1\"",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Больше",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Меньше",
+	"readerexperiments-imagebrowsing-detail-crop": "Полноэкранный режим",
+	"readerexperiments-imagebrowsing-detail-share": "Поделиться",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Копировать",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Посмотреть на Викискладе",
+	"readerexperiments-imagebrowsing-detail-download": "Скачать",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Исходный файл ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Маленький ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Средний ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Большой ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Очень большой ($1×$2 px)",
+	"readerexperiments-imagebrowsing-loading": "Загружается",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Вернуться к статье",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Закрыть",
+	"readerexperiments-imagebrowsing-overlay-label": "Сведения об изображении",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Подробнее из этой статьи",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Медиа из других проектов",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Загрузка изображений из других проектов",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Посмотреть в статье",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Из $1",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Из $1 и $2 {{PLURAL:$2|1=другого языкового раздела|других языковых разделов}} Википедии",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Из $1",
+	"readerexperiments-minerva-toc-contents-button-label": "Содержание",
+	"readerexperiments-minerva-toc-edit-button-label": "Править",
+	"readerexperiments-minerva-toc-region-label": "Содержание",
+	"readerexperiments-minerva-toc-top-link": "(Вверх)",
+	"readerexperiments-mobilepagepreviews-loading": "Предпросмотр загружается",
+	"readerexperiments-mobilepagepreviews-read-more": "Подробнее",
+	"readerexperiments-mobilepagepreviews-title": "Предпросмотр страницы",
+	"readerexperiments-mobilepagepreviews-close-button-label": "Закрыть",
+	"readerexperiments-sharehighlight-toolbar-share": "Поделиться",
+	"readerexperiments-sharehighlight-share-quote": "Поделиться цитатой",
+	"readerexperiments-sharehighlight-background-legend": "Фон",
+	"readerexperiments-sharehighlight-background-average": "Средний",
+	"readerexperiments-sharehighlight-copy-link": "Скопировать ссылку",
+	"readerexperiments-sharehighlight-share": "Поделиться",
+	"readerexperiments-sharehighlight-download": "Скачать",
+	"readerexperiments-sharehighlight-image-author-license": "Изображение: $1 · $2"
 }
