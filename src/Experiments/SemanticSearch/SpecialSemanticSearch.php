@@ -135,7 +135,7 @@ class SpecialSemanticSearch extends SpecialPage {
 				// Localised 'Special:Search' plus the namespaces the reader
 				// asked for, so the frontend can rebuild the "switch to classic
 				// search" link when the search term changes
-				'specialSearchPage' => SpecialPage::getTitleFor( 'Search' )->getPrefixedText(),
+				'classicSearchPage' => SpecialPage::getTitleFor( 'Search' )->getPrefixedText(),
 				'requestedNamespaces' => $requestedNamespaces,
 			],
 			'response' => array_combine( [ 'lexical', 'semantic' ], array_map(
@@ -161,15 +161,15 @@ class SpecialSemanticSearch extends SpecialPage {
 				'continueText' => $this->msg( 'readerexperiments-semanticsearch-load-more-results' )->text(),
 				'previousText' => $this->msg( 'readerexperiments-semanticsearch-load-less-results' )->text(),
 				'noResultsText' => $this->msg( 'readerexperiments-semanticsearch-no-results' )->text(),
-				'specialSearchUrl' => $this->generateSpecialSearchUrl( $term, $requestedNamespaces ),
-				'switchToSpecialSearchText' => $this->msg(
+				'classicSearchUrl' => $this->generateClassicSearchUrl( $term, $requestedNamespaces ),
+				'switchToClassicSearchText' => $this->msg(
 					'readerexperiments-semanticsearch-switch-classic-search'
 				)->text(),
 				'didYouMeanText' => $didYouMean
 					? $this->msg( 'readerexperiments-semanticsearch-did-you-mean' )->rawParams(
 						Html::element(
 							'a',
-							[ 'href' => $this->generateSearchUrl( $didYouMean, $namespaces, $limit, $sort ) ],
+							[ 'href' => $this->generateSemanticSearchUrl( $didYouMean, $namespaces, $limit, $sort ) ],
 							$didYouMean,
 						),
 					)->parse()
@@ -299,9 +299,10 @@ class SpecialSemanticSearch extends SpecialPage {
 
 	/**
 	 * If the search API returns a suggested search, generate a clickable link
-	 * that allows the user to run the suggested query immediately.
+	 * back to Special:SemanticSearch that allows the user to run the
+	 * suggested query immediately.
 	 */
-	private function generateSearchUrl( string $term, array $namespaces, int $limit, string $sort ): string {
+	private function generateSemanticSearchUrl( string $term, array $namespaces, int $limit, string $sort ): string {
 		return $this->getPageTitle()->getLocalURL( [
 			'search' => $term,
 			...$this->buildNamespaceParams( $namespaces ),
@@ -324,7 +325,7 @@ class SpecialSemanticSearch extends SpecialPage {
 	 * the routing mechanism (T438878), once merged, will treat following the
 	 * link as manual navigation rather than a typeahead arrival.
 	 */
-	private function generateSpecialSearchUrl( string $term, array $namespaces ): string {
+	private function generateClassicSearchUrl( string $term, array $namespaces ): string {
 		return SpecialPage::getTitleFor( 'Search' )->getLocalURL( [
 			'search' => $term,
 			...$this->buildNamespaceParams( $namespaces ),

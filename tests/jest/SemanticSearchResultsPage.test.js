@@ -15,7 +15,7 @@ const request = {
 	sort: 'relevance',
 	limit: 10,
 	continue: 0,
-	specialSearchPage: 'Special:Search',
+	classicSearchPage: 'Special:Search',
 	// Empty unless the reader explicitly passed ns<N> query params
 	requestedNamespaces: []
 };

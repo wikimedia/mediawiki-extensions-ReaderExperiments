@@ -17,7 +17,7 @@
 		:info="responseLexicalRef.info || {}"
 		:warnings="responseLexicalRef.warning || []"
 		:error="responseLexicalRef.error || null"
-		:generate-search-url="generateSearchUrl"
+		:generate-search-url="generateSemanticSearchUrl"
 	></search-info>
 
 	<h1>Semantic</h1>
@@ -57,7 +57,7 @@
 
 	<div class="ext-readerExperiments-semanticsearch-switch-search">
 		<a
-			:href="specialSearchUrl"
+			:href="classicSearchUrl"
 			class="
 				cdx-button
 				cdx-button--fake-button
@@ -119,7 +119,7 @@ module.exports = exports = defineComponent( {
 
 		const useLang = mw.config.get( 'wgUserLanguage' );
 
-		function generateSearchUrl( term, namespaces, limit, sort ) {
+		function generateSemanticSearchUrl( term, namespaces, limit, sort ) {
 			return mw.util.getUrl( null, {
 				search: term,
 				...namespaces.reduce(
@@ -143,14 +143,14 @@ module.exports = exports = defineComponent( {
 		 * routing mechanism (T438878), once merged, will treat following the
 		 * link as manual navigation rather than a typeahead arrival.
 		 *
-		 * Mirrors generateSpecialSearchUrl() in SpecialSemanticSearch.php,
+		 * Mirrors generateClassicSearchUrl() in SpecialSemanticSearch.php,
 		 * which renders the same link server-side.
 		 *
 		 * @param {string} term
 		 * @return {string}
 		 */
-		function generateSpecialSearchUrl( term ) {
-			return mw.util.getUrl( props.request.specialSearchPage, {
+		function generateClassicSearchUrl( term ) {
+			return mw.util.getUrl( props.request.classicSearchPage, {
 				search: term,
 				...( props.request.requestedNamespaces || [] ).reduce(
 					( params, namespace ) => ( { ...params, [ `ns${ namespace }` ]: 1 } ),
@@ -164,7 +164,7 @@ module.exports = exports = defineComponent( {
 
 		// Recomputed whenever the term changes, so the link always reflects the
 		// search currently on screen
-		const specialSearchUrl = computed( () => generateSpecialSearchUrl( termRef.value ) );
+		const classicSearchUrl = computed( () => generateClassicSearchUrl( termRef.value ) );
 
 		async function search( restApi, term, params ) {
 			// Abort any in-flight requests
@@ -201,7 +201,7 @@ module.exports = exports = defineComponent( {
 				return;
 			}
 
-			const url = generateSearchUrl( term, props.request.namespaces, props.request.limit, props.request.sort );
+			const url = generateSemanticSearchUrl( term, props.request.namespaces, props.request.limit, props.request.sort );
 			window.history.pushState( {}, '', url );
 
 			termRef.value = term;
@@ -300,10 +300,10 @@ module.exports = exports = defineComponent( {
 			nextContinueRef,
 			responseLexicalRef,
 			responseSemanticRef,
-			specialSearchUrl,
+			classicSearchUrl,
 			onSubmit,
 			onLoadMore,
-			generateSearchUrl,
+			generateSemanticSearchUrl,
 			isLoading
 		};
 	}
