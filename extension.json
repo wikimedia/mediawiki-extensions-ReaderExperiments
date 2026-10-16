@@ -552,6 +552,8 @@
 				"readerexperiments-semanticsearch-match-section",
 				"readerexperiments-semanticsearch-match-redirect",
 				"readerexperiments-semanticsearch-referencecount",
+				"readerexperiments-semanticsearch-switch-classic-search",
+				"readerexperiments-semanticsearch-switch-special-search",
 				"size-bytes",
 				"size-kilobytes",
 				"size-megabytes",

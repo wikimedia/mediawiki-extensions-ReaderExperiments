@@ -53,6 +53,7 @@
 	"readerexperiments-semanticsearch-preference-semanticsearch-label": "{{optional}}\nLabel for the Special:MediaSearch interface option",
 	"readerexperiments-semanticsearch-preference-specialsearch-label": "{{optional}}\nLabel for the Special:Search interface option",
 	"readerexperiments-semanticsearch-preference-help": "Help text for preference to allow user to choose their search interface",
+	"readerexperiments-semanticsearch-switch-classic-search": "Text for the link on Special:SemanticSearch that takes the user back to the classic search interface at {{#Special:Search}}, with their current search prepopulated.",
 	"readerexperiments-semanticsearch-switch-special-search": "A link so that the user can go to Special:Search",
 	"readerexperiments-semanticsearch-search-button": "Label text for the Semantic Search search button\n\n{{Identical|Search}}",
 	"readerexperiments-semanticsearch-input-placeholder": "Placeholder text for Semantic Search search input",

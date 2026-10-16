@@ -54,6 +54,22 @@
 			{{ $i18n( 'readerexperiments-semanticsearch-load-more-results' ).text() }}
 		</cdx-button>
 	</div>
+
+	<div class="ext-readerExperiments-semanticsearch-switch-search">
+		<a
+			:href="specialSearchUrl"
+			class="
+				cdx-button
+				cdx-button--fake-button
+				cdx-button--fake-button--enabled
+				cdx-button--action-progressive
+				cdx-button--weight-quiet
+				cdx-button--size-small
+			"
+		>
+			{{ $i18n( 'readerexperiments-semanticsearch-switch-classic-search' ).text() }}
+		</a>
+	</div>
 </template>
 
 <script>
@@ -115,6 +131,40 @@ module.exports = exports = defineComponent( {
 				noredirect: ''
 			} );
 		}
+
+		/**
+		 * Link back to Special:Search, prepopulated with the current search
+		 * term and any explicitly requested namespaces.
+		 *
+		 * `limit` and `sort` are deliberately not carried over: Special:Search
+		 * prefers those params over the reader's own `searchlimit` preference
+		 * and its default of 20 results, so forwarding ours would silently
+		 * override both. The typeahead `wprov` param is omitted, so that the
+		 * routing mechanism (T438878), once merged, will treat following the
+		 * link as manual navigation rather than a typeahead arrival.
+		 *
+		 * Mirrors generateSpecialSearchUrl() in SpecialSemanticSearch.php,
+		 * which renders the same link server-side.
+		 *
+		 * @param {string} term
+		 * @return {string}
+		 */
+		function generateSpecialSearchUrl( term ) {
+			return mw.util.getUrl( props.request.specialSearchPage, {
+				search: term,
+				...( props.request.requestedNamespaces || [] ).reduce(
+					( params, namespace ) => ( { ...params, [ `ns${ namespace }` ]: 1 } ),
+					{}
+				),
+				// Without this, Special:Search redirects straight to an exact
+				// title match instead of rendering its results page
+				fulltext: 1
+			} );
+		}
+
+		// Recomputed whenever the term changes, so the link always reflects the
+		// search currently on screen
+		const specialSearchUrl = computed( () => generateSpecialSearchUrl( termRef.value ) );
 
 		async function search( restApi, term, params ) {
 			// Abort any in-flight requests
@@ -250,6 +300,7 @@ module.exports = exports = defineComponent( {
 			nextContinueRef,
 			responseLexicalRef,
 			responseSemanticRef,
+			specialSearchUrl,
 			onSubmit,
 			onLoadMore,
 			generateSearchUrl,
