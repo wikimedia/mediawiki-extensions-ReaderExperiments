@@ -214,27 +214,4 @@ describe( 'Image carousel retest Test Kitchen connection', () => {
 		expect( experiment.sendExposure ).not.toHaveBeenCalled();
 		expect( experiment.send ).not.toHaveBeenCalled();
 	} );
-
-	it.each( [ 'load rejection', 'lookup rejection', 'synchronous load failure', 'missing API' ] )(
-		'skips recording safely after %s', async ( failure ) => {
-			if ( failure === 'load rejection' ) {
-				mw.loader.using.mockRejectedValue( new Error( 'Unavailable' ) );
-			} else if ( failure === 'lookup rejection' ) {
-				mw.testKitchen.getExperiment.mockRejectedValue( new Error( 'Unavailable' ) );
-			} else if ( failure === 'synchronous load failure' ) {
-				mw.loader.using.mockImplementation( () => {
-					throw new Error( 'Unavailable' );
-				} );
-			} else {
-				delete mw.testKitchen;
-			}
-			await expect( instrumentation.initialize() ).resolves.toBeNull();
-			await expect( instrumentation.getAssignment() ).resolves.toBeNull();
-			const experience = await instrumentation.prepareExperience( context );
-			await expect( experience.experienceReady() ).resolves.toBe( false );
-			await expect( instrumentation.recordInteraction( 'click' ) ).resolves.toBeUndefined();
-			expect( experiment.send ).not.toHaveBeenCalled();
-			expect( mw.log.warn ).toHaveBeenCalled();
-		}
-	);
 } );

@@ -11,21 +11,17 @@ function isTreatmentActive() {
 		document.body.classList.contains( 'minerva--minimal' );
 }
 
+/**
+ * @return {Promise<mw.testKitchen.ExperimentInterface>|null}
+ */
 function getExperiment() {
 	const config = mw.config.get( CONFIG_KEY ) || {};
 
-	if ( !config.experimentName || !mw.loader || !mw.loader.using ) {
+	if ( !config.experimentName ) {
 		return Promise.resolve( null );
 	}
 
-	return mw.loader.using( 'ext.testKitchen' )
-		.then( () => mw.testKitchen.getExperiment( config.experimentName ) )
-		.catch( () => (
-			// eslint-disable-next-line no-console
-			console.info(
-				'[Minimal Minerva Toolbar] TestKitchen not available: skipping instrumentation.'
-			)
-		) );
+	return mw.testKitchen.getExperiment( config.experimentName );
 }
 
 function isLanguageElement( element, treatmentActive ) {

@@ -56,12 +56,6 @@ function isSuppressed() {
 	);
 }
 
-function getExperiment( experimentName ) {
-	return mw.loader.using( 'ext.testKitchen' )
-		.then( () => mw.testKitchen.getExperiment( experimentName ) )
-		.catch( () => null );
-}
-
 /**
  * Produce the standard page_visit events (with the referrer class
  * in action_source) via WikimediaEvents' reusable anyPageVisit
@@ -82,7 +76,7 @@ function init() {
 	// $wgReaderExperimentsPreferredSourcesDebug: local development only.
 	const { debug } = require( './config.json' );
 
-	getExperiment( EXPERIMENT_NAME ).then( ( experiment ) => {
+	mw.testKitchen.getExperiment( EXPERIMENT_NAME ).then( ( experiment ) => {
 		// Non-cache-splitting experiment: enrollment is only knowable here,
 		// via the async Test Kitchen API. Bail if not enrolled.
 		if ( !experiment || experiment.getAssignedGroup() === null ) {

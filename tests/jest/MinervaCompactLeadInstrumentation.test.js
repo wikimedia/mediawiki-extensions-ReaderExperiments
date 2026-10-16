@@ -41,7 +41,6 @@ describe( 'Minerva Compact Lead instrumentation', () => {
 			getAssignedGroup: jest.fn().mockReturnValue( 'control' ),
 			sendExposure: jest.fn(), send: jest.fn(), use: jest.fn()
 		};
-		mw.loader = { using: jest.fn().mockResolvedValue() };
 		mw.testKitchen = { getExperiment: jest.fn().mockResolvedValue( experiment ) };
 		module = require( '../../resources/experiments/minervaCompactLead/instrumentation.js' );
 		renderControls();
@@ -151,7 +150,6 @@ describe( 'Minerva Compact Lead instrumentation', () => {
 		await Promise.resolve();
 		await Promise.resolve();
 		await Promise.resolve();
-		expect( mw.loader.using ).toHaveBeenCalledWith( 'ext.testKitchen' );
 		expect( mw.testKitchen.getExperiment ).toHaveBeenCalledTimes( 1 );
 		expect( mw.testKitchen.getExperiment ).toHaveBeenCalledWith( 'minerva-compact-lead' );
 		expect( global.$ ).toHaveBeenCalledTimes( 1 );

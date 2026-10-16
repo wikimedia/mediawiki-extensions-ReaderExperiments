@@ -27,18 +27,13 @@ function connectMmvActions() {
 /**
  * Load Test Kitchen and resolve the experiment once per page.
  *
- * @return {Promise<Object|null>} Experiment, or null when unavailable
+ * @return {Promise<mw.testKitchen.ExperimentInterface>} Experiment, or null when unavailable
  */
 function initialize() {
 	if ( !experimentPromise ) {
-		experimentPromise = Promise.resolve()
-			.then( () => mw.loader.using( 'ext.testKitchen' ) )
-			.then( () => mw.testKitchen.getExperiment( 'image-carousel-retest' ) )
-			.catch( () => {
-				mw.log.warn( '[Image Carousel Retest] Test Kitchen unavailable: skipping instrumentation.' );
-				return null;
-			} );
+		experimentPromise = mw.testKitchen.getExperiment( 'image-carousel-retest' );
 	}
+
 	return experimentPromise;
 }
 

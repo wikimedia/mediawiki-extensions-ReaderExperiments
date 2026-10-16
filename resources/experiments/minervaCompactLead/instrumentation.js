@@ -110,10 +110,9 @@ function initInstrumentation() {
 	}
 	initialized = true;
 
-	mw.loader.using( 'ext.testKitchen' )
-		.then( () => mw.testKitchen.getExperiment( config.experimentName ) )
+	mw.testKitchen.getExperiment( config.experimentName )
 		.then( ( experiment ) => {
-			if ( !experiment || experiment.getAssignedGroup() !== config.group ) {
+			if ( experiment.getAssignedGroup() !== config.group ) {
 				return;
 			}
 			// The module depends on Minerva's scripts, which initialize the assigned
@@ -126,10 +125,6 @@ function initInstrumentation() {
 					trackPageview( experiment, config.group );
 				}
 			} );
-		} )
-		.catch( () => {
-			// eslint-disable-next-line no-console
-			console.info( '[Minerva Compact Lead] TestKitchen not available: skipping instrumentation.' );
 		} );
 }
 
