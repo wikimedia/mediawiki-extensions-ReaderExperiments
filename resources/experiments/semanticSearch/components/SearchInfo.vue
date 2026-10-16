@@ -10,8 +10,8 @@
 	>
 		<span class="cdx-message__icon"></span>
 		<div
-			v-html="didYouMeanText"
 			class="cdx-message__content"
+			v-html="didYouMeanText"
 		></div>
 	</div>
 
@@ -21,7 +21,9 @@
 		aria-live="polite"
 	>
 		<span class="cdx-message__icon"></span>
-		<div class="cdx-message__content">{{ $i18n( 'readerexperiments-semanticsearch-no-results' ).text() }}</div>
+		<div class="cdx-message__content">
+			{{ $i18n( 'readerexperiments-semanticsearch-no-results' ).text() }}
+		</div>
 	</div>
 
 	<div
@@ -31,7 +33,9 @@
 		aria-live="polite"
 	>
 		<span class="cdx-message__icon"></span>
-		<div class="cdx-message__content">{{ warning }}</div>
+		<div class="cdx-message__content">
+			{{ warning }}
+		</div>
 	</div>
 
 	<div

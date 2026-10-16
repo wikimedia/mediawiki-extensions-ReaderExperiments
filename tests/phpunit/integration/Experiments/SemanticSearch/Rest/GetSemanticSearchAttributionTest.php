@@ -57,6 +57,7 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 				return [
 					'essential' => [ 'title' => 'Mars' ],
 					'trust_and_relevance' => [
+						'contributor_counts' => [ 'total_unique' => 100 ],
 						'reference_count' => 666,
 						'page_views' => 1984,
 						'last_updated' => '2026-10-02T07:08:33Z',
@@ -66,6 +67,7 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 
 		$attribution = $this->callFetchAttribution( $engine, 'Mars' );
 		$this->assertSame( 666, $attribution['trust_and_relevance']['reference_count'] );
+		$this->assertSame( 100, $attribution['trust_and_relevance']['contributor_counts']['total_unique'] );
 	}
 
 	public function testTitleIsDbKeyedAndUrlEncoded(): void {
@@ -78,11 +80,15 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 					'/attribution/v0-beta/pages/Foo_Bar_%28thing%29/signals',
 					$request->getRequestURL()
 				);
-				return [ 'trust_and_relevance' => [ 'reference_count' => 42 ] ];
+				return [ 'trust_and_relevance' => [
+					'reference_count' => 42,
+					'contributor_counts' => [ 'total_unique' => 50 ] ]
+				];
 			} );
 
 		$attribution = $this->callFetchAttribution( $engine, 'Foo Bar (thing)' );
 		$this->assertSame( 42, $attribution['trust_and_relevance']['reference_count'] );
+		$this->assertSame( 50, $attribution['trust_and_relevance']['contributor_counts']['total_unique'] );
 	}
 
 	public function testReturnsNullWhenApiThrows(): void {

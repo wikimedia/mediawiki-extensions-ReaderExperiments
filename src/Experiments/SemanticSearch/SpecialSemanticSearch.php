@@ -108,7 +108,7 @@ class SpecialSemanticSearch extends SpecialPage {
 						'limit' => 3,
 						'continue' => 0,
 						'sort' => $sort,
-						'data' => [ 'referencecount' ],
+						'data' => [ 'referencecount', 'contributorcount' ],
 						'uselang' => $userLanguage->getCode(),
 					]
 				);
@@ -426,7 +426,12 @@ class SpecialSemanticSearch extends SpecialPage {
 		}
 
 		// Contributors
-		// @todo
+		if ( isset( $result['contributorcount'] ) && $result['contributorcount'] ) {
+			$result['contributorsText'] = $this->msg(
+				'readerexperiments-semanticsearch-contributorcount',
+				$userLanguage->formatNum( $result['contributorcount'] )
+			)->text();
+		}
 
 		// References
 		if ( isset( $result['referencecount'] ) ) {

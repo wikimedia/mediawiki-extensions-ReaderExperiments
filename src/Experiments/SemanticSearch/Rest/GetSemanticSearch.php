@@ -134,21 +134,29 @@ class GetSemanticSearch extends Handler {
 		} );
 
 		// Enrich each search result with attribution data if requested
-		$attributionApiData = [ 'referencecount' ];
+		$attributionApiData = [ 'referencecount', 'contributorcount' ];
 		$needsAttributionApi = (bool)array_intersect( $attributionApiData, $params[ 'data' ] );
 		if ( $needsAttributionApi ) {
 			foreach ( $results as &$result ) {
 				$attribution = $this->fetchAttribution( $result['title'] ?? null );
 				$referenceCount = $attribution['trust_and_relevance']['reference_count'] ?? null;
-				// TODO add contributors count (T438419):
-				//      $attribution['trust_and_relevance']['contributor_counts']
+				// Contributor count of total_unique does not exclude known_bots.
+				// This matches the mobile app experience and is intentional unless directed otherwise (T438419)
+				$contributorCount = $attribution['trust_and_relevance']['contributor_counts']['total_unique'] ?? null;
 
+				// Use 'referencecount'/'contributorcount' for consistency with other keys
 				if (
 					$referenceCount !== null &&
 					in_array( 'referencecount', $params[ 'data' ], true )
 				) {
-					// Use 'referencecount' for consistency with other keys
 					$result['referencecount'] = $referenceCount;
+				}
+
+				if (
+					$contributorCount !== null &&
+					in_array( 'contributorcount', $params[ 'data' ], true )
+				) {
+					$result['contributorcount'] = $contributorCount;
 				}
 			}
 			unset( $result );
@@ -393,6 +401,7 @@ class GetSemanticSearch extends Handler {
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => [
 					'referencecount',
+					'contributorcount',
 				],
 				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_DEFAULT => [],

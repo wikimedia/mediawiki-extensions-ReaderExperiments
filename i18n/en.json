@@ -67,6 +67,7 @@
 	"readerexperiments-semanticsearch-match-section": "(section: $1)",
 	"readerexperiments-semanticsearch-match-redirect": "(redirect: $1)",
 	"readerexperiments-semanticsearch-referencecount": "$1 {{PLURAL:$1|1=reference|references}}",
+	"readerexperiments-semanticsearch-contributorcount": "$1 {{PLURAL:$1|contributor|contributors}}",
 	"readerexperiments-sharehighlight-blue-dot-label": "New share feature",
 	"readerexperiments-sharehighlight-toolbar-share": "Share",
 	"readerexperiments-sharehighlight-share-quote": "Share quote",

@@ -26,8 +26,8 @@
 			</span>
 
 			<div
-				v-html="result.snippet"
 				class="cdx-card__text__description"
+				v-html="result.snippet"
 			></div>
 
 			<span class="cdx-card__text__supporting-text">
@@ -118,7 +118,16 @@ module.exports = exports = defineComponent( {
 			).text();
 		} );
 
-		const contributorsText = ''; // @todo
+		const contributorsText = computed( () => {
+			if ( !props.result.contributorcount ) {
+				return null;
+			}
+			return $i18n(
+				'readerexperiments-semanticsearch-contributorcount',
+				mw.language.convertNumber( props.result.contributorcount )
+			).text();
+		} );
+
 		const referencesText = computed( () => {
 			if ( props.result.referencecount === undefined ) {
 				return null;

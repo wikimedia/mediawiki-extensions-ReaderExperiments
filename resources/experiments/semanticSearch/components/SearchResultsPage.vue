@@ -242,7 +242,7 @@ module.exports = exports = defineComponent( {
 						limit: 3,
 						continue: 0,
 						sort: props.request.sort,
-						data: [ 'referencecount' ],
+						data: [ 'referencecount', 'contributorcount' ],
 						uselang: useLang
 					}
 					);
