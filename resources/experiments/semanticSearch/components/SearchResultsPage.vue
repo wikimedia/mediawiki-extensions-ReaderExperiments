@@ -1,5 +1,6 @@
 <template>
 	<cdx-search-input
+		class="ext-readerExperiments-semanticsearch-form"
 		v-model="inputValueRef"
 		clearable
 		use-button
@@ -95,6 +96,10 @@ module.exports = exports = defineComponent( {
 		response: {
 			type: Object,
 			required: true
+		},
+		onSearchRegister: {
+			type: Function,
+			default: null
 		}
 	},
 	setup( props ) {
@@ -205,6 +210,7 @@ module.exports = exports = defineComponent( {
 			window.history.pushState( {}, '', url );
 
 			termRef.value = term;
+			inputValueRef.value = term;
 			responseLexicalRef.value = [];
 			responseSemanticRef.value = [];
 			currentContinueRef.value = 0;
@@ -256,6 +262,10 @@ module.exports = exports = defineComponent( {
 			}
 
 			await Promise.all( [ searchLexical(), searchSemantic() ] );
+		}
+
+		if ( props.onSearchRegister ) {
+			props.onSearchRegister( onSubmit );
 		}
 
 		async function onLoadMore() {

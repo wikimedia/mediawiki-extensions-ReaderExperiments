@@ -2,7 +2,7 @@
 	SERPWidget template. This file sets up the no-JS fallback UI for
 	Special:SemanticSearch using simple HTML form tags.
 }}
-<form method="get" action="{{request.page}}">
+<form method="get" action="{{request.page}}" class="ext-readerExperiments-semanticsearch-form">
 	{{#request.queryParams}}
 		{{!
 			New searches will have a new search term,
