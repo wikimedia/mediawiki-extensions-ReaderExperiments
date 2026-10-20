@@ -16,7 +16,7 @@
 		:sort="request.sort"
 		:results="responseLexicalRef.results || []"
 		:info="responseLexicalRef.info || {}"
-		:warnings="responseLexicalRef.warning || []"
+		:warnings="responseLexicalRef.warnings || []"
 		:error="responseLexicalRef.error || null"
 		:generate-search-url="generateSemanticSearchUrl"
 	></search-info>
@@ -168,7 +168,8 @@ module.exports = exports = defineComponent( {
 		}
 
 		// Recomputed whenever the term changes, so the link always reflects the
-		// search currently on screen
+		// search term the reader last submitted, which is also what the URL and
+		// the input show
 		const classicSearchUrl = computed( () => generateClassicSearchUrl( termRef.value ) );
 
 		async function search( restApi, term, params ) {

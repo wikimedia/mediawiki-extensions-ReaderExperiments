@@ -16,7 +16,7 @@
 	</div>
 
 	<div
-		v-if="term && !results && !error"
+		v-if="term && !results.length && !error"
 		class="cdx-message cdx-message--block cdx-message--notice"
 		aria-live="polite"
 	>
