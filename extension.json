@@ -658,7 +658,8 @@
 				"ReaderExperiments.SemanticSearch.Api.InternalRestApi",
 				"MainConfig",
 				"TitleMatcher",
-				"UserOptionsManager"
+				"UserOptionsManager",
+				"TestKitchen.ExperimentManager"
 			]
 		}
 	},

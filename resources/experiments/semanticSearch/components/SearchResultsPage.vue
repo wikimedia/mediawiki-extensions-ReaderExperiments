@@ -1,7 +1,7 @@
 <template>
 	<cdx-search-input
-		class="ext-readerExperiments-semanticsearch-form"
 		v-model="inputValueRef"
+		class="ext-readerExperiments-semanticsearch-form"
 		clearable
 		use-button
 		:placeholder="$i18n( 'readerexperiments-semanticsearch-input-placeholder' ).text()"
@@ -21,17 +21,19 @@
 		:generate-search-url="generateSemanticSearchUrl"
 	></search-info>
 
-	<h1>Semantic</h1>
-	<div
-		v-if="responseSemanticRef.results && !isLoading"
-		class="cdx-docs-card-group-with-thumbnails"
-	>
-		<search-result
-			v-for="( result, index ) in Object.values( responseSemanticRef.results ).sort( ( a, b ) => a.index - b.index )"
-			:key="`result=${index}`"
-			:result="result"
-		></search-result>
-	</div>
+	<template v-if="semanticEnabled">
+		<h1>Semantic</h1>
+		<div
+			v-if="responseSemanticRef.results && !isLoading"
+			class="cdx-docs-card-group-with-thumbnails"
+		>
+			<search-result
+				v-for="( result, index ) in Object.values( responseSemanticRef.results ).sort( ( a, b ) => a.index - b.index )"
+				:key="`result=${index}`"
+				:result="result"
+			></search-result>
+		</div>
+	</template>
 
 	<h1>Lexical</h1>
 	<div
@@ -120,6 +122,8 @@ module.exports = exports = defineComponent( {
 		const nextContinueRef = ref( props.response.lexical.continue );
 		const responseLexicalRef = ref( props.response.lexical );
 		const responseSemanticRef = ref( props.response.semantic );
+
+		const semanticEnabled = computed( () => !!( props.request && props.request.semanticEnabled ) );
 
 		const loadingLexicalRef = ref( false );
 		const loadingSemanticRef = ref( false );
@@ -236,7 +240,7 @@ module.exports = exports = defineComponent( {
 			currentContinueRef.value = 0;
 			nextContinueRef.value = null;
 			loadingLexicalRef.value = true;
-			loadingSemanticRef.value = true;
+			loadingSemanticRef.value = semanticEnabled.value;
 
 			async function searchLexical() {
 				try {
@@ -267,6 +271,11 @@ module.exports = exports = defineComponent( {
 			}
 
 			async function searchSemantic() {
+				if ( !semanticEnabled.value ) {
+					loadingSemanticRef.value = false;
+					return;
+				}
+
 				try {
 					const response = await search( restApiSemantic, term, {
 						type: 'semantic',
@@ -352,6 +361,7 @@ module.exports = exports = defineComponent( {
 			nextContinueRef,
 			responseLexicalRef,
 			responseSemanticRef,
+			semanticEnabled,
 			classicSearchUrl,
 			onSubmit,
 			onLoadMore,

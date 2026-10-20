@@ -55,9 +55,14 @@ function restResolve( body ) {
  */
 function restReject( details ) {
 	return {
-		catch: ( handler ) => new Promise( ( resolve ) => {
-			resolve( handler( 'http', details ) );
-		} )
+		catch: ( handler ) => {
+			try {
+				const result = handler( 'http', details );
+				return Promise.resolve( result );
+			} catch ( e ) {
+				return Promise.reject( e );
+			}
+		}
 	};
 }
 
@@ -125,6 +130,57 @@ describe( 'SearchResultsPage', () => {
 		expect( wrapper.find( SWITCH_LINK ).exists() ).toBe( true );
 	} );
 
+	async function runSearch( props, term ) {
+		const calls = [];
+		mw.Rest.prototype.get.mockImplementation( ( url, params ) => {
+			calls.push( params.type );
+			return Promise.resolve( { results: {}, info: {}, continue: null, warnings: [] } );
+		} );
+
+		let registeredSearch;
+		mount( SearchResultsPage, {
+			props: {
+				...props,
+				onSearchRegister: ( fn ) => {
+					registeredSearch = fn;
+				}
+			}
+		} );
+
+		await registeredSearch( term );
+		return calls;
+	}
+
+	describe( 'treatment group', () => {
+		const treatmentRequest = { ...request, semanticEnabled: true };
+
+		it( 'renders the semantic results section', () => {
+			const wrapper = mount( SearchResultsPage, { props: { request: treatmentRequest, response } } );
+
+			expect( wrapper.findAll( 'h1' ).map( ( w ) => w.text() ) ).toContain( 'Semantic' );
+		} );
+
+		it( 'fetches semantic and lexical results on new searches', async () => {
+			const calls = await runSearch( { request: treatmentRequest, response }, 'how do birds fly' );
+			expect( calls ).toEqual( [ 'lexical', 'semantic' ] );
+		} );
+	} );
+
+	describe( 'control group', () => {
+		const controlRequest = { ...request, semanticEnabled: false };
+
+		it( 'does not render the semantic results section', () => {
+			const wrapper = mount( SearchResultsPage, { props: { request: controlRequest, response } } );
+
+			expect( wrapper.findAll( 'h1' ).map( ( w ) => w.text() ) ).not.toContain( 'Semantic' );
+		} );
+
+		it( 'only fetches lexical results on new searches', async () => {
+			const calls = await runSearch( { request: controlRequest, response }, 'how do birds fly' );
+			expect( calls ).toEqual( [ 'lexical' ] );
+		} );
+	} );
+
 	describe( 'when the semantic search fails', () => {
 		const lexicalResponse = {
 			results: {
@@ -165,7 +221,8 @@ describe( 'SearchResultsPage', () => {
 		 * @return {Promise<Object>} The mounted wrapper
 		 */
 		async function submitSearch() {
-			const wrapper = mount( SearchResultsPage, { props: { request, response } } );
+			const semanticRequest = { ...request, semanticEnabled: true };
+			const wrapper = mount( SearchResultsPage, { props: { request: semanticRequest, response } } );
 			await wrapper.getComponent( { name: 'CdxSearchInput' } )
 				.vm.$emit( 'submit-click', 'how do birds fly' );
 			await flushPromises();

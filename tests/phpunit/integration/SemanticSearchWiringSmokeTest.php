@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\ReaderExperiments\Tests;
 
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Hooks;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\SpecialSemanticSearch;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\MediaWikiServices;
 use MediaWikiIntegrationTestCase;
@@ -35,6 +36,26 @@ class SemanticSearchWiringSmokeTest extends MediaWikiIntegrationTestCase {
 			]
 		);
 		$this->assertInstanceOf( Hooks::class, $hooks );
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\SpecialSemanticSearch::__construct
+	 */
+	public function testSpecialPageResolves(): void {
+		// Mirror SpecialPages.SemanticSearch in extension.json
+		$specialPage = ( new ObjectFactory( MediaWikiServices::getInstance() ) )->createObject(
+			[
+				'class' => SpecialSemanticSearch::class,
+				'services' => [
+					'ReaderExperiments.SemanticSearch.Api.InternalRestApi',
+					'MainConfig',
+					'TitleMatcher',
+					'UserOptionsManager',
+					'TestKitchen.ExperimentManager',
+				],
+			]
+		);
+		$this->assertInstanceOf( SpecialSemanticSearch::class, $specialPage );
 	}
 
 	/**

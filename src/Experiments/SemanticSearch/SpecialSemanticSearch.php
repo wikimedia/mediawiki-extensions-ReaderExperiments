@@ -3,8 +3,10 @@
 namespace MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch;
 
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\ReaderExperiments\Common\FeatureFlagExperiment;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
+use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
@@ -22,6 +24,7 @@ class SpecialSemanticSearch extends SpecialPage {
 		private readonly Config $config,
 		private readonly TitleMatcher $titleMatcher,
 		private readonly UserOptionsManager $userOptionsManager,
+		private ?ExperimentManager $experimentManager = null,
 		private readonly TemplateParser $templateParser = new TemplateParser( __DIR__ . '/templates' ),
 		string $name = 'SemanticSearch'
 	) {
@@ -43,7 +46,7 @@ class SpecialSemanticSearch extends SpecialPage {
 	/**
 	 * @inheritDoc
 	 */
-	public function execute( $subPage ) {
+	public function execute( $subPage ): void {
 		$userLanguage = $this->getLanguage();
 
 		// url & querystring params of this page, in tests this is sometimes unset
@@ -61,6 +64,12 @@ class SpecialSemanticSearch extends SpecialPage {
 			$this->getOutput()->redirect( $redirectUrl );
 			return;
 		}
+
+		$experiment = new FeatureFlagExperiment(
+			$this->experimentManager, $request, Hooks::EXPERIMENT_NAME
+		);
+		// Only the treatment group gets semantic results
+		$semanticEnabled = $experiment->getAssignedGroup() === Hooks::GROUP_TREATMENT;
 
 		$requestedNamespaces = $this->getRequestedNamespaces( $queryParams );
 		$namespaces = $requestedNamespaces ?: [ NS_MAIN ];
@@ -98,7 +107,7 @@ class SpecialSemanticSearch extends SpecialPage {
 		}
 		// Only get a handful of semantic results, only on the first page
 		$responses['semantic'] = [];
-		if ( $currentContinue === 0 ) {
+		if ( $semanticEnabled && $currentContinue === 0 ) {
 			try {
 				$responses['semantic'] = $this->search(
 					$term,
@@ -137,6 +146,7 @@ class SpecialSemanticSearch extends SpecialPage {
 				// search" link when the search term changes
 				'classicSearchPage' => SpecialPage::getTitleFor( 'Search' )->getPrefixedText(),
 				'requestedNamespaces' => $requestedNamespaces,
+				'semanticEnabled' => $semanticEnabled,
 			],
 			'response' => array_combine( [ 'lexical', 'semantic' ], array_map(
 				fn ( $type ) => [

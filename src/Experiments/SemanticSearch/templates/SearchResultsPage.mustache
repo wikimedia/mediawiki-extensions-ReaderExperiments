@@ -38,14 +38,16 @@
 	{{>SearchInfo}}
 {{/response.lexical}}
 
-{{#response.semantic}}
-	<h1>Semantic</h1>
-	<div class="cdx-docs-card-group-with-thumbnails">
-		{{#results}}
-			{{>SearchResult}}
-		{{/results}}
-	</div>
-{{/response.semantic}}
+{{#request.semanticEnabled}}
+	{{#response.semantic}}
+		<h1>Semantic</h1>
+		<div class="cdx-docs-card-group-with-thumbnails">
+			{{#results}}
+				{{>SearchResult}}
+			{{/results}}
+		</div>
+	{{/response.semantic}}
+{{/request.semanticEnabled}}
 
 {{#response.lexical}}
 	<h1>Lexical</h1>
