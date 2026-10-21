@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch;
 
 use MediaWiki\Config\Config;
+use MediaWiki\Exception\ErrorPageError;
 use MediaWiki\Extension\ReaderExperiments\Common\FeatureFlagExperiment;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
@@ -32,7 +33,8 @@ class SpecialSemanticSearch extends SpecialPage {
 	}
 
 	public function isListed(): bool {
-		return $this->config->get( 'ReaderExperimentsSemanticSearchAllowOptIn' );
+		return $this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) &&
+			$this->config->get( 'ReaderExperimentsSemanticSearchAllowOptIn' );
 	}
 
 	public function getDescription(): Message {
@@ -47,6 +49,9 @@ class SpecialSemanticSearch extends SpecialPage {
 	 * @inheritDoc
 	 */
 	public function execute( $subPage ): void {
+		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ) {
+			throw new ErrorPageError( 'nosuchspecialpage', 'nospecialpagetext' );
+		}
 		$userLanguage = $this->getLanguage();
 
 		// url & querystring params of this page, in tests this is sometimes unset

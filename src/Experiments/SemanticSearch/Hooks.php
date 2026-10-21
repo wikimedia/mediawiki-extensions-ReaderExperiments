@@ -9,11 +9,12 @@ use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Hook\BeforeInitializeHook;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\Request\WebRequest;
+use MediaWiki\SpecialPage\Hook\SpecialPage_initListHook;
 use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
 
-class Hooks implements GetPreferencesHook, BeforeInitializeHook {
+class Hooks implements GetPreferencesHook, BeforeInitializeHook, SpecialPage_initListHook {
 	// TODO set up experiment on GrowthBook, update name as needed (T437394)
 	public const EXPERIMENT_NAME = 'semantic-search-for-web';
 	public const GROUP_CONTROL = 'control';
@@ -49,6 +50,9 @@ class Hooks implements GetPreferencesHook, BeforeInitializeHook {
 	public function onBeforeInitialize(
 		$title, $unused, $output, $user, $request, $mediaWikiEntryPoint
 	): void {
+		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ) {
+			return;
+		}
 		// The user is already on Special:SemanticSearch: don't jump to Special:Search.
 		// The check is first in line, since it allows any user
 		// to explicitly navigate to Special:SemanticSearch.
@@ -203,8 +207,20 @@ class Hooks implements GetPreferencesHook, BeforeInitializeHook {
 	/**
 	 * @inheritDoc
 	 */
+	public function onSpecialPage_initList( &$list ) {
+		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ) {
+			unset( $list['SemanticSearch'] );
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function onGetPreferences( $user, &$preferences ) {
-		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchAllowOptIn' ) ) {
+		if (
+			!$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ||
+			!$this->config->get( 'ReaderExperimentsSemanticSearchAllowOptIn' )
+		) {
 			return;
 		}
 

@@ -2,12 +2,15 @@
 
 namespace MediaWiki\Extension\ReaderExperiments\Tests\Unit\Experiments\SemanticSearch\Rest;
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
+use MediaWiki\Rest\HttpException;
 use MediaWikiUnitTestCase;
 use ReflectionMethod;
 
 /**
+ * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::execute
  * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::isSupportedType
  * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::getTargetUrl
  */
@@ -238,5 +241,19 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 		] );
 
 		$this->assertSame( 'https://en.wikipedia.org/wiki/Purr', $url );
+	}
+
+	public function testExecuteThrowsWhenDisabled(): void {
+		$handler = new class( new HashConfig( [
+			'ReaderExperimentsSemanticSearchEnabled' => false,
+		] ) ) extends GetSemanticSearch {
+			public function __construct( \MediaWiki\Config\Config $config ) {
+				$this->config = $config;
+			}
+		};
+
+		$this->expectException( HttpException::class );
+		$this->expectExceptionCode( 404 );
+		$handler->execute();
 	}
 }

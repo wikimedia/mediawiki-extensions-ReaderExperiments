@@ -48,6 +48,10 @@
 			"description": "Local development only: bypass the Google-referrer gate and the CTA suppression flag for the preferred-sources-ab experiment.",
 			"value": false
 		},
+		"ReaderExperimentsSemanticSearchEnabled": {
+			"description": "Whether or not semantic search is enabled",
+			"value": false
+		},
 		"ReaderExperimentsSemanticSearchAllowOptIn": {
 			"description": "Whether or not to provide the option for users to opt in to Special:SemanticSearch",
 			"value": false
@@ -136,6 +140,9 @@
 			"SemanticSearchHooks"
 		],
 		"GetPreferences": [
+			"SemanticSearchHooks"
+		],
+		"SpecialPage_initList": [
 			"SemanticSearchHooks"
 		],
 		"ShouldUseParsoid": [

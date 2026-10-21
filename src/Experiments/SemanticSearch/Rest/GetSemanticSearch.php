@@ -57,6 +57,10 @@ class GetSemanticSearch extends Handler {
 	}
 
 	public function execute(): Response {
+		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ) {
+			throw new HttpException( 'Semantic search is disabled', 404 );
+		}
+
 		$params = $this->getValidatedParams();
 
 		if ( !$this->isSupportedType( $params['type'], $params['term'], $params['namespace'] ) ) {
