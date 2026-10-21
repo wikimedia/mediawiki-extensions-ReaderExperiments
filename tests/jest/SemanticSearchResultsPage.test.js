@@ -1,6 +1,6 @@
 'use strict';
 
-const { mount } = require( '@vue/test-utils' );
+const { flushPromises, mount } = require( '@vue/test-utils' );
 
 const SearchResultsPage = require( '../../resources/experiments/semanticSearch/components/SearchResultsPage.vue' );
 
@@ -35,6 +35,30 @@ const response = {
  */
 function getUrl( pageName, params ) {
 	return `/wiki/${ pageName }?${ new URLSearchParams( params ).toString() }`;
+}
+
+/**
+ * mw.Rest returns a jQuery promise, whose catch() handler receives the error
+ * code and its details as separate arguments. Native promises can't express
+ * that, so fake just enough of one for search() to consume.
+ *
+ * @param {Object} body Response body, as mw.Rest resolves it
+ * @return {Object}
+ */
+function restResolve( body ) {
+	return { catch: () => Promise.resolve( body ) };
+}
+
+/**
+ * @param {Object} details Rejection details, as mw.Rest passes them
+ * @return {Object}
+ */
+function restReject( details ) {
+	return {
+		catch: ( handler ) => new Promise( ( resolve ) => {
+			resolve( handler( 'http', details ) );
+		} )
+	};
 }
 
 describe( 'SearchResultsPage', () => {
@@ -99,5 +123,88 @@ describe( 'SearchResultsPage', () => {
 		// The link is persistent so there is always a route back to classic
 		// search, even from the bare landing page
 		expect( wrapper.find( SWITCH_LINK ).exists() ).toBe( true );
+	} );
+
+	describe( 'when the semantic search fails', () => {
+		const lexicalResponse = {
+			results: {
+				0: { index: 0, ns: 0, title: 'Sky', timestamp: '2026-01-01T00:00:00Z' }
+			},
+			info: { totalhits: 1 },
+			continue: null,
+			warnings: []
+		};
+
+		let originalRest;
+		let restInstances;
+		let semanticFailure;
+
+		beforeEach( () => {
+			originalRest = mw.Rest;
+			restInstances = [];
+			mw.Rest = function ( options ) {
+				this.options = options;
+				restInstances.push( this );
+			};
+			mw.Rest.prototype.abort = jest.fn();
+			mw.Rest.prototype.get = jest.fn( function ( path, params ) {
+				this.searchType = params.type;
+				return params.type === 'semantic' ?
+					restReject( semanticFailure ) :
+					restResolve( lexicalResponse );
+			} );
+		} );
+
+		afterEach( () => {
+			mw.Rest = originalRest;
+		} );
+
+		/**
+		 * Mount the page and submit a new search, settling both requests
+		 *
+		 * @return {Promise<Object>} The mounted wrapper
+		 */
+		async function submitSearch() {
+			const wrapper = mount( SearchResultsPage, { props: { request, response } } );
+			await wrapper.getComponent( { name: 'CdxSearchInput' } )
+				.vm.$emit( 'submit-click', 'how do birds fly' );
+			await flushPromises();
+			return wrapper;
+		}
+
+		it( 'gives up on the semantic request after 5 seconds, but not the lexical one', async () => {
+			semanticFailure = { xhr: { status: 0 }, textStatus: 'timeout' };
+			await submitSearch();
+
+			const semantic = restInstances.find( ( rest ) => rest.searchType === 'semantic' );
+			const lexical = restInstances.find( ( rest ) => rest.searchType === 'lexical' );
+			expect( semantic.options ).toEqual( { ajax: { timeout: 5000 } } );
+			expect( lexical.options ).toBeUndefined();
+		} );
+
+		it.each( [
+			[ 'times out', { xhr: { status: 0 }, textStatus: 'timeout' }, 'Request timed out' ],
+			[ 'errors without a message', { xhr: { status: 503 }, textStatus: 'error' }, 'Unknown error' ]
+		] )( 'still shows lexical results and logs the cause when it %s', async ( _, failure, cause ) => {
+			semanticFailure = failure;
+			const wrapper = await submitSearch();
+
+			// Only the lexical card renders; the failed semantic section stays empty
+			const cards = wrapper.findAllComponents( { name: 'SearchResult' } );
+			expect( cards ).toHaveLength( 1 );
+			expect( cards[ 0 ].props( 'result' ).title ).toBe( 'Sky' );
+
+			expect( mw.log.error ).toHaveBeenCalledWith( 'Semantic search request failed:', cause );
+		} );
+
+		it( 'does not log or show an error when the request was superseded', async () => {
+			// A newer search aborting this one is not a real failure (T441802);
+			// a genuine failure is covered by the cases above
+			semanticFailure = { xhr: { status: 0 }, textStatus: 'abort' };
+			const wrapper = await submitSearch();
+
+			expect( mw.log.error ).not.toHaveBeenCalled();
+			expect( wrapper.vm.responseSemanticRef ).not.toHaveProperty( 'error' );
+		} );
 	} );
 } );

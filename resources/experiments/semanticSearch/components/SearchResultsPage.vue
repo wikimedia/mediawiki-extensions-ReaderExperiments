@@ -79,6 +79,11 @@ const { CdxButton, CdxSearchInput } = require( '@wikimedia/codex' );
 const SearchInfo = require( './SearchInfo.vue' );
 const SearchResult = require( './SearchResult.vue' );
 
+// Semantic results supplement the lexical ones, so the page should not wait
+// long on them: give up after this long rather than the mw.Rest default of
+// 30 seconds (T441802). Lexical search keeps the default.
+const SEMANTIC_SEARCH_TIMEOUT_MS = 5000;
+
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'SearchResultsPage',
@@ -107,7 +112,7 @@ module.exports = exports = defineComponent( {
 		// Semantic search to be run in parallel. Otherwise, any simultaneous,
 		// in-flight requests are aborted when search() is called.
 		const restApiLexical = new mw.Rest();
-		const restApiSemantic = new mw.Rest();
+		const restApiSemantic = new mw.Rest( { ajax: { timeout: SEMANTIC_SEARCH_TIMEOUT_MS } } );
 
 		const inputValueRef = ref( props.request.term );
 		const termRef = ref( props.request.term );
@@ -190,12 +195,26 @@ module.exports = exports = defineComponent( {
 				params
 			).catch(
 				( code, data ) => {
+					// Aborted because a newer request superseded this one (see the
+					// restApi.abort() call); not a real failure, so callers
+					// should treat this distinctly from an actual error (T441802)
+					if ( data.textStatus === 'abort' ) {
+						const abortError = new Error( 'Request superseded' );
+						abortError.name = 'AbortError';
+						throw abortError;
+					}
+
 					const response = data.xhr.responseJSON || {};
+					// A timed out request has no response body to read a message from,
+					// so name the cause rather than falling back to 'Unknown error'
+					const fallback = data.textStatus === 'timeout' ?
+						'Request timed out' :
+						'Unknown error';
 					throw new Error(
 						( response.messageTranslations && response.messageTranslations[ useLang ] ) ||
 						response.message ||
 						response.httpReason ||
-						'Unknown error'
+						fallback
 					);
 				}
 			);
@@ -235,6 +254,12 @@ module.exports = exports = defineComponent( {
 					nextContinueRef.value = response.continue;
 
 				} catch ( e ) {
+					// This request was aborted because a newer search already
+					// started; skip writing to responseLexicalRef here, since the
+					// newer search will set it from its own response
+					if ( e.name === 'AbortError' ) {
+						return;
+					}
 					responseLexicalRef.value = { error: e.message };
 				} finally {
 					loadingLexicalRef.value = false;
@@ -256,6 +281,15 @@ module.exports = exports = defineComponent( {
 					response.results = Object.values( response.results );
 					responseSemanticRef.value = response;
 				} catch ( e ) {
+					// This request was aborted because a newer search already
+					// started; skip writing to responseSemanticRef here, since the
+					// newer search will set it from its own response
+					if ( e.name === 'AbortError' ) {
+						return;
+					}
+					// Surface semantic search failure in the console; without
+					// this the section renders empty with no explanation
+					mw.log.error( 'Semantic search request failed:', e.message );
 					responseSemanticRef.value = { error: e.message };
 				} finally {
 					loadingSemanticRef.value = false;
@@ -301,6 +335,13 @@ module.exports = exports = defineComponent( {
 				responseLexicalRef.value = response;
 				nextContinueRef.value = response.continue;
 			} catch ( e ) {
+				// This request was aborted because a newer request already
+				// started (a new search, or another "load more" click); skip
+				// writing to responseLexicalRef here, since the newer request
+				// will set it from its own response
+				if ( e.name === 'AbortError' ) {
+					return;
+				}
 				responseLexicalRef.value = { error: e.message };
 			}
 		}
