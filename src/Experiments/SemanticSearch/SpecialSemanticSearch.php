@@ -100,7 +100,10 @@ class SpecialSemanticSearch extends SpecialPage {
 				$term,
 				[
 					'type' => 'lexical',
-					'data' => [ 'thumbnail', 'suggestion' ],
+					'data' => [
+						'thumbnail',
+						'suggestion',
+					],
 					'namespace' => $namespaces,
 					'limit' => $limit,
 					'continue' => $currentContinue,
@@ -123,7 +126,13 @@ class SpecialSemanticSearch extends SpecialPage {
 						'limit' => 3,
 						'continue' => 0,
 						'sort' => $sort,
-						'data' => [ 'thumbnail', 'referencecount', 'contributorcount' ],
+						'data' => [
+							'thumbnail',
+							'referencecount',
+							'contributorcount',
+							'targeturl',
+							'truncatedsnippet',
+						],
 						'uselang' => $userLanguage->getCode(),
 					]
 				);

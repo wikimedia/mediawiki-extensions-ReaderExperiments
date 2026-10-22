@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\ReaderExperiments\Tests;
+namespace MediaWiki\Extension\ReaderExperiments\Tests\Unit\Experiments\SemanticSearch\Utils;
 
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\Request\FauxRequest;
@@ -10,7 +10,7 @@ use MediaWikiUnitTestCase;
  * @group ReaderExperiments
  * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector
  */
-class SemanticSearchQueryInspectorTest extends MediaWikiUnitTestCase {
+class SemanticSearchRequestInspectorTest extends MediaWikiUnitTestCase {
 	/** @var SemanticSearchRequestInspector */
 	private SemanticSearchRequestInspector $inspector;
 

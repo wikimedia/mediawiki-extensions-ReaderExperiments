@@ -264,11 +264,11 @@ module.exports = exports = defineComponent( {
 				try {
 					const response = await search( restApiLexical, term, {
 						type: 'lexical',
-						data: [ 'thumbnail', 'suggestion' ],
 						namespace: props.request.namespaces,
 						limit: props.request.limit,
 						continue: 0,
 						sort: props.request.sort,
+						data: [ 'thumbnail', 'suggestion' ],
 						uselang: useLang
 					}
 					);
@@ -302,7 +302,7 @@ module.exports = exports = defineComponent( {
 						limit: 3,
 						continue: 0,
 						sort: props.request.sort,
-						data: [ 'thumbnail', 'referencecount', 'contributorcount' ],
+						data: [ 'thumbnail', 'referencecount', 'contributorcount', 'targeturl', 'truncatedsnippet' ],
 						uselang: useLang
 					}
 					);

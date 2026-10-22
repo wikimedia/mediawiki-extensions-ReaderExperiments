@@ -7,8 +7,8 @@ use MediaWiki\Config\Config;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
-use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticExcerpt;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Snippet;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\TextFragment;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
@@ -162,11 +162,15 @@ class GetSemanticSearch extends Handler {
 		}
 
 		$results = array_map(
-			fn ( array $result ) => $result + [
-				'targeturl' => $this->getTargetUrl( $params['type'], $result ),
-				'semanticExcerpt' => $params['type'] === self::TYPE_SEMANTIC
-					? SemanticExcerpt::format( $result['snippet'] ?? '' ) : null,
-			],
+			function ( array $result ) use ( $params ) {
+				if ( in_array( 'targeturl', $params[ 'data' ] ) ) {
+					$result['targeturl'] = $this->getTargetUrl( $result );
+				}
+				if ( in_array( 'truncatedsnippet', $params[ 'data' ] ) ) {
+					$result['truncatedsnippet'] = ( new Snippet( $result['snippet'] ?? '' ) )->truncate();
+				}
+				return $result;
+			},
 			$results
 		);
 
@@ -253,11 +257,8 @@ class GetSemanticSearch extends Handler {
 	 *
 	 * Protected to enable testing.
 	 */
-	protected function getTargetUrl( string $type, array $result ): string {
+	protected function getTargetUrl( array $result ): string {
 		$canonicalUrl = $result['canonicalurl'] ?? '';
-		if ( $type !== self::TYPE_SEMANTIC ) {
-			return $canonicalUrl;
-		}
 
 		// Escape the anchor here rather than in TextFragment, since Sanitizer
 		// reads $wgFragmentMode from globals and that would put the fragment
@@ -349,6 +350,8 @@ class GetSemanticSearch extends Handler {
 					'totalhits',
 					'referencecount',
 					'contributorcount',
+					'targeturl',
+					'truncatedsnippet',
 				],
 				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_DEFAULT => [],

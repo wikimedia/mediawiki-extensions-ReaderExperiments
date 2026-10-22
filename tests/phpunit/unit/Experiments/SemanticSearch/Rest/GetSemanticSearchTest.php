@@ -253,18 +253,18 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 	 * through Sanitizer, which reads $wgFragmentMode from globals and so is out of
 	 * reach here. TextFragmentTest covers the fragment building itself.
 	 */
-	private function invokeGetTargetUrl( string $type, array $result ): string {
+	private function invokeGetTargetUrl( array $result ): string {
 		$engine = new class() extends GetSemanticSearch {
 			public function __construct() {
 			}
 		};
 
 		$method = new ReflectionMethod( GetSemanticSearch::class, 'getTargetUrl' );
-		return $method->invoke( $engine, $type, $result );
+		return $method->invoke( $engine, $result );
 	}
 
-	public function testGetTargetUrlAddsFragmentForSemanticResults(): void {
-		$url = $this->invokeGetTargetUrl( GetSemanticSearch::TYPE_SEMANTIC, [
+	public function testGetTargetUrlAddsFragment(): void {
+		$url = $this->invokeGetTargetUrl( [
 			'canonicalurl' => 'https://en.wikipedia.org/wiki/Purr',
 			'snippet' => 'Cats also purr <span class="searchmatch">to manage pain</span> and soothe themselves',
 		] );
@@ -274,15 +274,6 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 				. '#:~:text=Cats%20also%20purr-,to%20manage%20pain,-and%20soothe%20themselves',
 			$url
 		);
-	}
-
-	public function testGetTargetUrlLeavesLexicalResultsAlone(): void {
-		$url = $this->invokeGetTargetUrl( 'lexical', [
-			'canonicalurl' => 'https://en.wikipedia.org/wiki/Purr',
-			'snippet' => 'Cats also purr <span class="searchmatch">to manage pain</span> and soothe themselves',
-		] );
-
-		$this->assertSame( 'https://en.wikipedia.org/wiki/Purr', $url );
 	}
 
 	public function testExecuteThrowsWhenDisabled(): void {

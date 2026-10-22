@@ -1,5 +1,5 @@
 <a
-	href="{{targeturl}}"
+	href="{{#targeturl}}{{.}}{{/targeturl}}{{^targeturl}}{{canonicalurl}}{{/targeturl}}"
 	title="{{title}}"
 	data-namespace="{{ns}}"
 	class="cdx-card cdx-card--is-link ext-readerExperiments-semanticsearch-result {{#semantic}}ext-readerExperiments-semanticsearch-result--semantic{{/semantic}}"
@@ -7,7 +7,7 @@
 	{{#semantic}}
 		<div class="ext-readerExperiments-semanticsearch-result__quote">
 			<span class="ext-readerExperiments-semanticsearch-result__quote-mark" aria-hidden="true"></span>
-			<span>{{{semanticExcerpt}}}</span>
+			<span>{{{truncatedsnippet}}}</span>
 		</div>
 	{{/semantic}}
 	<span class="cdx-thumbnail cdx-card__thumbnail">

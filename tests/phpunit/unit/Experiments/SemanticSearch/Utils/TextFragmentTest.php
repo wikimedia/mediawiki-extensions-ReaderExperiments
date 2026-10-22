@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\ReaderExperiments\Tests;
+namespace MediaWiki\Extension\ReaderExperiments\Tests\Unit\Experiments\SemanticSearch\Utils;
 
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\TextFragment;
 use MediaWikiUnitTestCase;
