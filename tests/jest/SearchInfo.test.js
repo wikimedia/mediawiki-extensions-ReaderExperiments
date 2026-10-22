@@ -30,6 +30,14 @@ describe( 'SearchInfo', () => {
 		expect( wrapper.text() ).not.toContain( NO_RESULTS_MESSAGE );
 	} );
 
+	it( 'does not show the no-results message while loading', () => {
+		const wrapper = mount( SearchInfo, {
+			props: { ...baseProps, isLoading: true }
+		} );
+
+		expect( wrapper.text() ).not.toContain( NO_RESULTS_MESSAGE );
+	} );
+
 	it( 'does not show the no-results message when there is an error', () => {
 		const wrapper = mount( SearchInfo, {
 			props: { ...baseProps, error: 'Something went wrong' }

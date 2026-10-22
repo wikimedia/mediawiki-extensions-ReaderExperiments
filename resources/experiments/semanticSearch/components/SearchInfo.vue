@@ -7,7 +7,7 @@
 	></p>
 
 	<p
-		v-if="term && !results.length && !error"
+		v-if="term && !isLoading && !results.length && !error"
 		class="ext-readerExperiments-semanticsearch-no-results"
 		aria-live="polite">
 		{{ $i18n( 'readerexperiments-semanticsearch-no-results' ).text() }}
@@ -83,6 +83,10 @@ module.exports = exports = defineComponent( {
 		generateSearchUrl: {
 			type: Function,
 			default: null
+		},
+		isLoading: {
+			type: Boolean,
+			default: false
 		}
 	},
 	setup( props ) {

@@ -20,6 +20,7 @@
 		:warnings="responseLexicalRef.warnings || []"
 		:error="responseLexicalRef.error || null"
 		:generate-search-url="generateSemanticSearchUrl"
+		:is-loading="isLoading"
 	></search-info>
 
 	<template v-if="semanticEnabled">
