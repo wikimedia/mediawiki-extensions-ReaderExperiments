@@ -44,6 +44,7 @@
 	"readerexperiments-semanticsearch-match-section": "(Abschnitt: $1)",
 	"readerexperiments-semanticsearch-match-redirect": "(Viruleedung: $1)",
 	"readerexperiments-semanticsearch-referencecount": "$1 {{PLURAL:$1|1=Referenz|Referenzen}}",
+	"readerexperiments-semanticsearch-contributorcount": "$1 {{PLURAL:$1|Contributeur|Contributeuren}}",
 	"readerexperiments-sharehighlight-blue-dot-label": "Nei Funktioun fir ze deelen",
 	"readerexperiments-sharehighlight-toolbar-share": "Deelen",
 	"readerexperiments-sharehighlight-share-quote": "Zitat deelen",
