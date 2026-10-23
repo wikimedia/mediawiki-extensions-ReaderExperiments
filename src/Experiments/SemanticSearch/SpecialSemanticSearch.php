@@ -163,6 +163,14 @@ class SpecialSemanticSearch extends SpecialPage {
 				'classicSearchPage' => SpecialPage::getTitleFor( 'Search' )->getPrefixedText(),
 				'requestedNamespaces' => $requestedNamespaces,
 				'semanticEnabled' => $semanticEnabled,
+				'feedbackSurveyEnabled' => $semanticEnabled
+					&& (bool)$this->config->get( 'ReaderExperimentsSemanticSearchFeedbackSurvey' ),
+				'feedbackSurvey' => [
+					'name' => SurveyHooks::SURVEY_NAME,
+					'question' => SurveyHooks::SURVEY_QUESTION,
+					'privacyPolicy' => SurveyHooks::SURVEY_PRIVACY,
+					'privacyPolicyUrl' => SurveyHooks::SURVEY_PRIVACY_URL,
+				],
 			],
 			'response' => array_combine( [ 'lexical', 'semantic' ], array_map(
 				fn ( $type ) => [

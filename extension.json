@@ -55,6 +55,10 @@
 		"ReaderExperimentsSemanticSearchAllowOptIn": {
 			"description": "Whether or not to provide the option for users to opt in to Special:SemanticSearch",
 			"value": false
+		},
+		"ReaderExperimentsSemanticSearchFeedbackSurvey": {
+			"description": "Whether to enable the qualitative feedback QuickSurvey on Special:SemanticSearch. Requires the QuickSurveys extension.",
+			"value": true
 		}
 	},
 	"HookHandlers": {
@@ -116,6 +120,12 @@
 				"MainConfig"
 			]
 		},
+		"SemanticSearchSurveyHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\SurveyHooks",
+			"services": [
+				"MainConfig"
+			]
+		},
 		"StickyHeadersHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\StickyHeaders\\Hooks",
 			"optional_services": [
@@ -153,6 +163,9 @@
 		],
 		"SpecialPage_initList": [
 			"SemanticSearchHooks"
+		],
+		"QuickSurveysEnabled": [
+			"SemanticSearchSurveyHooks"
 		],
 		"ShouldUseParsoid": [
 			"MinervaTocParserMigrationHooks"
@@ -553,6 +566,11 @@
 			"remoteExtPath": "ReaderExperiments/resources/experiments/semanticSearch",
 			"packageFiles": [
 				"init.js",
+				{
+					"name": "icons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons"
+				},
+				"components/SemanticSearchFeedbackSurvey.vue",
 				"components/SearchInfo.vue",
 				"components/SearchResult.vue",
 				"components/SearchResultsPage.vue"
@@ -573,6 +591,15 @@
 				"readerexperiments-semanticsearch-loading",
 				"readerexperiments-semanticsearch-semantic-results-label",
 				"readerexperiments-semanticsearch-lexical-results-label",
+				"readerexperiments-semanticsearch-feedback-prompt",
+				"readerexperiments-semanticsearch-feedback-positive",
+				"readerexperiments-semanticsearch-feedback-negative",
+				"readerexperiments-semanticsearch-feedback-thanks",
+				"readerexperiments-semanticsearch-survey-question",
+				"readerexperiments-semanticsearch-survey-freetext-label",
+				"readerexperiments-semanticsearch-survey-freetext-placeholder",
+				"readerexperiments-semanticsearch-survey-submit",
+				"readerexperiments-semanticsearch-survey-privacy-policy",
 				"ellipsis",
 				"readerexperiments-semanticsearch-switch-special-search"
 			],
