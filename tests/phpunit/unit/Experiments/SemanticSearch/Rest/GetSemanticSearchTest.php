@@ -229,7 +229,7 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 
 		$this->assertSame(
 			'https://en.wikipedia.org/wiki/Purr?wprov=sscw1'
-				. '#:~:text=Cats%20also%20purr-,to%20manage%20pain',
+				. '#:~:text=Cats%20also%20purr-,to%20manage%20pain,-and%20soothe%20themselves',
 			$url
 		);
 	}

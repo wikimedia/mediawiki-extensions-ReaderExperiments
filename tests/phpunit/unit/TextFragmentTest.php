@@ -43,18 +43,18 @@ class TextFragmentTest extends MediaWikiUnitTestCase {
 
 		// Under five words there is nothing to range over, so the preceding text
 		// pins the passage down instead.
-		yield 'short highlight gets a prefix instead' => [
+		yield 'short highlight gets a prefix and a suffix' => [
 			self::URL,
 			'a <span class="searchmatch">purring cat</span> b',
 			null,
-			self::URL . self::WPROV . '#:~:text=a-,purring%20cat',
+			self::URL . self::WPROV . '#:~:text=a-,purring%20cat,-b',
 		];
 
 		yield 'html entities are decoded' => [
 			self::URL,
 			'with a rolled <span class="searchmatch">&#039;r&#039; in human speech</span> and more',
 			null,
-			self::URL . self::WPROV . '#:~:text=with%20a%20rolled-,%27r%27%20in%20human%20speech',
+			self::URL . self::WPROV . '#:~:text=with%20a%20rolled-,%27r%27%20in%20human%20speech,-and%20more',
 		];
 
 		// '-' separates the prefix from the match, so it has to be escaped even
@@ -63,22 +63,22 @@ class TextFragmentTest extends MediaWikiUnitTestCase {
 			self::URL,
 			'the <span class="searchmatch">well-known cold-blooded trait</span> here',
 			null,
-			self::URL . self::WPROV . '#:~:text=the-,well%2dknown%20cold%2dblooded%20trait',
+			self::URL . self::WPROV . '#:~:text=the-,well%2dknown%20cold%2dblooded%20trait,-here',
 		];
 
 		yield 'ampersands are encoded' => [
 			self::URL,
 			'cats <span class="searchmatch">purr &amp; knead</span> often',
 			null,
-			self::URL . self::WPROV . '#:~:text=cats-,purr%20%26%20knead',
+			self::URL . self::WPROV . '#:~:text=cats-,purr%20%26%20knead,-often',
 		];
 
-		yield 'prefix stays inside the highlight\'s own elided segment' => [
+		yield 'prefix and suffix stay inside the highlight\'s own elided segment' => [
 			self::URL,
 			"first segment about dogs\nCats purr when <span class=\"searchmatch\">they are content"
 				. "</span>. Later text\nthird segment",
 			null,
-			self::URL . self::WPROV . '#:~:text=Cats%20purr%20when-,they%20are%20content',
+			self::URL . self::WPROV . '#:~:text=Cats%20purr%20when-,they%20are%20content,-.%20Later%20text',
 		];
 
 		yield 'longest of several highlights wins' => [
@@ -86,14 +86,40 @@ class TextFragmentTest extends MediaWikiUnitTestCase {
 			'a <span class="searchmatch">cat</span> b <span class="searchmatch">the longer passage '
 				. 'here</span> c',
 			null,
-			self::URL . self::WPROV . '#:~:text=a%20cat%20b-,the%20longer%20passage%20here',
+			self::URL . self::WPROV . '#:~:text=a%20cat%20b-,the%20longer%20passage%20here,-c',
 		];
 
 		yield 'highlight with nothing before it' => [
 			self::URL,
 			'<span class="searchmatch">purring</span> is a soft sound',
 			null,
-			self::URL . self::WPROV . '#:~:text=purring',
+			self::URL . self::WPROV . '#:~:text=purring,-is%20a%20soft',
+		];
+
+		yield 'a real-world passage is linked as a range' => [
+			self::URL,
+			'A total of <span class="searchmatch">twelve astronauts have landed on the Moon</span>. '
+				. 'This was accomplished with two pilot-astronauts flying a Lunar Module on each of six NASA missions.',
+			null,
+			self::URL . self::WPROV . '#:~:text=twelve%20astronauts%20have,the%20Moon',
+		];
+
+		// $end is a byte offset; a multibyte character in the highlight used to
+		// miscount it so that the suffix swallowed the '>' of the closing tag.
+		yield 'the suffix of a multibyte highlight does not swallow the closing tag' => [
+			self::URL,
+			'<span class="searchmatch">Pedro Sánchez</span>, of the Spanish Socialist Workers&#039; Party '
+				. '(PSOE), has been prime minister since 2 June 2018.',
+			null,
+			self::URL . self::WPROV . '#:~:text=Pedro%20S%C3%A1nchez,-%2C%20of%20the',
+		];
+
+		yield 'prefix and suffix around a multibyte end-of-sentence highlight' => [
+			self::URL,
+			'As of 2 June 2018, the prime minister of Spain is '
+				. '<span class="searchmatch">Pedro Sánchez</span>.',
+			null,
+			self::URL . self::WPROV . '#:~:text=of%20Spain%20is-,Pedro%20S%C3%A1nchez,-.',
 		];
 
 		// The anchor makes the section :target, which is what keeps a collapsed
@@ -109,7 +135,7 @@ class TextFragmentTest extends MediaWikiUnitTestCase {
 			self::URL,
 			'a <span class="searchmatch">purring cat</span> b',
 			'Cat_intelligence',
-			self::URL . self::WPROV . '#Cat_intelligence:~:text=a-,purring%20cat',
+			self::URL . self::WPROV . '#Cat_intelligence:~:text=a-,purring%20cat,-b',
 		];
 
 		// insource: snippets quote wikitext that the rendered article never shows,
@@ -179,7 +205,7 @@ class TextFragmentTest extends MediaWikiUnitTestCase {
 			'https://example.org/index.php?title=Purr',
 			'x <span class="searchmatch">a purring cat</span> y',
 			null,
-			'https://example.org/index.php?title=Purr&wprov=sscw1#:~:text=x-,a%20purring%20cat',
+			'https://example.org/index.php?title=Purr&wprov=sscw1#:~:text=x-,a%20purring%20cat,-y',
 		];
 
 		yield 'missing url yields nothing to link to' => [
@@ -206,19 +232,18 @@ class TextFragmentTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * A '-suffix' has to sit immediately after the match, and a reference
-	 * superscript at the end of a sentence breaks that adjacency often enough that
-	 * we never emit one.
+	 * A short highlight with text after it gets a '-suffix', capped at
+	 * CONTEXT_TOKENS tokens, to disambiguate it.
 	 */
-	public function testNoSuffixIsEmitted(): void {
+	public function testSuffixIsEmitted(): void {
 		$url = TextFragment::buildUrl(
 			self::URL,
-			'reasons, including <span class="searchmatch">when they are hungry, happy, or anxious'
-				. '</span>. In some cases, purring is thought to be a sign of contentment.',
+			'As of 2 June 2018, the prime minister of Spain is '
+				. '<span class="searchmatch">Pedro Sánchez</span>.',
 			null
 		);
 
-		$this->assertStringNotContainsString( ',-', $url );
+		$this->assertStringContainsString( ',-.', $url );
 	}
 
 	/**
