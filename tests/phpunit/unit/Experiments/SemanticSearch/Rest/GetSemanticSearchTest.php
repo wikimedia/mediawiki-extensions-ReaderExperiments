@@ -16,6 +16,48 @@ use ReflectionMethod;
  */
 class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 
+	/** @dataProvider provideRequestedData */
+	public function testOnlyRequestsDisplayedData( array $data, string $info, string $prop ): void {
+		$actionApi = $this->createMock(
+			\MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi::class
+		);
+		$restApi = $this->createMock(
+			\MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi::class
+		);
+		$restApi->expects( $this->never() )->method( 'execute' );
+		$engine = $this->getMockBuilder( GetSemanticSearch::class )
+			->setConstructorArgs( [
+				$actionApi, $restApi, new HashConfig( [ 'ReaderExperimentsSemanticSearchEnabled' => true ] ),
+				$this->createMock( \MediaWiki\Language\Language::class ), $this->newInspector( null ),
+			] )
+			->onlyMethods( [ 'getValidatedParams', 'getResponseFactory' ] )->getMock();
+		$engine->method( 'getValidatedParams' )->willReturn( [
+			'type' => 'lexical', 'term' => 'cats', 'namespace' => [ NS_MAIN ],
+			'limit' => 20, 'continue' => 0, 'sort' => 'relevance', 'uselang' => 'en', 'data' => $data,
+		] );
+		$engine->method( 'getResponseFactory' )->willReturn( new \MediaWiki\Rest\ResponseFactory( [] ) );
+		$actionApi->expects( $this->once() )->method( 'execute' )
+			->willReturnCallback( function ( $request ) use ( $info, $prop ) {
+				$params = $request->getQueryValues();
+				$this->assertSame( 'cats', $params['gsrsearch'] );
+				$this->assertSame( $info, $params['gsrinfo'] );
+				$this->assertSame( 'snippet|redirecttitle|sectiontitle', $params['gsrprop'] );
+				$this->assertSame( $prop, $params['prop'] );
+				$this->assertSame( str_contains( $prop, 'pageimages' ), isset( $params['piprop'] ) );
+				return [ 'query' => [ 'pages' => [ [
+					'index' => 1, 'title' => 'Cat', 'canonicalurl' => 'https://example.org/wiki/Cat',
+				] ] ] ];
+			} );
+		$engine->execute();
+	}
+
+	public static function provideRequestedData(): iterable {
+		yield 'basic search' => [ [], '', 'info' ];
+		yield 'lexical UI' => [ [ 'thumbnail', 'suggestion' ], 'suggestion', 'info|pageimages' ];
+		yield 'thumbnail only' => [ [ 'thumbnail' ], '', 'info|pageimages' ];
+		yield 'explicit total hits' => [ [ 'totalhits' ], 'totalhits', 'info' ];
+	}
+
 	private const STUB_KEYWORDS = [
 		'intitle', 'incategory', 'insource', 'hastemplate',
 		'linksto', 'prefix', 'morelike', 'neartitle', 'filesize',

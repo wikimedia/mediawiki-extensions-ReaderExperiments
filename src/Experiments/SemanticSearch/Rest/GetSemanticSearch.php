@@ -23,8 +23,7 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 /**
  * Rest endpoint to provide the necessary data relevant to Special:SemanticSearch.
- * It's essentially just a pass-through to the action API search (wih a load of
- * props for additional data we'll want to enrich the output with), but given that
+ * It wraps action API search with optional data requested through `data`. Given that
  * we'll be doing that both on frontend (snappy interactive experience) and backend
  * (no-JS fallback), this is being bundled in a single place to avoid duplication.
  *
@@ -70,29 +69,34 @@ class GetSemanticSearch extends Handler {
 			);
 		}
 
+		$baseParams = [
+			'format' => 'json',
+			'uselang' => $params['uselang'],
+			'action' => 'query',
+			'generator' => 'search',
+			'gsrwhat' => 'text',
+			'gsrsearch' => $params['term'],
+			'gsrnamespace' => implode( '|', $params['namespace'] ),
+			'gsrlimit' => $params['limit'],
+			'gsroffset' => $params['continue'] ?: 0,
+			'gsrsort' => $params['sort'],
+			'gsrinfo' => implode( '|', array_intersect( [ 'totalhits', 'suggestion' ], $params['data'] ) ),
+			'gsrprop' => 'snippet|redirecttitle|sectiontitle',
+			// URLs are needed for result links; other page metadata is opt-in.
+			'prop' => 'info',
+			'inprop' => 'url',
+		];
+		if ( in_array( 'thumbnail', $params['data'], true ) ) {
+			$baseParams['prop'] .= '|pageimages';
+			$baseParams['piprop'] = 'thumbnail';
+			$baseParams['pithumbsize'] = 48;
+			$baseParams['pilimit'] = $params['limit'];
+			$baseParams['pilicense'] = 'any';
+			$baseParams['pilangcode'] = $params['uselang'];
+		}
 		$request = new FauxRequest();
 		$request->setParams(
-			[
-				'format' => 'json',
-				'uselang' => $params['uselang'],
-				'action' => 'query',
-				'generator' => 'search',
-				'gsrwhat' => 'text',
-				'gsrsearch' => $params['term'],
-				'gsrnamespace' => implode( '|', $params['namespace'] ),
-				'gsrlimit' => $params['limit'],
-				'gsroffset' => $params['continue'] ?: 0,
-				'gsrsort' => $params['sort'],
-				'gsrinfo' => 'totalhits|suggestion',
-				'gsrprop' => 'size|wordcount|timestamp|snippet|redirecttitle|sectiontitle',
-				'prop' => 'info|categoryinfo|pageimages',
-				'inprop' => 'url',
-				'piprop' => 'thumbnail',
-				'pithumbsize' => '48',
-				'pilimit' => $params['limit'],
-				'pilicense' => 'any',
-				'pilangcode' => $params['uselang'],
-			] + ( $params['type'] === self::TYPE_SEMANTIC ? [ 'cirrusSemanticSearch' => 'hl' ] : [] )
+			$baseParams + ( $params['type'] === self::TYPE_SEMANTIC ? [ 'cirrusSemanticSearch' => 'hl' ] : [] )
 		);
 		// Grab external results if configured as such; otherwise from local wiki
 		$request->setRequestURL( '?' . http_build_query( $request->getQueryValues() ) );
@@ -338,6 +342,9 @@ class GetSemanticSearch extends Handler {
 			'data' => [
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => [
+					'thumbnail',
+					'suggestion',
+					'totalhits',
 					'referencecount',
 					'contributorcount',
 				],
