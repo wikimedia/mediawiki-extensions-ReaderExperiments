@@ -32,13 +32,19 @@ const SEARCH_INPUTS_SELECTOR = '#searchInput, .minerva-header input[name="search
 const SEARCH_FORM_CONTAINER_SELECTOR = 'header, .minerva-header, .vector-header, .skin-dialog-search, .cdx-typeahead-search';
 const SEARCH_FORM_SELECTOR = '.minerva-search-form, #searchform, .cdx-typeahead-search form, .cdx-typeahead-search__form';
 
-const term = data.request.term || '';
+let term = data.request.term || '';
+let isDormant = true;
 const skin = mw.config.get( 'skin' );
 const isMinerva = skin === 'minerva';
 const isVector = skin === 'vector' || skin === 'vector-2022';
 
 if ( isMinerva || isVector ) {
 	const makeDormant = () => {
+		isDormant = true;
+		const input = document.querySelector( '.skin-dialog-search input' );
+		if ( input && !input.value.trim() ) {
+			term = '';
+		}
 		document.body.classList.add( INACTIVE_TYPEAHEAD_CLASS );
 		document.body.classList.remove( 'cdx-dialog-open' );
 		document.body.style.removeProperty( 'position' );
@@ -54,12 +60,10 @@ if ( isMinerva || isVector ) {
 	};
 
 	const prefillSearchInput = () => {
-		if ( !term ) {
-			return;
-		}
 		Array.from( document.querySelectorAll( SEARCH_INPUTS_SELECTOR ) ).forEach( ( input ) => {
-			if ( !input.value ) {
+			if ( input.value !== term ) {
 				input.value = term;
+				input.dispatchEvent( new Event( 'input' ) );
 			}
 		} );
 	};
@@ -101,12 +105,14 @@ if ( isMinerva || isVector ) {
 		if ( searchIcon ) {
 			searchIcon.addEventListener( 'click', () => {
 				document.body.classList.remove( INACTIVE_TYPEAHEAD_CLASS );
+				prefillSearchInput();
 			} );
 		}
 
 		window.addEventListener( 'hashchange', () => {
 			if ( window.location.hash.match( /\/search/ ) ) {
 				document.body.classList.remove( INACTIVE_TYPEAHEAD_CLASS );
+				prefillSearchInput();
 			} else {
 				makeDormant();
 			}
@@ -115,6 +121,10 @@ if ( isMinerva || isVector ) {
 		document.addEventListener( 'focusin', ( e ) => {
 			if ( e.target && e.target.closest && e.target.closest( '.skin-dialog-search, .minerva-header .search-box' ) ) {
 				document.body.classList.remove( INACTIVE_TYPEAHEAD_CLASS );
+				if ( isDormant ) {
+					isDormant = false;
+					prefillSearchInput();
+				}
 			}
 		} );
 
@@ -127,9 +137,16 @@ if ( isMinerva || isVector ) {
 				}
 			}
 		}, true );
+
+		document.addEventListener( 'pointerdown', ( e ) => {
+			if ( e.target && e.target.closest && e.target.closest( '.cdx-text-input__clear-icon' ) ) {
+				term = '';
+			}
+		}, true );
 	}
 
 	const handleSearchSubmission = ( submittedTerm ) => {
+		term = submittedTerm;
 		if ( isMinerva ) {
 			makeDormant();
 			const activeInput = document.activeElement;
@@ -137,9 +154,7 @@ if ( isMinerva || isVector ) {
 				activeInput.blur();
 			}
 		}
-		Array.from( document.querySelectorAll( SEARCH_INPUTS_SELECTOR ) ).forEach( ( input ) => {
-			input.value = submittedTerm;
-		} );
+		prefillSearchInput();
 		executeSearch( submittedTerm );
 	};
 
