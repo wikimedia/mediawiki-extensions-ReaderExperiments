@@ -47,7 +47,6 @@
 	"readerexperiments-semanticsearch-input-placeholder": "{{SITENAME}}에게 무엇이든 물어보세요...",
 	"readerexperiments-semanticsearch-load-more-results": "더 불러오기",
 	"readerexperiments-semanticsearch-load-less-results": "돌아가기",
-	"readerexperiments-semanticsearch-results-count": "$1개 {{PLURAL:$1|결과}}",
 	"readerexperiments-semanticsearch-error-message": "잘못된 검색",
 	"readerexperiments-semanticsearch-error-text": "위에 새 검색을 입력하고 다시 시도하십시오",
 	"readerexperiments-semanticsearch-did-you-mean": "$1 문서를 찾고 있으신가요?",
