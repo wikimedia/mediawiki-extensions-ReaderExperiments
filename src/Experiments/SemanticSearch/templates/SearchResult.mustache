@@ -1,70 +1,43 @@
 <a
 	href="{{targeturl}}"
 	title="{{title}}"
-	class="cdx-card cdx-card--is-link cdx-docs-card-group-with-thumbnails__card"
+	data-namespace="{{ns}}"
+	class="cdx-card cdx-card--is-link ext-readerExperiments-semanticsearch-result {{#semantic}}ext-readerExperiments-semanticsearch-result--semantic{{/semantic}}"
 >
+	{{#semantic}}
+		<div class="ext-readerExperiments-semanticsearch-result__quote">
+			<span class="ext-readerExperiments-semanticsearch-result__quote-mark" aria-hidden="true"></span>
+			<span>{{{semanticExcerpt}}}</span>
+		</div>
+	{{/semantic}}
 	<span class="cdx-thumbnail cdx-card__thumbnail">
+		{{#thumbnail}}
 		<span
-			{{#thumbnail}}style="background-image: url( {{source}} );"{{/thumbnail}}
+			style="background-image: url( {{source}} );"
 			class="cdx-thumbnail__image"
 		></span>
+		{{/thumbnail}}
+		{{^thumbnail}}<span class="cdx-thumbnail__placeholder"><span class="cdx-thumbnail__placeholder__icon"></span></span>{{/thumbnail}}
 	</span>
 	<span class="cdx-card__text">
 		<span class="cdx-card__text__title">
-			{{#namespacePrefix}}<span class="ext-readerExperiments-semanticsearch-result__namespace">{{.}}</span>{{/namespacePrefix}}
 			{{title}}
-			{{sectionText}}
+			{{^semantic}}{{sectionText}}{{/semantic}}
 			{{redirectText}}
 		</span>
+		{{#semantic}}
+			{{#sectiontitle}}<div class="ext-readerExperiments-semanticsearch-result__section"><span class="ext-readerExperiments-semanticsearch-result__section-arrow" aria-hidden="true">↪</span> {{.}}</div>{{/sectiontitle}}
+		{{/semantic}}
+		{{^semantic}}
 		{{#snippet}}
 			<div class="cdx-card__text__description">
-				{{{.}}}
+				{{{.}}}{{output.ellipsisText}}
 			</div>
 		{{/snippet}}
+		{{/semantic}}
 		<span class="cdx-card__text__supporting-text">
-			{{#output.categoryInfoText}}
-				{{!
-					3 members (0 subcategories, 3 files)
-				}}
-				<span>{{.}}</span>
-			{{/output.categoryInfoText}}
-
-			{{^categoryInfoText}}
-				{{!
-					11 KB (816 words)
-				}}
-				{{#formattedPageSizeText}}
-					<span>{{.}}</span>
-				{{/formattedPageSizeText}}
-
-				{{#wordcountText}}
-					<span>{{.}}</span>
-				{{/wordcountText}}
-			{{/categoryInfoText}}
-
-			{{#lastEditedText}}
-				-
-				{{!
-					7:24, June 8, 2026
-				}}
-				<span>{{.}}</span>
-			{{/lastEditedText}}
-
-			{{#contributorsText}}
-				-
-				{{!
-					1573 contributors
-				}}
-				<span>{{.}}</span>
-			{{/contributorsText}}
-
-			{{#referencesText}}
-				•
-				{{!
-					42 references
-				}}
-				<span>{{.}}</span>
-			{{/referencesText}}
+			{{#contributorsText}}<span>{{.}}</span>{{/contributorsText}}
+			{{#referencesText}}<span>{{.}}</span>{{/referencesText}}
 		</span>
 	</span>
 </a>

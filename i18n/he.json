@@ -33,5 +33,5 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "מתוך $1",
 	"readerexperiments-minerva-toc-contents-button-label": "תוכן",
 	"readerexperiments-minerva-toc-top-link": "(ראש הדף)",
-	"readerexperiments-semanticsearch-referencecount": "{{PLURAL:$1|הערת שוליים אחת|$1 הערות שוליים}}"
+	"readerexperiments-semanticsearch-referencecount": "{{PLURAL:$1|1=הערת שוליים אחת|$1 הערות שוליים}}"
 }

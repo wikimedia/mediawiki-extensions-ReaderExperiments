@@ -1,29 +1,11 @@
-{{#output.resultsCountText}}
-	<span>
-		{{.}}
-	</span>
-{{/output.resultsCountText}}
-
 {{#output.didYouMeanText}}
-	<div
-		class="cdx-message cdx-message--block cdx-message--notice"
-		aria-live="polite"
-	>
-		<span class="cdx-message__icon"></span>
-		<div class="cdx-message__content">{{{.}}}</div>
-	</div>
+	<p class="ext-readerExperiments-semanticsearch-suggestion" aria-live="polite">{{{.}}}</p>
 {{/output.didYouMeanText}}
 
 {{^results}}
 	{{^error}}
 		{{#request.hasTerm}}
-			<div
-				class="cdx-message cdx-message--block cdx-message--notice"
-				aria-live="polite"
-			>
-				<span class="cdx-message__icon"></span>
-				<div class="cdx-message__content">{{output.noResultsText}}</div>
-			</div>
+			<p class="ext-readerExperiments-semanticsearch-no-results" aria-live="polite">{{output.noResultsText}}</p>
 		{{/request.hasTerm}}
 	{{/error}}
 {{/results}}

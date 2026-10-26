@@ -2,24 +2,21 @@
 
 namespace MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest;
 
-use CirrusSearch\Parser\FullTextKeywordRegistry;
-use CirrusSearch\SearchConfig;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\Config\Config;
-use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticExcerpt;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\TextFragment;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Sanitizer;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\Response;
-use MediaWiki\Search\SearchEngine;
 use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -39,32 +36,24 @@ class GetSemanticSearch extends Handler {
 	private const TYPE_LEXICAL = 'lexical';
 
 	// Protected to enable testing
-	protected ?SearchConfig $searchConfig = null;
 	protected ActionApi $actionApiRequest;
 	protected RestApi $restApiRequest;
 	protected Config $config;
 	protected Language $contentLanguage;
+	protected SemanticSearchRequestInspector $inspector;
 
 	public function __construct(
 		ActionApi $actionApiRequest,
 		RestApi $restApiRequest,
 		Config $config,
 		Language $contentLanguage,
-		?SearchConfig $searchConfig = null,
+		SemanticSearchRequestInspector $inspector,
 	) {
 		$this->actionApiRequest = $actionApiRequest;
 		$this->restApiRequest = $restApiRequest;
 		$this->config = $config;
 		$this->contentLanguage = $contentLanguage;
-
-		$mwServices = MediaWikiServices::getInstance();
-		try {
-			$this->searchConfig = $searchConfig ?? $mwServices
-				->getConfigFactory()
-				->makeConfig( 'CirrusSearch' );
-		} catch ( ConfigException ) {
-			// CirrusSearch not installed
-		}
+		$this->inspector = $inspector;
 	}
 
 	public function execute(): Response {
@@ -134,21 +123,29 @@ class GetSemanticSearch extends Handler {
 		} );
 
 		// Enrich each search result with attribution data if requested
-		$attributionApiData = [ 'referencecount' ];
+		$attributionApiData = [ 'referencecount', 'contributorcount' ];
 		$needsAttributionApi = (bool)array_intersect( $attributionApiData, $params[ 'data' ] );
 		if ( $needsAttributionApi ) {
 			foreach ( $results as &$result ) {
 				$attribution = $this->fetchAttribution( $result['title'] ?? null );
 				$referenceCount = $attribution['trust_and_relevance']['reference_count'] ?? null;
-				// TODO add contributors count (T438419):
-				//      $attribution['trust_and_relevance']['contributor_counts']
+				// Contributor count of total_unique does not exclude known_bots.
+				// This matches the mobile app experience and is intentional unless directed otherwise (T438419)
+				$contributorCount = $attribution['trust_and_relevance']['contributor_counts']['total_unique'] ?? null;
 
+				// Use 'referencecount'/'contributorcount' for consistency with other keys
 				if (
 					$referenceCount !== null &&
 					in_array( 'referencecount', $params[ 'data' ], true )
 				) {
-					// Use 'referencecount' for consistency with other keys
 					$result['referencecount'] = $referenceCount;
+				}
+
+				if (
+					$contributorCount !== null &&
+					in_array( 'contributorcount', $params[ 'data' ], true )
+				) {
+					$result['contributorcount'] = $contributorCount;
 				}
 			}
 			unset( $result );
@@ -157,6 +154,8 @@ class GetSemanticSearch extends Handler {
 		$results = array_map(
 			fn ( array $result ) => $result + [
 				'targeturl' => $this->getTargetUrl( $params['type'], $result ),
+				'semanticExcerpt' => $params['type'] === self::TYPE_SEMANTIC
+					? SemanticExcerpt::format( $result['snippet'] ?? '' ) : null,
 			],
 			$results
 		);
@@ -262,35 +261,6 @@ class GetSemanticSearch extends Handler {
 	}
 
 	/**
-	 * Thin wrapper around SearchEngine::parseNamespacePrefixes to enable testing.
-	 *
-	 * The real implementation reaches into MediaWikiServices via the message system.
-	 */
-	protected function parseNamespacePrefixes( string $term ): array|false {
-		return SearchEngine::parseNamespacePrefixes( $term, true, true );
-	}
-
-	/**
-	 * Returns a list of supported search keyword prefixes.
-	 *
-	 * Protected to enable testing.
-	 *
-	 * @throws NoCirrusSearchException
-	 */
-	protected function getSearchKeywords(): array {
-		if ( !$this->searchConfig ) {
-			throw new NoCirrusSearchException( 'CirrusSearch required for search keyword prefixes' );
-		}
-		$features = ( new FullTextKeywordRegistry( $this->searchConfig ) )->getKeywords();
-
-		$keywords = [];
-		foreach ( $features as $feature ) {
-			$keywords = array_merge( $keywords, $feature->getKeywordPrefixes() );
-		}
-		return $keywords;
-	}
-
-	/**
 	 * Returns a boolean to indicate whether the given search type
 	 * is one that can be handled.
 	 *
@@ -307,42 +277,14 @@ class GetSemanticSearch extends Handler {
 				return false;
 			}
 
-			if ( $this->searchConfig ) {
-				// Non-main namespace prefixes
-				$nsInTerm = $this->parseNamespacePrefixes( $term );
-				if ( $nsInTerm && ( count( $nsInTerm[1] ) !== 1 || !in_array( NS_MAIN, $nsInTerm[1] ) ) ) {
-					return false;
-				}
+			// Non-main namespace prefixes
+			if ( $this->inspector->hasNonMainNamespace( $term ) ) {
+				return false;
+			}
 
-				// Keywords and Lucene/CirrusSearch operators:
-				// - escape regex special characters as an extra-safe check
-				// - keywords (insource:, incategory:, hastemplate:, filesize:, etc.),
-				//   optionally negated with - or !
-				// - wildcard (*)
-				// - boosting (^)
-				// - fuzzy / proximity search (~)
-				// - boolean (AND, OR, NOT)
-				//
-				// Ignore the following operators, since they can be common in natural language
-				// and can lead to false positives:
-				// - bare negations (-, !)
-				// - question mark wildcard (?)
-				// - exact match ("...")
-				// - grouping with parentheses ()
-				$keywords = $this->getSearchKeywords();
-				$quotedKeywords = array_map( 'preg_quote', $keywords );
-				$pattern = '/'
-					// Keywords
-					. '(?<=^|\s)[-!]?(' . implode( '|', $quotedKeywords ) . '):\S+'
-					// Wildcard, boosting, fuzzy / proximity
-					. '|[*^~]'
-					// Boolean operators
-					. '|(?<=^|\s)(?:AND|OR|NOT)(?=$|\s)'
-					. '/';
-
-				if ( preg_match( $pattern, $term ) ) {
-					return false;
-				}
+			// Keywords and Lucene/CirrusSearch operators
+			if ( $this->inspector->hasAdvancedSyntax( $term ) ) {
+				return false;
 			}
 		}
 
@@ -393,6 +335,7 @@ class GetSemanticSearch extends Handler {
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => [
 					'referencecount',
+					'contributorcount',
 				],
 				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_DEFAULT => [],

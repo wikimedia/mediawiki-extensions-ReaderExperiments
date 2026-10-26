@@ -3,8 +3,10 @@
 namespace MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch;
 
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\ReaderExperiments\Common\FeatureFlagExperiment;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
+use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
@@ -22,6 +24,7 @@ class SpecialSemanticSearch extends SpecialPage {
 		private readonly Config $config,
 		private readonly TitleMatcher $titleMatcher,
 		private readonly UserOptionsManager $userOptionsManager,
+		private ?ExperimentManager $experimentManager = null,
 		private readonly TemplateParser $templateParser = new TemplateParser( __DIR__ . '/templates' ),
 		string $name = 'SemanticSearch'
 	) {
@@ -43,7 +46,7 @@ class SpecialSemanticSearch extends SpecialPage {
 	/**
 	 * @inheritDoc
 	 */
-	public function execute( $subPage ) {
+	public function execute( $subPage ): void {
 		$userLanguage = $this->getLanguage();
 
 		// url & querystring params of this page, in tests this is sometimes unset
@@ -62,7 +65,14 @@ class SpecialSemanticSearch extends SpecialPage {
 			return;
 		}
 
-		$namespaces = $this->getSearchNamespaces( $queryParams );
+		$experiment = new FeatureFlagExperiment(
+			$this->experimentManager, $request, Hooks::EXPERIMENT_NAME
+		);
+		// Only the treatment group (or unit tests) get semantic results
+		$semanticEnabled = $experiment->getAssignedGroup() === Hooks::GROUP_TREATMENT;
+
+		$requestedNamespaces = $this->getRequestedNamespaces( $queryParams );
+		$namespaces = $requestedNamespaces ?: [ NS_MAIN ];
 		$sort = $request->getText( 'sort', 'relevance' );
 		$limit = $request->getText( 'limit' ) ? (int)$request->getText( 'limit' ) : 10;
 		$currentContinue = (int)$request->getText( 'continue' );
@@ -97,7 +107,7 @@ class SpecialSemanticSearch extends SpecialPage {
 		}
 		// Only get a handful of semantic results, only on the first page
 		$responses['semantic'] = [];
-		if ( $currentContinue === 0 ) {
+		if ( $semanticEnabled && $currentContinue === 0 ) {
 			try {
 				$responses['semantic'] = $this->search(
 					$term,
@@ -107,7 +117,7 @@ class SpecialSemanticSearch extends SpecialPage {
 						'limit' => 3,
 						'continue' => 0,
 						'sort' => $sort,
-						'data' => [ 'referencecount' ],
+						'data' => [ 'referencecount', 'contributorcount' ],
 						'uselang' => $userLanguage->getCode(),
 					]
 				);
@@ -118,25 +128,32 @@ class SpecialSemanticSearch extends SpecialPage {
 
 		// Handle optional searchinfo that may be present in the API response:
 		$nextContinue = $responses['lexical']['continue'] ?? null;
-		$totalHits = $responses['lexical']['info']['totalhits'] ?? 0;
 		$didYouMean = $responses['lexical']['info']['suggestion'] ?? null;
+		$didYouMeanLabel = ( $responses['lexical']['info']['suggestionsnippet'] ?? '' )
+			?: htmlspecialchars( $didYouMean ?? '' );
 
 		$data = [
 			'request' => [
 				'queryParams' => $mappedQueryParams,
 				'page' => $url,
 				'term' => $term,
-				'hasTerm' => (bool)$term,
+				'hasTerm' => $term !== '',
 				'namespaces' => $namespaces,
 				'sort' => $sort,
 				'limit' => $limit,
 				'continue' => $currentContinue,
+				// Localised 'Special:Search' plus the namespaces the reader
+				// asked for, so the frontend can rebuild the "switch to classic
+				// search" link when the search term changes
+				'classicSearchPage' => SpecialPage::getTitleFor( 'Search' )->getPrefixedText(),
+				'requestedNamespaces' => $requestedNamespaces,
+				'semanticEnabled' => $semanticEnabled,
 			],
 			'response' => array_combine( [ 'lexical', 'semantic' ], array_map(
 				fn ( $type ) => [
 					'continue' => $responses[$type]['continue'] ?? null,
 					'results' => array_map(
-						fn ( $result ) => $this->getResultData( $result ),
+						fn ( $result ) => $this->getResultData( $result ) + [ 'semantic' => $type === 'semantic' ],
 						$responses[$type]['results'] ?? []
 					),
 					'info' => $responses[$type]['info'] ?? [],
@@ -146,6 +163,12 @@ class SpecialSemanticSearch extends SpecialPage {
 				[ 'lexical', 'semantic' ]
 			) ),
 			'output' => [
+				'semanticResultsLabel' => $this->msg(
+					'readerexperiments-semanticsearch-semantic-results-label'
+				)->text(),
+				'lexicalResultsLabel' => $this->msg(
+					'readerexperiments-semanticsearch-lexical-results-label'
+				)->text(),
 				'pagination' => $this->generatePaginationUrls( $queryParams, $limit, $currentContinue, $nextContinue ),
 				'errorTitleText' => $this->msg( 'readerexperiments-semanticsearch-error-message' )->text(),
 				'errorText' => $this->msg( 'readerexperiments-semanticsearch-error-text' )->text(),
@@ -154,21 +177,20 @@ class SpecialSemanticSearch extends SpecialPage {
 				'searchPlaceholderText' => $this->msg( 'readerexperiments-semanticsearch-input-placeholder' )->text(),
 				'continueText' => $this->msg( 'readerexperiments-semanticsearch-load-more-results' )->text(),
 				'previousText' => $this->msg( 'readerexperiments-semanticsearch-load-less-results' )->text(),
+				'ellipsisText' => $this->msg( 'ellipsis' )->text(),
 				'noResultsText' => $this->msg( 'readerexperiments-semanticsearch-no-results' )->text(),
+				'classicSearchUrl' => $this->generateClassicSearchUrl( $term, $requestedNamespaces ),
+				'switchToClassicSearchText' => $this->msg(
+					'readerexperiments-semanticsearch-switch-classic-search'
+				)->text(),
 				'didYouMeanText' => $didYouMean
 					? $this->msg( 'readerexperiments-semanticsearch-did-you-mean' )->rawParams(
-						Html::element(
+						Html::rawElement(
 							'a',
-							[ 'href' => $this->generateSearchUrl( $didYouMean, $namespaces, $limit, $sort ) ],
-							$didYouMean,
+							[ 'href' => $this->generateSemanticSearchUrl( $didYouMean, $namespaces, $limit, $sort ) ],
+							$didYouMeanLabel,
 						),
 					)->parse()
-					: null,
-				'resultsCountText' => $totalHits > 0
-					? $this->msg(
-						'readerexperiments-semanticsearch-results-count',
-						$userLanguage->formatNum( $totalHits )
-					)->text()
 					: null,
 			],
 		];
@@ -182,18 +204,6 @@ class SpecialSemanticSearch extends SpecialPage {
 		$this->getOutput()->addModuleStyles( [ 'codex-styles', 'ext.readerExperiments/semanticSearch.styles' ] );
 		$this->getOutput()->addModules( [ 'ext.readerExperiments/semanticSearch' ] );
 		$this->getOutput()->addJsConfigVars( [ 'semanticSearch' => $data ] );
-
-		$specialSearchUrl = SpecialPage::getTitleFor( 'Search' )->getLocalURL( [ 'search' => $term ] );
-		$this->getOutput()->setIndicators( [
-			'mw-help-switch' => Html::element(
-				'a',
-				[
-					'href' => $specialSearchUrl,
-					'id' => 'readerexperiments-semanticsearch-switch-special-search'
-				],
-				$this->msg( 'readerexperiments-semanticsearch-switch-special-search' )->text()
-			)
-		] );
 
 		parent::execute( $subPage );
 	}
@@ -279,7 +289,14 @@ class SpecialSemanticSearch extends SpecialPage {
 		}
 	}
 
-	private function getSearchNamespaces( array $queryParams ): array {
+	/**
+	 * Namespaces explicitly requested via ns<N> query params, which may be
+	 * empty. Kept separate from the NS_MAIN default applied by the caller:
+	 * the link to Special:Search must only carry namespaces the reader
+	 * actually asked for, so that it does not override the namespace
+	 * preferences Special:Search would otherwise apply for them.
+	 */
+	private function getRequestedNamespaces( array $queryParams ): array {
 		return array_reduce(
 			array_keys( $queryParams ),
 			static function ( array $result, $param ) {
@@ -289,27 +306,57 @@ class SpecialSemanticSearch extends SpecialPage {
 				return $result;
 			},
 			[]
-		) ?: [ NS_MAIN ];
+		);
 	}
 
 	/**
 	 * If the search API returns a suggested search, generate a clickable link
-	 * that allows the user to run the suggested query immediately.
+	 * back to Special:SemanticSearch that allows the user to run the
+	 * suggested query immediately.
 	 */
-	private function generateSearchUrl( string $term, array $namespaces, int $limit, string $sort ): string {
-		$queryParams = [
+	private function generateSemanticSearchUrl( string $term, array $namespaces, int $limit, string $sort ): string {
+		return $this->getPageTitle()->getLocalURL( [
 			'search' => $term,
-			...array_reduce(
-				$namespaces,
-				static fn ( array $params, int $namespace ): array => [ ...$params, "ns{$namespace}" => 1 ],
-				[],
-			),
+			...$this->buildNamespaceParams( $namespaces ),
 			'limit' => $limit,
 			'sort' => $sort,
 			'noredirect' => '',
-		];
+		] );
+	}
 
-		return $this->getPageTitle()->getLocalURL( $queryParams );
+	/**
+	 * Generate a link back to Special:Search, prepopulated with the current
+	 * search request, so users can switch to the classic search interface.
+	 *
+	 * Only the term and any explicitly requested namespaces are carried over.
+	 * `limit` and `sort` deliberately are not: Special:Search prefers those
+	 * params over the reader's own `searchlimit` preference and its default
+	 * of 20 results, so forwarding ours would silently override both.
+	 *
+	 * This also deliberately does not carry over the `wprov` param, so that
+	 * the routing mechanism (T438878), once merged, will treat following the
+	 * link as manual navigation rather than a typeahead arrival.
+	 */
+	private function generateClassicSearchUrl( string $term, array $namespaces ): string {
+		return SpecialPage::getTitleFor( 'Search' )->getLocalURL( [
+			'search' => $term,
+			...$this->buildNamespaceParams( $namespaces ),
+			// Without this, Special:Search redirects straight to an exact title
+			// match instead of rendering its results page
+			'fulltext' => 1,
+		] );
+	}
+
+	/**
+	 * Turn a list of namespace ids into the ns<N>=1 query params that both
+	 * Special:SemanticSearch and Special:Search expect.
+	 */
+	private function buildNamespaceParams( array $namespaces ): array {
+		return array_reduce(
+			$namespaces,
+			static fn ( array $params, int $namespace ): array => [ ...$params, "ns{$namespace}" => 1 ],
+			[],
+		);
 	}
 
 	private function generatePaginationUrls(
@@ -344,26 +391,6 @@ class SpecialSemanticSearch extends SpecialPage {
 	private function getResultData( array $result ): array {
 		$userLanguage = $this->getLanguage();
 
-		// Category info
-		if ( isset( $result['categoryinfo'] ) ) {
-			$categoryInfoParams = [
-				$userLanguage->formatNum( $result['categoryinfo']['size'] ),
-				$userLanguage->formatNum( $result['categoryinfo']['subcats'] ),
-				$userLanguage->formatNum( $result['categoryinfo']['files'] )
-			];
-			$result += [
-				'categoryInfoText' => $this->msg(
-					'readerexperiments-semanticsearch-category-info',
-					$categoryInfoParams
-				)->text()
-			];
-		}
-
-		// Namespace prefix
-		$result['namespacePrefix'] = $result['ns'] === NS_MAIN ?
-			null :
-			$this->getContentLanguage()->getFormattedNsText( $result['ns'] );
-
 		// Section
 		$result['sectionText'] = isset( $result['sectiontitle'] ) ?
 			$this->msg( 'readerexperiments-semanticsearch-match-section', $result['sectiontitle'] )->text() :
@@ -374,24 +401,13 @@ class SpecialSemanticSearch extends SpecialPage {
 			$this->msg( 'readerexperiments-semanticsearch-match-redirect', $result['redirecttitle'] )->text() :
 			null;
 
-		// Last edited date
-		$result['lastEditedText'] = $userLanguage->timeanddate( $result['timestamp'] );
-
-		// Formatted page size
-		if ( isset( $result['size'] ) ) {
-			$result['formattedPageSizeText'] = $userLanguage->formatSize( $result['size'] );
-		}
-
-		// Word count
-		if ( isset( $result['wordcount'] ) ) {
-			$result['wordcountText'] = $this->msg(
-				'readerexperiments-semanticsearch-wordcount',
-				$userLanguage->formatNum( $result['wordcount'] )
+		// Contributors
+		if ( isset( $result['contributorcount'] ) && $result['contributorcount'] ) {
+			$result['contributorsText'] = $this->msg(
+				'readerexperiments-semanticsearch-contributorcount',
+				$userLanguage->formatNum( $result['contributorcount'] )
 			)->text();
 		}
-
-		// Contributors
-		// @todo
 
 		// References
 		if ( isset( $result['referencecount'] ) ) {

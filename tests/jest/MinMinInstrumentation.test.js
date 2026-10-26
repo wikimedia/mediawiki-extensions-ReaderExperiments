@@ -25,9 +25,6 @@ describe( 'minimalMinervaToolbar instrumentation', () => {
 
 			return undefined;
 		} );
-		mw.loader = {
-			using: jest.fn().mockResolvedValue()
-		};
 		mw.testKitchen = {
 			getExperiment: jest.fn().mockResolvedValue( {
 				sendExposure: jest.fn(),
@@ -180,7 +177,6 @@ describe( 'minimalMinervaToolbar instrumentation', () => {
 		expectedClickData[ actionSourceKey ] = 'toolbar';
 		expectedClickData[ actionSubtypeKey ] = 'edit';
 
-		expect( mw.loader.using ).toHaveBeenCalledWith( 'ext.testKitchen' );
 		expect( mw.testKitchen.getExperiment ).toHaveBeenCalledWith( 'minimal-minerva-toolbar' );
 		expect( experiment.sendExposure ).toHaveBeenCalledTimes( 1 );
 		expect( experiment.send ).toHaveBeenNthCalledWith( 1, 'page_visit' );

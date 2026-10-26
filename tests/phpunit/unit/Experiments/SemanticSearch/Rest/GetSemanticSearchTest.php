@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\ReaderExperiments\Tests\Unit\Experiments\SemanticSearch\Rest;
 
-use CirrusSearch\SearchConfig;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWikiUnitTestCase;
 use ReflectionMethod;
 
@@ -19,27 +19,48 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 	];
 
 	/**
-	 * A stub that returns STUB_KEYWORDS keyword prefixes,
-	 * and treats every term as having no namespace prefix,
-	 * so isSupportedType() never touches MediaWikiServices.
+	 * A SemanticSearchRequestInspector whose keyword list is fixed (no
+	 * CirrusSearch / MediaWikiServices needed) and whose non-main namespace
+	 * check always reports false (the namespace-prefix check runs inline in
+	 * isSupportedType() independent of the inspector).
+	 *
+	 * hasAdvancedSyntax() is left as the real implementation so the Lucene /
+	 * boolean-operator checks still run against the given keyword list.
 	 */
-	private function newEngineWithKeywords( array $keywords ): GetSemanticSearch {
-		$searchConfig = $this->createMock( SearchConfig::class );
-
-		return new class( $keywords, $searchConfig ) extends GetSemanticSearch {
+	private function newInspector( ?array $keywords ): SemanticSearchRequestInspector {
+		return new class( $keywords ?? self::STUB_KEYWORDS ) extends SemanticSearchRequestInspector {
 			public function __construct(
-				private readonly array $stubKeywords,
-				SearchConfig $searchConfig
+				private readonly array $keywords,
 			) {
-				$this->searchConfig = $searchConfig;
+				parent::__construct( null );
 			}
 
-			protected function getSearchKeywords(): array {
-				return $this->stubKeywords;
+			public function getSearchKeywords(): array {
+				return $this->keywords;
 			}
 
-			protected function parseNamespacePrefixes( string $term ): array|false {
+			public function hasNonMainNamespace( string $term ): bool {
 				return false;
+			}
+		};
+	}
+
+	/**
+	 * Bypass the real constructor (it requires MediaWikiServices, which are
+	 * unavailable in a unit test) by extending GetSemanticSearch with a no-op
+	 * __construct and injecting a stub inspector.
+	 *
+	 * @param array|null $keywords keyword prefixes used by the inspector
+	 *   (defaults to STUB_KEYWORDS; pass [] to simulate CirrusSearch not being
+	 *   installed)
+	 */
+	private function newEngine( ?array $keywords = null ): GetSemanticSearch {
+		$inspector = $this->newInspector( $keywords );
+
+		return new class( $inspector ) extends GetSemanticSearch {
+			public function __construct(
+				protected SemanticSearchRequestInspector $inspector,
+			) {
 			}
 		};
 	}
@@ -164,7 +185,7 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideTerms
 	 */
 	public function testIsSupportedType( string $term, array $namespaces, bool $expected ): void {
-		$engine = $this->newEngineWithKeywords( self::STUB_KEYWORDS );
+		$engine = $this->newEngine();
 		$this->assertSame(
 			$expected,
 			$this->invokeIsSupportedType( $engine, $term, $namespaces ),
@@ -173,17 +194,10 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 	}
 
 	public function testIsSupportedTypeWithoutSearchConfig(): void {
-		$engine = new class( [] ) extends GetSemanticSearch {
-			public function __construct( array $unused ) {
-				$this->searchConfig = null;
-			}
-
-			protected function getSearchKeywords(): array {
-				return [];
-			}
-		};
-
-		// When there's no CirrusSearch config, accept keywords
+		// CirrusSearch not installed: the inspector's keyword list is empty,
+		// so an intitle: query is accepted (only operator/boolean/namespace
+		// rules apply).
+		$engine = $this->newEngine( [] );
 		$this->assertTrue(
 			$this->invokeIsSupportedType( $engine, 'intitle:London', [ NS_MAIN ] )
 		);

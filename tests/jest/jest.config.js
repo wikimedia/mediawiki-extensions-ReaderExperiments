@@ -89,6 +89,8 @@ module.exports = {
 		'../icons.json$': '<rootDir>/resources/experiments/imageBrowsing/__mocks__/icons.json',
 		// Mock the mediawiki.router module (provided by MediaWiki ResourceLoader at runtime)
 		'^mediawiki\\.router$': '<rootDir>/resources/experiments/imageBrowsing/__mocks__/mediawiki.router.js',
+		// Mock the mediawiki.DateFormatter module (provided by MediaWiki ResourceLoader at runtime)
+		'^mediawiki\\.DateFormatter$': '<rootDir>/resources/experiments/semanticSearch/__mocks__/mediawiki.DateFormatter.js',
 		// Common ReaderExperiments module
 		'^ext\\.readerExperiments$': '<rootDir>/resources/common/index.js',
 		// ReaderExperiments external libs

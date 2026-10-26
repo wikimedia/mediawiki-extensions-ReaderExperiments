@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\ReaderExperiments\Tests\Integration\Experiments\SemanticSearch\Rest;
 
-use MediaWiki\Config\HashConfig;
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\Language\Language;
-use MediaWiki\MainConfigNames;
 use MediaWikiIntegrationTestCase;
 use ReflectionMethod;
 
@@ -23,14 +23,20 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 	private function newHandler(): array {
 		$actionApiMock = $this->createMock( ActionApi::class );
 		$restApiMock = $this->createMock( RestApi::class );
+		$inspectorMock = $this->createMock( SemanticSearchRequestInspector::class );
 		$languageMock = $this->createMock( Language::class );
 		$languageMock->method( 'getCode' )->willReturn( 'en' );
+		$configMock = $this->createMock( Config::class );
+		$configMock
+			->method( 'get' )
+			->willReturnCallback( static fn ( $key ) => $key === 'RestPath' ? '/w/rest.php' : '' );
 
 		$engine = new GetSemanticSearch(
 			$actionApiMock,
 			$restApiMock,
-			new HashConfig( [ MainConfigNames::RestPath => '/w/rest.php' ] ),
-			$languageMock
+			$configMock,
+			$languageMock,
+			$inspectorMock
 		);
 
 		return [ $engine, $actionApiMock, $restApiMock ];
@@ -57,6 +63,7 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 				return [
 					'essential' => [ 'title' => 'Mars' ],
 					'trust_and_relevance' => [
+						'contributor_counts' => [ 'total_unique' => 100 ],
 						'reference_count' => 666,
 						'page_views' => 1984,
 						'last_updated' => '2026-10-02T07:08:33Z',
@@ -66,6 +73,7 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 
 		$attribution = $this->callFetchAttribution( $engine, 'Mars' );
 		$this->assertSame( 666, $attribution['trust_and_relevance']['reference_count'] );
+		$this->assertSame( 100, $attribution['trust_and_relevance']['contributor_counts']['total_unique'] );
 	}
 
 	public function testTitleIsDbKeyedAndUrlEncoded(): void {
@@ -78,11 +86,15 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 					'/attribution/v0-beta/pages/Foo_Bar_%28thing%29/signals',
 					$request->getRequestURL()
 				);
-				return [ 'trust_and_relevance' => [ 'reference_count' => 42 ] ];
+				return [ 'trust_and_relevance' => [
+					'reference_count' => 42,
+					'contributor_counts' => [ 'total_unique' => 50 ] ]
+				];
 			} );
 
 		$attribution = $this->callFetchAttribution( $engine, 'Foo Bar (thing)' );
 		$this->assertSame( 42, $attribution['trust_and_relevance']['reference_count'] );
+		$this->assertSame( 50, $attribution['trust_and_relevance']['contributor_counts']['total_unique'] );
 	}
 
 	public function testReturnsNullWhenApiThrows(): void {

@@ -1,28 +1,17 @@
 <template>
-	<span v-if="formattedTotalhits">
-		{{ $i18n( 'readerexperiments-semanticsearch-results-count', formattedTotalhits ).text() }}
-	</span>
-
-	<div
+	<p
 		v-if="didYouMeanText"
-		class="cdx-message cdx-message--block cdx-message--notice"
+		class="ext-readerExperiments-semanticsearch-suggestion"
 		aria-live="polite"
-	>
-		<span class="cdx-message__icon"></span>
-		<div
-			v-html="didYouMeanText"
-			class="cdx-message__content"
-		></div>
-	</div>
+		v-html="didYouMeanText"
+	></p>
 
-	<div
-		v-if="term && !results && !error"
-		class="cdx-message cdx-message--block cdx-message--notice"
-		aria-live="polite"
-	>
-		<span class="cdx-message__icon"></span>
-		<div class="cdx-message__content">{{ $i18n( 'readerexperiments-semanticsearch-no-results' ).text() }}</div>
-	</div>
+	<p
+		v-if="term && !isLoading && !results.length && !error"
+		class="ext-readerExperiments-semanticsearch-no-results"
+		aria-live="polite">
+		{{ $i18n( 'readerexperiments-semanticsearch-no-results' ).text() }}
+	</p>
 
 	<div
 		v-for="( warning, index ) in warnings"
@@ -31,7 +20,9 @@
 		aria-live="polite"
 	>
 		<span class="cdx-message__icon"></span>
-		<div class="cdx-message__content">{{ warning }}</div>
+		<div class="cdx-message__content">
+			{{ warning }}
+		</div>
 	</div>
 
 	<div
@@ -92,16 +83,13 @@ module.exports = exports = defineComponent( {
 		generateSearchUrl: {
 			type: Function,
 			default: null
+		},
+		isLoading: {
+			type: Boolean,
+			default: false
 		}
 	},
 	setup( props ) {
-		const formattedTotalhits = computed( () => {
-			if ( !props.info || isNaN( props.info.totalhits ) ) {
-				return null;
-			}
-			return mw.language.convertNumber( props.info.totalhits );
-		} );
-
 		const didYouMeanText = computed( () => {
 			if ( !props.info || !props.info.suggestion || !props.generateSearchUrl ) {
 				return null;
@@ -115,13 +103,14 @@ module.exports = exports = defineComponent( {
 				props.sort
 			);
 
+			// The search API supplies escaped suggestion HTML with corrected words marked.
+			const label = props.info.suggestionsnippet || mw.html.escape( props.info.suggestion );
 			const msg = rawParamsMessage( 'readerexperiments-semanticsearch-did-you-mean' );
-			msg.rawParams( [ `<a href="${ mw.html.escape( didYouMeanUrl ) }">${ mw.html.escape( props.info.suggestion ) }</a>` ] );
+			msg.rawParams( [ `<a href="${ mw.html.escape( didYouMeanUrl ) }">${ label }</a>` ] );
 			return msg.parse();
 		} );
 
 		return {
-			formattedTotalhits,
 			didYouMeanText
 		};
 	}
