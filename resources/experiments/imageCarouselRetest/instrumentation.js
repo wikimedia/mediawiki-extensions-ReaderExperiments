@@ -1,12 +1,13 @@
-// TODO(image-carousel-retest): Remove this experiment-only file after the retest.
+// TODO(image-carousel-retest-v2): Remove this experiment-only file after the retest.
 // See README.md for the coordinated cleanup across ReaderExperiments and MMV.
 const groups = require( './groups.js' );
 const isEligible = require( './eligibility.js' );
 const events = require( './events.js' );
 
-let experimentPromise;
+const experimentPromise = mw.testKitchen.getExperiment( 'image-carousel-retest-v2' );
 let readyPromise;
 let readyAssignment;
+let initializationRecorded = false;
 
 /**
  * Subscribe once readiness starts, before asynchronous telemetry loading.
@@ -25,29 +26,13 @@ function connectMmvActions() {
 }
 
 /**
- * Load Test Kitchen and resolve the experiment once per page.
- *
- * @return {Promise<mw.testKitchen.ExperimentInterface>} Experiment, or null when unavailable
- */
-function initialize() {
-	if ( !experimentPromise ) {
-		experimentPromise = mw.testKitchen.getExperiment( 'image-carousel-retest' );
-	}
-
-	return experimentPromise;
-}
-
-/**
  * Resolve the assigned group and its UI options for the carousel entry point.
- * Initializes the connection if necessary; does not record exposure or render UI.
+ * Does not record exposure or render UI.
  *
  * @return {Promise<Object|null>} Group and options, or null if not assigned a known group
  */
 async function getAssignment() {
-	const experiment = await initialize();
-	if ( !experiment ) {
-		return null;
-	}
+	const experiment = await experimentPromise;
 	const group = experiment.getAssignedGroup();
 	if ( !Object.prototype.hasOwnProperty.call( groups, group ) ) {
 		return null;
@@ -57,12 +42,13 @@ async function getAssignment() {
 
 /**
  * Prepare the same eligibility decision for control and treatments.
- * Call experienceReady only after applying the returned assignment to the UI.
- * For control, applying the assignment means leaving the carousel absent.
+ * Call experienceReady after confirming the server/client assignments agree,
+ * before carousel initialization. The server has already varied the page output:
+ * treatments receive carousel markup, while control does not.
  *
  * @param {Object} context Page and reader facts for the shared eligibility check
  * @param {Object} [rules] Provisional eligibility settings
- * @return {Promise<Object>} Assignment, eligibility, and readiness callback
+ * @return {Promise<Object>} Assignment, eligibility, and tracking callbacks
  */
 async function prepareExperience( context, rules ) {
 	const eligiblePage = isEligible( context, rules );
@@ -72,6 +58,21 @@ async function prepareExperience( context, rules ) {
 	return Object.freeze( {
 		assignment,
 		eligible,
+		// Called after carousel initialization succeeds.
+		async carouselInitialized() {
+			if ( !eligible || !assignment.showCarousel || initializationRecorded ) {
+				return;
+			}
+			const experiment = await experimentPromise;
+			if ( initializationRecorded ) {
+				return;
+			}
+			initializationRecorded = true;
+			experiment.send( 'carousel_initialize', {
+				// eslint-disable-next-line camelcase
+				action_subtype: 'success', action_source: 'image_carousel'
+			}, [ 'performer_session_id', 'performer_pageview_id' ] );
+		},
 		experienceReady() {
 			if ( !eligible ) {
 				return Promise.resolve( false );
@@ -81,7 +82,7 @@ async function prepareExperience( context, rules ) {
 					.then( () => mw.loader.using( 'ext.wikimediaEvents.testKitchen' ) )
 					.then( ( require ) => {
 						const { anyPageVisit } = require( 'ext.wikimediaEvents.testKitchen' );
-						return initialize().then( ( experiment ) => {
+						return experimentPromise.then( ( experiment ) => {
 							if ( !experiment ||
 								experiment.getAssignedGroup() !== assignment.group ) {
 								return false;
@@ -124,4 +125,4 @@ async function recordInteraction( name ) {
 	experiment.send( 'click', events[ name ] );
 }
 
-module.exports = { initialize, getAssignment, prepareExperience, recordInteraction };
+module.exports = { getAssignment, prepareExperience, recordInteraction };

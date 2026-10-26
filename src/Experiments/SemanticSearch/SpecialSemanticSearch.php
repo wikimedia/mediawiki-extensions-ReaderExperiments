@@ -3,8 +3,10 @@
 namespace MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch;
 
 use MediaWiki\Config\Config;
+use MediaWiki\Extension\ReaderExperiments\Common\FeatureFlagExperiment;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
+use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
@@ -22,6 +24,7 @@ class SpecialSemanticSearch extends SpecialPage {
 		private readonly Config $config,
 		private readonly TitleMatcher $titleMatcher,
 		private readonly UserOptionsManager $userOptionsManager,
+		private ?ExperimentManager $experimentManager = null,
 		private readonly TemplateParser $templateParser = new TemplateParser( __DIR__ . '/templates' ),
 		string $name = 'SemanticSearch'
 	) {
@@ -43,7 +46,7 @@ class SpecialSemanticSearch extends SpecialPage {
 	/**
 	 * @inheritDoc
 	 */
-	public function execute( $subPage ) {
+	public function execute( $subPage ): void {
 		$userLanguage = $this->getLanguage();
 
 		// url & querystring params of this page, in tests this is sometimes unset
@@ -61,6 +64,12 @@ class SpecialSemanticSearch extends SpecialPage {
 			$this->getOutput()->redirect( $redirectUrl );
 			return;
 		}
+
+		$experiment = new FeatureFlagExperiment(
+			$this->experimentManager, $request, Hooks::EXPERIMENT_NAME
+		);
+		// Only the treatment group (or unit tests) get semantic results
+		$semanticEnabled = $experiment->getAssignedGroup() === Hooks::GROUP_TREATMENT;
 
 		$requestedNamespaces = $this->getRequestedNamespaces( $queryParams );
 		$namespaces = $requestedNamespaces ?: [ NS_MAIN ];
@@ -98,7 +107,7 @@ class SpecialSemanticSearch extends SpecialPage {
 		}
 		// Only get a handful of semantic results, only on the first page
 		$responses['semantic'] = [];
-		if ( $currentContinue === 0 ) {
+		if ( $semanticEnabled && $currentContinue === 0 ) {
 			try {
 				$responses['semantic'] = $this->search(
 					$term,
@@ -119,8 +128,9 @@ class SpecialSemanticSearch extends SpecialPage {
 
 		// Handle optional searchinfo that may be present in the API response:
 		$nextContinue = $responses['lexical']['continue'] ?? null;
-		$totalHits = $responses['lexical']['info']['totalhits'] ?? 0;
 		$didYouMean = $responses['lexical']['info']['suggestion'] ?? null;
+		$didYouMeanLabel = ( $responses['lexical']['info']['suggestionsnippet'] ?? '' )
+			?: htmlspecialchars( $didYouMean ?? '' );
 
 		$data = [
 			'request' => [
@@ -137,12 +147,13 @@ class SpecialSemanticSearch extends SpecialPage {
 				// search" link when the search term changes
 				'classicSearchPage' => SpecialPage::getTitleFor( 'Search' )->getPrefixedText(),
 				'requestedNamespaces' => $requestedNamespaces,
+				'semanticEnabled' => $semanticEnabled,
 			],
 			'response' => array_combine( [ 'lexical', 'semantic' ], array_map(
 				fn ( $type ) => [
 					'continue' => $responses[$type]['continue'] ?? null,
 					'results' => array_map(
-						fn ( $result ) => $this->getResultData( $result ),
+						fn ( $result ) => $this->getResultData( $result ) + [ 'semantic' => $type === 'semantic' ],
 						$responses[$type]['results'] ?? []
 					),
 					'info' => $responses[$type]['info'] ?? [],
@@ -152,6 +163,12 @@ class SpecialSemanticSearch extends SpecialPage {
 				[ 'lexical', 'semantic' ]
 			) ),
 			'output' => [
+				'semanticResultsLabel' => $this->msg(
+					'readerexperiments-semanticsearch-semantic-results-label'
+				)->text(),
+				'lexicalResultsLabel' => $this->msg(
+					'readerexperiments-semanticsearch-lexical-results-label'
+				)->text(),
 				'pagination' => $this->generatePaginationUrls( $queryParams, $limit, $currentContinue, $nextContinue ),
 				'errorTitleText' => $this->msg( 'readerexperiments-semanticsearch-error-message' )->text(),
 				'errorText' => $this->msg( 'readerexperiments-semanticsearch-error-text' )->text(),
@@ -160,6 +177,7 @@ class SpecialSemanticSearch extends SpecialPage {
 				'searchPlaceholderText' => $this->msg( 'readerexperiments-semanticsearch-input-placeholder' )->text(),
 				'continueText' => $this->msg( 'readerexperiments-semanticsearch-load-more-results' )->text(),
 				'previousText' => $this->msg( 'readerexperiments-semanticsearch-load-less-results' )->text(),
+				'ellipsisText' => $this->msg( 'ellipsis' )->text(),
 				'noResultsText' => $this->msg( 'readerexperiments-semanticsearch-no-results' )->text(),
 				'classicSearchUrl' => $this->generateClassicSearchUrl( $term, $requestedNamespaces ),
 				'switchToClassicSearchText' => $this->msg(
@@ -167,18 +185,12 @@ class SpecialSemanticSearch extends SpecialPage {
 				)->text(),
 				'didYouMeanText' => $didYouMean
 					? $this->msg( 'readerexperiments-semanticsearch-did-you-mean' )->rawParams(
-						Html::element(
+						Html::rawElement(
 							'a',
 							[ 'href' => $this->generateSemanticSearchUrl( $didYouMean, $namespaces, $limit, $sort ) ],
-							$didYouMean,
+							$didYouMeanLabel,
 						),
 					)->parse()
-					: null,
-				'resultsCountText' => $totalHits > 0
-					? $this->msg(
-						'readerexperiments-semanticsearch-results-count',
-						$userLanguage->formatNum( $totalHits )
-					)->text()
 					: null,
 			],
 		];
@@ -379,26 +391,6 @@ class SpecialSemanticSearch extends SpecialPage {
 	private function getResultData( array $result ): array {
 		$userLanguage = $this->getLanguage();
 
-		// Category info
-		if ( isset( $result['categoryinfo'] ) ) {
-			$categoryInfoParams = [
-				$userLanguage->formatNum( $result['categoryinfo']['size'] ),
-				$userLanguage->formatNum( $result['categoryinfo']['subcats'] ),
-				$userLanguage->formatNum( $result['categoryinfo']['files'] )
-			];
-			$result += [
-				'categoryInfoText' => $this->msg(
-					'readerexperiments-semanticsearch-category-info',
-					$categoryInfoParams
-				)->text()
-			];
-		}
-
-		// Namespace prefix
-		$result['namespacePrefix'] = $result['ns'] === NS_MAIN ?
-			null :
-			$this->getContentLanguage()->getFormattedNsText( $result['ns'] );
-
 		// Section
 		$result['sectionText'] = isset( $result['sectiontitle'] ) ?
 			$this->msg( 'readerexperiments-semanticsearch-match-section', $result['sectiontitle'] )->text() :
@@ -408,22 +400,6 @@ class SpecialSemanticSearch extends SpecialPage {
 		$result['redirectText'] = isset( $result['redirecttitle'] ) ?
 			$this->msg( 'readerexperiments-semanticsearch-match-redirect', $result['redirecttitle'] )->text() :
 			null;
-
-		// Last edited date
-		$result['lastEditedText'] = $userLanguage->timeanddate( $result['timestamp'] );
-
-		// Formatted page size
-		if ( isset( $result['size'] ) ) {
-			$result['formattedPageSizeText'] = $userLanguage->formatSize( $result['size'] );
-		}
-
-		// Word count
-		if ( isset( $result['wordcount'] ) ) {
-			$result['wordcountText'] = $this->msg(
-				'readerexperiments-semanticsearch-wordcount',
-				$userLanguage->formatNum( $result['wordcount'] )
-			)->text();
-		}
 
 		// Contributors
 		if ( isset( $result['contributorcount'] ) && $result['contributorcount'] ) {

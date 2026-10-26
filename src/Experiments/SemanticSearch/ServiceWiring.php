@@ -1,10 +1,12 @@
 <?php
 
+use MediaWiki\Config\ConfigException;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ExternalApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\InternalActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\InternalRestApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 
@@ -50,5 +52,17 @@ return [
 			$services->getService( 'HttpRequestFactory' ),
 			$externalRestApiUrl,
 		);
+	},
+	'ReaderExperiments.SemanticSearch.RequestInspector' => static function (
+		MediaWikiServices $services
+	): SemanticSearchRequestInspector {
+		try {
+			$searchConfig = $services->getConfigFactory()->makeConfig( 'CirrusSearch' );
+		} catch ( ConfigException ) {
+			// CirrusSearch not installed
+			$searchConfig = null;
+		}
+
+		return new SemanticSearchRequestInspector( $searchConfig );
 	},
 ];

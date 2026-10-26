@@ -1,4 +1,4 @@
-// TODO(image-carousel-retest): Remove this experiment-only file after the retest.
+// TODO(image-carousel-retest-v2): Remove this experiment-only file after the retest.
 // See README.md for the coordinated cleanup across ReaderExperiments and MMV.
 /**
  * Shared eligibility for all arms; independent of whether a carousel is rendered.

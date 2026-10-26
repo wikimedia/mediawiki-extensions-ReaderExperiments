@@ -48,7 +48,6 @@
 	"readerexperiments-semanticsearch-input-placeholder": "Pregúntale lo que quieras a {{SITENAME}}...",
 	"readerexperiments-semanticsearch-load-more-results": "Cargar más",
 	"readerexperiments-semanticsearch-load-less-results": "Ir atrás",
-	"readerexperiments-semanticsearch-results-count": "$1 {{PLURAL:$1|1=resultado|resultados}}",
 	"readerexperiments-semanticsearch-error-message": "Búsqueda inválida",
 	"readerexperiments-semanticsearch-error-text": "Introduce una nueva búsqueda arriba e inténtalo de nuevo",
 	"readerexperiments-semanticsearch-did-you-mean": "¿Querías decir: $1?",

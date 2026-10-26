@@ -45,6 +45,7 @@ ApiMock.prototype.postWithToken = jest.fn();
 
 function RestMock() {}
 RestMock.prototype.get = jest.fn();
+RestMock.prototype.abort = jest.fn();
 
 function TitleMock() {}
 TitleMock.prototype.getMainText = jest.fn();

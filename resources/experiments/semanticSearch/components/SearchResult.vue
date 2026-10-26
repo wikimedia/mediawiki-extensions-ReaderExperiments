@@ -2,22 +2,31 @@
 	<a
 		:href="result.targeturl"
 		:title="result.title"
-		class="cdx-card cdx-card--is-link cdx-docs-card-group-with-thumbnails__card"
+		:data-namespace="result.ns"
+		class="cdx-card cdx-card--is-link ext-readerExperiments-semanticsearch-result"
+		:class="{ 'ext-readerExperiments-semanticsearch-result--semantic': semantic }"
 	>
+		<div v-if="semantic" class="ext-readerExperiments-semanticsearch-result__quote">
+			<span
+				class="ext-readerExperiments-semanticsearch-result__quote-mark"
+				aria-hidden="true"
+			></span>
+			<span v-html="result.semanticExcerpt || result.snippet"></span>
+		</div>
 		<span class="cdx-thumbnail cdx-card__thumbnail">
 			<span
+				v-if="result.thumbnail"
 				:style="[ result.thumbnail ? { 'background-image': `url( ${result.thumbnail.source} )` } : null ]"
 				class="cdx-thumbnail__image"
 			></span>
+			<span v-else class="cdx-thumbnail__placeholder">
+				<span class="cdx-thumbnail__placeholder__icon"></span>
+			</span>
 		</span>
 		<span class="cdx-card__text">
 			<span class="cdx-card__text__title">
-				<span
-					v-if="namespacePrefix"
-					class="ext-readerExperiments-semanticsearch-result__namespace"
-				>{{ namespacePrefix }}</span>
 				{{ result.title }}
-				<template v-if="result.sectiontitle">
+				<template v-if="result.sectiontitle && !semantic">
 					{{ $i18n( 'readerexperiments-semanticsearch-match-section', result.sectiontitle ) }}
 				</template>
 				<template v-if="result.redirecttitle">
@@ -25,46 +34,29 @@
 				</template>
 			</span>
 
+			<div v-if="semantic && result.sectiontitle" class="ext-readerExperiments-semanticsearch-result__section">
+				<span
+					class="ext-readerExperiments-semanticsearch-result__section-arrow"
+					aria-hidden="true"
+				>↪</span> {{ result.sectiontitle }}
+			</div>
 			<div
+				v-if="!semantic && result.snippet"
 				class="cdx-card__text__description"
-				v-html="result.snippet"
-			></div>
+			>
+				<span v-html="result.snippet"></span>{{ $i18n( 'ellipsis' ).text() }}
+			</div>
 
-			<span class="cdx-card__text__supporting-text">
-				<!-- 3 members (0 subcategories, 3 files) -->
-				<span v-if="categoryInfoText">{{ categoryInfoText }}</span>
-				<template v-else>
-					<!-- 11 KB (816 words) -->
-					<span v-if="formattedPageSizeText">{{ formattedPageSizeText }}</span>
-					<span v-if="wordcountText">{{ wordcountText }}</span>
-				</template>
-
-				<template v-if="lastEditedText">
-					-
-					<!-- 7:24, June 8, 2026 -->
-					<span>{{ lastEditedText }}</span>
-				</template>
-
-				<template v-if="contributorsText">
-					-
-					<!-- 1573 contributors -->
-					<span>{{ contributorsText }}</span>
-				</template>
-
-				<template v-if="referencesText">
-					•
-					<!-- 42 references -->
-					<span>{{ referencesText }}</span>
-				</template>
+			<span v-if="contributorsText || referencesText" class="cdx-card__text__supporting-text">
+				<span v-if="contributorsText">{{ contributorsText }}</span>
+				<span v-if="referencesText">{{ referencesText }}</span>
 			</span>
 		</span>
 	</a>
 </template>
 
 <script>
-const { formatTimeAndDate } = require( 'mediawiki.DateFormatter' );
 const { computed, defineComponent, inject } = require( 'vue' );
-const formatSize = require( '../utils/formatSize.js' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -73,50 +65,14 @@ module.exports = exports = defineComponent( {
 		result: {
 			type: Object,
 			required: true
+		},
+		semantic: {
+			type: Boolean,
+			default: false
 		}
 	},
 	setup( props ) {
 		const $i18n = inject( 'i18n' );
-
-		const categoryInfoText = computed( () => {
-			if ( !props.result.categoryinfo ) {
-				return null;
-			}
-			const params = [
-				mw.language.convertNumber( props.result.categoryinfo.size ),
-				mw.language.convertNumber( props.result.categoryinfo.subcats ),
-				mw.language.convertNumber( props.result.categoryinfo.files )
-			];
-			return $i18n( 'readerexperiments-semanticsearch-category-info', ...params ).text();
-		} );
-
-		const namespacePrefix = computed( () => {
-			if ( props.result.ns === 0 ) {
-				return null;
-			}
-			return mw.config.get( 'wgFormattedNamespaces' )[ props.result.ns ] || null;
-		} );
-
-		const lastEditedText = computed( () => {
-			return formatTimeAndDate( new Date( props.result.timestamp ) );
-		} );
-
-		const formattedPageSizeText = computed( () => {
-			if ( props.result.size === undefined ) {
-				return null;
-			}
-			return formatSize( props.result.size );
-		} );
-
-		const wordcountText = computed( () => {
-			if ( props.result.wordcount === undefined ) {
-				return null;
-			}
-			return $i18n(
-				'readerexperiments-semanticsearch-wordcount',
-				mw.language.convertNumber( props.result.wordcount )
-			).text();
-		} );
 
 		const contributorsText = computed( () => {
 			if ( !props.result.contributorcount ) {
@@ -139,11 +95,6 @@ module.exports = exports = defineComponent( {
 		} );
 
 		return {
-			categoryInfoText,
-			namespacePrefix,
-			lastEditedText,
-			formattedPageSizeText,
-			wordcountText,
 			contributorsText,
 			referencesText
 		};

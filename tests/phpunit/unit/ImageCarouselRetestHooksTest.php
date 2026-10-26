@@ -1,6 +1,6 @@
 <?php
 
-// TODO(image-carousel-retest): Remove this experiment-only file after the retest.
+// TODO(image-carousel-retest-v2): Remove this experiment-only file after the retest.
 // Remove the hook registrations and modules listed in the experiment README too.
 
 namespace MediaWiki\Extension\ReaderExperiments\Tests;
@@ -26,7 +26,7 @@ class ImageCarouselRetestHooksTest extends MediaWikiUnitTestCase {
 		$out->method( 'getSkin' )->willReturn( $skin );
 		$out->method( 'getUser' )->willReturn( $user );
 		$out->method( 'getRequest' )->willReturn( new FauxRequest( $group === null ? [] : [
-			'mpo' => 'image-carousel-retest:' . $group
+			'mpo' => 'image-carousel-retest-v2:' . $group
 		] ) );
 		if ( $expectedRender !== null ) {
 			$out->expects( $this->once() )->method( 'addModules' )

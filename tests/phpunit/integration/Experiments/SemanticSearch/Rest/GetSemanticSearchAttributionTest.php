@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\ReaderExperiments\Tests\Integration\Experiments\SemanticSearch\Rest;
 
-use MediaWiki\Config\HashConfig;
+use MediaWiki\Config\Config;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\Language\Language;
-use MediaWiki\MainConfigNames;
 use MediaWikiIntegrationTestCase;
 use ReflectionMethod;
 
@@ -23,14 +23,20 @@ class GetSemanticSearchAttributionTest extends MediaWikiIntegrationTestCase {
 	private function newHandler(): array {
 		$actionApiMock = $this->createMock( ActionApi::class );
 		$restApiMock = $this->createMock( RestApi::class );
+		$inspectorMock = $this->createMock( SemanticSearchRequestInspector::class );
 		$languageMock = $this->createMock( Language::class );
 		$languageMock->method( 'getCode' )->willReturn( 'en' );
+		$configMock = $this->createMock( Config::class );
+		$configMock
+			->method( 'get' )
+			->willReturnCallback( static fn ( $key ) => $key === 'RestPath' ? '/w/rest.php' : '' );
 
 		$engine = new GetSemanticSearch(
 			$actionApiMock,
 			$restApiMock,
-			new HashConfig( [ MainConfigNames::RestPath => '/w/rest.php' ] ),
-			$languageMock
+			$configMock,
+			$languageMock,
+			$inspectorMock
 		);
 
 		return [ $engine, $actionApiMock, $restApiMock ];

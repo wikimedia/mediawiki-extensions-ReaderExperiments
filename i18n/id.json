@@ -48,7 +48,6 @@
 	"readerexperiments-semanticsearch-input-placeholder": "Tanyakan apa saja kepada {{SITENAME}}...",
 	"readerexperiments-semanticsearch-load-more-results": "Muat lebih banyak",
 	"readerexperiments-semanticsearch-load-less-results": "Kembali",
-	"readerexperiments-semanticsearch-results-count": "$1 {{PLURAL:$1|hasil}}",
 	"readerexperiments-semanticsearch-error-message": "Pencarian tidak sah",
 	"readerexperiments-semanticsearch-error-text": "Masukkan pencarian baru di atas dan coba lagi",
 	"readerexperiments-semanticsearch-did-you-mean": "Mungkin maksud Anda adalah: $1",

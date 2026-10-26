@@ -1,4 +1,4 @@
-// TODO(image-carousel-retest): Delete this test with the experiment modules after the retest.
+// TODO(image-carousel-retest-v2): Delete this test with the experiment modules after the retest.
 const context = {
 	isLoggedOut: true, isMobile: true, skin: 'minerva', namespaceId: 0,
 	pageEligible: true, imageCount: 3
@@ -116,7 +116,7 @@ describe( 'Image carousel retest Test Kitchen connection', () => {
 		expect( assignment ).toEqual( expected );
 		expect( Object.isFrozen( assignment ) ).toBe( true );
 		expect( experiment.send ).not.toHaveBeenCalled();
-		expect( mw.testKitchen.getExperiment ).toHaveBeenCalledWith( 'image-carousel-retest' );
+		expect( mw.testKitchen.getExperiment ).toHaveBeenCalledWith( 'image-carousel-retest-v2' );
 	} );
 
 	it.each( [ null, undefined, 'unknown-group', 'toString', '__proto__' ] )(
@@ -214,4 +214,33 @@ describe( 'Image carousel retest Test Kitchen connection', () => {
 		expect( experiment.sendExposure ).not.toHaveBeenCalled();
 		expect( experiment.send ).not.toHaveBeenCalled();
 	} );
+
+	it.each( [ 'vanilla-carousel', 'carousel-captions-only', 'carousel-jump-only', 'carousel-captions-jump' ] )(
+		'records initialization once with matching identifiers for %s', async ( group ) => {
+			experiment.getAssignedGroup.mockReturnValue( group );
+			const first = await instrumentation.prepareExperience( context );
+			const second = await instrumentation.prepareExperience( context );
+			await Promise.all( [ first.carouselInitialized(), second.carouselInitialized() ] );
+			expect( experiment.send ).toHaveBeenCalledTimes( 1 );
+			expect( experiment.send ).toHaveBeenCalledWith( 'carousel_initialize', {
+				// eslint-disable-next-line camelcase
+				action_subtype: 'success', action_source: 'image_carousel'
+			}, [ 'performer_session_id', 'performer_pageview_id' ] );
+			expect( experiment.sendExposure ).not.toHaveBeenCalled();
+		}
+	);
+
+	it.each( [ 'control', 'ineligible' ] )(
+		'does not record initialization for %s', async ( reason ) => {
+			if ( reason === 'control' ) {
+				experiment.getAssignedGroup.mockReturnValue( 'control' );
+			}
+			const experience = await instrumentation.prepareExperience(
+				Object.assign( {}, context, reason === 'ineligible' ? { imageCount: 0 } : {} )
+			);
+			await experience.carouselInitialized();
+			expect( experiment.send ).not.toHaveBeenCalled();
+		}
+	);
+
 } );

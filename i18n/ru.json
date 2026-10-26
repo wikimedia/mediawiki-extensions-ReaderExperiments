@@ -48,7 +48,6 @@
 	"readerexperiments-semanticsearch-input-placeholder": "Спросите {{GRAMMAR:accusative|{{SITENAME}}}} про что угодно…",
 	"readerexperiments-semanticsearch-load-more-results": "Загрузить ещё",
 	"readerexperiments-semanticsearch-load-less-results": "Назад",
-	"readerexperiments-semanticsearch-results-count": "$1 {{PLURAL:$1|результат|результата|результатов}}",
 	"readerexperiments-semanticsearch-error-message": "Недопустимый поисковой запрос",
 	"readerexperiments-semanticsearch-error-text": "Введите новый запрос выше и повторите попытку",
 	"readerexperiments-semanticsearch-did-you-mean": "Возможно, вы имели в виду: $1",

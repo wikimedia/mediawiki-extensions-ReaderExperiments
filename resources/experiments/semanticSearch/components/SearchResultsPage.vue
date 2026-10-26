@@ -1,6 +1,7 @@
 <template>
 	<cdx-search-input
 		v-model="inputValueRef"
+		class="ext-readerExperiments-semanticsearch-form"
 		clearable
 		use-button
 		:placeholder="$i18n( 'readerexperiments-semanticsearch-input-placeholder' ).text()"
@@ -9,67 +10,87 @@
 	></cdx-search-input>
 
 	<search-info
+		v-if="!isLoading"
 		:term="termRef"
 		:namespaces="request.namespaces"
 		:limit="request.limit"
 		:sort="request.sort"
 		:results="responseLexicalRef.results || []"
 		:info="responseLexicalRef.info || {}"
-		:warnings="responseLexicalRef.warning || []"
+		:warnings="responseLexicalRef.warnings || []"
 		:error="responseLexicalRef.error || null"
 		:generate-search-url="generateSemanticSearchUrl"
+		:is-loading="isLoading"
 	></search-info>
 
-	<h1>Semantic</h1>
-	<div
-		v-if="responseSemanticRef.results && !isLoading"
-		class="cdx-docs-card-group-with-thumbnails"
-	>
-		<search-result
-			v-for="( result, index ) in Object.values( responseSemanticRef.results ).sort( ( a, b ) => a.index - b.index )"
-			:key="`result=${index}`"
-			:result="result"
-		></search-result>
-	</div>
+	<template v-if="semanticEnabled">
+		<div
+			v-if="isLoading"
+			class="ext-readerExperiments-semanticsearch-loading"
+			role="status"
+			:aria-label="$i18n( 'readerexperiments-semanticsearch-loading' ).text()">
+			<div
+				v-for="index in 3"
+				:key="index"
+				class="ext-readerExperiments-semanticsearch-loading__card"
+				aria-hidden="true">
+				<div class="ext-readerExperiments-semanticsearch-loading__quote">
+					<span v-for="line in 5" :key="line"></span>
+				</div>
+				<div class="ext-readerExperiments-semanticsearch-loading__details">
+					<span class="cdx-thumbnail ext-readerExperiments-semanticsearch-loading__thumbnail">
+						<span class="cdx-thumbnail__placeholder"><span class="cdx-thumbnail__placeholder__icon"></span></span>
+					</span>
+					<div class="ext-readerExperiments-semanticsearch-loading__text">
+						<span></span><span></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<section
+			v-if="responseSemanticRef.results && responseSemanticRef.results.length && !isLoading"
+			class="ext-readerExperiments-semanticsearch-results ext-readerExperiments-semanticsearch-results--semantic"
+			:aria-label="$i18n( 'readerexperiments-semanticsearch-semantic-results-label' ).text()"
+		>
+			<h1>Semantic</h1>
+			<search-result
+				v-for="( result, index ) in Object.values( responseSemanticRef.results ).sort( ( a, b ) => a.index - b.index )"
+				:key="`result=${index}`"
+				:result="result"
+				semantic
+			></search-result>
+		</section>
+	</template>
 
-	<h1>Lexical</h1>
-	<div
-		v-if="responseLexicalRef.results && !isLoading"
-		class="cdx-docs-card-group-with-thumbnails"
+	<section
+		v-if="responseLexicalRef.results && responseLexicalRef.results.length && !isLoading"
+		class="ext-readerExperiments-semanticsearch-results ext-readerExperiments-semanticsearch-results--lexical"
+		:aria-label="$i18n( 'readerexperiments-semanticsearch-lexical-results-label' ).text()"
 	>
 		<search-result
 			v-for="( result, index ) in Object.values( responseLexicalRef.results ).sort( ( a, b ) => a.index - b.index )"
 			:key="`result=${index}`"
 			:result="result"
 		></search-result>
-	</div>
+	</section>
 
-	<div>
+	<div class="ext-readerExperiments-semanticsearch-actions">
 		<!-- @todo add functionality (or maybe just a link?) to go back to previous results? -->
 		<cdx-button
 			v-if="nextContinueRef"
 			action="progressive"
+			weight="primary"
 			@click="onLoadMore"
 		>
 			{{ $i18n( 'readerexperiments-semanticsearch-load-more-results' ).text() }}
 		</cdx-button>
 	</div>
-
-	<div class="ext-readerExperiments-semanticsearch-switch-search">
-		<a
-			:href="classicSearchUrl"
-			class="
-				cdx-button
-				cdx-button--fake-button
-				cdx-button--fake-button--enabled
-				cdx-button--action-progressive
-				cdx-button--weight-quiet
-				cdx-button--size-small
-			"
-		>
-			{{ $i18n( 'readerexperiments-semanticsearch-switch-classic-search' ).text() }}
-		</a>
-	</div>
+	<a
+		id="readerexperiments-semanticsearch-switch-special-search"
+		:href="classicSearchUrl"
+		class="ext-readerExperiments-semanticsearch-classic">
+		{{ $i18n( 'readerexperiments-semanticsearch-switch-classic-search' ).text() }}
+	</a>
 </template>
 
 <script>
@@ -77,6 +98,11 @@ const { computed, defineComponent, ref } = require( 'vue' );
 const { CdxButton, CdxSearchInput } = require( '@wikimedia/codex' );
 const SearchInfo = require( './SearchInfo.vue' );
 const SearchResult = require( './SearchResult.vue' );
+
+// Semantic results supplement the lexical ones, so the page should not wait
+// long on them: give up after this long rather than the mw.Rest default of
+// 30 seconds (T441802). Lexical search keeps the default.
+const SEMANTIC_SEARCH_TIMEOUT_MS = 5000;
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -95,6 +121,10 @@ module.exports = exports = defineComponent( {
 		response: {
 			type: Object,
 			required: true
+		},
+		onSearchRegister: {
+			type: Function,
+			default: null
 		}
 	},
 	setup( props ) {
@@ -102,7 +132,7 @@ module.exports = exports = defineComponent( {
 		// Semantic search to be run in parallel. Otherwise, any simultaneous,
 		// in-flight requests are aborted when search() is called.
 		const restApiLexical = new mw.Rest();
-		const restApiSemantic = new mw.Rest();
+		const restApiSemantic = new mw.Rest( { ajax: { timeout: SEMANTIC_SEARCH_TIMEOUT_MS } } );
 
 		const inputValueRef = ref( props.request.term );
 		const termRef = ref( props.request.term );
@@ -110,6 +140,8 @@ module.exports = exports = defineComponent( {
 		const nextContinueRef = ref( props.response.lexical.continue );
 		const responseLexicalRef = ref( props.response.lexical );
 		const responseSemanticRef = ref( props.response.semantic );
+
+		const semanticEnabled = computed( () => !!( props.request && props.request.semanticEnabled ) );
 
 		const loadingLexicalRef = ref( false );
 		const loadingSemanticRef = ref( false );
@@ -163,7 +195,8 @@ module.exports = exports = defineComponent( {
 		}
 
 		// Recomputed whenever the term changes, so the link always reflects the
-		// search currently on screen
+		// search term the reader last submitted, which is also what the URL and
+		// the input show
 		const classicSearchUrl = computed( () => generateClassicSearchUrl( termRef.value ) );
 
 		async function search( restApi, term, params ) {
@@ -184,12 +217,26 @@ module.exports = exports = defineComponent( {
 				params
 			).catch(
 				( code, data ) => {
+					// Aborted because a newer request superseded this one (see the
+					// restApi.abort() call); not a real failure, so callers
+					// should treat this distinctly from an actual error (T441802)
+					if ( data.textStatus === 'abort' ) {
+						const abortError = new Error( 'Request superseded' );
+						abortError.name = 'AbortError';
+						throw abortError;
+					}
+
 					const response = data.xhr.responseJSON || {};
+					// A timed out request has no response body to read a message from,
+					// so name the cause rather than falling back to 'Unknown error'
+					const fallback = data.textStatus === 'timeout' ?
+						'Request timed out' :
+						'Unknown error';
 					throw new Error(
 						( response.messageTranslations && response.messageTranslations[ useLang ] ) ||
 						response.message ||
 						response.httpReason ||
-						'Unknown error'
+						fallback
 					);
 				}
 			);
@@ -205,12 +252,13 @@ module.exports = exports = defineComponent( {
 			window.history.pushState( {}, '', url );
 
 			termRef.value = term;
+			inputValueRef.value = term;
 			responseLexicalRef.value = [];
 			responseSemanticRef.value = [];
 			currentContinueRef.value = 0;
 			nextContinueRef.value = null;
 			loadingLexicalRef.value = true;
-			loadingSemanticRef.value = true;
+			loadingSemanticRef.value = semanticEnabled.value;
 
 			async function searchLexical() {
 				try {
@@ -228,6 +276,12 @@ module.exports = exports = defineComponent( {
 					nextContinueRef.value = response.continue;
 
 				} catch ( e ) {
+					// This request was aborted because a newer search already
+					// started; skip writing to responseLexicalRef here, since the
+					// newer search will set it from its own response
+					if ( e.name === 'AbortError' ) {
+						return;
+					}
 					responseLexicalRef.value = { error: e.message };
 				} finally {
 					loadingLexicalRef.value = false;
@@ -235,6 +289,11 @@ module.exports = exports = defineComponent( {
 			}
 
 			async function searchSemantic() {
+				if ( !semanticEnabled.value ) {
+					loadingSemanticRef.value = false;
+					return;
+				}
+
 				try {
 					const response = await search( restApiSemantic, term, {
 						type: 'semantic',
@@ -249,6 +308,15 @@ module.exports = exports = defineComponent( {
 					response.results = Object.values( response.results );
 					responseSemanticRef.value = response;
 				} catch ( e ) {
+					// This request was aborted because a newer search already
+					// started; skip writing to responseSemanticRef here, since the
+					// newer search will set it from its own response
+					if ( e.name === 'AbortError' ) {
+						return;
+					}
+					// Surface semantic search failure in the console; without
+					// this the section renders empty with no explanation
+					mw.log.error( 'Semantic search request failed:', e.message );
 					responseSemanticRef.value = { error: e.message };
 				} finally {
 					loadingSemanticRef.value = false;
@@ -256,6 +324,10 @@ module.exports = exports = defineComponent( {
 			}
 
 			await Promise.all( [ searchLexical(), searchSemantic() ] );
+		}
+
+		if ( props.onSearchRegister ) {
+			props.onSearchRegister( onSubmit );
 		}
 
 		async function onLoadMore() {
@@ -290,6 +362,13 @@ module.exports = exports = defineComponent( {
 				responseLexicalRef.value = response;
 				nextContinueRef.value = response.continue;
 			} catch ( e ) {
+				// This request was aborted because a newer request already
+				// started (a new search, or another "load more" click); skip
+				// writing to responseLexicalRef here, since the newer request
+				// will set it from its own response
+				if ( e.name === 'AbortError' ) {
+					return;
+				}
 				responseLexicalRef.value = { error: e.message };
 			}
 		}
@@ -300,6 +379,7 @@ module.exports = exports = defineComponent( {
 			nextContinueRef,
 			responseLexicalRef,
 			responseSemanticRef,
+			semanticEnabled,
 			classicSearchUrl,
 			onSubmit,
 			onLoadMore,
