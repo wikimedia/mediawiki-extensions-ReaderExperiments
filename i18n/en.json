@@ -46,7 +46,7 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Read more",
 	"readerexperiments-mobilepagepreviews-title": "Page preview",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Close",
-	"readerexperiments-semanticsearch-title": "Semantic search",
+	"readerexperiments-semanticsearch-title": "Search results",
 	"readerexperiments-semanticsearch-preference": "Choose your search interface",
 	"readerexperiments-semanticsearch-preference-semanticsearch-label": "{{#Special:SemanticSearch}}",
 	"readerexperiments-semanticsearch-preference-specialsearch-label": "{{#Special:Search}}",
