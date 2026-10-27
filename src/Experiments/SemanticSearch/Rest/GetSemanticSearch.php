@@ -69,7 +69,7 @@ class GetSemanticSearch extends Handler {
 			);
 		}
 
-		$baseParams = [
+		$requestParams = [
 			'format' => 'json',
 			'uselang' => $params['uselang'],
 			'action' => 'query',
@@ -87,17 +87,19 @@ class GetSemanticSearch extends Handler {
 			'inprop' => 'url',
 		];
 		if ( in_array( 'thumbnail', $params['data'], true ) ) {
-			$baseParams['prop'] .= '|pageimages';
-			$baseParams['piprop'] = 'thumbnail';
-			$baseParams['pithumbsize'] = 48;
-			$baseParams['pilimit'] = $params['limit'];
-			$baseParams['pilicense'] = 'any';
-			$baseParams['pilangcode'] = $params['uselang'];
+			$requestParams['prop'] .= '|pageimages';
+			$requestParams['piprop'] = 'thumbnail';
+			$requestParams['pithumbsize'] = 48;
+			$requestParams['pilimit'] = $params['limit'];
+			$requestParams['pilicense'] = 'any';
+			$requestParams['pilangcode'] = $params['uselang'];
+		}
+		if ( $params['type'] === self::TYPE_SEMANTIC ) {
+			$requestParams['cirrusSemanticSearch'] = 'hl';
+			$requestParams['cirrusQueryDispatchProfile'] = 'semantic_only';
 		}
 		$request = new FauxRequest();
-		$request->setParams(
-			$baseParams + ( $params['type'] === self::TYPE_SEMANTIC ? [ 'cirrusSemanticSearch' => 'hl' ] : [] )
-		);
+		$request->setParams( $requestParams );
 		// Grab external results if configured as such; otherwise from local wiki
 		$request->setRequestURL( '?' . http_build_query( $request->getQueryValues() ) );
 

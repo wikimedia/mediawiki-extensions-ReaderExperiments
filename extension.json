@@ -110,6 +110,12 @@
 				"TestKitchen.ExperimentManager"
 			]
 		},
+		"SemanticSearchCirrusSearchHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\CirrusSearchHooks",
+			"optional_services": [
+				"MainConfig"
+			]
+		},
 		"StickyHeadersHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\StickyHeaders\\Hooks",
 			"optional_services": [
@@ -138,6 +144,9 @@
 		"BeforeInitialize": [
 			"MinervaTocHooks",
 			"SemanticSearchHooks"
+		],
+		"CirrusSearchProfileService": [
+			"SemanticSearchCirrusSearchHooks"
 		],
 		"GetPreferences": [
 			"SemanticSearchHooks"
