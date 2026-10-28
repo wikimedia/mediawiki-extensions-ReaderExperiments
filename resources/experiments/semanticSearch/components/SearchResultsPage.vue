@@ -116,7 +116,7 @@ const SearchResult = require( './SearchResult.vue' );
 // Semantic results supplement the lexical ones, so the page should not wait
 // long on them: give up after this long rather than the mw.Rest default of
 // 30 seconds (T441802). Lexical search keeps the default.
-const SEMANTIC_SEARCH_TIMEOUT_MS = 5000;
+const SEMANTIC_SEARCH_TIMEOUT_MS = 7500;
 
 // @vue/component
 module.exports = exports = defineComponent( {

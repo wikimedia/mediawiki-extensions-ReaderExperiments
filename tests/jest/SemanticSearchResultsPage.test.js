@@ -338,13 +338,13 @@ describe( 'SearchResultsPage', () => {
 			return wrapper;
 		}
 
-		it( 'gives up on the semantic request after 5 seconds, but not the lexical one', async () => {
+		it( 'gives up on the semantic request after 7.5 seconds, but not the lexical one', async () => {
 			semanticFailure = { xhr: { status: 0 }, textStatus: 'timeout' };
 			await submitSearch();
 
 			const semantic = restInstances.find( ( rest ) => rest.searchType === 'semantic' );
 			const lexical = restInstances.find( ( rest ) => rest.searchType === 'lexical' );
-			expect( semantic.options ).toEqual( { ajax: { timeout: 5000 } } );
+			expect( semantic.options ).toEqual( { ajax: { timeout: 7500 } } );
 			expect( lexical.options ).toBeUndefined();
 		} );
 
