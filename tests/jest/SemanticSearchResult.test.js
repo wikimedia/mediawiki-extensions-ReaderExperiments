@@ -81,7 +81,7 @@ test.each( [ false, true ] )( 'uses the shortened passage only for semantic=%s',
 			semantic,
 			result: {
 				...result,
-				semanticExcerpt: '…<span class="searchmatch">Short answer</span>…'
+				truncatedsnippet: '…<span class="searchmatch">Short answer</span>…'
 			}
 		}
 	} );

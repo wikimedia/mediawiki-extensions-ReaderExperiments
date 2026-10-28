@@ -48,6 +48,10 @@
 			"description": "Local development only: bypass the Google-referrer gate and the CTA suppression flag for the preferred-sources-ab experiment.",
 			"value": false
 		},
+		"ReaderExperimentsSemanticSearchEnabled": {
+			"description": "Whether or not semantic search is enabled",
+			"value": false
+		},
 		"ReaderExperimentsSemanticSearchAllowOptIn": {
 			"description": "Whether or not to provide the option for users to opt in to Special:SemanticSearch",
 			"value": false
@@ -106,6 +110,12 @@
 				"TestKitchen.ExperimentManager"
 			]
 		},
+		"SemanticSearchCirrusSearchHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\CirrusSearchHooks",
+			"optional_services": [
+				"MainConfig"
+			]
+		},
 		"StickyHeadersHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\StickyHeaders\\Hooks",
 			"optional_services": [
@@ -135,7 +145,13 @@
 			"MinervaTocHooks",
 			"SemanticSearchHooks"
 		],
+		"CirrusSearchProfileService": [
+			"SemanticSearchCirrusSearchHooks"
+		],
 		"GetPreferences": [
+			"SemanticSearchHooks"
+		],
+		"SpecialPage_initList": [
 			"SemanticSearchHooks"
 		],
 		"ShouldUseParsoid": [

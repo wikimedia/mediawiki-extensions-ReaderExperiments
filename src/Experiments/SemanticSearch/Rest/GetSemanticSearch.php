@@ -7,8 +7,8 @@ use MediaWiki\Config\Config;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi;
-use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticExcerpt;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
+use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Snippet;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\TextFragment;
 use MediaWiki\Language\Language;
 use MediaWiki\MainConfigNames;
@@ -23,8 +23,7 @@ use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 /**
  * Rest endpoint to provide the necessary data relevant to Special:SemanticSearch.
- * It's essentially just a pass-through to the action API search (wih a load of
- * props for additional data we'll want to enrich the output with), but given that
+ * It wraps action API search with optional data requested through `data`. Given that
  * we'll be doing that both on frontend (snappy interactive experience) and backend
  * (no-JS fallback), this is being bundled in a single place to avoid duplication.
  *
@@ -57,6 +56,10 @@ class GetSemanticSearch extends Handler {
 	}
 
 	public function execute(): Response {
+		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ) {
+			throw new HttpException( 'Semantic search is disabled', 404 );
+		}
+
 		$params = $this->getValidatedParams();
 
 		if ( !$this->isSupportedType( $params['type'], $params['term'], $params['namespace'] ) ) {
@@ -66,30 +69,37 @@ class GetSemanticSearch extends Handler {
 			);
 		}
 
+		$requestParams = [
+			'format' => 'json',
+			'uselang' => $params['uselang'],
+			'action' => 'query',
+			'generator' => 'search',
+			'gsrwhat' => 'text',
+			'gsrsearch' => $params['term'],
+			'gsrnamespace' => implode( '|', $params['namespace'] ),
+			'gsrlimit' => $params['limit'],
+			'gsroffset' => $params['continue'] ?: 0,
+			'gsrsort' => $params['sort'],
+			'gsrinfo' => implode( '|', array_intersect( [ 'totalhits', 'suggestion' ], $params['data'] ) ),
+			'gsrprop' => 'snippet|redirecttitle|sectiontitle',
+			// URLs are needed for result links; other page metadata is opt-in.
+			'prop' => 'info',
+			'inprop' => 'url',
+		];
+		if ( in_array( 'thumbnail', $params['data'], true ) ) {
+			$requestParams['prop'] .= '|pageimages';
+			$requestParams['piprop'] = 'thumbnail';
+			$requestParams['pithumbsize'] = 48;
+			$requestParams['pilimit'] = $params['limit'];
+			$requestParams['pilicense'] = 'any';
+			$requestParams['pilangcode'] = $params['uselang'];
+		}
+		if ( $params['type'] === self::TYPE_SEMANTIC ) {
+			$requestParams['cirrusSemanticSearch'] = 'hl';
+			$requestParams['cirrusQueryDispatchProfile'] = 'semantic_only';
+		}
 		$request = new FauxRequest();
-		$request->setParams(
-			[
-				'format' => 'json',
-				'uselang' => $params['uselang'],
-				'action' => 'query',
-				'generator' => 'search',
-				'gsrwhat' => 'text',
-				'gsrsearch' => $params['term'],
-				'gsrnamespace' => implode( '|', $params['namespace'] ),
-				'gsrlimit' => $params['limit'],
-				'gsroffset' => $params['continue'] ?: 0,
-				'gsrsort' => $params['sort'],
-				'gsrinfo' => 'totalhits|suggestion',
-				'gsrprop' => 'size|wordcount|timestamp|snippet|redirecttitle|sectiontitle',
-				'prop' => 'info|categoryinfo|pageimages',
-				'inprop' => 'url',
-				'piprop' => 'thumbnail',
-				'pithumbsize' => '48',
-				'pilimit' => $params['limit'],
-				'pilicense' => 'any',
-				'pilangcode' => $params['uselang'],
-			] + ( $params['type'] === self::TYPE_SEMANTIC ? [ 'cirrusSemanticSearch' => 'hl' ] : [] )
-		);
+		$request->setParams( $requestParams );
 		// Grab external results if configured as such; otherwise from local wiki
 		$request->setRequestURL( '?' . http_build_query( $request->getQueryValues() ) );
 
@@ -152,11 +162,15 @@ class GetSemanticSearch extends Handler {
 		}
 
 		$results = array_map(
-			fn ( array $result ) => $result + [
-				'targeturl' => $this->getTargetUrl( $params['type'], $result ),
-				'semanticExcerpt' => $params['type'] === self::TYPE_SEMANTIC
-					? SemanticExcerpt::format( $result['snippet'] ?? '' ) : null,
-			],
+			function ( array $result ) use ( $params ) {
+				if ( in_array( 'targeturl', $params[ 'data' ] ) ) {
+					$result['targeturl'] = $this->getTargetUrl( $result );
+				}
+				if ( in_array( 'truncatedsnippet', $params[ 'data' ] ) ) {
+					$result['truncatedsnippet'] = ( new Snippet( $result['snippet'] ?? '' ) )->truncate();
+				}
+				return $result;
+			},
 			$results
 		);
 
@@ -243,11 +257,8 @@ class GetSemanticSearch extends Handler {
 	 *
 	 * Protected to enable testing.
 	 */
-	protected function getTargetUrl( string $type, array $result ): string {
+	protected function getTargetUrl( array $result ): string {
 		$canonicalUrl = $result['canonicalurl'] ?? '';
-		if ( $type !== self::TYPE_SEMANTIC ) {
-			return $canonicalUrl;
-		}
 
 		// Escape the anchor here rather than in TextFragment, since Sanitizer
 		// reads $wgFragmentMode from globals and that would put the fragment
@@ -334,8 +345,13 @@ class GetSemanticSearch extends Handler {
 			'data' => [
 				self::PARAM_SOURCE => 'query',
 				ParamValidator::PARAM_TYPE => [
+					'thumbnail',
+					'suggestion',
+					'totalhits',
 					'referencecount',
 					'contributorcount',
+					'targeturl',
+					'truncatedsnippet',
 				],
 				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_DEFAULT => [],
