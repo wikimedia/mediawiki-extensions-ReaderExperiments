@@ -52,7 +52,6 @@
 			class="ext-readerExperiments-semanticsearch-results ext-readerExperiments-semanticsearch-results--semantic"
 			:aria-label="$i18n( 'readerexperiments-semanticsearch-semantic-results-label' ).text()"
 		>
-			<h1>Semantic</h1>
 			<search-result
 				v-for="( result, index ) in Object.values( responseSemanticRef.results ).sort( ( a, b ) => a.index - b.index )"
 				:key="`result=${index}`"
