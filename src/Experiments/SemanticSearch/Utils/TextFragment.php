@@ -12,20 +12,16 @@ namespace MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils
  *
  * The catch is that a snippet is built from the indexed text, while the
  * directive has to match the rendered article. The two differ: the article
- * interleaves reference superscripts, pronunciation guides and other markup that
+ * interleaves reference superscripts, pronunciation guides, and other markup that
  * the index strips out. Anything matched straight across the middle of a passage
  * is therefore liable to fail.
  *
- * So a passage is linked as a short 'start,end' range rather than as one exact
- * match. Only the few words at either end have to match; whatever the article
+ * So a passage is encoded as a 'start,end' range rather than as one exact
+ * match. Only the few tokens at either end have to match; whatever the article
  * renders in between is free to differ, and a range may also span block
  * boundaries.
- *
- * A trailing '-suffix' is deliberately not emitted. The spec requires it to sit
- * immediately after the match, and a reference superscript at the end of a
- * sentence - a very common place for one - breaks that adjacency. Trimming
- * punctuation off the front of such a suffix, to avoid a bare '.', only moves it
- * further from the match and breaks it outright.
+ * If a passage is too short, context terms are used to disambiguate the match.
+ * This is encoded as prefix-,passage,-suffix.
  *
  * Note that this is why the thresholds here differ from
  * resources/experiments/shareHighlight/utils/textFragment.js, which this is
@@ -40,12 +36,12 @@ namespace MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils
  * Known limitations, which land the reader at the section anchor where there is
  * one and at the top of the article otherwise, since browsers ignore a directive
  * they cannot resolve:
- * - Markup falling inside one of the two short anchors still breaks the match.
+ * - Markup inside start, end, prefix, passage, or suffix still breaks the match.
  * - A passage in a collapsed Minerva section with no sectiontitle to anchor to
  *   is still unmatchable; in practice such results are in the lead section,
  *   which Minerva never collapses.
- * - Word splitting is whitespace-based, so languages that do not space their
- *   words (Thai, Japanese, Chinese) always take the exact-match branch below.
+ * - Token splitting is whitespace-based, so languages that do not space their
+ *   tokens (Thai, Japanese, Chinese) always take the exact-match branch below.
  *   PHP offers us no equivalent of JS's Intl.Segmenter.
  */
 class TextFragment {
@@ -55,21 +51,19 @@ class TextFragment {
 	// https://wikitech.wikimedia.org/wiki/Provenance#Description_of_wprov_parameter
 	public const WPROV_VALUE = 'sscw1';
 
-	// A passage is ranged over as soon as it has the words to spare for two
+	// A passage is ranged over as soon as it has the tokens to spare for two
 	// disjoint anchors. Anchor sizes are kept deliberately small; see docblock.
-	private const RANGE_MIN_WORDS = 5;
-	private const START_WORDS = 3;
-	private const END_WORDS = 2;
+	// Note that the unit here is a token, not a word, since we also take into
+	// account punctuation signs.
+	private const RANGE_MIN_TOKENS = 5;
+	private const START_TOKENS = 3;
+	private const END_TOKENS = 2;
 
-	// Only used on the short path (passages under RANGE_MIN_WORDS words), where
-	// there aren't enough words in the highlight itself for a 'start,end' range.
-	// These are the N words immediately before the highlight - from the same
-	// snippet segment, see extractHighlight() - included as a 'prefix-,' before
-	// the match. Without them, a short highlight could land on the first
-	// occurrence of that exact phrase anywhere in the article, rather than the
-	// one the search actually matched. A range match doesn't need this:
-	// start+end anchors are already distinctive enough on their own.
-	private const CONTEXT_WORDS = 3;
+	// Tokens immediately before and after the highlighted passage,
+	// encoded as prefix- and -suffix respectively.
+	// Used to disambiguate passages below RANGE_MIN_TOKENS,
+	// where there aren't enough tokens for a 'start,end' range.
+	private const CONTEXT_TOKENS = 3;
 
 	// Snippets for `insource:`-style queries quote raw wikitext, which never appears
 	// in the rendered article, so there would be nothing for the directive to match.
@@ -150,7 +144,7 @@ class TextFragment {
 	 * Build the directive for a snippet, or null if the snippet yields nothing
 	 * usable to link to.
 	 *
-	 * Format: :~:text=[prefix-,]start[,end]
+	 * Format: :~:text=[prefix-,]start[,end][,-suffix]
 	 */
 	private static function createDirective( string $snippet ): ?string {
 		if ( preg_match( self::WIKITEXT_PATTERN, $snippet ) ) {
@@ -161,33 +155,38 @@ class TextFragment {
 		if ( $parts === null ) {
 			return null;
 		}
-		[ $prefix, $highlight ] = $parts;
 
-		$words = self::splitWords( $highlight );
+		[ $prefix, $highlight, $suffix ] = $parts;
+		$tokens = self::tokenize( $highlight );
 
-		if ( count( $words ) >= self::RANGE_MIN_WORDS ) {
-			$start = implode( ' ', array_slice( $words, 0, self::START_WORDS ) );
-			$end = implode( ' ', array_slice( $words, -self::END_WORDS ) );
+		// Large-enough highlight: start,end
+		if ( count( $tokens ) >= self::RANGE_MIN_TOKENS ) {
+			$start = implode( ' ', array_slice( $tokens, 0, self::START_TOKENS ) );
+			$end = implode( ' ', array_slice( $tokens, -self::END_TOKENS ) );
 
 			return ':~:text=' . self::encode( $start ) . ',' . self::encode( $end );
 		}
 
+		// Small highlight: prefix-,highlight,-suffix
 		$directive = ':~:text=';
 		if ( $prefix !== '' ) {
 			$directive .= self::encode( $prefix ) . '-,';
 		}
+		$directive .= self::encode( $highlight );
+		if ( $suffix !== '' ) {
+			$directive .= ',-' . self::encode( $suffix );
+		}
 
-		return $directive . self::encode( $highlight );
+		return $directive;
 	}
 
 	/**
-	 * Pull the highlighted passage out of a snippet, along with the few words that
-	 * precede it.
+	 * Pull the highlighted passage out of a snippet, along with prefix and suffix tokens.
 	 *
 	 * Semantic results wrap one contiguous passage in a single searchmatch span;
 	 * where there are several, the longest is the most distinctive to link to.
 	 *
-	 * @return array|null [ prefix, highlight ], or null if there is no highlight
+	 * @return array|null [ prefix, highlight, suffix ] or null if there is no highlight
 	 */
 	private static function extractHighlight( string $snippet ): ?array {
 		$matched = preg_match_all(
@@ -202,10 +201,14 @@ class TextFragment {
 
 		$best = null;
 		foreach ( $matches as $match ) {
-			$offset = $match[0][1];
+			$start = (int)$match[0][1];
+			// $start is a byte offset from PREG_OFFSET_CAPTURE.
+			// Later we extract the suffix via substr(), also byte-based.
+			// Hence, use strlen instead of mb_strlen.
+			$end = $start + strlen( $match[0][0] );
 			$inner = $match[1][0];
 			if ( $best === null || mb_strlen( $inner ) > mb_strlen( $best['inner'] ) ) {
-				$best = [ 'inner' => $inner, 'offset' => $offset ];
+				$best = [ 'inner' => $inner, 'start' => $start, 'end' => $end ];
 			}
 		}
 		if ( $best === null ) {
@@ -220,28 +223,35 @@ class TextFragment {
 		// The api joins elided snippet segments with newlines. Text on the far side
 		// of one of those does not precede the highlight in the article, so it
 		// cannot serve as context: keep to the segment the highlight sits in.
-		$before = substr( $snippet, 0, $best['offset'] );
+		$before = substr( $snippet, 0, $best['start'] );
 		$boundary = strrpos( $before, "\n" );
 		if ( $boundary !== false ) {
 			$before = substr( $before, $boundary + 1 );
 		}
+		$after = substr( $snippet, $best['end'] );
+		$boundary = strpos( $after, "\n" );
+		if ( $boundary !== false ) {
+			$after = substr( $after, 0, $boundary );
+		}
 
-		$context = self::splitWords( self::normalizeText( $before ) );
+		$prefix = self::tokenize( self::normalizeText( $before ) );
+		$suffix = self::tokenize( self::normalizeText( $after ) );
 
 		return [
-			implode( ' ', array_slice( $context, -self::CONTEXT_WORDS ) ),
+			implode( ' ', array_slice( $prefix, -self::CONTEXT_TOKENS ) ),
 			$highlight,
+			implode( ' ', array_slice( $suffix, 0, self::CONTEXT_TOKENS ) ),
 		];
 	}
 
 	/**
 	 * @return string[]
 	 */
-	private static function splitWords( string $text ): array {
+	private static function tokenize( string $text ): array {
 		if ( $text === '' ) {
 			return [];
 		}
-		return preg_split( '/\s+/u', $text, -1, PREG_SPLIT_NO_EMPTY ) ?: [];
+		return preg_split( '/\s+/u', $text, flags: PREG_SPLIT_NO_EMPTY ) ?: [];
 	}
 
 	/**

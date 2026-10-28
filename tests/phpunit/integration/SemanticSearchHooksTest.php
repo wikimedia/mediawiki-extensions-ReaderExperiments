@@ -46,8 +46,14 @@ class SemanticSearchHooksTest extends MediaWikiIntegrationTestCase {
 		return [ $redirected, $url, $user ];
 	}
 
-	private function invoke( User $user, array $query, ?string $page ): array {
+	private function invoke( User $user, array $query, ?string $page, bool $enabled = true ): array {
 		$config = $this->createMock( Config::class );
+		$config->method( 'get' )->willReturnCallback( static function ( $name ) use ( $enabled ) {
+			if ( $name === 'ReaderExperimentsSemanticSearchEnabled' ) {
+				return $enabled;
+			}
+			return null;
+		} );
 		$inspector = new SemanticSearchRequestInspector(
 			MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'CirrusSearch' )
 		);
@@ -261,5 +267,16 @@ class SemanticSearchHooksTest extends MediaWikiIntegrationTestCase {
 		);
 		$this->assertTrue( $redirected );
 		$this->assertStringContainsString( 'SemanticSearch', $url );
+	}
+
+	public function testFeatureFlagDisabledBailsEarly(): void {
+		$user = $this->anonUser();
+		[ $redirected ] = $this->invoke(
+			$user,
+			[ 'search' => self::QUALIFYING_QUERY, 'mpo' => Hooks::EXPERIMENT_NAME . ':' . Hooks::GROUP_TREATMENT ],
+			'Donald_Duck',
+			false
+		);
+		$this->assertFalse( $redirected );
 	}
 }

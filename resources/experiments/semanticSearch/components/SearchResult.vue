@@ -1,6 +1,6 @@
 <template>
 	<a
-		:href="result.targeturl"
+		:href="result.targeturl || result.canonicalurl"
 		:title="result.title"
 		:data-namespace="result.ns"
 		class="cdx-card cdx-card--is-link ext-readerExperiments-semanticsearch-result"
@@ -11,7 +11,7 @@
 				class="ext-readerExperiments-semanticsearch-result__quote-mark"
 				aria-hidden="true"
 			></span>
-			<span v-html="result.semanticExcerpt || result.snippet"></span>
+			<span v-html="result.truncatedsnippet || result.snippet"></span>
 		</div>
 		<span class="cdx-thumbnail cdx-card__thumbnail">
 			<span

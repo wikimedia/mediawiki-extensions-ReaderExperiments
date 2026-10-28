@@ -268,6 +268,7 @@ module.exports = exports = defineComponent( {
 						limit: props.request.limit,
 						continue: 0,
 						sort: props.request.sort,
+						data: [ 'thumbnail', 'suggestion' ],
 						uselang: useLang
 					}
 					);
@@ -301,7 +302,7 @@ module.exports = exports = defineComponent( {
 						limit: 3,
 						continue: 0,
 						sort: props.request.sort,
-						data: [ 'referencecount', 'contributorcount' ],
+						data: [ 'thumbnail', 'referencecount', 'contributorcount', 'targeturl', 'truncatedsnippet' ],
 						uselang: useLang
 					}
 					);
@@ -344,6 +345,7 @@ module.exports = exports = defineComponent( {
 					termRef.value,
 					{
 						type: 'lexical',
+						data: [ 'thumbnail', 'suggestion' ],
 						namespace: props.request.namespaces,
 						limit: props.request.limit,
 						continue: currentContinueRef.value,

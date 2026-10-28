@@ -2,16 +2,61 @@
 
 namespace MediaWiki\Extension\ReaderExperiments\Tests\Unit\Experiments\SemanticSearch\Rest;
 
+use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
+use MediaWiki\Rest\HttpException;
 use MediaWikiUnitTestCase;
 use ReflectionMethod;
 
 /**
+ * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::execute
  * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::isSupportedType
  * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::getTargetUrl
  */
 class GetSemanticSearchTest extends MediaWikiUnitTestCase {
+
+	/** @dataProvider provideRequestedData */
+	public function testOnlyRequestsDisplayedData( array $data, string $info, string $prop ): void {
+		$actionApi = $this->createMock(
+			\MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ActionApi::class
+		);
+		$restApi = $this->createMock(
+			\MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\RestApi::class
+		);
+		$restApi->expects( $this->never() )->method( 'execute' );
+		$engine = $this->getMockBuilder( GetSemanticSearch::class )
+			->setConstructorArgs( [
+				$actionApi, $restApi, new HashConfig( [ 'ReaderExperimentsSemanticSearchEnabled' => true ] ),
+				$this->createMock( \MediaWiki\Language\Language::class ), $this->newInspector( null ),
+			] )
+			->onlyMethods( [ 'getValidatedParams', 'getResponseFactory' ] )->getMock();
+		$engine->method( 'getValidatedParams' )->willReturn( [
+			'type' => 'lexical', 'term' => 'cats', 'namespace' => [ NS_MAIN ],
+			'limit' => 20, 'continue' => 0, 'sort' => 'relevance', 'uselang' => 'en', 'data' => $data,
+		] );
+		$engine->method( 'getResponseFactory' )->willReturn( new \MediaWiki\Rest\ResponseFactory( [] ) );
+		$actionApi->expects( $this->once() )->method( 'execute' )
+			->willReturnCallback( function ( $request ) use ( $info, $prop ) {
+				$params = $request->getQueryValues();
+				$this->assertSame( 'cats', $params['gsrsearch'] );
+				$this->assertSame( $info, $params['gsrinfo'] );
+				$this->assertSame( 'snippet|redirecttitle|sectiontitle', $params['gsrprop'] );
+				$this->assertSame( $prop, $params['prop'] );
+				$this->assertSame( str_contains( $prop, 'pageimages' ), isset( $params['piprop'] ) );
+				return [ 'query' => [ 'pages' => [ [
+					'index' => 1, 'title' => 'Cat', 'canonicalurl' => 'https://example.org/wiki/Cat',
+				] ] ] ];
+			} );
+		$engine->execute();
+	}
+
+	public static function provideRequestedData(): iterable {
+		yield 'basic search' => [ [], '', 'info' ];
+		yield 'lexical UI' => [ [ 'thumbnail', 'suggestion' ], 'suggestion', 'info|pageimages' ];
+		yield 'thumbnail only' => [ [ 'thumbnail' ], '', 'info|pageimages' ];
+		yield 'explicit total hits' => [ [ 'totalhits' ], 'totalhits', 'info' ];
+	}
 
 	private const STUB_KEYWORDS = [
 		'intitle', 'incategory', 'insource', 'hastemplate',
@@ -208,35 +253,40 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 	 * through Sanitizer, which reads $wgFragmentMode from globals and so is out of
 	 * reach here. TextFragmentTest covers the fragment building itself.
 	 */
-	private function invokeGetTargetUrl( string $type, array $result ): string {
+	private function invokeGetTargetUrl( array $result ): string {
 		$engine = new class() extends GetSemanticSearch {
 			public function __construct() {
 			}
 		};
 
 		$method = new ReflectionMethod( GetSemanticSearch::class, 'getTargetUrl' );
-		return $method->invoke( $engine, $type, $result );
+		return $method->invoke( $engine, $result );
 	}
 
-	public function testGetTargetUrlAddsFragmentForSemanticResults(): void {
-		$url = $this->invokeGetTargetUrl( GetSemanticSearch::TYPE_SEMANTIC, [
+	public function testGetTargetUrlAddsFragment(): void {
+		$url = $this->invokeGetTargetUrl( [
 			'canonicalurl' => 'https://en.wikipedia.org/wiki/Purr',
 			'snippet' => 'Cats also purr <span class="searchmatch">to manage pain</span> and soothe themselves',
 		] );
 
 		$this->assertSame(
 			'https://en.wikipedia.org/wiki/Purr?wprov=sscw1'
-				. '#:~:text=Cats%20also%20purr-,to%20manage%20pain',
+				. '#:~:text=Cats%20also%20purr-,to%20manage%20pain,-and%20soothe%20themselves',
 			$url
 		);
 	}
 
-	public function testGetTargetUrlLeavesLexicalResultsAlone(): void {
-		$url = $this->invokeGetTargetUrl( 'lexical', [
-			'canonicalurl' => 'https://en.wikipedia.org/wiki/Purr',
-			'snippet' => 'Cats also purr <span class="searchmatch">to manage pain</span> and soothe themselves',
-		] );
+	public function testExecuteThrowsWhenDisabled(): void {
+		$handler = new class( new HashConfig( [
+			'ReaderExperimentsSemanticSearchEnabled' => false,
+		] ) ) extends GetSemanticSearch {
+			public function __construct( \MediaWiki\Config\Config $config ) {
+				$this->config = $config;
+			}
+		};
 
-		$this->assertSame( 'https://en.wikipedia.org/wiki/Purr', $url );
+		$this->expectException( HttpException::class );
+		$this->expectExceptionCode( 404 );
+		$handler->execute();
 	}
 }

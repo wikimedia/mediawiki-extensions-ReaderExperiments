@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\ReaderExperiments\Tests\Unit\Experiments\SemanticSearch\Api;
+namespace MediaWiki\Extension\ReaderExperiments\Tests\Unit\Experiments\SemanticSearch\Utils\Api;
 
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\Exception;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\Api\ExternalApi;
