@@ -152,6 +152,7 @@
 			"MinervaTocHooks",
 			"MobilePagePreviewsHooks",
 			"PreferredSourcesHooks",
+			"SemanticSearchHooks",
 			"ShareHighlightHooks",
 			"StickyHeadersHooks",
 			"MinervaCompactLeadHooks"
@@ -615,6 +616,25 @@
 				"@wikimedia/codex",
 				"vue",
 				"ext.readerExperiments"
+			]
+		},
+		"ext.readerExperiments/semanticSearch.instrumentation": {
+			"localBasePath": "resources/experiments/semanticSearch/instrumentation",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/semanticSearch/instrumentation",
+			"packageFiles": [
+				"init.js",
+				"digest.js",
+				"levenshtein.js",
+				"semanticSearchRequestInspector.js",
+				{
+					"name": "config.json",
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\ResourceLoader::getInstrumentationConfig"
+				}
+			],
+			"dependencies": [
+				"mediawiki.storage",
+				"ext.testKitchen",
+				"ext.wikimediaEvents.testKitchen"
 			]
 		},
 		"ext.readerExperiments/semanticSearch.styles": {

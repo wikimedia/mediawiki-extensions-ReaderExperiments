@@ -7,6 +7,7 @@ use MediaWiki\Extension\ReaderExperiments\Common\FeatureFlagExperiment;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Hook\BeforeInitializeHook;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\Hook\SpecialPage_initListHook;
@@ -14,8 +15,7 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
 
-class Hooks implements BeforeInitializeHook, GetPreferencesHook, SpecialPage_initListHook {
-	// TODO set up experiment on GrowthBook, update name as needed (T437394)
+class Hooks implements BeforeInitializeHook, BeforePageDisplayHook, GetPreferencesHook, SpecialPage_initListHook {
 	public const EXPERIMENT_NAME = 'semantic-search-for-web';
 	public const GROUP_CONTROL = 'control';
 	public const GROUP_TREATMENT = 'hybrid-srp';
@@ -204,6 +204,28 @@ class Hooks implements BeforeInitializeHook, GetPreferencesHook, SpecialPage_ini
 		$params = array_filter( $values, static fn ( $v ) => is_scalar( $v ) );
 
 		return SpecialPage::getTitleFor( $target )->getFullURL( $params );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onBeforePageDisplay( $out, $skin ): void {
+		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ) {
+			return;
+		}
+
+		$context = $out->getContext();
+		$request = $context->getRequest();
+
+		$experiment = new FeatureFlagExperiment(
+			$this->experimentManager,
+			$request,
+			self::EXPERIMENT_NAME
+		);
+
+		if ( $experiment->getAssignedGroup() !== null ) {
+			$out->addModules( 'ext.readerExperiments/semanticSearch.instrumentation' );
+		}
 	}
 
 	/**

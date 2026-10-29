@@ -5,6 +5,7 @@
 		:data-namespace="result.ns"
 		class="cdx-card cdx-card--is-link ext-readerExperiments-semanticsearch-result"
 		:class="{ 'ext-readerExperiments-semanticsearch-result--semantic': semantic }"
+		@click="$emit( 'click' )"
 	>
 		<div v-if="semantic" class="ext-readerExperiments-semanticsearch-result__quote">
 			<span
@@ -72,6 +73,9 @@ module.exports = exports = defineComponent( {
 			default: false
 		}
 	},
+	emits: [
+		'click'
+	],
 	setup( props ) {
 		const $i18n = inject( 'i18n' );
 
