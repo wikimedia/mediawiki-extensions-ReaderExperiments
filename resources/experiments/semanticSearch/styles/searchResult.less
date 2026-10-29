@@ -82,6 +82,8 @@
 	}
 
 	&-result--semantic.cdx-card {
+		border-color: color-mix( in srgb, @border-color-base 75%, @color-placeholder );
+
 		// stylelint-disable-next-line selector-class-pattern
 		.searchmatch {
 			background-color: @background-color-warning-subtle;
@@ -101,7 +103,13 @@
 	}
 
 	&-result__quote-mark {
-		.cdx-mixin-css-icon( @cdx-icon-quotes, @param-fill-color: @color-subtle );
+		.cdx-mixin-css-icon(
+			@cdx-icon-quotes,
+			@param-fill-color: @color-placeholder,
+			@param-size-icon: @size-icon-small,
+			@param-vertical-align: baseline
+		);
+		height: @size-icon-medium;
 		margin-inline-end: @spacing-25;
 	}
 

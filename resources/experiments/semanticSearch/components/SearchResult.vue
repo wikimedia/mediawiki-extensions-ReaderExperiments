@@ -34,11 +34,12 @@
 				</template>
 			</span>
 
-			<div v-if="semantic && result.sectiontitle" class="ext-readerExperiments-semanticsearch-result__section">
+			<div v-if="semantic" class="ext-readerExperiments-semanticsearch-result__section">
 				<span
 					class="ext-readerExperiments-semanticsearch-result__section-arrow"
 					aria-hidden="true"
-				>↪</span> {{ result.sectiontitle }}
+				>↪</span>
+				{{ result.sectiontitle || $i18n( 'readerexperiments-semanticsearch-introduction' ).text() }}
 			</div>
 			<div
 				v-if="!semantic && result.snippet"

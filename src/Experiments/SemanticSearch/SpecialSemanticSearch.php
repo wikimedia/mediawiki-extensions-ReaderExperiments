@@ -186,6 +186,7 @@ class SpecialSemanticSearch extends SpecialPage {
 				[ 'lexical', 'semantic' ]
 			) ),
 			'output' => [
+				'introductionText' => $this->msg( 'readerexperiments-semanticsearch-introduction' )->text(),
 				'semanticResultsLabel' => $this->msg(
 					'readerexperiments-semanticsearch-semantic-results-label'
 				)->text(),
