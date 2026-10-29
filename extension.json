@@ -347,6 +347,12 @@
 				"smartcrop.js"
 			]
 		},
+		"ext.readerExperiments/lib/fastest-levenshtein": {
+			"localBasePath": "resources/lib/fastest-levenshtein",
+			"packageFiles": [
+				"mod.js"
+			]
+		},
 		"ext.readerExperiments/stickyHeaders.parsoid": {
 			"localBasePath": "resources/experiments/stickyHeaders/parsoid",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/stickyHeaders/parsoid",
@@ -634,7 +640,8 @@
 			"dependencies": [
 				"mediawiki.storage",
 				"ext.testKitchen",
-				"ext.wikimediaEvents.testKitchen"
+				"ext.wikimediaEvents.testKitchen",
+				"ext.readerExperiments/lib/fastest-levenshtein"
 			]
 		},
 		"ext.readerExperiments/semanticSearch.styles": {

@@ -2,7 +2,7 @@
 	"$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
 	"bomFormat": "CycloneDX",
 	"specVersion": "1.6",
-	"serialNumber": "urn:uuid:55275e76-2dad-4588-a6bf-814cf562f262",
+	"serialNumber": "urn:uuid:2b44f92d-5047-4014-a345-43f9cd7897de",
 	"version": 1,
 	"components": [
 		{
@@ -30,6 +30,29 @@
 		},
 		{
 			"type": "library",
+			"name": "html-to-image",
+			"version": "1.11.13",
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			],
+			"authors": [
+				{
+					"name": "bubkoo"
+				}
+			],
+			"externalReferences": [
+				{
+					"url": "https://github.com/bubkoo/html-to-image",
+					"type": "website"
+				}
+			]
+		},
+		{
+			"type": "library",
 			"name": "smartcrop",
 			"version": "2.0.5",
 			"licenses": [
@@ -42,6 +65,24 @@
 			"externalReferences": [
 				{
 					"url": "https://github.com/jwagner/smartcrop.js",
+					"type": "website"
+				}
+			]
+		},
+		{
+			"type": "library",
+			"name": "fastest-levenshtein",
+			"version": "1.0.16",
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			],
+			"externalReferences": [
+				{
+					"url": "https://github.com/ka-weihe/fastest-levenshtein",
 					"type": "website"
 				}
 			]
