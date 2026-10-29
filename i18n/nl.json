@@ -31,6 +31,6 @@
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Afbeeldingen uit andere projecten worden geladen",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Op pagina bekijken",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Van $1",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Van $1 en nog {{PLURAL:$2|een|$2}} taaleditie{{PLURAL:$2||s}} van Wikipedia",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Van $1 en nog {{PLURAL:$2|één andere taaleditie|$2 andere taaledities}} van Wikipedia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Van $1"
 }

@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Janbery"
+		]
+	},
+	"readerexperiments-desc": "Sada prototypů, jejichž cílem je zvýšit počet čtenářů Wikipedie",
+	"readerexperiments-imagebrowsing-carousel-label": "Prohlížení obrázků",
+	"readerexperiments-imagebrowsing-carousel-item-button-label": "Vybrat obrázek „$1“",
+	"readerexperiments-imagebrowsing-detail-caption-expand": "Více",
+	"readerexperiments-imagebrowsing-detail-caption-collapse": "Méně",
+	"readerexperiments-imagebrowsing-detail-crop": "Celá obrazovka",
+	"readerexperiments-imagebrowsing-detail-share": "Sdílet",
+	"readerexperiments-imagebrowsing-detail-share-copy": "Kopírovat",
+	"readerexperiments-imagebrowsing-detail-view-on-commons": "Zobrazit na Commons",
+	"readerexperiments-imagebrowsing-detail-download": "Stáhnout",
+	"readerexperiments-imagebrowsing-detail-download-size-original": "Původní soubor ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-small": "Malý ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-medium": "Střední ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-large": "Velký ($1×$2 px)",
+	"readerexperiments-imagebrowsing-detail-download-size-xl": "Extra velký ($1×$2 px)",
+	"readerexperiments-imagebrowsing-loading": "Načítání",
+	"readerexperiments-imagebrowsing-overlay-back-button-label": "Zpět k článku",
+	"readerexperiments-imagebrowsing-overlay-close-button-label": "Zavřít",
+	"readerexperiments-imagebrowsing-overlay-label": "Podrobnosti o obrázku",
+	"readerexperiments-imagebrowsing-vtoc-heading": "Více z tohoto článku",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-heading": "Média z jiných projektů",
+	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Načítání obrázků z jiných projektů",
+	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Zobrazit v článku",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Z $1 a $2 {{PLURAL:$2|další jazykové verze|dalších jazykových verzí Wikipedie}}",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Z $1"
+}

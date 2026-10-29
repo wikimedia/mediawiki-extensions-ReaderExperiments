@@ -30,6 +30,6 @@
 	"readerexperiments-imagebrowsing-vtoc-other-wikis-loading": "Memuat gambar dari proyek lain",
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "Lihat di artikel",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "Dari $1",
-	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Berasal dari $1 dan $2 bahasa lainnya di Wikipedia",
+	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "Berasal dari $1 dan $2 bahasa {{PLURAL:$2|lainnya}} di Wikipedia",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "Dari $1"
 }
