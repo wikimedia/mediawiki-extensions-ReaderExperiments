@@ -16,13 +16,13 @@
 			.cdx-dialog__header {
 				pointer-events: auto;
 			}
+
+			.cdx-dialog__body {
+				display: none !important;
+			}
 		}
 
-		.cdx-dialog__body {
-			display: none !important;
-		}
-
-		div.cdx-dialog-backdrop {
+		div.cdx-dialog-backdrop:has( > div.cdx-dialog.skin-dialog-search ) {
 			background: transparent !important;
 			pointer-events: none;
 		}

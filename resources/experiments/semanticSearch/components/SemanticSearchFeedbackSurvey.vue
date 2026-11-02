@@ -12,7 +12,7 @@
 			<cdx-toggle-button
 				v-for="button in buttons"
 				:key="button.value"
-				:model-value="selection === button.value"
+				:model-value="reaction === button.value"
 				:aria-label="button.ariaLabel"
 				@update:model-value="onReaction( button.value )"
 			>
@@ -23,6 +23,27 @@
 			:href="survey.privacyPolicyUrl"
 			class="ext-readerExperiments-semanticsearch-feedback__privacy"
 		>{{ privacyPolicyLabel }}</a>
+
+		<cdx-dialog
+			v-model:open="showDialog"
+			class="ext-readerExperiments-semanticsearch-feedback__dialog"
+			:use-close-button="true"
+			:title="$i18n( 'readerexperiments-semanticsearch-survey-question' ).text()"
+			:primary-action="dialogSubmitButton"
+			@primary="submit"
+			@update:open="submit"
+		>
+			<cdx-field>
+				<template #description>
+					{{ $i18n( 'readerexperiments-semanticsearch-survey-freetext-label' ).text() }}
+				</template>
+				<cdx-text-area
+					v-model="freeTextValue"
+					:maxlength="freeTextMaxLength"
+					:placeholder="$i18n( 'readerexperiments-semanticsearch-survey-freetext-placeholder' ).text()"
+				></cdx-text-area>
+			</cdx-field>
+		</cdx-dialog>
 
 		<cdx-toast
 			v-if="showToast"
@@ -39,8 +60,14 @@
 const { defineComponent, ref } = require( 'vue' );
 const {
 	CdxToggleButton,
-	CdxToast
+	CdxToast,
+	CdxDialog,
+	CdxField,
+	CdxTextArea
 } = require( '@wikimedia/codex' );
+
+// Maximum number of characters for the free text response.
+const FREE_TEXT_MAX_LENGTH = 500;
 
 /**
  * Qualitative feedback survey for the semantic search results (T441798).
@@ -54,7 +81,10 @@ module.exports = exports = defineComponent( {
 	name: 'SemanticSearchFeedbackSurvey',
 	components: {
 		CdxToggleButton,
-		CdxToast
+		CdxToast,
+		CdxDialog,
+		CdxField,
+		CdxTextArea
 	},
 	props: {
 		survey: {
@@ -62,14 +92,18 @@ module.exports = exports = defineComponent( {
 			required: true
 		},
 		selectedAnswer: {
-			type: String,
-			default: null
+			type: Object,
+			default: null,
+			validator: ( value ) => value === null ||
+				( typeof value.reaction === 'string' && 'freeText' in value )
 		}
 	},
 	emits: [ 'survey-completed' ],
 	setup( props, { emit } ) {
-		const selection = ref( props.selectedAnswer );
+		const reaction = ref( props.selectedAnswer ? props.selectedAnswer.reaction : null );
 		const showToast = ref( false );
+		const showDialog = ref( false );
+		const freeTextValue = ref( '' );
 
 		const submitted = ref( props.selectedAnswer !== null );
 
@@ -86,6 +120,12 @@ module.exports = exports = defineComponent( {
 			}
 		];
 
+		const dialogSubmitButton = {
+			label: mw.msg( 'readerexperiments-semanticsearch-survey-submit' ),
+			ariaLabel: mw.msg( 'readerexperiments-semanticsearch-survey-submit' ),
+			actionType: 'progressive'
+		};
+
 		const privacyPolicyLabel = mw.msg( props.survey.privacyPolicy );
 
 		/**
@@ -97,8 +137,15 @@ module.exports = exports = defineComponent( {
 				return;
 			}
 			submitted.value = true;
+			showDialog.value = false;
 			showToast.value = true;
-			emit( 'survey-completed', selection.value );
+			emit(
+				'survey-completed',
+				{
+					reaction: reaction.value,
+					freeText: freeTextValue.value
+				}
+			);
 		}
 
 		/**
@@ -110,16 +157,21 @@ module.exports = exports = defineComponent( {
 			if ( submitted.value ) {
 				return;
 			}
-			selection.value = value;
-			submit();
+			reaction.value = value;
+			showDialog.value = true;
 		}
 
 		return {
-			selection,
+			reaction,
 			submitted,
 			showToast,
+			showDialog,
+			freeTextValue,
+			freeTextMaxLength: FREE_TEXT_MAX_LENGTH,
+			submit,
 			buttons,
 			privacyPolicyLabel,
+			dialogSubmitButton,
 			onReaction
 		};
 	}
