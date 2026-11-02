@@ -53,7 +53,7 @@
 			:aria-label="$i18n( 'readerexperiments-semanticsearch-semantic-results-label' ).text()"
 		>
 			<search-result
-				v-for="( result, index ) in Object.values( responseSemanticRef.results ).sort( ( a, b ) => a.index - b.index )"
+				v-for="( result, index ) in responseSemanticRef.results.slice().sort( ( a, b ) => a.index - b.index )"
 				:key="`result=${index}`"
 				:result="result"
 				semantic
@@ -81,7 +81,7 @@
 		:aria-label="$i18n( 'readerexperiments-semanticsearch-lexical-results-label' ).text()"
 	>
 		<search-result
-			v-for="( result, index ) in Object.values( responseLexicalRef.results ).sort( ( a, b ) => a.index - b.index )"
+			v-for="( result, index ) in responseLexicalRef.results.slice().sort( ( a, b ) => a.index - b.index )"
 			:key="`result=${index}`"
 			:result="result"
 		></search-result>
@@ -267,7 +267,7 @@ module.exports = exports = defineComponent( {
 					results: [],
 					info: [],
 					continue: null,
-					warnings: []
+					warnings: null
 				};
 			}
 
@@ -319,7 +319,7 @@ module.exports = exports = defineComponent( {
 		// History navigation fetches results without creating another history entry.
 		function onPopState() {
 			const params = new URLSearchParams( window.location.search );
-			return updateResults( params.get( 'search' ) || '', Number( params.get( 'continue' ) ) || 0 );
+			updateResults( params.get( 'search' ) || '', Number( params.get( 'continue' ) ) || 0 );
 		}
 
 		onMounted( () => window.addEventListener( 'popstate', onPopState ) );
@@ -335,8 +335,8 @@ module.exports = exports = defineComponent( {
 			termRef.value = term;
 			inputValueRef.value = term;
 			surveyAnswerRef.value = null;
-			responseLexicalRef.value = [];
-			responseSemanticRef.value = [];
+			responseLexicalRef.value = {};
+			responseSemanticRef.value = {};
 			currentContinueRef.value = offset;
 			nextContinueRef.value = null;
 			loadingLexicalRef.value = true;
@@ -344,15 +344,18 @@ module.exports = exports = defineComponent( {
 
 			async function searchLexical() {
 				try {
-					const response = await search( restApiLexical, term, {
-						type: 'lexical',
-						namespace: props.request.namespaces,
-						limit: props.request.limit,
-						continue: offset,
-						sort: props.request.sort,
-						data: [ 'thumbnail', 'suggestion' ],
-						uselang: useLang
-					}
+					const response = await search(
+						restApiLexical,
+						term,
+						{
+							type: 'lexical',
+							namespace: props.request.namespaces,
+							limit: props.request.limit,
+							continue: offset,
+							sort: props.request.sort,
+							data: [ 'thumbnail', 'suggestion' ],
+							uselang: useLang
+						}
 					);
 					if ( version !== searchVersion ) {
 						return;
@@ -383,15 +386,18 @@ module.exports = exports = defineComponent( {
 				}
 
 				try {
-					const response = await search( restApiSemantic, term, {
-						type: 'semantic',
-						namespace: props.request.namespaces,
-						limit: 3,
-						continue: 0,
-						sort: props.request.sort,
-						data: [ 'thumbnail', 'referencecount', 'contributorcount', 'targeturl', 'truncatedsnippet' ],
-						uselang: useLang
-					}
+					const response = await search(
+						restApiSemantic,
+						term,
+						{
+							type: 'semantic',
+							namespace: props.request.namespaces,
+							limit: 3,
+							continue: 0,
+							sort: props.request.sort,
+							data: [ 'thumbnail', 'referencecount', 'contributorcount', 'targeturl', 'truncatedsnippet' ],
+							uselang: useLang
+						}
 					);
 					if ( version !== searchVersion ) {
 						return;

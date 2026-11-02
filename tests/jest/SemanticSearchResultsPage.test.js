@@ -232,7 +232,7 @@ describe( 'SearchResultsPage', () => {
 			pending.slice( 0, 2 ).forEach( ( resolve ) => resolve( { results: [ { title: 'Old' } ] } ) );
 			await submitted;
 			expect( wrapper.vm.isLoading ).toBe( true );
-			expect( wrapper.vm.responseLexicalRef ).toEqual( [] );
+			expect( wrapper.vm.responseLexicalRef ).toEqual( {} );
 			pending.slice( 2 ).forEach( ( resolve ) => resolve( { results: [], continue: null } ) );
 			await flushPromises();
 			expect( wrapper.vm.isLoading ).toBe( false );

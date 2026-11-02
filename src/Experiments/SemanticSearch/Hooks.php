@@ -14,11 +14,12 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
 
-class Hooks implements GetPreferencesHook, BeforeInitializeHook, SpecialPage_initListHook {
+class Hooks implements BeforeInitializeHook, GetPreferencesHook, SpecialPage_initListHook {
 	// TODO set up experiment on GrowthBook, update name as needed (T437394)
 	public const EXPERIMENT_NAME = 'semantic-search-for-web';
 	public const GROUP_CONTROL = 'control';
 	public const GROUP_TREATMENT = 'hybrid-srp';
+
 	/**
 	 * Minimum number of words (whitespace-separated) the query term
 	 * must have to qualify for the semantic search redirect.
@@ -53,6 +54,7 @@ class Hooks implements GetPreferencesHook, BeforeInitializeHook, SpecialPage_ini
 		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ) {
 			return;
 		}
+
 		// The user is already on Special:SemanticSearch: don't jump to Special:Search.
 		// The check is first in line, since it allows any user
 		// to explicitly navigate to Special:SemanticSearch.
