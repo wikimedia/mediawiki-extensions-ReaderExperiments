@@ -14,6 +14,13 @@
 	"readerexperiments-minerva-toc-edit-button-label": "لکھو",
 	"readerexperiments-mobilepagepreviews-read-more": "ٻیا پڑھو",
 	"readerexperiments-mobilepagepreviews-close-button-label": "بند کرو",
+	"readerexperiments-semanticsearch-title": "ڳولݨ دے نتیجے",
 	"readerexperiments-semanticsearch-search-button": "ڳولو",
+	"readerexperiments-semanticsearch-feedback-positive": "👍 جیا",
+	"readerexperiments-semanticsearch-feedback-negative": "👎 کو",
+	"readerexperiments-semanticsearch-feedback-thanks": "تہاݙے فیڈبیک دا شکریہ۔",
+	"readerexperiments-semanticsearch-survey-freetext-label": "اختیاری",
+	"readerexperiments-semanticsearch-survey-submit": "جمع کرواؤ",
+	"readerexperiments-semanticsearch-survey-privacy-policy": "رازداری پالیسی",
 	"readerexperiments-sharehighlight-download": "ڈاؤن لوڈ"
 }

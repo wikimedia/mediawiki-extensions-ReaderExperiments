@@ -48,11 +48,10 @@
 			</div>
 		</div>
 		<section
-			v-if="responseSemanticRef.results && responseSemanticRef.results.length && !isLoading"
+			v-if="hasSemanticResults"
 			class="ext-readerExperiments-semanticsearch-results ext-readerExperiments-semanticsearch-results--semantic"
 			:aria-label="$i18n( 'readerexperiments-semanticsearch-semantic-results-label' ).text()"
 		>
-			<h1>Semantic</h1>
 			<search-result
 				v-for="( result, index ) in Object.values( responseSemanticRef.results ).sort( ( a, b ) => a.index - b.index )"
 				:key="`result=${index}`"
@@ -60,10 +59,24 @@
 				semantic
 			></search-result>
 		</section>
+
+		<!-- Only display feedback survey and divider if semantic search results are available" -->
+		<template v-if="hasSemanticResults && showSurvey">
+			<semantic-search-feedback-survey
+				:key="termRef"
+				:survey="request.feedbackSurvey"
+				:selected-answer="surveyAnswer"
+				@survey-completed="onSurveyCompleted"
+			></semantic-search-feedback-survey>
+			<div
+				class="ext-readerExperiments-semanticsearch-divider"
+				role="separator"
+			></div>
+		</template>
 	</template>
 
 	<section
-		v-if="responseLexicalRef.results && responseLexicalRef.results.length && !isLoading"
+		v-if="hasLexicalResults"
 		class="ext-readerExperiments-semanticsearch-results ext-readerExperiments-semanticsearch-results--lexical"
 		:aria-label="$i18n( 'readerexperiments-semanticsearch-lexical-results-label' ).text()"
 	>
@@ -94,8 +107,9 @@
 </template>
 
 <script>
-const { computed, defineComponent, ref } = require( 'vue' );
+const { computed, defineComponent, onMounted, onUnmounted, ref } = require( 'vue' );
 const { CdxButton, CdxSearchInput } = require( '@wikimedia/codex' );
+const SemanticSearchFeedbackSurvey = require( './SemanticSearchFeedbackSurvey.vue' );
 const SearchInfo = require( './SearchInfo.vue' );
 const SearchResult = require( './SearchResult.vue' );
 
@@ -110,6 +124,7 @@ module.exports = exports = defineComponent( {
 	components: {
 		CdxButton,
 		CdxSearchInput,
+		SemanticSearchFeedbackSurvey,
 		SearchInfo,
 		SearchResult
 	},
@@ -148,6 +163,50 @@ module.exports = exports = defineComponent( {
 		// Loading state resolves only once semantic AND lexical search
 		// API calls have completed (T440348).
 		const isLoading = computed( () => loadingLexicalRef.value || loadingSemanticRef.value );
+
+		const hasSemanticResults = computed( () => semanticEnabled.value &&
+			!isLoading.value &&
+			!!( responseSemanticRef.value.results && responseSemanticRef.value.results.length ) );
+
+		const hasLexicalResults = computed( () => !isLoading.value &&
+			!!( responseLexicalRef.value.results && responseLexicalRef.value.results.length ) );
+
+		// Reaction the reader chose for the current term, or null while
+		// unanswered. Held here, not in the feedback component, so a search
+		// that returns no semantic results unmounts that component without the
+		// answer being forgotten. A new term clears it: each query gets its
+		// own survey.
+		const surveyAnswerRef = ref( null );
+
+		// QuickSurveys records the answer through logSurveyAnswer(). The
+		// module stays null until it loads, and also if it fails to load.
+		const quickSurveysRef = ref( null );
+
+		// null for a module ResourceLoader does not know,
+		// which is the case on a wiki without QuickSurveys.
+		if ( props.request.feedbackSurveyEnabled &&
+			mw.loader.getState( 'ext.quicksurveys.lib' ) !== null ) {
+			mw.loader.using( 'ext.quicksurveys.lib' )
+				.then( ( req ) => {
+					quickSurveysRef.value = req( 'ext.quicksurveys.lib' );
+				} )
+				.catch( ( e ) => {
+					mw.log.warn( 'QuickSurveys is unavailable, feedback cannot be recorded', e );
+				} );
+		}
+
+		const showSurvey = computed( () => quickSurveysRef.value !== null );
+
+		function onSurveyCompleted( answer ) {
+			surveyAnswerRef.value = answer;
+
+			// The free text answer is null until T441932 adds the dialog.
+			quickSurveysRef.value.logSurveyAnswer(
+				props.request.feedbackSurvey.name,
+				props.request.feedbackSurvey.question,
+				{ [ answer ]: null }
+			);
+		}
 
 		const useLang = mw.config.get( 'wgUserLanguage' );
 
@@ -242,6 +301,10 @@ module.exports = exports = defineComponent( {
 			);
 		}
 
+		// Aborting a request may settle it after the next search has started.
+		// Only the current search may update results or loading state.
+		let searchVersion = 0;
+
 		async function onSubmit( term ) {
 			if ( term === termRef.value ) {
 				// No change
@@ -250,12 +313,31 @@ module.exports = exports = defineComponent( {
 
 			const url = generateSemanticSearchUrl( term, props.request.namespaces, props.request.limit, props.request.sort );
 			window.history.pushState( {}, '', url );
+			await updateResults( term );
+		}
 
+		// History navigation fetches results without creating another history entry.
+		function onPopState() {
+			const params = new URLSearchParams( window.location.search );
+			return updateResults( params.get( 'search' ) || '', Number( params.get( 'continue' ) ) || 0 );
+		}
+
+		onMounted( () => window.addEventListener( 'popstate', onPopState ) );
+		onUnmounted( () => {
+			window.removeEventListener( 'popstate', onPopState );
+			searchVersion++;
+			restApiLexical.abort();
+			restApiSemantic.abort();
+		} );
+
+		async function updateResults( term, offset = 0 ) {
+			const version = ++searchVersion;
 			termRef.value = term;
 			inputValueRef.value = term;
+			surveyAnswerRef.value = null;
 			responseLexicalRef.value = [];
 			responseSemanticRef.value = [];
-			currentContinueRef.value = 0;
+			currentContinueRef.value = offset;
 			nextContinueRef.value = null;
 			loadingLexicalRef.value = true;
 			loadingSemanticRef.value = semanticEnabled.value;
@@ -266,12 +348,15 @@ module.exports = exports = defineComponent( {
 						type: 'lexical',
 						namespace: props.request.namespaces,
 						limit: props.request.limit,
-						continue: 0,
+						continue: offset,
 						sort: props.request.sort,
 						data: [ 'thumbnail', 'suggestion' ],
 						uselang: useLang
 					}
 					);
+					if ( version !== searchVersion ) {
+						return;
+					}
 					response.results = Object.values( response.results );
 					responseLexicalRef.value = response;
 					nextContinueRef.value = response.continue;
@@ -280,12 +365,14 @@ module.exports = exports = defineComponent( {
 					// This request was aborted because a newer search already
 					// started; skip writing to responseLexicalRef here, since the
 					// newer search will set it from its own response
-					if ( e.name === 'AbortError' ) {
+					if ( e.name === 'AbortError' || version !== searchVersion ) {
 						return;
 					}
 					responseLexicalRef.value = { error: e.message };
 				} finally {
-					loadingLexicalRef.value = false;
+					if ( version === searchVersion ) {
+						loadingLexicalRef.value = false;
+					}
 				}
 			}
 
@@ -306,13 +393,16 @@ module.exports = exports = defineComponent( {
 						uselang: useLang
 					}
 					);
+					if ( version !== searchVersion ) {
+						return;
+					}
 					response.results = Object.values( response.results );
 					responseSemanticRef.value = response;
 				} catch ( e ) {
 					// This request was aborted because a newer search already
 					// started; skip writing to responseSemanticRef here, since the
 					// newer search will set it from its own response
-					if ( e.name === 'AbortError' ) {
+					if ( e.name === 'AbortError' || version !== searchVersion ) {
 						return;
 					}
 					// Surface semantic search failure in the console; without
@@ -320,7 +410,9 @@ module.exports = exports = defineComponent( {
 					mw.log.error( 'Semantic search request failed:', e.message );
 					responseSemanticRef.value = { error: e.message };
 				} finally {
-					loadingSemanticRef.value = false;
+					if ( version === searchVersion ) {
+						loadingSemanticRef.value = false;
+					}
 				}
 			}
 
@@ -332,6 +424,7 @@ module.exports = exports = defineComponent( {
 		}
 
 		async function onLoadMore() {
+			const version = searchVersion;
 			if ( currentContinueRef.value === nextContinueRef.value ) {
 				// No change
 				return;
@@ -353,6 +446,9 @@ module.exports = exports = defineComponent( {
 						uselang: useLang
 					}
 				);
+				if ( version !== searchVersion ) {
+					return;
+				}
 				// Every new batch will start from a 0-based index, but since we'll be merging them
 				// together with old result I want to make sure their sort index in the array
 				// accurately reflects the real result order
@@ -368,7 +464,7 @@ module.exports = exports = defineComponent( {
 				// started (a new search, or another "load more" click); skip
 				// writing to responseLexicalRef here, since the newer request
 				// will set it from its own response
-				if ( e.name === 'AbortError' ) {
+				if ( e.name === 'AbortError' || version !== searchVersion ) {
 					return;
 				}
 				responseLexicalRef.value = { error: e.message };
@@ -382,6 +478,11 @@ module.exports = exports = defineComponent( {
 			responseLexicalRef,
 			responseSemanticRef,
 			semanticEnabled,
+			hasSemanticResults,
+			hasLexicalResults,
+			showSurvey,
+			surveyAnswer: surveyAnswerRef,
+			onSurveyCompleted,
 			classicSearchUrl,
 			onSubmit,
 			onLoadMore,

@@ -1,8 +1,10 @@
 'use strict';
 
-const { flushPromises, mount } = require( '@vue/test-utils' );
+const { enableAutoUnmount, flushPromises, mount } = require( '@vue/test-utils' );
 
 const SearchResultsPage = require( '../../resources/experiments/semanticSearch/components/SearchResultsPage.vue' );
+
+enableAutoUnmount( afterEach );
 
 const SWITCH_LINK = '.ext-readerExperiments-semanticsearch-classic';
 
@@ -151,6 +153,92 @@ describe( 'SearchResultsPage', () => {
 		await registeredSearch( term );
 		return calls;
 	}
+
+	describe( 'browser history', () => {
+		beforeEach( () => {
+			window.history.replaceState( {}, '', request.page );
+			mw.Rest.prototype.get.mockImplementation( ( path ) => restResolve( {
+				results: [ { title: decodeURIComponent( path.split( '/' ).pop() ), index: 0, ns: 0 } ],
+				info: {}, continue: null, warnings: []
+			} ) );
+		} );
+
+		it.each( [ true, false ] )( 'restores results on Back and Forward (semanticEnabled=%s)', async ( semanticEnabled ) => {
+			const wrapper = mount( SearchResultsPage, {
+				props: { request: { ...request, semanticEnabled }, response }
+			} );
+			await wrapper.vm.onSubmit( 'birds & bees' );
+			const historyLength = window.history.length;
+			const navigate = async ( direction ) => {
+				await new Promise( ( resolve ) => {
+					window.addEventListener( 'popstate', resolve, { once: true } );
+					window.history[ direction ]();
+				} );
+				await flushPromises();
+			};
+
+			await navigate( 'back' );
+			expect( wrapper.vm.inputValueRef ).toBe( request.term );
+			expect( wrapper.findAllComponents( { name: 'SearchResult' } ).map( ( card ) => card.props( 'result' ).title ) )
+				.toEqual( semanticEnabled ? [ request.term, request.term ] : [ request.term ] );
+
+			await navigate( 'forward' );
+			expect( wrapper.vm.inputValueRef ).toBe( 'birds & bees' );
+			expect( wrapper.vm.responseLexicalRef.results[ 0 ].title ).toBe( 'birds & bees' );
+			expect( window.history.length ).toBe( historyLength );
+		} );
+
+		it( 'restores the lexical offset from the URL', async () => {
+			const wrapper = mount( SearchResultsPage, { props: { request, response } } );
+			await wrapper.vm.onSubmit( 'birds' );
+			mw.Rest.prototype.get.mockClear();
+			window.history.replaceState( {}, '', request.page + '&continue=20' );
+			window.dispatchEvent( new PopStateEvent( 'popstate' ) );
+			await flushPromises();
+			expect( mw.Rest.prototype.get ).toHaveBeenCalledWith(
+				'/semanticsearch/v0/' + encodeURIComponent( request.term ),
+				expect.objectContaining( { type: 'lexical', continue: 20 } )
+			);
+			expect( mw.Rest.prototype.get ).toHaveBeenCalledWith(
+				'/semanticsearch/v0/' + encodeURIComponent( request.term ),
+				expect.objectContaining( { type: 'semantic', continue: 0 } )
+			);
+		} );
+
+		it( 'clears results when returning to a URL without a search and removes its listener on unmount', async () => {
+			const wrapper = mount( SearchResultsPage, { props: { request, response } } );
+			await wrapper.vm.onSubmit( 'birds' );
+			window.history.replaceState( {}, '', '/wiki/Special:SemanticSearch' );
+			window.dispatchEvent( new PopStateEvent( 'popstate' ) );
+			await flushPromises();
+			expect( wrapper.vm.inputValueRef ).toBe( '' );
+			expect( wrapper.findAllComponents( { name: 'SearchResult' } ) ).toHaveLength( 0 );
+			wrapper.unmount();
+			mw.Rest.prototype.get.mockClear();
+			window.history.replaceState( {}, '', request.page );
+			window.dispatchEvent( new PopStateEvent( 'popstate' ) );
+			expect( mw.Rest.prototype.get ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps the latest results when older requests finish after history navigation', async () => {
+			const pending = [];
+			mw.Rest.prototype.get.mockImplementation( () => new Promise( ( resolve ) => {
+				pending.push( resolve );
+			} ) );
+			const wrapper = mount( SearchResultsPage, { props: { request, response } } );
+			const submitted = wrapper.vm.onSubmit( 'birds' );
+			window.history.replaceState( {}, '', request.page );
+			window.dispatchEvent( new PopStateEvent( 'popstate' ) );
+			pending.slice( 0, 2 ).forEach( ( resolve ) => resolve( { results: [ { title: 'Old' } ] } ) );
+			await submitted;
+			expect( wrapper.vm.isLoading ).toBe( true );
+			expect( wrapper.vm.responseLexicalRef ).toEqual( [] );
+			pending.slice( 2 ).forEach( ( resolve ) => resolve( { results: [], continue: null } ) );
+			await flushPromises();
+			expect( wrapper.vm.isLoading ).toBe( false );
+			expect( wrapper.vm.termRef ).toBe( request.term );
+		} );
+	} );
 
 	describe( 'treatment group', () => {
 		const treatmentRequest = { ...request, semanticEnabled: true };

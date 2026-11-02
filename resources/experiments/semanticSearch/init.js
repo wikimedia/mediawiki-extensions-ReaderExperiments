@@ -70,6 +70,15 @@ if ( isMinerva || isVector ) {
 
 	prefillSearchInput();
 
+	window.addEventListener( 'popstate', () => {
+		// Defer until history traversal finishes restoring form values. Read the
+		// URL at that point so rapid navigation always uses the latest term.
+		setTimeout( () => {
+			term = new URLSearchParams( window.location.search ).get( 'search' ) || '';
+			prefillSearchInput();
+		}, 0 );
+	} );
+
 	if ( isMinerva ) {
 		const mobileQuery = window.matchMedia ? window.matchMedia( MOBILE_MEDIA_QUERY ) : null;
 		let minervaSearchInitialized = false;

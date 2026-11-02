@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Tensama0415",
+			"YeBoy371",
 			"Ykhwong"
 		]
 	},
@@ -39,7 +40,7 @@
 	"readerexperiments-mobilepagepreviews-read-more": "더 읽어보기",
 	"readerexperiments-mobilepagepreviews-title": "문서 미리 보기",
 	"readerexperiments-mobilepagepreviews-close-button-label": "닫기",
-	"readerexperiments-semanticsearch-title": "시맨틱 검색",
+	"readerexperiments-semanticsearch-title": "검색 결과",
 	"readerexperiments-semanticsearch-preference": "검색 인터페이스 선택",
 	"readerexperiments-semanticsearch-preference-help": "검색 결과를 표시하는 여러 인터페이스가 있습니다. 당신이 선호하는 것을 선택하십시오.",
 	"readerexperiments-semanticsearch-switch-special-search": "Special:Search (으)로 전환",
@@ -55,6 +56,8 @@
 	"readerexperiments-semanticsearch-category-info": "멤버 $1{{PLURAL:$1|개}} (하위 분류 $2{{PLURAL:$2|개}}, 파일 $3{{PLURAL:$3|개}})",
 	"readerexperiments-semanticsearch-match-section": "(문단: $1)",
 	"readerexperiments-semanticsearch-match-redirect": "(넘겨주기: $1)",
+	"readerexperiments-semanticsearch-feedback-positive": "👍 네",
+	"readerexperiments-semanticsearch-feedback-negative": "👎 아니요",
 	"readerexperiments-semanticsearch-contributorcount": "{{PLURAL:$1|기여자}} $1명",
 	"readerexperiments-sharehighlight-blue-dot-label": "새 공유 기능",
 	"readerexperiments-sharehighlight-toolbar-share": "공유",

@@ -113,6 +113,40 @@
 		color: @color-subtle;
 	}
 
+	&-feedback {
+		margin-top: @spacing-100;
+		text-align: center;
+
+		&__prompt {
+			margin: 0;
+			font-size: @font-size-small;
+			font-weight: @font-weight-bold;
+		}
+
+		&__actions {
+			display: flex;
+			justify-content: center;
+			gap: @spacing-100;
+			margin-block: @spacing-50;
+
+			&--submitted .cdx-toggle-button:enabled:hover {
+				cursor: not-allowed;
+			}
+		}
+
+		&__privacy {
+			display: inline-block;
+			font-size: @font-size-small;
+		}
+	}
+
+	&-divider {
+		height: 0;
+		margin-block: @spacing-150;
+		border: 0;
+		border-block-start: @border-width-base @border-style-base @border-color-subtle;
+	}
+
 	&-actions {
 		margin-top: @spacing-250;
 	}
