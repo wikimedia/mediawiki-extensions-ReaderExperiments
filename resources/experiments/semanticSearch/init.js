@@ -132,7 +132,7 @@ if ( isMinerva || isVector ) {
 		} );
 
 		document.addEventListener( 'focusin', ( e ) => {
-			if ( e.target && e.target.closest && e.target.closest( '.skin-dialog-search, .minerva-header .search-box' ) ) {
+			if ( e.target && e.target.closest && e.target.closest( '.skin-dialog-search header' ) ) {
 				document.body.classList.remove( INACTIVE_TYPEAHEAD_CLASS );
 				if ( isDormant ) {
 					isDormant = false;

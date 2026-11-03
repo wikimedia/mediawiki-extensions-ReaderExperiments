@@ -641,7 +641,8 @@
 			"localBasePath": "resources/experiments/semanticSearch/styles",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/semanticSearch/styles",
 			"styles": [
-				"searchResult.less"
+				"searchResult.less",
+				"typeahead.less"
 			]
 		},
 		"ext.readerExperiments/minimalMinervaToolbar": {
