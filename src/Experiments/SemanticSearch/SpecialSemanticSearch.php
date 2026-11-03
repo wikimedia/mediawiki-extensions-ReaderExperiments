@@ -12,6 +12,7 @@ use MediaWiki\Html\Html;
 use MediaWiki\Html\TemplateParser;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Message;
+use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Request\FauxRequest;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\Search\TitleMatcher;
@@ -164,7 +165,8 @@ class SpecialSemanticSearch extends SpecialPage {
 				'requestedNamespaces' => $requestedNamespaces,
 				'semanticEnabled' => $semanticEnabled,
 				'feedbackSurveyEnabled' => $semanticEnabled
-					&& (bool)$this->config->get( 'ReaderExperimentsSemanticSearchFeedbackSurvey' ),
+					&& (bool)$this->config->get( 'ReaderExperimentsSemanticSearchFeedbackSurvey' )
+					&& ExtensionRegistry::getInstance()->isLoaded( 'QuickSurveys' ),
 				'feedbackSurvey' => [
 					'name' => SurveyHooks::SURVEY_NAME,
 					'question' => SurveyHooks::SURVEY_QUESTION,
@@ -173,19 +175,19 @@ class SpecialSemanticSearch extends SpecialPage {
 				],
 			],
 			'response' => array_combine( [ 'lexical', 'semantic' ], array_map(
-				fn ( $type ) => [
-					'continue' => $responses[$type]['continue'] ?? null,
-					'results' => array_map(
-						fn ( $result ) => $this->getResultData( $result ) + [ 'semantic' => $type === 'semantic' ],
-						$responses[$type]['results'] ?? []
-					),
-					'info' => $responses[$type]['info'] ?? [],
-					'error' => $responses[$type]['error'] ?? null,
-					'warnings' => $responses[$type]['warnings'] ?? [],
-				],
+				fn ( $type ) => array_merge(
+					$responses[$type],
+					isset( $responses[$type]['results'] ) ? [
+						'results' => array_map(
+							fn ( $result ) => $this->getResultData( $result ) + [ 'semantic' => $type === 'semantic' ],
+							$responses[$type]['results']
+						)
+					] : []
+				),
 				[ 'lexical', 'semantic' ]
 			) ),
 			'output' => [
+				'introductionText' => $this->msg( 'readerexperiments-semanticsearch-introduction' )->text(),
 				'semanticResultsLabel' => $this->msg(
 					'readerexperiments-semanticsearch-semantic-results-label'
 				)->text(),
@@ -243,7 +245,7 @@ class SpecialSemanticSearch extends SpecialPage {
 				'results' => [],
 				'info' => [],
 				'continue' => null,
-				'warnings' => [],
+				'warnings' => null,
 			];
 		}
 

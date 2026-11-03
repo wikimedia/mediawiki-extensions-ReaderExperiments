@@ -24,5 +24,11 @@
 	"readerexperiments-imagebrowsing-vtoc-view-button-label": "নিবন্ধে দেখুন",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "$1 থেকে",
 	"readerexperiments-mobilepagepreviews-read-more": "আরও পড়ুন",
-	"readerexperiments-mobilepagepreviews-close-button-label": "বন্ধ করুন"
+	"readerexperiments-mobilepagepreviews-close-button-label": "বন্ধ করুন",
+	"readerexperiments-semanticsearch-feedback-positive": "👍 হ্যাঁ",
+	"readerexperiments-semanticsearch-feedback-negative": "👎 না",
+	"readerexperiments-semanticsearch-feedback-thanks": "মতামত জানানোর জন্য আপনাকে ধন্যবাদ।",
+	"readerexperiments-semanticsearch-survey-freetext-placeholder": "এখানে আপনার মতামত লিখুন",
+	"readerexperiments-semanticsearch-survey-submit": "জমা দিন",
+	"readerexperiments-semanticsearch-survey-privacy-policy": "গোপনীয়তার নীতি"
 }

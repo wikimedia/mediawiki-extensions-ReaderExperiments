@@ -53,10 +53,11 @@
 			:aria-label="$i18n( 'readerexperiments-semanticsearch-semantic-results-label' ).text()"
 		>
 			<search-result
-				v-for="( result, index ) in Object.values( responseSemanticRef.results ).sort( ( a, b ) => a.index - b.index )"
+				v-for="( result, index ) in responseSemanticRef.results.slice().sort( ( a, b ) => a.index - b.index )"
 				:key="`result=${index}`"
 				:result="result"
 				semantic
+				@click="() => onClickResult( 'semantic', index )"
 			></search-result>
 		</section>
 
@@ -81,9 +82,10 @@
 		:aria-label="$i18n( 'readerexperiments-semanticsearch-lexical-results-label' ).text()"
 	>
 		<search-result
-			v-for="( result, index ) in Object.values( responseLexicalRef.results ).sort( ( a, b ) => a.index - b.index )"
+			v-for="( result, index ) in responseLexicalRef.results.slice().sort( ( a, b ) => a.index - b.index )"
 			:key="`result=${index}`"
 			:result="result"
+			@click="() => onClickResult( 'lexical', ( responseSemanticRef.results || [] ).length + index )"
 		></search-result>
 	</section>
 
@@ -101,7 +103,9 @@
 	<a
 		id="readerexperiments-semanticsearch-switch-special-search"
 		:href="classicSearchUrl"
-		class="ext-readerExperiments-semanticsearch-classic">
+		class="ext-readerExperiments-semanticsearch-classic"
+		@click="onLeave"
+	>
 		{{ $i18n( 'readerexperiments-semanticsearch-switch-classic-search' ).text() }}
 	</a>
 </template>
@@ -116,7 +120,7 @@ const SearchResult = require( './SearchResult.vue' );
 // Semantic results supplement the lexical ones, so the page should not wait
 // long on them: give up after this long rather than the mw.Rest default of
 // 30 seconds (T441802). Lexical search keeps the default.
-const SEMANTIC_SEARCH_TIMEOUT_MS = 5000;
+const SEMANTIC_SEARCH_TIMEOUT_MS = 7500;
 
 // @vue/component
 module.exports = exports = defineComponent( {
@@ -143,6 +147,12 @@ module.exports = exports = defineComponent( {
 		}
 	},
 	setup( props ) {
+		mw.hook( 'readerExperiments.semanticSearch.init' ).fire( props.request.term );
+
+		if ( props.request.term ) {
+			mw.hook( 'readerExperiments.semanticSearch.search' ).fire( props.request.term );
+		}
+
 		// Unique mw.Rest instances are needed to allow Lexical and
 		// Semantic search to be run in parallel. Otherwise, any simultaneous,
 		// in-flight requests are aborted when search() is called.
@@ -198,6 +208,8 @@ module.exports = exports = defineComponent( {
 		const showSurvey = computed( () => quickSurveysRef.value !== null );
 
 		function onSurveyCompleted( answer ) {
+			mw.hook( 'readerExperiments.semanticSearch.participate' ).fire( answer );
+
 			surveyAnswerRef.value = answer;
 
 			// The free text answer is null until T441932 adds the dialog.
@@ -267,7 +279,7 @@ module.exports = exports = defineComponent( {
 					results: [],
 					info: [],
 					continue: null,
-					warnings: []
+					warnings: null
 				};
 			}
 
@@ -311,6 +323,8 @@ module.exports = exports = defineComponent( {
 				return;
 			}
 
+			mw.hook( 'readerExperiments.semanticSearch.search' ).fire( term );
+
 			const url = generateSemanticSearchUrl( term, props.request.namespaces, props.request.limit, props.request.sort );
 			window.history.pushState( {}, '', url );
 			await updateResults( term );
@@ -319,7 +333,7 @@ module.exports = exports = defineComponent( {
 		// History navigation fetches results without creating another history entry.
 		function onPopState() {
 			const params = new URLSearchParams( window.location.search );
-			return updateResults( params.get( 'search' ) || '', Number( params.get( 'continue' ) ) || 0 );
+			updateResults( params.get( 'search' ) || '', Number( params.get( 'continue' ) ) || 0 );
 		}
 
 		onMounted( () => window.addEventListener( 'popstate', onPopState ) );
@@ -335,8 +349,8 @@ module.exports = exports = defineComponent( {
 			termRef.value = term;
 			inputValueRef.value = term;
 			surveyAnswerRef.value = null;
-			responseLexicalRef.value = [];
-			responseSemanticRef.value = [];
+			responseLexicalRef.value = {};
+			responseSemanticRef.value = {};
 			currentContinueRef.value = offset;
 			nextContinueRef.value = null;
 			loadingLexicalRef.value = true;
@@ -344,15 +358,18 @@ module.exports = exports = defineComponent( {
 
 			async function searchLexical() {
 				try {
-					const response = await search( restApiLexical, term, {
-						type: 'lexical',
-						namespace: props.request.namespaces,
-						limit: props.request.limit,
-						continue: offset,
-						sort: props.request.sort,
-						data: [ 'thumbnail', 'suggestion' ],
-						uselang: useLang
-					}
+					const response = await search(
+						restApiLexical,
+						term,
+						{
+							type: 'lexical',
+							namespace: props.request.namespaces,
+							limit: props.request.limit,
+							continue: offset,
+							sort: props.request.sort,
+							data: [ 'thumbnail', 'suggestion' ],
+							uselang: useLang
+						}
 					);
 					if ( version !== searchVersion ) {
 						return;
@@ -360,7 +377,6 @@ module.exports = exports = defineComponent( {
 					response.results = Object.values( response.results );
 					responseLexicalRef.value = response;
 					nextContinueRef.value = response.continue;
-
 				} catch ( e ) {
 					// This request was aborted because a newer search already
 					// started; skip writing to responseLexicalRef here, since the
@@ -383,15 +399,18 @@ module.exports = exports = defineComponent( {
 				}
 
 				try {
-					const response = await search( restApiSemantic, term, {
-						type: 'semantic',
-						namespace: props.request.namespaces,
-						limit: 3,
-						continue: 0,
-						sort: props.request.sort,
-						data: [ 'thumbnail', 'referencecount', 'contributorcount', 'targeturl', 'truncatedsnippet' ],
-						uselang: useLang
-					}
+					const response = await search(
+						restApiSemantic,
+						term,
+						{
+							type: 'semantic',
+							namespace: props.request.namespaces,
+							limit: 3,
+							continue: 0,
+							sort: props.request.sort,
+							data: [ 'thumbnail', 'referencecount', 'contributorcount', 'targeturl', 'truncatedsnippet' ],
+							uselang: useLang
+						}
 					);
 					if ( version !== searchVersion ) {
 						return;
@@ -471,6 +490,14 @@ module.exports = exports = defineComponent( {
 			}
 		}
 
+		function onClickResult( type, index ) {
+			mw.hook( 'readerExperiments.semanticSearch.click' ).fire( termRef.value, type, index );
+		}
+
+		function onLeave() {
+			mw.hook( 'readerExperiments.semanticSearch.leave' ).fire();
+		}
+
 		return {
 			inputValueRef,
 			termRef,
@@ -486,6 +513,8 @@ module.exports = exports = defineComponent( {
 			classicSearchUrl,
 			onSubmit,
 			onLoadMore,
+			onClickResult,
+			onLeave,
 			generateSemanticSearchUrl,
 			isLoading
 		};
