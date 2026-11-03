@@ -5,6 +5,7 @@
 		:data-namespace="result.ns"
 		class="cdx-card cdx-card--is-link ext-readerExperiments-semanticsearch-result"
 		:class="{ 'ext-readerExperiments-semanticsearch-result--semantic': semantic }"
+		@click="$emit( 'click' )"
 	>
 		<div v-if="semantic" class="ext-readerExperiments-semanticsearch-result__quote">
 			<span
@@ -34,11 +35,12 @@
 				</template>
 			</span>
 
-			<div v-if="semantic && result.sectiontitle" class="ext-readerExperiments-semanticsearch-result__section">
+			<div v-if="semantic" class="ext-readerExperiments-semanticsearch-result__section">
 				<span
 					class="ext-readerExperiments-semanticsearch-result__section-arrow"
 					aria-hidden="true"
-				>↪</span> {{ result.sectiontitle }}
+				>↪</span>
+				{{ result.sectiontitle || $i18n( 'readerexperiments-semanticsearch-introduction' ).text() }}
 			</div>
 			<div
 				v-if="!semantic && result.snippet"
@@ -71,6 +73,9 @@ module.exports = exports = defineComponent( {
 			default: false
 		}
 	},
+	emits: [
+		'click'
+	],
 	setup( props ) {
 		const $i18n = inject( 'i18n' );
 

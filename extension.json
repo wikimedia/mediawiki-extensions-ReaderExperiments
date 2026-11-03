@@ -62,14 +62,23 @@
 		}
 	},
 	"HookHandlers": {
-		"ImageCarouselRetestHooks": {
-			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ImageCarouselRetest\\Hooks",
-			"optional_services": [ "TestKitchen.ExperimentManager" ]
-		},
 		"ImageBrowsingHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ImageBrowsing\\Hooks",
 			"optional_services": [
 				"TestKitchen.ExperimentManager"
+			]
+		},
+		"ImageCarouselRetestHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ImageCarouselRetest\\Hooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager"
+			]
+		},
+		"MinervaCompactLeadHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\MinervaCompactLead\\Hooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager",
+				"MobileFrontend.Context"
 			]
 		},
 		"MinervaTocHooks": {
@@ -99,10 +108,10 @@
 		"PreferredSourcesHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\PreferredSources\\Hooks"
 		},
-		"ShareHighlightHooks": {
-			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ShareHighlight\\Hooks",
+		"SemanticSearchCirrusSearchHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\CirrusSearchHooks",
 			"optional_services": [
-				"TestKitchen.ExperimentManager"
+				"MainConfig"
 			]
 		},
 		"SemanticSearchHooks": {
@@ -114,16 +123,16 @@
 				"TestKitchen.ExperimentManager"
 			]
 		},
-		"SemanticSearchCirrusSearchHooks": {
-			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\CirrusSearchHooks",
-			"optional_services": [
-				"MainConfig"
-			]
-		},
 		"SemanticSearchSurveyHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\SurveyHooks",
 			"services": [
 				"MainConfig"
+			]
+		},
+		"ShareHighlightHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ShareHighlight\\Hooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager"
 			]
 		},
 		"StickyHeadersHooks": {
@@ -131,29 +140,22 @@
 			"optional_services": [
 				"TestKitchen.ExperimentManager"
 			]
-		},
-		"MinervaCompactLeadHooks": {
-			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\MinervaCompactLead\\Hooks",
-			"optional_services": [
-				"TestKitchen.ExperimentManager",
-				"MobileFrontend.Context"
-			]
 		}
 	},
 	"Hooks": {
-		"MultimediaViewerBeforeMobileCarousel": "ImageCarouselRetestHooks",
+		"BeforeInitialize": [
+			"MinervaTocHooks",
+			"SemanticSearchHooks"
+		],
 		"BeforePageDisplay": [
 			"ImageBrowsingHooks",
 			"MinervaTocHooks",
 			"MobilePagePreviewsHooks",
 			"PreferredSourcesHooks",
+			"SemanticSearchHooks",
 			"ShareHighlightHooks",
 			"StickyHeadersHooks",
 			"MinervaCompactLeadHooks"
-		],
-		"BeforeInitialize": [
-			"MinervaTocHooks",
-			"SemanticSearchHooks"
 		],
 		"CirrusSearchProfileService": [
 			"SemanticSearchCirrusSearchHooks"
@@ -161,8 +163,8 @@
 		"GetPreferences": [
 			"SemanticSearchHooks"
 		],
-		"SpecialPage_initList": [
-			"SemanticSearchHooks"
+		"MultimediaViewerBeforeMobileCarousel": [
+			"ImageCarouselRetestHooks"
 		],
 		"QuickSurveysEnabled": [
 			"SemanticSearchSurveyHooks"
@@ -170,11 +172,14 @@
 		"ShouldUseParsoid": [
 			"MinervaTocParserMigrationHooks"
 		],
+		"SkinMinervaOptionsInit": [
+			"MinimalMinervaToolbarMinervaHooks"
+		],
 		"SkinTemplateNavigation::Universal": [
 			"ShareHighlightHooks"
 		],
-		"SkinMinervaOptionsInit": [
-			"MinimalMinervaToolbarMinervaHooks"
+		"SpecialPage_initList": [
+			"SemanticSearchHooks"
 		]
 	},
 	"MessagesDirs": {
@@ -583,6 +588,7 @@
 				"readerexperiments-semanticsearch-no-results",
 				"readerexperiments-semanticsearch-error-message",
 				"readerexperiments-semanticsearch-error-text",
+				"readerexperiments-semanticsearch-introduction",
 				"readerexperiments-semanticsearch-match-section",
 				"readerexperiments-semanticsearch-match-redirect",
 				"readerexperiments-semanticsearch-contributorcount",
@@ -600,8 +606,8 @@
 				"readerexperiments-semanticsearch-survey-freetext-placeholder",
 				"readerexperiments-semanticsearch-survey-submit",
 				"readerexperiments-semanticsearch-survey-privacy-policy",
-				"ellipsis",
-				"readerexperiments-semanticsearch-switch-special-search"
+				"readerexperiments-semanticsearch-switch-special-search",
+				"ellipsis"
 			],
 			"dependencies": [
 				"mediawiki.api",
@@ -610,6 +616,25 @@
 				"@wikimedia/codex",
 				"vue",
 				"ext.readerExperiments"
+			]
+		},
+		"ext.readerExperiments/semanticSearch.instrumentation": {
+			"localBasePath": "resources/experiments/semanticSearch/instrumentation",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/semanticSearch/instrumentation",
+			"packageFiles": [
+				"init.js",
+				"digest.js",
+				"levenshtein.js",
+				"semanticSearchRequestInspector.js",
+				{
+					"name": "config.json",
+					"callback": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\ResourceLoader::getInstrumentationConfig"
+				}
+			],
+			"dependencies": [
+				"mediawiki.storage",
+				"ext.testKitchen",
+				"ext.wikimediaEvents.testKitchen"
 			]
 		},
 		"ext.readerExperiments/semanticSearch.styles": {

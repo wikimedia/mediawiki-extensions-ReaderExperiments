@@ -7,6 +7,7 @@ use MediaWiki\Extension\ReaderExperiments\Common\FeatureFlagExperiment;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\Extension\TestKitchen\Sdk\ExperimentManager;
 use MediaWiki\Hook\BeforeInitializeHook;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\Request\WebRequest;
 use MediaWiki\SpecialPage\Hook\SpecialPage_initListHook;
@@ -14,11 +15,11 @@ use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use MediaWiki\User\Options\UserOptionsManager;
 
-class Hooks implements GetPreferencesHook, BeforeInitializeHook, SpecialPage_initListHook {
-	// TODO set up experiment on GrowthBook, update name as needed (T437394)
+class Hooks implements BeforeInitializeHook, BeforePageDisplayHook, GetPreferencesHook, SpecialPage_initListHook {
 	public const EXPERIMENT_NAME = 'semantic-search-for-web';
 	public const GROUP_CONTROL = 'control';
 	public const GROUP_TREATMENT = 'hybrid-srp';
+
 	/**
 	 * Minimum number of words (whitespace-separated) the query term
 	 * must have to qualify for the semantic search redirect.
@@ -53,6 +54,7 @@ class Hooks implements GetPreferencesHook, BeforeInitializeHook, SpecialPage_ini
 		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ) {
 			return;
 		}
+
 		// The user is already on Special:SemanticSearch: don't jump to Special:Search.
 		// The check is first in line, since it allows any user
 		// to explicitly navigate to Special:SemanticSearch.
@@ -202,6 +204,28 @@ class Hooks implements GetPreferencesHook, BeforeInitializeHook, SpecialPage_ini
 		$params = array_filter( $values, static fn ( $v ) => is_scalar( $v ) );
 
 		return SpecialPage::getTitleFor( $target )->getFullURL( $params );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onBeforePageDisplay( $out, $skin ): void {
+		if ( !$this->config->get( 'ReaderExperimentsSemanticSearchEnabled' ) ) {
+			return;
+		}
+
+		$context = $out->getContext();
+		$request = $context->getRequest();
+
+		$experiment = new FeatureFlagExperiment(
+			$this->experimentManager,
+			$request,
+			self::EXPERIMENT_NAME
+		);
+
+		if ( $experiment->getAssignedGroup() !== null ) {
+			$out->addModules( 'ext.readerExperiments/semanticSearch.instrumentation' );
+		}
 	}
 
 	/**

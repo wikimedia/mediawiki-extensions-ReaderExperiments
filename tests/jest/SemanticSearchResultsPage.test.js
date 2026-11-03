@@ -232,7 +232,7 @@ describe( 'SearchResultsPage', () => {
 			pending.slice( 0, 2 ).forEach( ( resolve ) => resolve( { results: [ { title: 'Old' } ] } ) );
 			await submitted;
 			expect( wrapper.vm.isLoading ).toBe( true );
-			expect( wrapper.vm.responseLexicalRef ).toEqual( [] );
+			expect( wrapper.vm.responseLexicalRef ).toEqual( {} );
 			pending.slice( 2 ).forEach( ( resolve ) => resolve( { results: [], continue: null } ) );
 			await flushPromises();
 			expect( wrapper.vm.isLoading ).toBe( false );
@@ -338,13 +338,13 @@ describe( 'SearchResultsPage', () => {
 			return wrapper;
 		}
 
-		it( 'gives up on the semantic request after 5 seconds, but not the lexical one', async () => {
+		it( 'gives up on the semantic request after 7.5 seconds, but not the lexical one', async () => {
 			semanticFailure = { xhr: { status: 0 }, textStatus: 'timeout' };
 			await submitSearch();
 
 			const semantic = restInstances.find( ( rest ) => rest.searchType === 'semantic' );
 			const lexical = restInstances.find( ( rest ) => rest.searchType === 'lexical' );
-			expect( semantic.options ).toEqual( { ajax: { timeout: 5000 } } );
+			expect( semantic.options ).toEqual( { ajax: { timeout: 7500 } } );
 			expect( lexical.options ).toBeUndefined();
 		} );
 
