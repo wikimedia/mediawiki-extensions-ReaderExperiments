@@ -16,6 +16,8 @@
 	"readerexperiments-mobilepagepreviews-close-button-label": "بند کرو",
 	"readerexperiments-semanticsearch-title": "ڳولݨ دے نتیجے",
 	"readerexperiments-semanticsearch-search-button": "ڳولو",
+	"readerexperiments-semanticsearch-did-you-mean": "بھلا تہاݙا مطلب ہائی \"$1\"؟",
+	"readerexperiments-semanticsearch-introduction": "تعارف",
 	"readerexperiments-semanticsearch-feedback-positive": "👍 جیا",
 	"readerexperiments-semanticsearch-feedback-negative": "👎 کو",
 	"readerexperiments-semanticsearch-feedback-thanks": "تہاݙے فیڈبیک دا شکریہ۔",
