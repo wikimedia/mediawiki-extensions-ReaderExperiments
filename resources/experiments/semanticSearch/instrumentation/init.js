@@ -163,8 +163,11 @@ async function handleAbandonedSearch( experiment, term ) {
 	// aren't simply searching for a new thing, but are tinkering with their existing search
 	// because they were not satisfied with the previous results
 	const previousTerm = mw.storage.session.get( SESSION_KEY_LAST_TERM );
-	// eslint-disable-next-line max-len
-	const reformulation = previousTerm && levenshtein.distanceNormalized( term, previousTerm, MAX_FULLTEXT_QUERY_LENGTH ) <= 0.5;
+	const reformulation = previousTerm && levenshtein.distanceNormalized(
+		term.toLowerCase(),
+		previousTerm.toLowerCase(),
+		MAX_FULLTEXT_QUERY_LENGTH
+	) <= 0.5;
 
 	// Search expired without having been refined or interacted with: log as "good abandoned"
 	mw.storage.session.remove( SESSION_KEY_ABANDON_EXPIRATION );
