@@ -10,6 +10,9 @@ const STORAGE_KEY_EXPOSE = 'readerExperiments.semanticSearch/expose';
 const SESSION_KEY_LAST_TERM = 'readerExperiments.semanticSearch/term';
 const SESSION_KEY_ABANDON_EXPIRATION = 'readerExperiments.semanticSearch/abandon';
 
+// @see 'CirrusSearchMaxFullTextQueryLength' in CirrusSearch/extension.json
+const MAX_FULLTEXT_QUERY_LENGTH = 300;
+
 /**
  * Returns a unique identifier per "search", so we can aggregate per search
  * (as is needed for click-through rate, where we want all clicks per distinct
@@ -160,7 +163,11 @@ async function handleAbandonedSearch( experiment, term ) {
 	// aren't simply searching for a new thing, but are tinkering with their existing search
 	// because they were not satisfied with the previous results
 	const previousTerm = mw.storage.session.get( SESSION_KEY_LAST_TERM );
-	const reformulation = previousTerm && levenshtein.distanceNormalized( term, previousTerm ) <= 0.5;
+	const reformulation = previousTerm && levenshtein.distanceNormalized(
+		term.toLowerCase(),
+		previousTerm.toLowerCase(),
+		MAX_FULLTEXT_QUERY_LENGTH
+	) <= 0.5;
 
 	// Search expired without having been refined or interacted with: log as "good abandoned"
 	mw.storage.session.remove( SESSION_KEY_ABANDON_EXPIRATION );

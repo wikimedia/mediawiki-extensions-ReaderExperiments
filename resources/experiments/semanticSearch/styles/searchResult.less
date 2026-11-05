@@ -88,6 +88,8 @@
 		.searchmatch {
 			background-color: @background-color-warning-subtle;
 			font-weight: @font-weight-normal;
+			border-top: 1px solid @background-color-warning-subtle;
+			border-bottom: 2px solid @background-color-warning-subtle;
 		}
 	}
 
@@ -239,7 +241,7 @@
 	}
 }
 
-/* stylelint-disable selector-class-pattern, declaration-no-important */
+/* stylelint-disable selector-class-pattern */
 // Don't show page title in Minerva
 body.skin-minerva .heading-holder {
 	display: none;
@@ -252,35 +254,7 @@ body.skin-minerva .heading-holder {
 		display: none;
 	}
 }
-
-@media ( max-width: @max-width-breakpoint-mobile ) {
-	body.skin-minerva.ext-semanticsearch--typeahead-inactive {
-		div.cdx-menu.cdx-typeahead-search__menu {
-			display: none !important;
-		}
-
-		div.cdx-dialog.skin-dialog-search {
-			bottom: auto;
-			height: auto;
-			background: transparent;
-			pointer-events: none;
-
-			.cdx-dialog__header {
-				pointer-events: auto;
-			}
-		}
-
-		.cdx-dialog__body {
-			display: none !important;
-		}
-
-		div.cdx-dialog-backdrop {
-			background: transparent !important;
-			pointer-events: none;
-		}
-	}
-}
-/* stylelint-enable selector-class-pattern, declaration-no-important */
+/* stylelint-enable selector-class-pattern */
 
 [ dir='rtl' ] .ext-readerExperiments-semanticsearch-result__section-arrow {
 	transform: scaleX( -1 );

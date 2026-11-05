@@ -208,15 +208,14 @@ module.exports = exports = defineComponent( {
 		const showSurvey = computed( () => quickSurveysRef.value !== null );
 
 		function onSurveyCompleted( answer ) {
-			mw.hook( 'readerExperiments.semanticSearch.participate' ).fire( answer );
+			mw.hook( 'readerExperiments.semanticSearch.participate' ).fire( answer.reaction );
 
 			surveyAnswerRef.value = answer;
 
-			// The free text answer is null until T441932 adds the dialog.
 			quickSurveysRef.value.logSurveyAnswer(
 				props.request.feedbackSurvey.name,
 				props.request.feedbackSurvey.question,
-				{ [ answer ]: null }
+				{ [ answer.reaction ]: answer.freeText || null }
 			);
 		}
 

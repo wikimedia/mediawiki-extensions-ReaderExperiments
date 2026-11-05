@@ -29,3 +29,13 @@ smartcrop:
   integrity: sha384-MFx/krFqqAwdVQcbFsG7NZ6io1/k+p/zRG1aJxYtjjnzaiwRUxVslq915QQ/c3Cl
   dest:
     package/smartcrop.js: .
+fastest-levenshtein:
+  type: tar
+  homepage: https://github.com/ka-weihe/fastest-levenshtein
+  license: MIT
+  version: 1.0.16
+  src: https://registry.npmjs.org/fastest-levenshtein/-/fastest-levenshtein-1.0.16.tgz
+  integrity: sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==
+  dest:
+    package/mod.js: .
+    package/LICENSE.md: .

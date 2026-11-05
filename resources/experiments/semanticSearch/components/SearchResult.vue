@@ -39,7 +39,7 @@
 				<span
 					class="ext-readerExperiments-semanticsearch-result__section-arrow"
 					aria-hidden="true"
-				>↪</span>
+				>↪︎</span>
 				{{ result.sectiontitle || $i18n( 'readerexperiments-semanticsearch-introduction' ).text() }}
 			</div>
 			<div
