@@ -32,7 +32,7 @@ Vue.createMwApp(
 const MAX_WIDTH_BREAKPOINT_MOBILE = 639;
 const MOBILE_MEDIA_QUERY = `(max-width: ${ MAX_WIDTH_BREAKPOINT_MOBILE }px)`;
 const INACTIVE_TYPEAHEAD_CLASS = 'ext-semanticsearch--typeahead-inactive';
-const SEARCH_INPUTS_SELECTOR = '#searchInput, .minerva-header input[name="search"], #searchform input[name="search"], .skin-dialog-search input[name="search"], .cdx-typeahead-search input';
+const SEARCH_INPUTS_SELECTOR = '#searchInput, .minerva-header input[name="search"], #searchform input[name="search"], .skin-dialog-search input[name="search"], .cdx-typeahead-search input[name="search"]';
 const SEARCH_FORM_CONTAINER_SELECTOR = 'header, .minerva-header, .vector-header, .skin-dialog-search, .cdx-typeahead-search';
 const SEARCH_FORM_SELECTOR = '.minerva-search-form, #searchform, .cdx-typeahead-search form, .cdx-typeahead-search__form';
 
@@ -74,9 +74,20 @@ if ( isMinerva || isVector ) {
 
 	prefillSearchInput();
 
+	// Handle in-page history traversal (back/forward between search terms)
 	window.addEventListener( 'popstate', () => {
 		// Defer until history traversal finishes restoring form values. Read the
 		// URL at that point so rapid navigation always uses the latest term.
+		setTimeout( () => {
+			term = new URLSearchParams( window.location.search ).get( 'search' ) || '';
+			prefillSearchInput();
+		}, 0 );
+	} );
+
+	// When navigating back from another page, above popstate will not trigger.
+	// Pageshow, will for every pageload, so we can use that to populated with the
+	// relevant search term if one is available from the URL.
+	window.addEventListener( 'pageshow', () => {
 		setTimeout( () => {
 			term = new URLSearchParams( window.location.search ).get( 'search' ) || '';
 			prefillSearchInput();
