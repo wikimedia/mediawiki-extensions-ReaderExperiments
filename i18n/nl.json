@@ -52,7 +52,7 @@
 	"readerexperiments-semanticsearch-load-less-results": "Teruggaan",
 	"readerexperiments-semanticsearch-error-message": "Onjuiste zoekopdracht",
 	"readerexperiments-semanticsearch-error-text": "Voer hierboven een nieuwe zoekopdracht in en probeer het opnieuw",
-	"readerexperiments-semanticsearch-did-you-mean": "Bedoelde u $1",
+	"readerexperiments-semanticsearch-did-you-mean": "Bedoelde u “$1”?",
 	"readerexperiments-semanticsearch-no-results": "Er waren geen resultaten die overeenkomen met de zoekopdracht.",
 	"readerexperiments-semanticsearch-wordcount": "($1 {{PLURAL:$1|1=woord|woorden}})",
 	"readerexperiments-semanticsearch-category-info": "$1 {{PLURAL:$1|1=lid|leden}} ($2 {{PLURAL:$2|1=subcategorie|subcategorieën}}, $3 {{PLURAL:$3|1=bestand|bestanden}})",
