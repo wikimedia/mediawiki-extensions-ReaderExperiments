@@ -3,12 +3,7 @@
 		<p class="ext-readerExperiments-semanticsearch-feedback__prompt">
 			{{ $i18n( 'readerexperiments-semanticsearch-feedback-prompt' ).text() }}
 		</p>
-		<div
-			class="ext-readerExperiments-semanticsearch-feedback__actions"
-			:class="{
-				'ext-readerExperiments-semanticsearch-feedback__actions--submitted': submitted
-			}"
-		>
+		<div class="ext-readerExperiments-semanticsearch-feedback__actions">
 			<cdx-toggle-button
 				v-for="button in buttons"
 				:key="button.value"
@@ -45,14 +40,7 @@
 			</cdx-field>
 		</cdx-dialog>
 
-		<cdx-toast
-			v-if="showToast"
-			type="success"
-			standalone
-			auto-dismiss
-		>
-			{{ $i18n( 'readerexperiments-semanticsearch-feedback-thanks' ).text() }}
-		</cdx-toast>
+		<cdx-toast-container></cdx-toast-container>
 	</div>
 </template>
 
@@ -60,10 +48,11 @@
 const { defineComponent, ref } = require( 'vue' );
 const {
 	CdxToggleButton,
-	CdxToast,
 	CdxDialog,
 	CdxField,
-	CdxTextArea
+	CdxTextArea,
+	CdxToastContainer,
+	useToast
 } = require( '@wikimedia/codex' );
 
 // Maximum number of characters for the free text response.
@@ -72,19 +61,21 @@ const FREE_TEXT_MAX_LENGTH = 500;
 /**
  * Qualitative feedback survey for the semantic search results (T441798).
  *
- * The reader picks a reaction, which emits the answer immediately. The parent
- * records it, and renders this component only when QuickSurveys is available
- * to receive the answer.
+ * The reader picks a reaction, which opens a dialog for free text. The dialog
+ * emits the answer when it closes. The parent records it, and renders this
+ * component only when QuickSurveys is available to receive the answer.
+ *
+ * Emits a new answer each time.
  */
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'SemanticSearchFeedbackSurvey',
 	components: {
 		CdxToggleButton,
-		CdxToast,
 		CdxDialog,
 		CdxField,
-		CdxTextArea
+		CdxTextArea,
+		CdxToastContainer
 	},
 	props: {
 		survey: {
@@ -101,11 +92,9 @@ module.exports = exports = defineComponent( {
 	emits: [ 'survey-completed' ],
 	setup( props, { emit } ) {
 		const reaction = ref( props.selectedAnswer ? props.selectedAnswer.reaction : null );
-		const showToast = ref( false );
 		const showDialog = ref( false );
 		const freeTextValue = ref( '' );
-
-		const submitted = ref( props.selectedAnswer !== null );
+		const toast = useToast();
 
 		const buttons = [
 			{
@@ -128,17 +117,17 @@ module.exports = exports = defineComponent( {
 
 		const privacyPolicyLabel = mw.msg( props.survey.privacyPolicy );
 
+		function showToast() {
+			toast.success( mw.msg( 'readerexperiments-semanticsearch-feedback-thanks' ), { autoDismiss: true } );
+		}
+
 		/**
 		 * Send the response and thank the reader.
 		 */
 		function submit() {
-			// return early if a reaction has been previously submitted.
-			if ( submitted.value ) {
-				return;
-			}
-			submitted.value = true;
 			showDialog.value = false;
-			showToast.value = true;
+			showToast();
+
 			emit(
 				'survey-completed',
 				{
@@ -154,17 +143,20 @@ module.exports = exports = defineComponent( {
 		 * @param {string} value Answer code of the chosen reaction
 		 */
 		function onReaction( value ) {
-			if ( submitted.value ) {
+			// Reset toggle if the reader clicks the reaction that is already
+			// selected. Do not open the free text dialog again upon deselect.
+			if ( reaction.value === value ) {
+				reaction.value = null;
 				return;
 			}
+
+			freeTextValue.value = '';
 			reaction.value = value;
 			showDialog.value = true;
 		}
 
 		return {
 			reaction,
-			submitted,
-			showToast,
 			showDialog,
 			freeTextValue,
 			freeTextMaxLength: FREE_TEXT_MAX_LENGTH,
