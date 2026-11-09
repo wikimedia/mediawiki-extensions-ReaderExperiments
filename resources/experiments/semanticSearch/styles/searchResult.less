@@ -13,8 +13,8 @@
 	// Code currently only checks for lexical results to be present before showing
 	// this message, but in the current presentation, showing this when there are
 	// any sort of results, lexical or semantic, makes no sense. This forces it to
-	// be hidden if no result containers are found.
-	:has( .ext-readerExperiments-semanticsearch-results ) &-no-results {
+	// be hidden if any result card is found, lexical or semantic.
+	:has( .ext-readerExperiments-semanticsearch-result ) &-no-results {
 		display: none;
 	}
 
