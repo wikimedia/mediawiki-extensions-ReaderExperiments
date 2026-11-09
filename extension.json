@@ -108,6 +108,12 @@
 		"PreferredSourcesHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\PreferredSources\\Hooks"
 		},
+		"ReadAloudHooks": {
+			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\ReadAloud\\Hooks",
+			"optional_services": [
+				"TestKitchen.ExperimentManager"
+			]
+		},
 		"SemanticSearchCirrusSearchHooks": {
 			"class": "MediaWiki\\Extension\\ReaderExperiments\\Experiments\\SemanticSearch\\CirrusSearchHooks",
 			"optional_services": [
@@ -152,6 +158,7 @@
 			"MinervaTocHooks",
 			"MobilePagePreviewsHooks",
 			"PreferredSourcesHooks",
+			"ReadAloudHooks",
 			"SemanticSearchHooks",
 			"ShareHighlightHooks",
 			"StickyHeadersHooks",
@@ -719,6 +726,18 @@
 				"skins.minerva.scripts",
 				"mediawiki.storage",
 				"ext.testKitchen"
+			]
+		},
+		"ext.readerExperiments/readAloud": {
+			"localBasePath": "resources/experiments/readAloud",
+			"remoteExtPath": "ReaderExperiments/resources/experiments/readAloud",
+			"packageFiles": [
+				"init.js",
+				"App.vue"
+			],
+			"dependencies": [
+				"vue",
+				"@wikimedia/codex"
 			]
 		}
 	},
