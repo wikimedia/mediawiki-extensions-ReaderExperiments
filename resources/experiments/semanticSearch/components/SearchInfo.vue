@@ -9,19 +9,19 @@
 	<p
 		v-if="term && !isLoading && !results.length && !error"
 		class="ext-readerExperiments-semanticsearch-no-results"
-		aria-live="polite">
+		aria-live="polite"
+	>
 		{{ $i18n( 'readerexperiments-semanticsearch-no-results' ).text() }}
 	</p>
 
 	<div
-		v-for="( warning, index ) in warnings"
-		:key="`warning-${index}`"
+		v-if="warnings"
 		class="cdx-message cdx-message--block cdx-message--warning"
 		aria-live="polite"
 	>
 		<span class="cdx-message__icon"></span>
 		<div class="cdx-message__content">
-			{{ warning }}
+			{{ warnings }}
 		</div>
 	</div>
 
@@ -73,8 +73,8 @@ module.exports = exports = defineComponent( {
 			default: () => ( {} )
 		},
 		warnings: {
-			type: Array,
-			default: () => []
+			type: String,
+			default: null
 		},
 		error: {
 			type: String,

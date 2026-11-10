@@ -173,10 +173,10 @@ if ( isMinerva || isVector ) {
 		term = submittedTerm;
 		if ( isMinerva ) {
 			makeDormant();
-			const activeInput = document.activeElement;
-			if ( activeInput && activeInput.blur ) {
-				activeInput.blur();
-			}
+		}
+		const activeInput = document.activeElement;
+		if ( activeInput && activeInput.blur ) {
+			activeInput.blur();
 		}
 		prefillSearchInput();
 		executeSearch( submittedTerm );
