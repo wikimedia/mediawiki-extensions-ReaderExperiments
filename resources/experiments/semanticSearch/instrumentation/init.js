@@ -6,7 +6,6 @@ const digest = require( './digest.js' );
 const semanticSearchRequestInspector = require( './semanticSearchRequestInspector.js' );
 const { experimentName, minQueryWords } = require( './config.json' );
 
-const STORAGE_KEY_EXPOSE = 'readerExperiments.semanticSearch/expose';
 const SESSION_KEY_LAST_TERM = 'readerExperiments.semanticSearch/term';
 const SESSION_KEY_ABANDON_EXPIRATION = 'readerExperiments.semanticSearch/abandon';
 
@@ -72,7 +71,6 @@ async function handleSearch( experiment, term ) {
 		return;
 	}
 
-	experiment.sendExposure();
 	experiment.submitInteraction(
 		'search',
 		{
@@ -194,16 +192,11 @@ mw.testKitchen.getExperiment( experimentName ).then( ( experiment ) => {
 	mw.hook( 'readerExperiments.semanticSearch.leave' ).add( handleLeave.bind( null, experiment ) );
 	mw.hook( 'readerExperiments.semanticSearch.participate' ).add( handleParticipate.bind( null, experiment ) );
 
-	// Keep track of when a user has truly been exposed to Special:SemanticSearch
-	if ( mw.config.get( 'wgCanonicalSpecialPageName' ) === 'SemanticSearch' ) {
-		mw.storage.set( STORAGE_KEY_EXPOSE, '1', 31 * 24 * 60 * 60 * 1000 );
-	}
-
 	// We'll also want to track searches on Special:Search, but not until a user has
 	// actually been exposed to Special:SemanticSearch
 	if (
-		mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Search' &&
-		mw.storage.get( STORAGE_KEY_EXPOSE )
+		mw.config.get( 'wgReaderExperimentsSemanticSearchExposed' ) &&
+		mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Search'
 	) {
 		// Special:SemanticSearch fires events when users interact with it, but
 		// Special:Search does not. We'll wire it up in a similar way.

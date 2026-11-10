@@ -17,7 +17,7 @@
 		:sort="request.sort"
 		:results="responseLexicalRef.results || []"
 		:info="responseLexicalRef.info || {}"
-		:warnings="responseLexicalRef.warnings || []"
+		:warnings="responseLexicalRef.warnings || null"
 		:error="responseLexicalRef.error || null"
 		:generate-search-url="generateSemanticSearchUrl"
 		:is-loading="isLoading"
