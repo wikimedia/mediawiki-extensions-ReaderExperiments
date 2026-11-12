@@ -223,35 +223,9 @@ class Hooks implements BeforeInitializeHook, BeforePageDisplayHook, GetPreferenc
 			self::EXPERIMENT_NAME
 		);
 
-		if ( $experiment->getAssignedGroup() === null ) {
-			return;
+		if ( $experiment->getAssignedGroup() !== null ) {
+			$out->addModules( 'ext.readerExperiments/semanticSearch.instrumentation' );
 		}
-
-		$out->addModules( 'ext.readerExperiments/semanticSearch.instrumentation' );
-
-		// Keep track of when a user has truly been exposed to Special:SemanticSearch
-		$keyExposure = 'readerExperiments.semanticSearch/expose';
-		$title = $out->getTitle();
-		if ( $title->isSpecial( 'SemanticSearch' ) ) {
-			$out->getRequest()->response()->setCookie(
-				$keyExposure,
-				'1',
-				strtotime( '31 days' ),
-			);
-		}
-
-		// When on Special:SemanticSearch, log exposure.
-		// Same when on Special:Search after having been exposed to SemanticSearch before.
-		$wasExposed = $context->getRequest()->getCookie( $keyExposure );
-		$isExposed = $title->isSpecial( 'SemanticSearch' ) ||
-			( $wasExposed && $title->isSpecial( 'Search' ) );
-		if ( $isExposed ) {
-			$experiment = $this->experimentManager->getExperiment( self::EXPERIMENT_NAME );
-			$experiment->sendExposure();
-		}
-
-		// Add exposure status to output so JS knows which searches to log
-		$out->addJsConfigVars( [ 'wgReaderExperimentsSemanticSearchExposed' => $isExposed ] );
 	}
 
 	/**
