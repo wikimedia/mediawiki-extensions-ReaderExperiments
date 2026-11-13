@@ -44,7 +44,6 @@
 	</cdx-popover>
 	<audio
 		ref="audioPlayer"
-		class="ext-readerExperiments-readAloud-audio-player"
 		@timeupdate="onTimeUpdate"
 		@play="onPlay"
 		@pause="onPause"
@@ -52,25 +51,44 @@
 		@progress="onProgress"
 		@canplay="onCanPlay"
 	></audio>
+	<teleport :to="teleportTarget">
+		<playback-toolbar
+			v-show="isVisible"
+			:is-playing="isPlaying"
+			:is-loading="isLoading"
+			:current-time="currentTime"
+			:duration="duration"
+			@play="play"
+			@pause="pause"
+			@previous="onPrevious"
+			@next="onNext"
+			@close="onClose"
+		>
+		</playback-toolbar>
+	</teleport>
 </template>
 
 <script>
-const { defineComponent, ref, onMounted, onBeforeUnmount } = require( 'vue' );
+const { defineComponent, ref, onMounted, onBeforeUnmount, inject } = require( 'vue' );
 const { CdxButton, CdxIcon, CdxPopover } = require( '@wikimedia/codex' );
 const { cdxIconVolumeUp, cdxIconClose } = require( './readAloudIcons.json' );
 const SEEN_KEY = 'mw.readerExperiments.readAloud.coachMarkSeen';
+const PlaybackToolbar = require( './components/PlaybackToolbar.vue' );
 
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'ReadAloud',
-	components: { CdxButton, CdxIcon, CdxPopover },
+	components: { CdxButton, CdxIcon, CdxPopover, PlaybackToolbar },
 	setup() {
 		const speaker = ref( null );
 		const audioPlayer = ref( null );
 		const currentTime = ref( 0 );
 		const isPlaying = ref( false );
+		const isLoading = ref( true ); // TODO: loading state
 		const duration = ref( 0 );
-		const buffered = ref( 0 );
+		const buffered = ref( 0 ); // TODO: Does the design show buffering?
+		const isVisible = ref( false );
+		const teleportTarget = inject( 'CdxTeleportTarget' );
 
 		function onTimeUpdate() {
 			currentTime.value = audioPlayer.value.currentTime;
@@ -108,6 +126,25 @@ module.exports = exports = defineComponent( {
 
 		function pause() {
 			audioPlayer.value.pause();
+		}
+
+		/**
+		 * Stop the audio via pause() and rewind the track back to the
+		 * beginning, and then dismiss the toolbar.
+		 */
+		function onClose() {
+			pause();
+			audioPlayer.value.currentTime = 0;
+			currentTime.value = 0;
+			isVisible.value = false;
+		}
+
+		function onPrevious() {
+			// TODO: T434892
+		}
+
+		function onNext() {
+			// TODO: T434892
 		}
 
 		/**
@@ -158,23 +195,37 @@ module.exports = exports = defineComponent( {
 			mw.storage.set( SEEN_KEY, '1' );
 			// Playback (T434890) can subscribe to either entry point here.
 			mw.hook( 'ext.readerExperiments.readAloud.start' ).fire( audioPlayer.value );
+			isVisible.value = true;
 		}
 
 		return {
+			audioPlayer,
+			isPlaying,
+			isLoading,
+			currentTime,
+			duration,
+			isVisible,
 			onTimeUpdate,
 			onPlay,
 			onPause,
 			onEnded,
 			onProgress,
 			onCanPlay,
-			// eslint-disable-next-line vue/no-unused-properties
 			play,
-			// eslint-disable-next-line vue/no-unused-properties
 			pause,
 			// eslint-disable-next-line vue/no-unused-properties
 			load,
-			speaker, audioPlayer, showCoachMark, start, dismiss, dismissAndFocus,
-			cdxIconVolumeUp, cdxIconClose
+			onClose,
+			onPrevious,
+			onNext,
+			speaker,
+			showCoachMark,
+			start,
+			dismiss,
+			dismissAndFocus,
+			cdxIconVolumeUp,
+			cdxIconClose,
+			teleportTarget
 		};
 	}
 } );

@@ -739,12 +739,18 @@
 			"packageFiles": [
 				"init.js",
 				"App.vue",
+				"components/PlaybackToolbar.vue",
+				"components/PlaybackSpeed.vue",
 				{
 					"name": "readAloudIcons.json",
 					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
 					"callbackParam": [
 						"cdxIconVolumeUp",
-						"cdxIconClose"
+						"cdxIconClose",
+						"cdxIconPlay",
+						"cdxIconPause",
+						"cdxIconDoubleChevronStart",
+						"cdxIconDoubleChevronEnd"
 					]
 				}
 			],
@@ -754,13 +760,20 @@
 			"dependencies": [
 				"vue",
 				"@wikimedia/codex",
-				"mediawiki.storage"
+				"mediawiki.storage",
+				"mediawiki.language"
 			],
 			"messages": [
 				"readerexperiments-readaloud-title",
 				"readerexperiments-readaloud-description",
 				"readerexperiments-readaloud-try",
-				"readerexperiments-readaloud-dismiss"
+				"readerexperiments-readaloud-dismiss",
+				"readerexperiments-readaloud-close",
+				"readerexperiments-readaloud-next",
+				"readerexperiments-readaloud-pause",
+				"readerexperiments-readaloud-play",
+				"readerexperiments-readaloud-previous",
+				"readerexperiments-readaloud-playback-speed-button-label"
 			]
 		}
 	},

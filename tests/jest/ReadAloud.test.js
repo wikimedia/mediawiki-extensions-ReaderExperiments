@@ -7,6 +7,7 @@ const SEEN_KEY = 'mw.readerExperiments.readAloud.coachMarkSeen';
 
 describe( 'Read aloud entry point', () => {
 	let wrapper;
+	let teleportTarget;
 	let frames;
 	beforeEach( () => {
 		frames = new Map();
@@ -17,6 +18,9 @@ describe( 'Read aloud entry point', () => {
 		} );
 		jest.spyOn( window, 'cancelAnimationFrame' ).mockImplementation( ( id ) => frames.delete( id ) );
 		const storage = new Map();
+		// Core's createMwApp provides the teleport target, which the toolbar renders into.
+		teleportTarget = document.createElement( 'div' );
+		document.body.appendChild( teleportTarget );
 		mw.storage = {
 			get: jest.fn( ( key ) => storage.get( key ) || null ),
 			set: jest.fn( ( key, value ) => storage.set( key, value ) )
@@ -24,6 +28,7 @@ describe( 'Read aloud entry point', () => {
 	} );
 	afterEach( () => {
 		wrapper.unmount();
+		teleportTarget.remove();
 		jest.restoreAllMocks();
 	} );
 
@@ -35,7 +40,10 @@ describe( 'Read aloud entry point', () => {
 	}
 
 	async function render( settle = true ) {
-		wrapper = mount( App, { attachTo: document.body } );
+		wrapper = mount( App, {
+			attachTo: document.body,
+			global: { provide: { CdxTeleportTarget: teleportTarget } }
+		} );
 		await nextTick();
 		if ( settle ) {
 			await paint();

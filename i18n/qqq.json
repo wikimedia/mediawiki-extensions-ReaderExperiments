@@ -48,6 +48,16 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Text for the link that navigates to the article.",
 	"readerexperiments-mobilepagepreviews-title": "Accessibility title for in the mobile page preview bottom sheet.",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Accessibility label for the mobile page preview bottom sheet close button.",
+	"readerexperiments-readaloud-close": "Accessibility label for the close button",
+	"readerexperiments-readaloud-description": "Description of calm reading shown in the onboarding coach mark.",
+	"readerexperiments-readaloud-dismiss": "Accessible label for the button that dismisses the calm reading coach mark.",
+	"readerexperiments-readaloud-next": "Accessibility label for the next button",
+	"readerexperiments-readaloud-pause": "Accessibility label for the pause button",
+	"readerexperiments-readaloud-play": "Accessibility label for the play button",
+	"readerexperiments-readaloud-previous": "Accessibility label for the previous button",
+	"readerexperiments-readaloud-playback-speed-button-label": "Label of the audio player's playback speed button and menu items, shown as a multiplier of normal speed.\n\nParameters:\n* $1: The playback speed as a number formatted for the user's language, for example 1, 1.25 or 2. The default \"x\" is the multiplication marker.",
+	"readerexperiments-readaloud-title": "Title of the calm reading coach mark and accessible label for its speaker toolbar button.",
+	"readerexperiments-readaloud-try": "Label for the button that starts calm reading from the coach mark.",
 	"readerexperiments-semanticsearch-title": "Title text for the semantic search special page",
 	"readerexperiments-semanticsearch-preference": "Title of preference to allow user to choose their search interface",
 	"readerexperiments-semanticsearch-preference-semanticsearch-label": "{{optional}}\nLabel for the Special:MediaSearch interface option",
@@ -103,9 +113,5 @@
 	"readerexperiments-preferredsources-dialog-title": "Title of the dialog opened from the small popup element.",
 	"readerexperiments-preferredsources-dialog-body": "Body text of the dialog, explaining why the reader might want to choose Wikipedia as a preferred source.",
 	"readerexperiments-preferredsources-dialog-action": "Label of the dialog's primary button. Tapping it opens Google's preferred-sources settings page with Wikipedia pre-filled. Keep it short.",
-	"readerexperiments-preferredsources-dialog-dismiss": "Label of the dialog's second button. Tapping it closes the dialog and stops the popup element from appearing again. Keep it short.",
-	"readerexperiments-readaloud-title": "Title of the calm reading coach mark and accessible label for its speaker toolbar button.",
-	"readerexperiments-readaloud-description": "Description of calm reading shown in the onboarding coach mark.",
-	"readerexperiments-readaloud-try": "Label for the button that starts calm reading from the coach mark.",
-	"readerexperiments-readaloud-dismiss": "Accessible label for the button that dismisses the calm reading coach mark."
+	"readerexperiments-preferredsources-dialog-dismiss": "Label of the dialog's second button. Tapping it closes the dialog and stops the popup element from appearing again. Keep it short."
 }

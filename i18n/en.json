@@ -46,6 +46,16 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Read more",
 	"readerexperiments-mobilepagepreviews-title": "Page preview",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Close",
+	"readerexperiments-readaloud-close": "Close",
+	"readerexperiments-readaloud-description": "Try our new immersive reading experience. Focus on the text, hear the words out loud, and learn without distraction.",
+	"readerexperiments-readaloud-dismiss": "Dismiss calm reading introduction",
+	"readerexperiments-readaloud-next": "Next",
+	"readerexperiments-readaloud-pause": "Pause",
+	"readerexperiments-readaloud-play": "Play",
+	"readerexperiments-readaloud-previous": "Previous",
+	"readerexperiments-readaloud-playback-speed-button-label": "$1x",
+	"readerexperiments-readaloud-title": "Calm reading",
+	"readerexperiments-readaloud-try": "Try calm reading",
 	"readerexperiments-semanticsearch-title": "Search results",
 	"readerexperiments-semanticsearch-preference": "Choose your search interface",
 	"readerexperiments-semanticsearch-preference-semanticsearch-label": "{{#Special:SemanticSearch}}",
@@ -101,9 +111,5 @@
 	"readerexperiments-preferredsources-dialog-title": "Keep Wikipedia visible in your Google searches",
 	"readerexperiments-preferredsources-dialog-body": "Prioritize reliable information that has been fact-checked by humans. Choose Wikipedia as a preferred source on Google.",
 	"readerexperiments-preferredsources-dialog-action": "Choose Wikipedia",
-	"readerexperiments-preferredsources-dialog-dismiss": "Don't show again",
-	"readerexperiments-readaloud-title": "Calm reading",
-	"readerexperiments-readaloud-description": "Try our new immersive reading experience. Focus on the text, hear the words out loud, and learn without distraction.",
-	"readerexperiments-readaloud-try": "Try calm reading",
-	"readerexperiments-readaloud-dismiss": "Dismiss calm reading introduction"
+	"readerexperiments-preferredsources-dialog-dismiss": "Don't show again"
 }
