@@ -6,6 +6,7 @@ use MediaWiki\Config\HashConfig;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch;
 use MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Utils\SemanticSearchRequestInspector;
 use MediaWiki\Rest\HttpException;
+use MediaWiki\Tests\Rest\RestTestTrait;
 use MediaWikiUnitTestCase;
 use ReflectionMethod;
 
@@ -15,6 +16,7 @@ use ReflectionMethod;
  * @covers \MediaWiki\Extension\ReaderExperiments\Experiments\SemanticSearch\Rest\GetSemanticSearch::getTargetUrl
  */
 class GetSemanticSearchTest extends MediaWikiUnitTestCase {
+	use RestTestTrait;
 
 	/** @dataProvider provideRequestedData */
 	public function testOnlyRequestsDisplayedData( array $data, string $info, string $prop ): void {
@@ -35,7 +37,7 @@ class GetSemanticSearchTest extends MediaWikiUnitTestCase {
 			'type' => 'lexical', 'term' => 'cats', 'namespace' => [ NS_MAIN ],
 			'limit' => 20, 'continue' => 0, 'sort' => 'relevance', 'uselang' => 'en', 'data' => $data,
 		] );
-		$engine->method( 'getResponseFactory' )->willReturn( new \MediaWiki\Rest\ResponseFactory( [] ) );
+		$engine->method( 'getResponseFactory' )->willReturn( $this->newResponseFactory() );
 		$actionApi->expects( $this->once() )->method( 'execute' )
 			->willReturnCallback( function ( $request ) use ( $info, $prop ) {
 				$params = $request->getQueryValues();
