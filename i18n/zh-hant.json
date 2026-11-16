@@ -43,7 +43,7 @@
 	"readerexperiments-semanticsearch-title": "搜尋結果",
 	"readerexperiments-semanticsearch-preference": "挑選您的搜尋介面",
 	"readerexperiments-semanticsearch-preference-help": "有多個介面可用於展示搜尋結果。選擇您偏好的介面。",
-	"readerexperiments-semanticsearch-switch-special-search": "切換成{{#Special:Search}}",
+	"readerexperiments-semanticsearch-switch-special-search": "切換成Special:Search",
 	"readerexperiments-semanticsearch-search-button": "搜尋",
 	"readerexperiments-semanticsearch-input-placeholder": "向 {{SITENAME}} 提問…",
 	"readerexperiments-semanticsearch-load-more-results": "載入更多",
