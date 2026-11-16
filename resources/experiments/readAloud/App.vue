@@ -1,4 +1,47 @@
 <template>
+	<cdx-button
+		ref="speaker"
+		weight="quiet"
+		size="large"
+		:aria-label="$i18n( 'readerexperiments-readaloud-title' ).text()"
+		@click="start"
+	>
+		<cdx-icon :icon="cdxIconVolumeUp"></cdx-icon>
+	</cdx-button>
+	<cdx-popover
+		:anchor="speaker"
+		:open="showCoachMark"
+		class="ext-readerExperiments-readAloud-coachMark"
+		role="region"
+		aria-labelledby="read-aloud-coach-title"
+		:title="$i18n( 'readerexperiments-readaloud-title' ).text()"
+		:use-close-button="true"
+		:close-button-label="$i18n( 'readerexperiments-readaloud-dismiss' ).text()"
+		:primary-action="{
+			label: $i18n( 'readerexperiments-readaloud-try' ).text(),
+			actionType: 'progressive'
+		}"
+		placement="bottom-end"
+		@update:open="dismiss"
+		@primary="start"
+	>
+		<template #header>
+			<div class="ext-readerExperiments-readAloud-sky" aria-hidden="true"></div>
+			<div class="ext-readerExperiments-readAloud-heading">
+				<h2 id="read-aloud-coach-title">
+					{{ $i18n( 'readerexperiments-readaloud-title' ).text() }}
+				</h2>
+				<cdx-button
+					weight="quiet"
+					:aria-label="$i18n( 'readerexperiments-readaloud-dismiss' ).text()"
+					@click="dismissAndFocus"
+				>
+					<cdx-icon :icon="cdxIconClose"></cdx-icon>
+				</cdx-button>
+			</div>
+		</template>
+		<p>{{ $i18n( 'readerexperiments-readaloud-description' ).text() }}</p>
+	</cdx-popover>
 	<audio
 		ref="audioPlayer"
 		class="ext-readerExperiments-readAloud-audio-player"
@@ -12,12 +55,17 @@
 </template>
 
 <script>
-const { defineComponent, ref } = require( 'vue' );
+const { defineComponent, ref, onMounted, onBeforeUnmount } = require( 'vue' );
+const { CdxButton, CdxIcon, CdxPopover } = require( '@wikimedia/codex' );
+const { cdxIconVolumeUp, cdxIconClose } = require( './readAloudIcons.json' );
+const SEEN_KEY = 'mw.readerExperiments.readAloud.coachMarkSeen';
 
 // @vue/component
 module.exports = exports = defineComponent( {
 	name: 'ReadAloud',
+	components: { CdxButton, CdxIcon, CdxPopover },
 	setup() {
+		const speaker = ref( null );
 		const audioPlayer = ref( null );
 		const currentTime = ref( 0 );
 		const isPlaying = ref( false );
@@ -76,8 +124,43 @@ module.exports = exports = defineComponent( {
 			audioPlayer.value.load();
 		}
 
+		const showCoachMark = ref( false );
+		let openingFrame;
+		onMounted( () => {
+			if ( mw.storage.get( SEEN_KEY ) ) {
+				return;
+			}
+			// ResourceLoader applies module styles on an animation frame. Wait for
+			// that paint before Codex measures the newly inserted toolbar button.
+			openingFrame = requestAnimationFrame( () => {
+				openingFrame = requestAnimationFrame( () => {
+					showCoachMark.value = true;
+					mw.storage.set( SEEN_KEY, '1' );
+				} );
+			} );
+		} );
+		onBeforeUnmount( () => cancelAnimationFrame( openingFrame ) );
+
+		function dismiss() {
+			cancelAnimationFrame( openingFrame );
+			showCoachMark.value = false;
+		}
+
+		function dismissAndFocus() {
+			dismiss();
+			// Vue exposes a native button element, not a jQuery object.
+			// eslint-disable-next-line no-jquery/no-event-shorthand
+			speaker.value.$el.focus();
+		}
+
+		function start() {
+			dismissAndFocus();
+			mw.storage.set( SEEN_KEY, '1' );
+			// Playback (T434890) can subscribe to either entry point here.
+			mw.hook( 'ext.readerExperiments.readAloud.start' ).fire( audioPlayer.value );
+		}
+
 		return {
-			audioPlayer,
 			onTimeUpdate,
 			onPlay,
 			onPause,
@@ -89,7 +172,9 @@ module.exports = exports = defineComponent( {
 			// eslint-disable-next-line vue/no-unused-properties
 			pause,
 			// eslint-disable-next-line vue/no-unused-properties
-			load
+			load,
+			speaker, audioPlayer, showCoachMark, start, dismiss, dismissAndFocus,
+			cdxIconVolumeUp, cdxIconClose
 		};
 	}
 } );

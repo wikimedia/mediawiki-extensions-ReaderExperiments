@@ -78,6 +78,7 @@ module.exports = {
 
 	// A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
 	moduleNameMapper: {
+		'readAloudIcons.json$': '@wikimedia/codex-icons',
 		// We load Codex components on demand via ResourceLoader.
 		// This generates a virtual `codex.js` file that doesn't exist on the filesystem,
 		// so tell Jest it can load the full library instead.

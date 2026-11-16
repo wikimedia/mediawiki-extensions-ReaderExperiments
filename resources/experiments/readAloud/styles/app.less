@@ -1,0 +1,47 @@
+@import 'mediawiki.skin.variables.less';
+
+.ext-readerExperiments-readAloud-coachMark {
+	width: 320px;
+	max-width: calc( 100vw - 32px );
+
+	.cdx-popover__header {
+		display: block;
+	}
+
+	.ext-readerExperiments-readAloud-heading {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+
+		.cdx-button {
+			flex-shrink: 0;
+			margin-inline-start: 8px;
+		}
+	}
+
+	h2 {
+		min-width: 0;
+		overflow-wrap: anywhere;
+		font-family: @font-family-system-sans;
+		font-size: @font-size-large;
+		font-weight: @font-weight-bold;
+		border: 0;
+		padding: 0;
+		margin: 0;
+	}
+
+	p {
+		margin: 0;
+	}
+}
+
+// Decorative sky until the final photographic asset is supplied.
+.ext-readerExperiments-readAloud-sky {
+	width: calc( 100% + 32px );
+	height: 200px;
+	flex-shrink: 0;
+	margin: -16px -16px 24px;
+	@cloud-left: radial-gradient( ellipse at 25% 15%, #fff 0%, transparent 60% );
+	@cloud-right: radial-gradient( ellipse at 85% 30%, #eef5fa 0%, transparent 55% );
+	background: @cloud-left, @cloud-right, #508fc7;
+}

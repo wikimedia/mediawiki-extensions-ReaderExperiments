@@ -101,5 +101,9 @@
 	"readerexperiments-preferredsources-dialog-title": "Keep Wikipedia visible in your Google searches",
 	"readerexperiments-preferredsources-dialog-body": "Prioritize reliable information that has been fact-checked by humans. Choose Wikipedia as a preferred source on Google.",
 	"readerexperiments-preferredsources-dialog-action": "Choose Wikipedia",
-	"readerexperiments-preferredsources-dialog-dismiss": "Don't show again"
+	"readerexperiments-preferredsources-dialog-dismiss": "Don't show again",
+	"readerexperiments-readaloud-title": "Calm reading",
+	"readerexperiments-readaloud-description": "Try our new immersive reading experience. Focus on the text, hear the words out loud, and learn without distraction.",
+	"readerexperiments-readaloud-try": "Try calm reading",
+	"readerexperiments-readaloud-dismiss": "Dismiss calm reading introduction"
 }

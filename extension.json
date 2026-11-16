@@ -733,11 +733,29 @@
 			"remoteExtPath": "ReaderExperiments/resources/experiments/readAloud",
 			"packageFiles": [
 				"init.js",
-				"App.vue"
+				"App.vue",
+				{
+					"name": "readAloudIcons.json",
+					"callback": "MediaWiki\\ResourceLoader\\CodexModule::getIcons",
+					"callbackParam": [
+						"cdxIconVolumeUp",
+						"cdxIconClose"
+					]
+				}
+			],
+			"styles": [
+				"styles/app.less"
 			],
 			"dependencies": [
 				"vue",
-				"@wikimedia/codex"
+				"@wikimedia/codex",
+				"mediawiki.storage"
+			],
+			"messages": [
+				"readerexperiments-readaloud-title",
+				"readerexperiments-readaloud-description",
+				"readerexperiments-readaloud-try",
+				"readerexperiments-readaloud-dismiss"
 			]
 		}
 	},
