@@ -91,5 +91,9 @@
 	"readerexperiments-preferredsources-dialog-title": "Mantén a Wikipedia visible nas buscas de Google",
 	"readerexperiments-preferredsources-dialog-body": "Prioriza a información fiable e verificada por humanos. Escolle a Wikipedia como fonte preferida en Google.",
 	"readerexperiments-preferredsources-dialog-action": "Escolle a Wikipedia",
-	"readerexperiments-preferredsources-dialog-dismiss": "Non mostrar de novo"
+	"readerexperiments-preferredsources-dialog-dismiss": "Non mostrar de novo",
+	"readerexperiments-readaloud-title": "Lectura con acougo",
+	"readerexperiments-readaloud-description": "Proba a nosa nova experiencia de lectura inmersiva. Concéntrate no texto, escoita as palabras en voz alta e aprende sen distraccións.",
+	"readerexperiments-readaloud-try": "Probar a lectura con acougo",
+	"readerexperiments-readaloud-dismiss": "Omitir a introdución á lectura con acougo"
 }

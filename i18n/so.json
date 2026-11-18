@@ -91,5 +91,9 @@
 	"readerexperiments-preferredsources-dialog-title": "Wikipedia ka dhig mid ka muuqda raadintaada Google",
 	"readerexperiments-preferredsources-dialog-body": "Mudnaanta sii macluumaadka lagu kalsoonaan karo ee ay dadku xaqiijiyeen. Wikipedia ka dooro ilo aad doorbidayso ee Google.",
 	"readerexperiments-preferredsources-dialog-action": "Dooro Wikipedia",
-	"readerexperiments-preferredsources-dialog-dismiss": "Mar dambe ha tusin"
+	"readerexperiments-preferredsources-dialog-dismiss": "Mar dambe ha tusin",
+	"readerexperiments-readaloud-title": "Akhris deggan",
+	"readerexperiments-readaloud-description": "Isku day waayo aragnimadeenna cusub ee akhriska qotada dheer. Diiradda saar qoraalka, dhegayso erayada oo cod dheer lagu akhrinayo, waxna baro adigoon wax ku mashquulin.",
+	"readerexperiments-readaloud-try": "Isku day akhris deggan",
+	"readerexperiments-readaloud-dismiss": "Ka saar hordhaca akhriska deggan"
 }

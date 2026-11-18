@@ -91,5 +91,9 @@
 	"readerexperiments-preferredsources-dialog-title": "Google axtarışlarınızda Vikipediyanı görünən saxlayın",
 	"readerexperiments-preferredsources-dialog-body": "İnsanlar tərəfindən fakt yoxlanışından keçirilmiş etibarlı məlumatlara üstünlük verin. Google-da üstünlük verilən mənbə kimi Vikipediyanı seçin.",
 	"readerexperiments-preferredsources-dialog-action": "Vikipediyanı seç",
-	"readerexperiments-preferredsources-dialog-dismiss": "Bir daha göstərmə"
+	"readerexperiments-preferredsources-dialog-dismiss": "Bir daha göstərmə",
+	"readerexperiments-readaloud-title": "Sakit oxu",
+	"readerexperiments-readaloud-description": "Yeni, maraqlı oxuma təcrübəmizi sına. Mətn üzərində diqqəti cəmlə, sözləri səslə dinlə və diqqəti dağıtmadan öyrən.",
+	"readerexperiments-readaloud-try": "Sakit oxumağa çalış",
+	"readerexperiments-readaloud-dismiss": "Sakit oxuma təqdimatını bağla"
 }
