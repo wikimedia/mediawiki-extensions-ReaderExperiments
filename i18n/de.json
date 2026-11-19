@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Brettchenweber"
+		]
 	},
 	"readerexperiments-desc": "Eine Reihe von Prototypen, die darauf abzielen, die Zahl der Wikipedia-Leser zu erhöhen",
 	"readerexperiments-imagebrowsing-carousel-label": "Bilder durchsuchen",
@@ -89,5 +91,9 @@
 	"readerexperiments-preferredsources-dialog-title": "Sorge dafür, dass Wikipedia in deinen Google-Suchergebnissen weiterhin angezeigt wird",
 	"readerexperiments-preferredsources-dialog-body": "Lege Wert auf zuverlässige Informationen, die von Menschen auf ihre Richtigkeit überprüft wurden. Wähle Wikipedia als bevorzugte Quelle bei Google.",
 	"readerexperiments-preferredsources-dialog-action": "Wikipedia auswählen",
-	"readerexperiments-preferredsources-dialog-dismiss": "Nicht wieder anzeigen"
+	"readerexperiments-preferredsources-dialog-dismiss": "Nicht wieder anzeigen",
+	"readerexperiments-readaloud-title": "Entspanntes Lesen",
+	"readerexperiments-readaloud-description": "Probiere unser neues, immersives Leseerlebnis aus. Konzentriere dich auf den Text, lass dir die Wörter laut vorlesen und lerne ohne Ablenkung.",
+	"readerexperiments-readaloud-try": "Versuche das entspannte Lesen",
+	"readerexperiments-readaloud-dismiss": "Einführung zum entspannten Lesen überspringen"
 }
