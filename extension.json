@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.47.0",
+		"MediaWiki": ">= 1.48.0",
 		"extensions": {
 			"TestKitchen": "*"
 		}
@@ -202,8 +202,13 @@
 		"ext.readerExperiments.imageCarouselRetest.init": {
 			"localBasePath": "resources/experiments/imageCarouselRetest",
 			"remoteExtPath": "ReaderExperiments/resources/experiments/imageCarouselRetest",
-			"dependencies": [ "ext.readerExperiments.imageCarouselRetest", "mediawiki.user" ],
-			"packageFiles": [ "init.js" ]
+			"dependencies": [
+				"ext.readerExperiments.imageCarouselRetest",
+				"mediawiki.user"
+			],
+			"packageFiles": [
+				"init.js"
+			]
 		},
 		"ext.readerExperiments.imageCarouselRetest": {
 			"localBasePath": "resources/experiments/imageCarouselRetest",
