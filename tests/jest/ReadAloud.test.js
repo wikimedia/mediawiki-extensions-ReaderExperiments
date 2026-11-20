@@ -101,4 +101,27 @@ describe( 'Read aloud entry point', () => {
 		expect( mw.hook().fire ).toHaveBeenCalledWith( wrapper.get( 'audio' ).element );
 		expect( wrapper.findComponent( CdxPopover ).props( 'open' ) ).toBe( false );
 	} );
+
+	test( 'disables seeking and shows a spinner while the audio is loading', async () => {
+		await render();
+		const seekButtons = () => [
+			...document.querySelectorAll( '[aria-label^="readerexperiments-readaloud-seek"]' )
+		];
+		const spinner = () => document.querySelector( '.cdx-progress-indicator' );
+
+		expect( seekButtons() ).toHaveLength( 2 );
+		expect( seekButtons().every( ( button ) => button.disabled ) ).toBe( true );
+		expect( spinner() ).not.toBeNull();
+
+		await wrapper.get( 'audio' ).trigger( 'canplay' );
+		expect( seekButtons().every( ( button ) => !button.disabled ) ).toBe( true );
+		expect( spinner() ).toBeNull();
+
+		await wrapper.get( 'audio' ).trigger( 'waiting' );
+		expect( seekButtons().every( ( button ) => button.disabled ) ).toBe( true );
+		expect( spinner() ).not.toBeNull();
+
+		await wrapper.get( 'audio' ).trigger( 'playing' );
+		expect( spinner() ).toBeNull();
+	} );
 } );

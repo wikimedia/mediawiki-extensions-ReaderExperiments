@@ -58,7 +58,7 @@ module.exports = exports = defineComponent( {
 		 */
 		function formatSpeed( rate ) {
 			return $i18n(
-				'readerexperiments-readaloud-playback-speed-button-label',
+				'readerexperiments-readaloud-speed-button-label',
 				mw.language.convertNumber( Number( rate ) )
 			).text();
 		}

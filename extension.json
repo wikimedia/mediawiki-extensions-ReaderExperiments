@@ -770,10 +770,12 @@
 				"readerexperiments-readaloud-dismiss",
 				"readerexperiments-readaloud-close",
 				"readerexperiments-readaloud-seek-forward",
+				"readerexperiments-readaloud-loading",
 				"readerexperiments-readaloud-pause",
 				"readerexperiments-readaloud-play",
+				"readerexperiments-readaloud-progress",
 				"readerexperiments-readaloud-seek-backward",
-				"readerexperiments-readaloud-playback-speed-button-label"
+				"readerexperiments-readaloud-speed-button-label"
 			]
 		}
 	},

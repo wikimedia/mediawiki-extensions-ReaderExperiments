@@ -50,6 +50,9 @@
 		@ended="onEnded"
 		@progress="onProgress"
 		@canplay="onCanPlay"
+		@loadstart="onLoadStart"
+		@waiting="onWaiting"
+		@playing="onPlaying"
 	></audio>
 	<teleport :to="teleportTarget">
 		<playback-toolbar
@@ -86,9 +89,9 @@ module.exports = exports = defineComponent( {
 		const audioPlayer = ref( null );
 		const currentTime = ref( 0 );
 		const isPlaying = ref( false );
-		const isLoading = ref( true ); // TODO: loading state
+		const isLoading = ref( true );
 		const duration = ref( 0 );
-		const buffered = ref( 0 ); // TODO: Does the design show buffering?
+		const buffered = ref( 0 );
 		const isVisible = ref( false );
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 
@@ -118,6 +121,25 @@ module.exports = exports = defineComponent( {
 
 		function onCanPlay() {
 			duration.value = audioPlayer.value.duration || 0;
+			isLoading.value = false;
+		}
+
+		// Browser started to load a resource.
+		// https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loadstart_event
+		function onLoadStart() {
+			isLoading.value = true;
+		}
+
+		// Playback stopped because the next media data isn't available yet (buffering).
+		// https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/waiting_event
+		function onWaiting() {
+			isLoading.value = true;
+		}
+
+		// Playback started or restarted.
+		// https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/playing_event
+		function onPlaying() {
+			isLoading.value = false;
 		}
 
 		function play() {
@@ -165,6 +187,7 @@ module.exports = exports = defineComponent( {
 			duration.value = 0;
 			buffered.value = 0;
 			isPlaying.value = false;
+			isLoading.value = true;
 			audioPlayer.value.src = audioSourceUrl;
 			audioPlayer.value.load();
 		}
@@ -219,6 +242,9 @@ module.exports = exports = defineComponent( {
 			onEnded,
 			onProgress,
 			onCanPlay,
+			onLoadStart,
+			onWaiting,
+			onPlaying,
 			play,
 			pause,
 			// eslint-disable-next-line vue/no-unused-properties
