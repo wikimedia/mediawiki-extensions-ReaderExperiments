@@ -58,10 +58,11 @@
 			:is-loading="isLoading"
 			:current-time="currentTime"
 			:duration="duration"
+			:seek-offset="seekOffsetSeconds"
 			@play="play"
 			@pause="pause"
-			@previous="onPrevious"
-			@next="onNext"
+			@backward="seekTo( -seekOffsetSeconds )"
+			@forward="seekTo( seekOffsetSeconds )"
 			@close="onClose"
 		>
 		</playback-toolbar>
@@ -73,6 +74,7 @@ const { defineComponent, ref, onMounted, onBeforeUnmount, inject } = require( 'v
 const { CdxButton, CdxIcon, CdxPopover } = require( '@wikimedia/codex' );
 const { cdxIconVolumeUp, cdxIconClose } = require( './readAloudIcons.json' );
 const SEEN_KEY = 'mw.readerExperiments.readAloud.coachMarkSeen';
+const SEEK_OFFSET_SECONDS = 30;
 const PlaybackToolbar = require( './components/PlaybackToolbar.vue' );
 
 // @vue/component
@@ -139,12 +141,18 @@ module.exports = exports = defineComponent( {
 			isVisible.value = false;
 		}
 
-		function onPrevious() {
-			// TODO: T434892
-		}
+		/**
+		 * Seek forward or backward by offset amount (seconds)
+		 * Limited to start or end of track by the browser
+		 *
+		 * @param {number} timeOffset Seconds to move within track.
+		 */
+		function seekTo( timeOffset ) {
+			if ( !audioPlayer.value ) {
+				return;
+			}
 
-		function onNext() {
-			// TODO: T434892
+			audioPlayer.value.currentTime += timeOffset;
 		}
 
 		/**
@@ -216,8 +224,7 @@ module.exports = exports = defineComponent( {
 			// eslint-disable-next-line vue/no-unused-properties
 			load,
 			onClose,
-			onPrevious,
-			onNext,
+			seekTo,
 			speaker,
 			showCoachMark,
 			start,
@@ -225,7 +232,8 @@ module.exports = exports = defineComponent( {
 			dismissAndFocus,
 			cdxIconVolumeUp,
 			cdxIconClose,
-			teleportTarget
+			teleportTarget,
+			seekOffsetSeconds: SEEK_OFFSET_SECONDS
 		};
 	}
 } );

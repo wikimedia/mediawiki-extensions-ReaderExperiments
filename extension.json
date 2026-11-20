@@ -769,10 +769,10 @@
 				"readerexperiments-readaloud-try",
 				"readerexperiments-readaloud-dismiss",
 				"readerexperiments-readaloud-close",
-				"readerexperiments-readaloud-next",
+				"readerexperiments-readaloud-seek-forward",
 				"readerexperiments-readaloud-pause",
 				"readerexperiments-readaloud-play",
-				"readerexperiments-readaloud-previous",
+				"readerexperiments-readaloud-seek-backward",
 				"readerexperiments-readaloud-playback-speed-button-label"
 			]
 		}

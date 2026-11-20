@@ -11,8 +11,8 @@
 
 	<cdx-popover
 		ref="speedPopover"
-		class="ext-readerExperiments-readAloud__playback-speed__popover"
 		v-model:open="showSpeedPopover"
+		class="ext-readerExperiments-readAloud__playback-speed__popover"
 		:anchor="speedRateButton"
 		placement="top"
 		:use-close-button="true"

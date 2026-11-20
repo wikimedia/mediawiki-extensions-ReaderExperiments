@@ -3,9 +3,10 @@
 		<playback-speed></playback-speed>
 		<div class="ext-readerExperiments-readAloud__playback-controls">
 			<cdx-button
-				:aria-label="$i18n( 'readerexperiments-readaloud-previous' ).text()"
+				:aria-label="$i18n(
+					'readerexperiments-readaloud-seek-backward', seekOffsetLabel ).text()"
 				weight="quiet"
-				@click="onPrevious">
+				@click="onSeekBackward">
 				<cdx-icon :icon="cdxIconDoubleChevronStart"></cdx-icon>
 			</cdx-button>
 			<cdx-button
@@ -18,9 +19,10 @@
 				<cdx-icon :icon="isPlaying ? cdxIconPause : cdxIconPlay"></cdx-icon>
 			</cdx-button>
 			<cdx-button
-				:aria-label="$i18n( 'readerexperiments-readaloud-next' ).text()"
+				:aria-label="$i18n(
+					'readerexperiments-readaloud-seek-forward', seekOffsetLabel ).text()"
 				weight="quiet"
-				@click="onNext">
+				@click="onSeekForward">
 				<cdx-icon :icon="cdxIconDoubleChevronEnd"></cdx-icon>
 			</cdx-button>
 		</div>
@@ -34,7 +36,7 @@
 </template>
 
 <script>
-const { defineComponent } = require( 'vue' );
+const { computed, defineComponent } = require( 'vue' );
 const { CdxButton, CdxIcon } = require( '@wikimedia/codex' );
 const PlaybackSpeed = require( './PlaybackSpeed.vue' );
 const {
@@ -69,27 +71,35 @@ module.exports = exports = defineComponent( {
 		duration: {
 			type: Number,
 			default: 0
+		},
+		seekOffset: {
+			type: Number,
+			required: true
 		}
 	},
 	emits: [
 		'play',
 		'pause',
-		'previous',
-		'next',
+		'backward',
+		'forward',
 		'close'
 	],
 	setup( props, { emit } ) {
+		// Format the seek offset number for current language.
+		const seekOffsetLabel = computed(
+			() => mw.language.convertNumber( props.seekOffset )
+		);
 
 		function onTogglePlayback() {
 			emit( props.isPlaying ? 'pause' : 'play' );
 		}
 
-		function onPrevious() {
-			emit( 'previous' );
+		function onSeekBackward() {
+			emit( 'backward' );
 		}
 
-		function onNext() {
-			emit( 'next' );
+		function onSeekForward() {
+			emit( 'forward' );
 		}
 
 		function onClose() {
@@ -102,9 +112,10 @@ module.exports = exports = defineComponent( {
 			cdxIconDoubleChevronStart,
 			cdxIconDoubleChevronEnd,
 			cdxIconClose,
+			seekOffsetLabel,
 			onTogglePlayback,
-			onPrevious,
-			onNext,
+			onSeekBackward,
+			onSeekForward,
 			onClose
 		};
 	}
