@@ -1,0 +1,42 @@
+{
+	"schema_version": 2,
+	"scope": "all",
+	"wiki_id": "enwiki",
+	"page_id": 663,
+	"rev_id": 1376497718,
+	"generation_version": "kokoro-v1.0+af_heart+norm-2026.10.02-nemo1.2.0-aa0.3.3-3fde6c41+split-v1:4000:250",
+	"generated_at": "2026-11-03T00:45:24+00:00",
+	"sections": [
+		{
+			"section_id": "lead",
+			"title": "Lead",
+			"level": 1,
+			"duration_ms": 145671.66666666666,
+			"content_sha256": "44993156cf719918d22310a3c0a101e9569190385f4c13f2704b4c913af0e814",
+			"audio": {
+				"key": "lead.mp3",
+				"media_type": "audio/mpeg"
+			},
+			"captions": {
+				"key": "lead.vtt",
+				"media_type": "text/vtt"
+			}
+		},
+		{
+			"section_id": "background",
+			"title": "Background",
+			"level": 2,
+			"duration_ms": 138994.33333333334,
+			"content_sha256": "93245e04e7b910d450f69d9b7e6da6869fcc8286c83dfb94a68ee20fe3fd4853",
+			"audio": {
+				"key": "background.mp3",
+				"media_type": "audio/mpeg"
+			},
+			"captions": {
+				"key": "background.vtt",
+				"media_type": "text/vtt"
+			}
+		}
+	],
+	"render_id": "48ad7791-d48d-11f1-8157-7d95cb3d688c"
+}

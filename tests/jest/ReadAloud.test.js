@@ -25,6 +25,10 @@ describe( 'Read aloud entry point', () => {
 			get: jest.fn( ( key ) => storage.get( key ) || null ),
 			set: jest.fn( ( key, value ) => storage.set( key, value ) )
 		};
+		global.fetch = ( path ) => Promise.resolve( {
+			// eslint-disable-next-line security/detect-non-literal-require
+			json: () => Promise.resolve( require( path ) )
+		} );
 	} );
 	afterEach( () => {
 		wrapper.unmount();
@@ -41,6 +45,10 @@ describe( 'Read aloud entry point', () => {
 
 	async function render( settle = true ) {
 		wrapper = mount( App, {
+			props: {
+				ttsBaseUri: './files/readAloud/tts-v2/',
+				manifestPath: 'manifest.json'
+			},
 			attachTo: document.body,
 			global: { provide: { CdxTeleportTarget: teleportTarget } }
 		} );
@@ -98,12 +106,14 @@ describe( 'Read aloud entry point', () => {
 			await nextTick();
 		}
 		expect( mw.hook ).toHaveBeenCalledWith( 'ext.readerExperiments.readAloud.start' );
-		expect( mw.hook().fire ).toHaveBeenCalledWith( wrapper.get( 'audio' ).element );
+		expect( mw.hook().fire ).toHaveBeenCalled();
 		expect( wrapper.findComponent( CdxPopover ).props( 'open' ) ).toBe( false );
 	} );
 
 	test( 'disables seeking and shows a spinner while the audio is loading', async () => {
 		await render();
+		await wrapper.get( 'button' ).trigger( 'click' );
+
 		const seekButtons = () => [
 			...document.querySelectorAll( '[aria-label^="readerexperiments-readaloud-seek"]' )
 		];

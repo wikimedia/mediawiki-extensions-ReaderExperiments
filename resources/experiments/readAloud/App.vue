@@ -43,7 +43,11 @@
 		<p>{{ $i18n( 'readerexperiments-readaloud-description' ).text() }}</p>
 	</cdx-popover>
 	<audio
+		v-if="audioSet.length > 0"
 		ref="audioPlayer"
+		autoplay
+		preload
+		:src="audioSet[ 0 ]"
 		@timeupdate="onTimeUpdate"
 		@play="onPlay"
 		@pause="onPause"
@@ -74,7 +78,7 @@
 </template>
 
 <script>
-const { defineComponent, ref, onMounted, onBeforeUnmount, inject } = require( 'vue' );
+const { computed, defineComponent, ref, onMounted, onBeforeUnmount, inject } = require( 'vue' );
 const { CdxButton, CdxIcon, CdxPopover } = require( '@wikimedia/codex' );
 const { cdxIconVolumeUp, cdxIconClose } = require( './readAloudIcons.json' );
 const SEEN_KEY = 'mw.readerExperiments.readAloud.coachMarkSeen';
@@ -85,7 +89,17 @@ const PlaybackToolbar = require( './components/PlaybackToolbar.vue' );
 module.exports = exports = defineComponent( {
 	name: 'ReadAloud',
 	components: { CdxButton, CdxIcon, CdxPopover, PlaybackToolbar },
-	setup() {
+	props: {
+		ttsBaseUri: {
+			type: String,
+			required: true
+		},
+		manifestPath: {
+			type: String,
+			required: true
+		}
+	},
+	setup( props ) {
 		const speaker = ref( null );
 		const audioPlayer = ref( null );
 		const currentTime = ref( 0 );
@@ -94,10 +108,12 @@ module.exports = exports = defineComponent( {
 		const duration = ref( 0 );
 		const buffered = ref( 0 );
 		const isVisible = ref( false );
+		const manifest = ref( null );
+		const audioSet = computed( () => ( manifest.value && manifest.value.sections || [] ).map( ( section ) => props.ttsBaseUri + section.audio.key ) );
 		const teleportTarget = inject( 'CdxTeleportTarget' );
 
 		function onTimeUpdate() {
-			currentTime.value = audioPlayer.value.currentTime;
+			currentTime.value = audioPlayer.value && audioPlayer.value.currentTime || 0;
 		}
 
 		function onPlay() {
@@ -113,7 +129,7 @@ module.exports = exports = defineComponent( {
 		}
 
 		function onProgress() {
-			if ( audioPlayer.value.buffered.length ) {
+			if ( audioPlayer.value && audioPlayer.value.buffered.length ) {
 				buffered.value = audioPlayer.value.buffered.end(
 					audioPlayer.value.buffered.length - 1
 				);
@@ -121,7 +137,7 @@ module.exports = exports = defineComponent( {
 		}
 
 		function onCanPlay() {
-			duration.value = audioPlayer.value.duration || 0;
+			duration.value = audioPlayer.value && audioPlayer.value.duration || 0;
 			isLoading.value = false;
 		}
 
@@ -144,22 +160,29 @@ module.exports = exports = defineComponent( {
 		}
 
 		function play() {
+			if ( !audioPlayer.value ) {
+				return;
+			}
+
 			audioPlayer.value.play().catch( ( error ) => {
 				mw.log.warn( 'Read Aloud: unable to play audio', error );
 			} );
 		}
 
 		function pause() {
+			if ( !audioPlayer.value ) {
+				return;
+			}
+
 			audioPlayer.value.pause();
 		}
 
 		/**
-		 * Stop the audio via pause() and rewind the track back to the
-		 * beginning, and then dismiss the toolbar.
+		 * Stop the audio (implicit through clearing manifest),
+		 * and then dismiss the toolbar.
 		 */
 		function onClose() {
-			pause();
-			audioPlayer.value.currentTime = 0;
+			manifest.value = null;
 			currentTime.value = 0;
 			isVisible.value = false;
 		}
@@ -194,16 +217,17 @@ module.exports = exports = defineComponent( {
 		/**
 		 * Load the audio source.
 		 *
-		 * @param {string} audioSourceUrl
+		 * @param {string} manifestPath
 		 */
-		function load( audioSourceUrl ) {
+		async function load( manifestPath ) {
 			currentTime.value = 0;
 			duration.value = 0;
 			buffered.value = 0;
 			isPlaying.value = false;
 			isLoading.value = true;
-			audioPlayer.value.src = audioSourceUrl;
-			audioPlayer.value.load();
+
+			const response = await fetch( props.ttsBaseUri + manifestPath );
+			manifest.value = await response.json();
 		}
 
 		const showCoachMark = ref( false );
@@ -235,12 +259,18 @@ module.exports = exports = defineComponent( {
 			speaker.value.$el.focus();
 		}
 
-		function start() {
+		async function start() {
 			dismissAndFocus();
 			mw.storage.set( SEEN_KEY, '1' );
 			// Playback (T434890) can subscribe to either entry point here.
-			mw.hook( 'ext.readerExperiments.readAloud.start' ).fire( audioPlayer.value );
+			mw.hook( 'ext.readerExperiments.readAloud.start' ).fire();
 			isVisible.value = true;
+
+			try {
+				await load( props.manifestPath );
+			} catch ( e ) {
+				// @todo handle missing audio (IIRC show a link to a list of articles with audio?)
+			}
 		}
 
 		return {
@@ -250,6 +280,7 @@ module.exports = exports = defineComponent( {
 			currentTime,
 			duration,
 			isVisible,
+			audioSet,
 			onTimeUpdate,
 			onPlay,
 			onPause,
@@ -261,8 +292,6 @@ module.exports = exports = defineComponent( {
 			onPlaying,
 			play,
 			pause,
-			// eslint-disable-next-line vue/no-unused-properties
-			load,
 			onClose,
 			seekTo,
 			setPlaybackRate,
