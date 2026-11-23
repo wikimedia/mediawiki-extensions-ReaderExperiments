@@ -38,6 +38,16 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Sii akhri",
 	"readerexperiments-mobilepagepreviews-title": "Horudhaca bogga",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Xir",
+	"readerexperiments-readaloud-close": "Xir",
+	"readerexperiments-readaloud-description": "Isku day waayo aragnimadeenna cusub ee akhriska qotada dheer. Diiradda saar qoraalka, dhegayso erayada oo cod dheer lagu akhrinayo, waxna baro adigoon wax ku mashquulin.",
+	"readerexperiments-readaloud-dismiss": "Ka saar hordhaca akhriska deggan",
+	"readerexperiments-readaloud-seek-forward": "Hore ugu bood $1 ilbiriqsi",
+	"readerexperiments-readaloud-pause": "Hakad",
+	"readerexperiments-readaloud-play": "Daar",
+	"readerexperiments-readaloud-seek-backward": "Dib ugu noqo $1 ilbiriqsi",
+	"readerexperiments-readaloud-playback-speed-button-label": "$1x",
+	"readerexperiments-readaloud-title": "Akhris deggan",
+	"readerexperiments-readaloud-try": "Isku day akhris deggan",
 	"readerexperiments-semanticsearch-title": "Natiijooyinka raadinta",
 	"readerexperiments-semanticsearch-preference": "Dooro is dhexgalka raadinta",
 	"readerexperiments-semanticsearch-preference-help": "Waxaa jira is dhexgallo badan oo loo heli karo soo bandhigista natiijooyinka raadinta. Dooro si aad u doorato midka aad doorbidayso.",
@@ -91,9 +101,5 @@
 	"readerexperiments-preferredsources-dialog-title": "Wikipedia ka dhig mid ka muuqda raadintaada Google",
 	"readerexperiments-preferredsources-dialog-body": "Mudnaanta sii macluumaadka lagu kalsoonaan karo ee ay dadku xaqiijiyeen. Wikipedia ka dooro ilo aad doorbidayso ee Google.",
 	"readerexperiments-preferredsources-dialog-action": "Dooro Wikipedia",
-	"readerexperiments-preferredsources-dialog-dismiss": "Mar dambe ha tusin",
-	"readerexperiments-readaloud-title": "Akhris deggan",
-	"readerexperiments-readaloud-description": "Isku day waayo aragnimadeenna cusub ee akhriska qotada dheer. Diiradda saar qoraalka, dhegayso erayada oo cod dheer lagu akhrinayo, waxna baro adigoon wax ku mashquulin.",
-	"readerexperiments-readaloud-try": "Isku day akhris deggan",
-	"readerexperiments-readaloud-dismiss": "Ka saar hordhaca akhriska deggan"
+	"readerexperiments-preferredsources-dialog-dismiss": "Mar dambe ha tusin"
 }

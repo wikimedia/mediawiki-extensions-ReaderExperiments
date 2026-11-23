@@ -38,6 +38,16 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Ler máis",
 	"readerexperiments-mobilepagepreviews-title": "Vista previa da páxina",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Pechar",
+	"readerexperiments-readaloud-close": "Pechar",
+	"readerexperiments-readaloud-description": "Proba a nosa nova experiencia de lectura inmersiva. Concéntrate no texto, escoita as palabras en voz alta e aprende sen distraccións.",
+	"readerexperiments-readaloud-dismiss": "Omitir a introdución á lectura con acougo",
+	"readerexperiments-readaloud-seek-forward": "Adiantar $1 segundos",
+	"readerexperiments-readaloud-pause": "Pausar",
+	"readerexperiments-readaloud-play": "Reproducir",
+	"readerexperiments-readaloud-seek-backward": "Retroceder $1 segundos",
+	"readerexperiments-readaloud-playback-speed-button-label": "× $1",
+	"readerexperiments-readaloud-title": "Lectura con acougo",
+	"readerexperiments-readaloud-try": "Probar a lectura con acougo",
 	"readerexperiments-semanticsearch-title": "Resultados da busca",
 	"readerexperiments-semanticsearch-preference": "Escolle a túa interface de busca",
 	"readerexperiments-semanticsearch-preference-help": "Hai varias interfaces dispoñibles para mostrar os resultados da busca. Selecciona a que prefiras.",
@@ -91,9 +101,5 @@
 	"readerexperiments-preferredsources-dialog-title": "Mantén a Wikipedia visible nas buscas de Google",
 	"readerexperiments-preferredsources-dialog-body": "Prioriza a información fiable e verificada por humanos. Escolle a Wikipedia como fonte preferida en Google.",
 	"readerexperiments-preferredsources-dialog-action": "Escolle a Wikipedia",
-	"readerexperiments-preferredsources-dialog-dismiss": "Non mostrar de novo",
-	"readerexperiments-readaloud-title": "Lectura con acougo",
-	"readerexperiments-readaloud-description": "Proba a nosa nova experiencia de lectura inmersiva. Concéntrate no texto, escoita as palabras en voz alta e aprende sen distraccións.",
-	"readerexperiments-readaloud-try": "Probar a lectura con acougo",
-	"readerexperiments-readaloud-dismiss": "Omitir a introdución á lectura con acougo"
+	"readerexperiments-preferredsources-dialog-dismiss": "Non mostrar de novo"
 }

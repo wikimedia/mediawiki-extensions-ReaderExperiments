@@ -39,6 +39,16 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Czytaj więcej",
 	"readerexperiments-mobilepagepreviews-title": "Podgląd strony",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Zamknij",
+	"readerexperiments-readaloud-close": "Zamknij",
+	"readerexperiments-readaloud-description": "Wypróbuj nasz nowy tryb czytania pozwalający w pełni zanurzyć się w lekturze. Skup się na tekście, słuchaj słów czytanych na głos i ucz się bez rozpraszaczy.",
+	"readerexperiments-readaloud-dismiss": "Zamknij wprowadzenie do trybu spokojnego czytania",
+	"readerexperiments-readaloud-seek-forward": "Przeskocz o $1 sekund do przodu",
+	"readerexperiments-readaloud-pause": "Wstrzymaj",
+	"readerexperiments-readaloud-play": "Odtwórz",
+	"readerexperiments-readaloud-seek-backward": "Przeskocz o $1 sekund do tyłu",
+	"readerexperiments-readaloud-playback-speed-button-label": "$1×",
+	"readerexperiments-readaloud-title": "Tryb spokojnego czytania",
+	"readerexperiments-readaloud-try": "Wypróbuj tryb spokojnego czytania",
 	"readerexperiments-semanticsearch-title": "Wyniki wyszukiwania",
 	"readerexperiments-semanticsearch-preference": "Wybierz swój interfejs wyszukiwania",
 	"readerexperiments-semanticsearch-preference-help": "Dostępnych jest kilka interfejsów do wyświetlania wyników wyszukiwania. Wybierz, który preferujesz.",
@@ -92,9 +102,5 @@
 	"readerexperiments-preferredsources-dialog-title": "Pokazuj Wikipedię w wynikach wyszukiwania Google",
 	"readerexperiments-preferredsources-dialog-body": "Stawiaj na rzetelne informacje, które zostały zweryfikowane przez ludzi. Wybierz Wikipedię jako preferowane źródło w wyszukiwarce Google.",
 	"readerexperiments-preferredsources-dialog-action": "Wybierz Wikipedię",
-	"readerexperiments-preferredsources-dialog-dismiss": "Nie pokazuj ponownie",
-	"readerexperiments-readaloud-title": "Tryb spokojnego czytania",
-	"readerexperiments-readaloud-description": "Wypróbuj nasz nowy tryb czytania pozwalający w pełni zanurzyć się w lekturze. Skup się na tekście, słuchaj słów czytanych na głos i ucz się bez rozpraszaczy.",
-	"readerexperiments-readaloud-try": "Wypróbuj tryb spokojnego czytania",
-	"readerexperiments-readaloud-dismiss": "Zamknij wprowadzenie do trybu spokojnego czytania"
+	"readerexperiments-preferredsources-dialog-dismiss": "Nie pokazuj ponownie"
 }

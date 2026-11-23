@@ -38,6 +38,15 @@
 	"readerexperiments-mobilepagepreviews-read-more": "Mehr erfahren",
 	"readerexperiments-mobilepagepreviews-title": "Seitenvorschau",
 	"readerexperiments-mobilepagepreviews-close-button-label": "Schließen",
+	"readerexperiments-readaloud-close": "Schließen",
+	"readerexperiments-readaloud-description": "Probiere unser neues, immersives Leseerlebnis aus. Konzentriere dich auf den Text, lass dir die Wörter laut vorlesen und lerne ohne Ablenkung.",
+	"readerexperiments-readaloud-dismiss": "Einführung zum entspannten Lesen überspringen",
+	"readerexperiments-readaloud-seek-forward": "$1 Sekunden vorspringen",
+	"readerexperiments-readaloud-pause": "Pausieren",
+	"readerexperiments-readaloud-play": "Wiedergabe",
+	"readerexperiments-readaloud-seek-backward": "$1 Sekunden zurückspringen",
+	"readerexperiments-readaloud-title": "Entspanntes Lesen",
+	"readerexperiments-readaloud-try": "Versuche das entspannte Lesen",
 	"readerexperiments-semanticsearch-title": "Suchergebnisse",
 	"readerexperiments-semanticsearch-preference": "Wählen deine Suchschnittstelle",
 	"readerexperiments-semanticsearch-preference-help": "Es stehen mehrere Oberflächen zur Anzeige der Suchergebnisse zur Verfügung. Wähle hier die von dir bevorzugte aus.",
@@ -91,9 +100,5 @@
 	"readerexperiments-preferredsources-dialog-title": "Sorge dafür, dass Wikipedia in deinen Google-Suchergebnissen weiterhin angezeigt wird",
 	"readerexperiments-preferredsources-dialog-body": "Lege Wert auf zuverlässige Informationen, die von Menschen auf ihre Richtigkeit überprüft wurden. Wähle Wikipedia als bevorzugte Quelle bei Google.",
 	"readerexperiments-preferredsources-dialog-action": "Wikipedia auswählen",
-	"readerexperiments-preferredsources-dialog-dismiss": "Nicht wieder anzeigen",
-	"readerexperiments-readaloud-title": "Entspanntes Lesen",
-	"readerexperiments-readaloud-description": "Probiere unser neues, immersives Leseerlebnis aus. Konzentriere dich auf den Text, lass dir die Wörter laut vorlesen und lerne ohne Ablenkung.",
-	"readerexperiments-readaloud-try": "Versuche das entspannte Lesen",
-	"readerexperiments-readaloud-dismiss": "Einführung zum entspannten Lesen überspringen"
+	"readerexperiments-preferredsources-dialog-dismiss": "Nicht wieder anzeigen"
 }
