@@ -27,6 +27,7 @@
 				:aria-expanded="expanded"
 				:menu-items="menuItems"
 				:render-in-place="true"
+				@update:selected="( selected ) => ( $emit( 'select', parseFloat( selected ) ) )"
 			></cdx-menu>
 		</template>
 	</cdx-popover>
@@ -40,6 +41,7 @@ const { CdxPopover, CdxToggleButton, CdxMenu } = require( '@wikimedia/codex' );
 module.exports = exports = defineComponent( {
 	name: 'PlaybackSpeed',
 	components: { CdxPopover, CdxToggleButton, CdxMenu },
+	emits: [ 'select' ],
 	setup() {
 		const speedRateButton = useTemplateRef( 'speedRateButton' );
 		const speedPopover = useTemplateRef( 'speedPopover' );
@@ -63,7 +65,7 @@ module.exports = exports = defineComponent( {
 			).text();
 		}
 
-		const menuItems = [ '1', '1.25', '1.5', '2' ].map( ( rate ) => ( {
+		const menuItems = [ '0.5', '1', '1.25', '1.5' ].map( ( rate ) => ( {
 			label: formatSpeed( rate ),
 			value: rate
 		} ) );

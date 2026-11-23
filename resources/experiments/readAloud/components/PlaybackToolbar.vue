@@ -21,7 +21,9 @@
 		</cdx-progress-bar>
 
 		<div class="ext-readerExperiments-readAloud__playback-toolbar__content">
-			<playback-speed></playback-speed>
+			<playback-speed
+				@select="onSelectSpeed"
+			></playback-speed>
 			<div class="ext-readerExperiments-readAloud__playback-controls">
 				<cdx-button
 					:aria-label="$i18n(
@@ -108,7 +110,8 @@ module.exports = exports = defineComponent( {
 		'pause',
 		'backward',
 		'forward',
-		'close'
+		'close',
+		'speed'
 	],
 	setup( props, { emit } ) {
 		// Format the seek offset number for current language.
@@ -142,6 +145,10 @@ module.exports = exports = defineComponent( {
 			emit( 'close' );
 		}
 
+		function onSelectSpeed( speed ) {
+			emit( 'speed', speed );
+		}
+
 		return {
 			cdxIconPlay,
 			cdxIconPause,
@@ -154,7 +161,8 @@ module.exports = exports = defineComponent( {
 			onTogglePlayback,
 			onSeekBackward,
 			onSeekForward,
-			onClose
+			onClose,
+			onSelectSpeed
 		};
 	}
 } );

@@ -67,6 +67,7 @@
 			@backward="seekTo( -seekOffsetSeconds )"
 			@forward="seekTo( seekOffsetSeconds )"
 			@close="onClose"
+			@speed="( rate ) => setPlaybackRate( rate )"
 		>
 		</playback-toolbar>
 	</teleport>
@@ -178,6 +179,19 @@ module.exports = exports = defineComponent( {
 		}
 
 		/**
+		 * Set the audio's playback rate.
+		 *
+		 * @param {number} rate
+		 */
+		function setPlaybackRate( rate ) {
+			if ( !audioPlayer.value ) {
+				return;
+			}
+
+			audioPlayer.value.playbackRate = rate;
+		}
+
+		/**
 		 * Load the audio source.
 		 *
 		 * @param {string} audioSourceUrl
@@ -251,6 +265,7 @@ module.exports = exports = defineComponent( {
 			load,
 			onClose,
 			seekTo,
+			setPlaybackRate,
 			speaker,
 			showCoachMark,
 			start,
