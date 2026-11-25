@@ -29,5 +29,8 @@
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia": "از $1",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-wikipedia-multiple": "از $1 و $2 {{PLURAL:$2|نسخهٔ}} زبانی دیگر ویکی‌پدیا",
 	"readerexperiments-imagebrowsing-vtoc-external-wikis-others": "از $1",
-	"readerexperiments-sharehighlight-copy-link": "رونویسی پیوند"
+	"readerexperiments-sharehighlight-toolbar-share": "هم‌رسانی",
+	"readerexperiments-sharehighlight-dialog-title": "هم‌رسانی",
+	"readerexperiments-sharehighlight-copy-link": "رونویسی پیوند",
+	"readerexperiments-sharehighlight-share": "هم‌رسانی"
 }
