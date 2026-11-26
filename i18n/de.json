@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Brettchenweber"
+		]
 	},
 	"readerexperiments-desc": "Eine Reihe von Prototypen, die darauf abzielen, die Zahl der Wikipedia-Leser zu erhöhen",
 	"readerexperiments-imagebrowsing-carousel-label": "Bilder durchsuchen",
